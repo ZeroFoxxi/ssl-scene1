@@ -1,0 +1,18 @@
+# 旧版本与重复打包（本地保留，不进仓库）
+_old_v1/
+_old_v2/
+网页项目上传包/
+*.zip
+
+# Office 临时锁文件
+~$*
+
+# Python / Node 缓存
+__pycache__/
+*.pyc
+node_modules/
+
+# 系统文件
+Thumbs.db
+desktop.ini
+.DS_Store

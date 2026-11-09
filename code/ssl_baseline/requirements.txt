@@ -1,0 +1,5 @@
+numpy>=1.23
+scipy>=1.9
+matplotlib>=3.6
+# numpy 2.x：用最新版 pyroomacoustics；numpy 1.x（如 1.26）：改成 pyroomacoustics==0.7.4
+pyroomacoustics

@@ -1,0 +1,18 @@
+[
+ {
+  "use_table": false,
+  "person_in_view_after_s": NaN,
+  "person_in_view_ratio_after_onset": 0.0,
+  "masked_bins_deg": []
+ },
+ {
+  "use_table": true,
+  "person_in_view_after_s": 3.02,
+  "person_in_view_ratio_after_onset": 0.813,
+  "masked_bins_deg": [
+   310.0,
+   320.0,
+   330.0
+  ]
+ }
+]

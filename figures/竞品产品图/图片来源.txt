@@ -1,0 +1,14 @@
+竞品产品图来源（仅供内部调研，对外使用前需替换或取得授权）
+ezviz_c6c.jpg          萤石官方资讯 https://www.ezviz.com/cn/news/2342.html
+quedan_pro.jpg         快科技发布会报道 https://news.mydrivers.com/1/1037/1037251.htm
+echo_show10.jpg / echo_xray_wide.png  Amazon Science https://www.amazon.science/blog/the-science-behind-echo-show-10
+tapo_c210.jpg          TP-Link 官网 https://www.tapo.com/en/product/smart-camera/tapo-c210/
+mi_cam360.jpg          小米官网 https://www.mi.com/camera-360/
+logi_rallybar.jpg      Logitech 官网 https://www.logitech.com/en-us/products/video-conferencing/room-solutions/rallybar.960-001308.html
+jabra_pc50.jpg         Jabra 官网 https://www.jabra.com/en-ie/business/video-conferencing/jabra-panacast-50
+owl3.jpg               Owl Labs 官网 https://owllabs.com/products/meeting-owl-3
+ideahub_es2plus.jpg    华为企业业务官网 https://e.huawei.com/eu/products/enterprise-collaboration/ideahub/ideahub-es2-plus
+xmos_respeaker.jpg     Seeed Wiki https://wiki.seeedstudio.com/respeaker_xvf3800_introduction/
+cisco_quad.jpg         Webex / Cisco 官网 https://www.webex.com/us/en/devices/cameras.html
+owl4.jpg               Owl Labs 官网 https://owllabs.com/products/meeting-owl-3（页面现展示 Meeting Owl 4+）
+mi_c700.jpg            小米官网 https://www.mi.com/global/product/xiaomi-smart-camera-c700/
