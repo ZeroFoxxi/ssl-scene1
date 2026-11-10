@@ -2,6 +2,7 @@
 const pptxgen = require('pptxgenjs');
 const path = require('path');
 const fs = require('fs');
+const { fixPptxLanguage } = require('./fix_pptx_language');
 const D = JSON.parse(fs.readFileSync(path.join(__dirname, 'spec_data.json'), 'utf8'));
 const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, '..'), '竞品规格调研_萤石与思必驰.pptx');
 const F = process.env.PPTX_FONT || 'Microsoft YaHei';
@@ -103,4 +104,4 @@ function notes(s,rows){s.addNotes(rows.map(r=>r.join('｜')).join('\n\n'));}
  t(s,'关键页：S2 印刷页 8-1-1-206 / 207；S1 印刷页 1-1-134 / 137 / 196；S16 第 2 节；S13 资源章节。',.55,6.47,12.2,.36,{fontSize:10.5,color:C.gray});
  s.addNotes('可访问的原始资料已重新核对，访问日期 2026-11-10。S8 本轮仅返回页面框架，不将未能确认的八麦或离线追踪作为结论。平台媒体报道仅作线索，定位资源需向厂商确认。');
 }
-p.writeFile({fileName:OUT}).then(()=>console.log('written',OUT));
+p.writeFile({fileName:OUT}).then(async()=>{ await fixPptxLanguage(OUT); console.log('written',OUT); }).catch(error=>{ console.error(error); process.exitCode=1; });
