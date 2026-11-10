@@ -1,0 +1,136 @@
+# -*- coding: utf-8 -*-
+"""训练数据方案与采集计划的唯一数据源：生成 Excel（采集矩阵、数据量估算、时间计划、元数据清单），并导出 JSON 供 PPT 使用。
+
+运行：python _build/data_plan.py  →  训练数据方案与采集计划.xlsx、_build/data_plan.json
+数字均为建议值，待与深圳同事、mentor 确认后再定。
+"""
+import json, os
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# ---------------- 公开数据盘点 ----------------
+PUBLIC = [
+    # 名称, 内容与阵列, 规模, 方位真值, 许可, 本方案用途
+    ["RealMAN（NeurIPS 2024）", "真实录制；32 麦阵列，可抽子阵；普通话（音箱播放），静止 + 移动说话人", "语音 83.7 h（静止 48.3 h / 移动 35.4 h），噪声 144.5 h，32 个场景",
+     "有：方位、俯仰、距离（鱼眼摄像头自动标注）", "待核实（原调研记为 CC BY 4.0）", "真实数据预训练 / 微调；抽取几何接近的子阵"],
+    ["LOCATA（2018 挑战赛）", "真实录制；4 类阵列（含机器人头、平面阵）", "6 个任务，规模小", "有", "待核实（原调研记为 Open Data Commons）", "评测为主（Task 1 静态、Task 3 移动），不作训练主体"],
+    ["STARSS23（DCASE 2023）", "真实录制；4 通道四面体阵列 / FOA；13 类声音事件", "约 7.5 h，16 个房间", "有（事件级）", "待核实（原调研记为 MIT）", "异响扩展储备；几何与目标设备差异大"],
+    ["SSLR（Idiap）", "真实录制；机器人头 4 麦，含风扇自噪声", "约 25 h", "有", "非商用 EULA", "仅研究对比，不用于产品训练"],
+    ["AISHELL-1", "普通话近讲语音（单通道）", "约 178 h，400 人", "无（作仿真声源素材）", "待核实（OpenSLR 标注 Apache 2.0，另有来源不一致）", "仿真用干净语音素材"],
+    ["DEMAND / MUSAN", "环境噪声 / 噪声、音乐、语音素材（单通道）", "—", "无（作仿真干扰素材）", "待核实", "仿真用噪声、音乐、电视类干扰素材"],
+]
+
+# ---------------- 仿真方案 ----------------
+SIM = [
+    ["阵列", "按目标设备几何（麦克风数量、间距、安装位置）；几何未定前先用 4 麦 5.7 cm 方阵"],
+    ["房间", "边长 3–8 m；RT60 0.2–0.9 s；家具散射用随机吸声系数近似"],
+    ["声源", "距离 0.5–5 m，方位 0–360°；静止 / 圆弧 / 直线 / 随机游走；唤醒词 + 连续语音"],
+    ["干扰", "电视（语音、音乐节目）、空调 / 风扇扩散噪声、云台电机近场噪声；SIR −5～20 dB，SNR 0～30 dB"],
+    ["增强", "阵元位置扰动、通道增益与相位失配、通道置换（对称阵列）"],
+    ["工具与规模", "pyroomacoustics（现有脚本）、gpuRIR（移动声源）；目标约 200 h 多通道数据（建议值）"],
+]
+
+# ---------------- 自采集矩阵（每间房） ----------------
+# 名称, 声源, 点位 / 条数, 每单位时长（分钟）, 条件, 说明
+MATRIX = [
+    ["静态网格（音箱播放）", "音箱播放：唤醒词 × 5 遍 + 连续语音约 20 s", "12 方位 × 3 距离 × 2 高度 = 72 点", 0.5, "安静", "可重复、覆盖全；唤醒词先请多人近讲录制再播放"],
+    ["静态子集（真人）", "真人：唤醒词 × 5 遍 + 指令与自由说话", "4 人 × 12 方位 × 1 距离 = 48 次", 0.5, "安静", "补充真人头部指向性、说话习惯"],
+    ["移动轨迹（真人）", "真人边说边走：圆弧、直线、靠近 / 远离", "4 人 × 10 条", 1.0, "安静", "跟踪用；方位真值靠顶视或鱼眼摄像头标注"],
+    ["干扰单独录制", "电视节目、空调 / 风扇、云台电机转动", "3 种 × 2 位置", 5.0, "无人", "与语音分开录，后期按指定 SIR 混合"],
+    ["真实混合（测试用）", "真人唤醒 + 电视同时播放", "2 人 × 12 方位", 0.5, "电视开", "不做后期混合，作为真实测试样本"],
+    ["长时误转专测", "无人，电视持续播放", "1 段", 120.0, "电视开", "测误转率（次 / 小时）"],
+]
+
+ROOMS = [
+    ["卧室类", "约 3 × 4 m", "约 0.3 s"],
+    ["客厅类", "约 5 × 6 m", "约 0.5 s"],
+    ["空旷大房间", "约 7 × 8 m", "约 0.8 s"],
+    ["会议室", "约 5 × 8 m", "约 0.6 s"],
+]
+
+META = [
+    "房间尺寸、家具布置照片、实测 RT60",
+    "阵列中心坐标与朝向；若阵列随云台转动，记录每段的云台角",
+    "每个点位的方位、距离、高度（地面贴标记）",
+    "说话人编号、性别、站 / 坐（不记录可识别个人身份的信息）",
+    "唤醒词起止时间（人工标注或唤醒模块日志）",
+    "干扰源类型、位置、播放音量；同一时钟下的多通道同步",
+    "移动段的轨迹视频（顶视或鱼眼摄像头）与时间戳",
+]
+
+# ---------------- 时间计划（建议，待确认） ----------------
+TIMELINE = [
+    ["方案定稿", "11 月下旬", "采集方案、数据格式、标注规范定稿；确认阵列 / 样机；启动录音合规流程（知情同意等）", "定位侧", "采集方案 v1"],
+    ["深圳准备与试录", "12 月上中旬", "设备、场地、标记与同步；试录半天，检查同步、电平、标注后修订方案", "深圳同事 + 定位侧", "试录数据与检查记录"],
+    ["正式采集", "12 月中旬至 1 月上旬", "4 类房间，约 8–10 个工作日（含搭建与标定）", "深圳同事", "原始多通道数据"],
+    ["整理与交付", "1 月中下旬", "切分、标注核对、按房间划分训练 / 测试", "定位侧", "训练集 / 测试集 v1"],
+    ["仿真数据（并行）", "阵列几何确认后即开始", "按目标几何生成约 200 h 仿真数据；先用公开数据和仿真训练候选模型", "定位侧", "仿真数据集、基线模型"],
+]
+
+# ---------------- 对比规范 ----------------
+COMPARE = [
+    ["同测试场景", "固定测试集：自采数据中不参与训练的房间 + LOCATA Task 1 / 3 + 5 个演示场景；竞品样机在同一房间、同一点位实测"],
+    ["同模型规格", "参数量、模型内存（权重 + 激活）与导向表上限对齐竞品量级；竞品数据未公开前，暂以公开参照的百 KB 级为基准"],
+    ["同算力开销", "统一在同一平台测每帧耗时与计算量（MFLOP/s）；目标芯片确认后改在目标芯片上测"],
+    ["统一指标", "Acc@10°、粗大错误率、平均误差、首次定向时延、跟踪覆盖率、误转次数 / 小时"],
+]
+
+CONFIRM = [
+    "demo 与采集用哪套阵列或样机（麦克风数量、间距、安装位置）",
+    "深圳同事的人力、场地与可用时间",
+    "录音的合规流程：参与者知情同意、数据存储与使用范围",
+    "唤醒词文本，以及能否拿到唤醒模块对录音的起止时间",
+    "目标芯片与算力预算（决定“同模型规格、同算力”的具体数字）",
+]
+
+
+COUNTS = [72, 48, 40, 6, 24, 1]  # 与 MATRIX 各行的“点位 / 条数”一致
+
+
+def per_room_minutes():
+    rows = [[m[0], n, m[3], round(n * m[3])] for m, n in zip(MATRIX, COUNTS)]
+    return rows, round(sum(r[3] for r in rows))
+
+
+def build_excel(path):
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
+    wb = Workbook(); thin = Side(style="thin", color="CBD5E1")
+    def sheet(ws, header, rows, widths):
+        ws.append(header)
+        for r in rows: ws.append(r)
+        for c in ws[1]:
+            c.font = Font(bold=True, color="FFFFFF"); c.fill = PatternFill("solid", fgColor="17375E")
+            c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        for row in ws.iter_rows(min_row=2):
+            for c in row:
+                c.alignment = Alignment(wrap_text=True, vertical="top"); c.border = Border(top=thin, bottom=thin, left=thin, right=thin)
+        for i, w in enumerate(widths): ws.column_dimensions[chr(65 + i)].width = w
+        ws.freeze_panes = "A2"
+    ws = wb.active; ws.title = "采集矩阵（每间房）"
+    sheet(ws, ["项目", "声源与内容", "点位 / 条数", "每单位时长（分钟）", "条件", "说明"], MATRIX, [20, 36, 30, 14, 10, 40])
+    rows, tot = per_room_minutes()
+    ws2 = wb.create_sheet("数据量估算")
+    sheet(ws2, ["项目", "数量", "每单位（分钟）", "每间房合计（分钟）"], rows + [["每间房合计", "", "", tot], ["4 类房间合计（小时）", "", "", round(tot * 4 / 60, 1)]], [24, 10, 16, 22])
+    ws3 = wb.create_sheet("房间")
+    sheet(ws3, ["房间类型", "尺寸（建议）", "混响时间（建议）"], ROOMS, [20, 16, 18])
+    ws4 = wb.create_sheet("元数据清单")
+    sheet(ws4, ["序号", "需要记录的内容"], [[i + 1, m] for i, m in enumerate(META)], [8, 80])
+    ws5 = wb.create_sheet("时间计划")
+    sheet(ws5, ["阶段", "时间（建议）", "内容", "负责", "产出"], TIMELINE, [16, 18, 60, 18, 20])
+    ws6 = wb.create_sheet("公开数据盘点")
+    sheet(ws6, ["数据集", "内容与阵列", "规模", "方位真值", "许可", "本方案用途"], PUBLIC, [22, 40, 30, 26, 28, 34])
+    ws7 = wb.create_sheet("待确认")
+    sheet(ws7, ["序号", "事项"], [[i + 1, c] for i, c in enumerate(CONFIRM)], [8, 80])
+    wb.save(path)
+    return tot
+
+
+if __name__ == "__main__":
+    tot = build_excel(os.path.join(ROOT, "训练数据方案与采集计划.xlsx"))
+    rows, _ = per_room_minutes()
+    json.dump({"public": PUBLIC, "sim": SIM, "matrix": MATRIX, "rooms": ROOMS, "meta": META, "timeline": TIMELINE,
+               "compare": COMPARE, "confirm": CONFIRM, "volume_rows": rows, "per_room_min": tot,
+               "total_h": round(tot * 4 / 60, 1)},
+              open(os.path.join(ROOT, "_build", "data_plan.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print("per room minutes", tot, "total hours", round(tot * 4 / 60, 1)); print(rows)
