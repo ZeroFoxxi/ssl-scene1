@@ -4,17 +4,17 @@ const path = require('path');
 const fs = require('fs');
 const D = JSON.parse(fs.readFileSync(path.join(__dirname, 'spec_data.json'), 'utf8'));
 const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, '..'), '竞品规格调研_萤石与思必驰.pptx');
-const F = process.env.PPTX_FONT || 'Noto Sans CJK SC';
+const F = process.env.PPTX_FONT || 'Microsoft YaHei';
 const C = {navy:'17375E',text:'1F2937',gray:'5B6B7F',light:'EEF2F7',teal:'1F7A68',mint:'E3F1EE',amber:'B8691A',sand:'FBF0E3',blue:'2F6EB5',white:'FFFFFF',border:'CBD5E1'};
 const p = new pptxgen();
 p.layout='LAYOUT_WIDE';p.author='令狐雅熙';p.title='竞品规格调研：萤石与思必驰';p.subject='声源定位算法选型与证据口径';
 p.theme={headFontFace:F,bodyFontFace:F,lang:'zh-CN'};
-function t(s,text,x,y,w,h,o={}){s.addText(text,{x,y,w,h,fontFace:F,fontSize:13,color:C.text,margin:0,valign:'top',breakLine:false,paraSpaceAfter:3,...o});}
+function t(s,text,x,y,w,h,o={}){s.addText(text,{x,y,w,h,fontFace:F,lang:'zh-CN',fontSize:13,color:C.text,margin:0,valign:'top',breakLine:false,paraSpaceAfter:3,...o});}
 function rect(s,x,y,w,h,fill){s.addShape('roundRect',{x,y,w,h,rectRadius:0.06,fill:{color:fill},line:{color:fill},radius:0.06});}
 function slide(title,sub){const s=p.addSlide();s.background={color:C.white};const n=p._slides.length;t(s,title,.55,.3,12.2,.65,{fontSize:23,bold:true,color:C.navy});if(sub)t(s,sub,.55,1.02,12.2,.42,{fontSize:11.5,color:C.gray});t(s,'声源定位竞品规格调研｜萤石与思必驰｜2026.11.10',.55,7.06,10,.2,{fontSize:9,color:C.gray});t(s,String(n),12.2,7.04,.55,.25,{fontSize:10,color:C.gray,align:'right'});return s;}
 function table(s,rows,x,y,widths,heights,size=11){
  const r=rows.map((row,i)=>row.map(v=>({text:String(v),options:i===0?{bold:true,color:C.white,fill:C.navy}:{} })));
- s.addTable(r,{x,y,w:widths.reduce((a,b)=>a+b,0),colW:widths,rowH:heights,fontFace:F,fontSize:size,color:C.text,margin:[.09,.10,.08,.10],border:{type:'solid',pt:.7,color:C.border},valign:'middle',autoPage:false,fill:C.white,paraSpaceAfter:0});
+ s.addTable(r,{x,y,w:widths.reduce((a,b)=>a+b,0),colW:widths,rowH:heights,fontFace:F,lang:'zh-CN',fontSize:size,color:C.text,margin:[.09,.10,.08,.10],border:{type:'solid',pt:.7,color:C.border},valign:'middle',autoPage:false,fill:C.white,paraSpaceAfter:0});
 }
 function callout(s,text,y=6.15,h=.62){rect(s,.55,y,12.22,h,C.sand);t(s,text,.75,y+.12,11.82,h-.17,{fontSize:12,color:C.amber});}
 function card(s,label,text,x,y,w,h,fill=C.light){rect(s,x,y,w,h,fill);t(s,label,x+.22,y+.17,w-.44,.38,{fontSize:16,bold:true,color:C.navy});t(s,text,x+.22,y+.68,w-.44,h-.82,{fontSize:14});}
@@ -32,11 +32,11 @@ function notes(s,rows){s.addNotes(rows.map(r=>r.join('｜')).join('\n\n'));}
 }
 // 2. 结论
 {
- const s=slide('当前结论：对标对象已收敛，定位模块资源预算仍待确认','先把相同场景、相同输入与资源口径定下来，再判断本方案是否更好。');
- const labels=['公开信息能回答什么','优先争取算法级对标','公开实现参照如何使用','首轮选型与下一步'];
- D.implications.forEach((v,i)=>card(s,labels[i],v,.55+(i%2)*6.22,1.68+Math.floor(i/2)*2.13,6,1.94,i===2?C.mint:C.light));
- callout(s,'当前证据不足以把“百 KB 级内存”或“几 M 模型”定为萤石、思必驰的定位预算。',6.12,.67);
- notes(s,D.rows);
+ const s=slide('结论：两家定位模块的资源指标均未公开，思必驰 SDK 是最快的对标途径','已公开的是阵列、功能与精度口径；内存、模型、执行单元与时延需通过 SDK 规格或样机实测获得。');
+ const labels=['已查到','未查到','公开参照','下一步'];
+ D.implications.forEach((v,i)=>card(s,labels[i],v,.55+(i%2)*6.22,1.68+Math.floor(i/2)*2.13,6,1.94,[C.mint,C.sand,C.light,C.light][i]));
+ callout(s,'模型量级待竞品数据补齐后确定；在此之前首轮保留 SRP-PHAT 与 GEVD-MUSIC 对照，同步测效果、内存与耗时。',6.12,.67);
+ s.addNotes('结论分四点。已查到的：萤石 C6C 有 3 麦和 4 麦两代产品，都支持 360 度声源定位，公司披露的“高精度声源定位”识别率 86%，是自家实验室测的；思必驰的模组有双麦、四麦、六麦，标称正负 5 度，它的 Linux SDK 在唤醒后会回调方位。没查到的：两家定位模块的内存、模型大小、跑在 CPU、DSP 还是 NPU、时延，公开资料里都没有，第 3 页的总表列得很清楚。公开参照：乐鑫公开了一个 4 麦定位的实测，约 206 KB 内存、每 8 毫秒帧处理 0.65 毫秒、CPU 约 8.1%，可以作为同类嵌入式实现的量级参考，但不代表竞品。下一步：申请思必驰的 Linux SDK，用同一段多通道音频直接对比；买萤石样机实测整机响应；拿到数据再确定模型量级和算力预算。在这之前，首轮先保留 SRP-PHAT 和 GEVD-MUSIC 两个方法做对照，效果、内存和耗时一起测。');
 }
 // 2b. 五项指标总表
 {
@@ -48,7 +48,7 @@ function notes(s,rows){s.addNotes(rows.map(r=>r.join('｜')).join('\n\n'));}
   const fill=r[0].startsWith('参照')?C.light:(r[0].startsWith('本方案')?C.mint:C.white);
   return r.slice(0,7).map((v,j)=>({text:v,options:{fill,bold:j===0,color:(j>=1&&j<=5&&pend(v))?C.amber:C.text}}));
  });
- s.addTable([head,...body],{x:.55,y:1.6,w:12.22,colW:[2.45,1.75,1.25,1.5,1.8,1.42,2.05],rowH:[.4,.6,.68,.6,.5,.55,.6,.6],fontFace:F,fontSize:10,color:C.text,margin:[.05,.07,.05,.07],border:{type:'solid',pt:.7,color:C.border},valign:'middle',autoPage:false});
+ s.addTable([head,...body],{x:.55,y:1.6,w:12.22,colW:[2.45,1.75,1.25,1.5,1.8,1.42,2.05],rowH:[.4,.6,.68,.6,.5,.55,.6,.6],fontFace:F,lang:'zh-CN',fontSize:10,color:C.text,margin:[.05,.07,.05,.07],border:{type:'solid',pt:.7,color:C.border},valign:'middle',autoPage:false});
  callout(s,'对标路径：思必驰申请 SDK，在同一段多通道音频上做算法级对比；萤石用样机实测整机响应（触发→转动、触发→入画）。',6.28,.52);
  s.addNotes('这页按选型需要的五项列出：内存占用、模型大小、运行在 CPU / DSP / NPU、离线还是在线、时延。萤石和思必驰的定位模块这五项都没有公开，表里如实写“未公开”。能看到的只有阵列和精度这类信息，放在最后一列。思必驰的 Linux SDK 手册定义为离线语音技术，这是有出处的；萤石只知道公司整体的音频算法可以放云端或设备端，具体产品没说。灰色一行是乐鑫的公开参照，五项都有数据：约 206 KB 内存、不用神经网络、CPU 约 8.1%、端侧、每 8 毫秒帧处理 0.65 毫秒。绿色一行是本方案现状，只有导向表大小是实测的，其他要移植后再测。补数据的路径是：思必驰申请 SDK 做算法级对比，萤石用样机实测整机响应。');
 }
