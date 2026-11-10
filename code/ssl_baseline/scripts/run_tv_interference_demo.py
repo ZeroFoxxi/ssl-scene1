@@ -4,6 +4,7 @@
 对比“启用 / 不启用干扰方向表”：不启用时跟踪器被电视锁住，真人方向的观测被门控拒绝；
 启用后电视方向在“有声无人”累计若干秒后被屏蔽，真人开口即可触发转向。
 运行：python scripts/run_tv_interference_demo.py → out/tv_demo.json、out/fig_tv_interference.png
+多种子统计：python scripts/run_tv_interference_demo.py --seeds 8 → out/tv_demo_seeds.json
 """
 import json, os, sys
 import numpy as np
@@ -104,7 +105,30 @@ def plot(results, path, hfov=90.0):
     fig.savefig(path, facecolor="white"); plt.close(fig)
 
 
+def seeds_summary(seeds):
+    """多个随机种子（房间噪声、电机噪声、视觉漏检不同）下的统计：是否转向真人、首次入画时间。"""
+    rows = []
+    for sd in seeds:
+        mic, fZ, Zm = render(seed=sd)
+        for use in (False, True):
+            rec, summ = run(mic, fZ, Zm, use)
+            t = np.array(rec["t"]); inv = metrics.angdiff(np.array(rec["pan"]), PERSON_AZ) <= 45.0
+            after = t >= PERSON_T0; hit = after & inv
+            i0 = int(np.argmax(hit)) if hit.any() else None
+            rows.append({"seed": sd, "use_table": use, "first_in_view_s": summ["person_in_view_after_s"],
+                         "in_view_ratio_from_onset": round(float(inv[after].mean()), 3),
+                         "in_view_ratio_after_entry": None if i0 is None else round(float(inv[i0:].mean()), 3)})
+            print(rows[-1], flush=True)
+    return rows
+
+
 if __name__ == "__main__":
+    if "--seeds" in sys.argv:
+        n = int(sys.argv[sys.argv.index("--seeds") + 1])
+        rows = seeds_summary(list(range(n)))
+        out = os.path.join(ROOT, "out"); os.makedirs(out, exist_ok=True)
+        json.dump(rows, open(os.path.join(out, "tv_demo_seeds.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        sys.exit(0)
     mic, fZ, Zm = render()
     res = [run(mic, fZ, Zm, False), run(mic, fZ, Zm, True)]
     out = os.path.join(ROOT, "out"); os.makedirs(out, exist_ok=True)
