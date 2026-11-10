@@ -1,4 +1,4 @@
-param([string]$out)
+﻿param([string]$out)
 Add-Type -AssemblyName System.Speech
 $s = New-Object System.Speech.Synthesis.SpeechSynthesizer
 $s.SelectVoice('Microsoft Huihui Desktop')
