@@ -1,4 +1,4 @@
-// 竞品补充页（2 页）v3：萤石整机对标、思必驰算法对标。用于插入既有 SSL 技术综述 PPT。
+// 竞品补充页（2 页）v4：萤石整机对标、思必驰算法对标。用于插入既有 SSL 技术综述 PPT。
 // 每页：左侧对标对象卡片；右上算法链路图；右下六项核查（状态标签）；底部部署芯片线索；来源。
 const pptxgen = require("pptxgenjs");
 const path = require("path");
@@ -50,14 +50,19 @@ function page(d) {
   s.addText(d.tag, { shape: p.shapes.ROUNDED_RECTANGLE, x: 11.35, y: 0.42, w: 1.48, h: 0.4, fill: { color: C.navy }, line: { type: "none" }, rectRadius: 0.2,
     fontFace: F, lang: "zh-CN", fontSize: 12, bold: true, color: C.white, align: "center", valign: "middle", margin: 0 });
   T(s, d.lead, { x: 0.5, y: 0.94, w: 12.3, h: 0.36, fontSize: 13, color: C.gray, valign: "middle" });
-  // 左侧对象卡片
+  // 左侧对象卡片：产品图 + 名称 + 产品信息
   const cx = 0.5, cy = 1.45, cw = 4.15, ch = 4.35;
   R(s, cx, cy, cw, ch, C.light, null, 0.1);
-  d.visual(s, cx + 0.25, cy + 0.22, cw - 0.5, 1.75);
-  T(s, d.object, { x: cx + 0.25, y: cy + 2.08, w: cw - 0.5, h: 0.38, fontSize: 16, bold: true, color: C.navy });
-  T(s, d.objectSub, { x: cx + 0.25, y: cy + 2.46, w: cw - 0.5, h: 0.3, fontSize: 11, color: C.gray });
-  T(s, d.facts.map((f, i) => [{ text: f[0] + "　", options: { bold: true, color: C.navy } }, { text: f[1], options: { breakLine: i < d.facts.length - 1 } }]).flat(),
-    { x: cx + 0.25, y: cy + 2.85, w: cw - 0.5, h: 1.4, fontSize: 11, paraSpaceAfter: 5 });
+  R(s, cx + 0.2, cy + 0.18, cw - 0.4, 1.5, C.white, C.line, 0.08);
+  s.addImage({ path: IMG(d.img[0]), x: cx + 0.2 + (cw - 0.4 - d.img[1]) / 2, y: cy + 0.24, w: d.img[1], h: d.img[2], altText: d.object });
+  T(s, d.object, { x: cx + 0.25, y: cy + 1.8, w: cw - 0.5, h: 0.36, fontSize: 15, bold: true, color: C.navy });
+  T(s, d.objectSub, { x: cx + 0.25, y: cy + 2.15, w: cw - 0.5, h: 0.28, fontSize: 10.5, color: C.gray });
+  d.info.forEach((f, k) => {
+    const yy = cy + 2.5 + k * 0.45;
+    s.addShape(p.shapes.LINE, { x: cx + 0.25, y: yy, w: cw - 0.5, h: 0, line: { color: C.line, width: 0.75 } });
+    T(s, f[0], { x: cx + 0.25, y: yy + 0.04, w: 0.62, h: 0.38, fontSize: 10.5, bold: true, color: C.navy, valign: "middle" });
+    T(s, f[1], { x: cx + 0.9, y: yy + 0.04, w: cw - 1.15, h: 0.38, fontSize: 10, color: C.text, valign: "middle" });
+  });
   // 右侧：链路 + 核查
   flow(s, 4.9, 1.45, 7.93, d.flow, d.flowCaption);
   checks(s, 4.9, 2.72, 7.93, d.checks);
@@ -73,65 +78,61 @@ function page(d) {
 
 // ---------------- 第 1 页：萤石 ----------------
 page({
-  title: "萤石 C6C：云台摄像头整机对标",
+  title: "萤石 C6Wi 4K：标注“听声辨位”的云台摄像机",
   tag: "整机对标",
-  lead: "形态与场景一一致：麦克风阵列定位声源后驱动云台转向；算法与资源未公开，需用样机实测整机响应",
-  visual: (s, x, y, w, h) => {
-    s.addShape(p.shapes.ROUNDED_RECTANGLE, { x, y, w, h, fill: { color: C.white }, line: { color: C.line, width: 0.75 }, rectRadius: 0.08 });
-    s.addImage({ path: IMG("ezviz_c6c.jpg"), x: x + (w - h + 0.2) / 2, y: y + 0.1, w: h - 0.2, h: h - 0.2, altText: "萤石 C6C 无极巡航版", sizing: { type: "contain", w: h - 0.2, h: h - 0.2 } });
-  },
-  object: "C6C 3MP 无极版",
-  objectSub: "候选样机：CS-C6C-3H3WFRV（版本待核）",
-  facts: [["阵列", "4 麦（问询回复，2021）；早期 1080P 款为 3 麦"], ["触发", "声音触发转向，官方示例为掌声"], ["公开精度", "“高精度声源定位”识别率 86.0%，行业平均 77.0%（公司级、实验室，非单品指标）"]],
-  flowCaption: "整机链路（公开功能）",
-  flow: [["声音触发", "掌声 / 异常声"], ["声源定位", "360°，4 麦", true], ["云台转向", "水平无限旋转"], ["人形跟踪", "视觉接管"]],
+  lead: "2021-12 发布；商城在售摄像机中仅见它标注“3MIC 听声辨位”。较新的 RK3 桌面机器人也带声源定位，且公开了 CPU / NPU，作芯片参照",
+  img: ["ezviz_c6wi_4k.jpg", 1.38, 1.38],
+  object: "萤石 C6Wi 4K 旗舰版",
+  objectSub: "型号 CS-C6Wi-4K · 萤石首款 4K 摄像机",
+  info: [["发布", "2021-12（C6Wi 系列 2019-12 首发）"], ["价格", "官方商城 C6WI 旗舰系列 519–2,079 元（含 400 万版与套装）"],
+         ["连接", "Wi-Fi 5 + RJ45 有线；Type-C 供电"], ["规格", "4K；云台水平 340° / 垂直 125°"]],
+  flowCaption: "整机链路（官方功能）",
+  flow: [["声音触发", "异常声 / 说话"], ["听声辨位", "3 麦阵列", true], ["云台转向", "水平 340°"], ["AI 追踪", "人形 / 特写跟踪"]],
   checks: [
-    ["定位算法", "part", "听声辨位 / 360° 声源定位已公开；具体 DOA 方法、是否用神经网络未公开"],
-    ["部署芯片", "part", "主控为萤石定制标记 SoC；目标 SKU 型号需拆机确认（见下方线索）"],
-    ["执行单元", "no", "CPU / DSP / NPU 未公开；定位实时驱动云台，判断在端侧运行"],
+    ["定位算法", "part", "官方：3MIC 听声辨位、声源追踪；DOA 方法未公开"],
+    ["部署芯片", "part", "官方：C6Wi 系列内置专用芯片、1.0T 算力；4K 版型号未公开"],
+    ["执行单元", "no", "定位跑在 CPU / DSP / NPU 未公开；需实时驱动云台，判断在端侧"],
     ["内存 / 模型", "no", "定位模块运行内存、模型 / 资源文件大小未公开"],
     ["时延", "no", "算法耗时未公开；整机“触发 → 转动 / 入画”需样机实测"],
-    ["离线 / 在线", "part", "公司音频算法可云端或设备端部署，支持动态加载；单品配置未公开"],
+    ["离线 / 在线", "part", "支持萤石算法商店动态加载算法；定位功能的离线依赖未公开"],
   ],
-  chip: "异款拆解：新 C6 主控为 ECZ5450S（定制标记，双核，带 CNN 模块）、C6C 1080P 主控为 HK2015-6；公司 SoC 供应商为富瀚微、海思、厦门威欣（问询回复，公司整体口径）。目标 3MP SKU 的主控与定位执行单元待拆机确认。",
-  src: [["问询回复 印刷页 8-1-1-61 / 110 / 199 / 206 / 207", "https://pdf.dfcfw.com/pdf/H2_AN202205051563734391_1.pdf"],
-        ["萤石官网资讯（2019，C6C 无极巡航版）", "https://www.ezviz.com/cn/news/2342.html"],
-        ["电子工程专辑：新 C6 拆解", "https://www.eet-china.com/news/202204210910.html"],
-        ["数码之家：C6C 1080P 拆解", "https://www.mydigit.cn/thread-402247-1-1.html"]],
-  notes: "萤石选 C6C 系列做整机对标，因为它和场景一的形态一样：麦克风阵列定位声源，再驱动云台转过去，入画后交给人形跟踪。候选样机是 3MP 无极版，问询回复披露是 4 麦；早期 1080P 款是 3 麦。公开精度只有一个公司级数字：高精度声源定位识别率 86%，行业平均 77%，是自家实验室测的，没说明角度阈值和场景，不能当成单品指标，也不能和本方案的 10 度命中率直接比。核查六项里，定位算法、部署芯片、离线在线是部分公开，执行单元、内存模型、时延都没公开。芯片线索来自拆解：新 C6 是定制标记的 ECZ5450S，双核带 CNN 模块；1080P 的 C6C 是 HK2015-6；公司层面的 SoC 供应商是富瀚微、海思、厦门威欣。这些是异款或公司整体信息，目标 3MP 型号的主控还要拆机确认。下一步是借或买样机，实测转向时延和命中率，再拆机看主控。",
+  chip: "C6Wi：官方称系列“内置专用高性能芯片，搭载 1.0T 算力”（未写型号）。RK3 桌面机器人（商城 1,299 元）：4 核 A55 1.5 GHz + NPU 3T，2 麦阵列 180° 声源定位。早期 C6C：问询回复披露 4 麦、公司级声源定位识别率 86.0%（实验室）。公司 SoC 供应商为富瀚微、海思、厦门威欣（公司整体口径）。",
+  src: [["萤石商城：C6WI 旗舰系列参数", "https://www.ys7.com/item/165990.html"],
+        ["快科技：C6Wi 4K AI 旗舰版发布（2021-12）", "https://news.mydrivers.com/1/803/803460.htm"],
+        ["萤石官网：产品家族（1.0T 算力）", "https://www.ezviz.com/cn/news/6270.html"],
+        ["萤石问询回复 印刷页 8-1-1-61 / 110 / 206 / 207", "https://pdf.dfcfw.com/pdf/H2_AN202205051563734391_1.pdf"],
+        ["萤石商城：RK3 桌面机器人参数", "https://www.ys7.com/item/927621.html"]],
+  notes: "萤石选 C6Wi 4K 做整机对标。它是 2021 年 12 月发布的，萤石首款 4K 摄像机，三颗麦克风听声辨位，卖点是声源追踪。2026 年 11 月逐个核对萤石商城在售的 98 款产品，摄像机里只有它的参数表写了 3MIC 听声辨位；之后几年的新品，比如 C6c 新款、C7 双摄、H7c、H6c 4K，主打的都是双摄联动和特写追踪这类视觉功能，没有再写声源定位。产品信息：型号 CS-C6Wi-4K，Wi-Fi 5 加有线网口，4K 画面，云台水平 340 度、垂直 125 度；官方商城 C6WI 旗舰系列售价 519 到 2079 元，含 400 万版和存储卡套装。部署芯片方面，萤石官网说 C6Wi 系列内置专用高性能芯片、1.0T 算力，没写型号；定位跑在哪个单元、内存、模型、时延都没公开。芯片参照可以看较新的 RK3 桌面机器人：它不是摄像机，但带 400 万摄像头和可转动云台，2 麦阵列支持 180 度声源定位，商城公开了 4 核 A55 1.5 GHz 和 3T NPU，是萤石少有的公开了处理器规格、又带声源定位的产品。早期的 C6C 无极版作参照：问询回复披露 4 麦，公司级高精度声源定位识别率 86%，是自家实验室数据。下一步是买 C6Wi 样机实测转向时延和命中率，拆机确认主控型号。",
 });
 
 // ---------------- 第 2 页：思必驰 ----------------
 page({
-  title: "思必驰 fespl：唤醒后定向的算法对标",
+  title: "思必驰：C60 声像追踪摄像头 + fespl SDK 算法对标",
   tag: "算法对标",
-  lead: "离线前端 SDK 在唤醒后回调声源方位，与场景一“唤醒后首次定向”链路一致，可在同一段多通道音频上做算法级对比",
-  visual: (s, x, y, w, h) => {
-    s.addShape(p.shapes.ROUNDED_RECTANGLE, { x, y, w, h, fill: { color: C.navy }, line: { type: "none" }, rectRadius: 0.08 });
-    T(s, "DUILITE_CALLBACK_FESPL_WAKEUP", { x: x + 0.22, y: y + 0.2, w: w - 0.4, h: 0.3, fontFace: "Consolas", fontSize: 10.5, color: "9FB4D3" });
-    T(s, "↓ 唤醒后", { x: x + 0.22, y: y + 0.5, w: w - 0.4, h: 0.28, fontSize: 10, color: "9FB4D3" });
-    T(s, "DUILITE_CALLBACK_FESPL_DOA", { x: x + 0.22, y: y + 0.78, w: w - 0.4, h: 0.3, fontFace: "Consolas", fontSize: 10.5, color: C.white, bold: true });
-    T(s, '{ "doa": 95 }', { x: x + 0.22, y: y + 1.12, w: w - 0.4, h: 0.45, fontFace: "Consolas", fontSize: 20, color: "7FD1B9", bold: true });
-  },
-  object: "线性阵列 Linux SDK（fespl）",
-  objectSub: "离线前端：回声消除、DOA、波束成形、唤醒",
-  facts: [["阵列", "线性四麦 / 六麦"], ["输入", "16 kHz、有符号 16-bit 多通道音频"], ["公开精度", "模组 ±5° 声源定位、会议方向检测率 > 98%（招股书，属模组 / 会议产品，非 fespl 实测）"]],
-  flowCaption: "SDK 链路（官方手册）",
-  flow: [["多通道音频", "线阵 4 / 6 麦"], ["唤醒", "唤醒词回调"], ["DOA 回调", "返回方位角", true], ["交给下游", "云台 / 波束成形"]],
+  lead: "C60 在摄像机内置 8 麦阵列，形态最接近场景一；MT200（2026-07）改用吊顶麦 + 多摄像机，作方向参照；算法对标用 fespl",
+  img: ["aispeech_c60.jpg", 2.9, 1.36],
+  object: "思必驰 C60 AI 双目追踪摄像头",
+  objectSub: "会议场景 · 算法对标走线阵前端 SDK（fespl）",
+  info: [["发布", "2024-04 InfoComm China 已展出"], ["价格", "国内未公开；海外渠道约 1,370–2,575 美元"],
+         ["阵列", "8 阵列线性麦克风"], ["镜头", "双 1080P：特写 12× 变焦 + 全景 110°"]],
+  flowCaption: "C60 声像追踪链路（官方功能）",
+  flow: [["多通道音频", "8 阵列线性麦"], ["语音定位", "声源方向", true], ["视觉锁定", "人脸 / 人形"], ["云台特写", "PTZ 跟踪发言人"]],
   checks: [
-    ["定位算法", "part", "唤醒后回调方位已公开；招股书称自研 DOA + 音区分割，具体方法未公开"],
-    ["部署芯片", "part", "自研太行芯片 + 通用芯片适配；fespl 对应平台随 SDK 版本确认"],
-    ["执行单元", "no", "定位跑在 CPU、DSP 还是 NPU 未公开"],
-    ["内存 / 模型", "no", "DOA 增量内存、资源文件大小未公开，需向 SDK 提供方索取"],
+    ["定位算法", "part", "C60：语音定位 + 视觉追踪；fespl：唤醒后回调方位；方法未公开"],
+    ["部署芯片", "part", "自研太行芯片 + 通用芯片适配；C60 主控与 fespl 对应平台未公开"],
+    ["执行单元", "no", "定位跑在 CPU / DSP / NPU 未公开"],
+    ["内存 / 模型", "no", "DOA 内存、资源文件大小未公开，需向 SDK 提供方索取"],
     ["时延", "no", "DOA 计算耗时、唤醒回调到方位输出的延迟未公开"],
-    ["离线 / 在线", "ok", "手册定义 fespl 为离线语音前端"],
+    ["离线 / 在线", "part", "fespl 为离线语音前端（官方手册）；C60 整机链路未公开"],
   ],
-  chip: "自研太行芯片：TH1520（双 DSP + AI 指令扩展，常开毫瓦级）、TH2608（Cortex-M + DSP + NPU，支持 INT8 / INT4 / INT1）；招股书：已完成 34 种芯片架构的深度适配，侧重低功耗芯片。fespl 具体部署在哪颗芯片待随 SDK 版本确认。",
-  src: [["DUI Linux SDK 开发手册（fespl）", "https://www.duiopen.com/docs/ct_fesp_linux"],
-        ["思必驰招股书（申报稿，2026）印刷页 1-1-127 / 128 / 137 / 196", "https://dataclouds.cninfo.com.cn/sjother2/documents/2026/2026-05-25/1d4b495ace513224eeffac7f7ab4bfbf.pdf"],
-        ["经济观察网：TH1520 发布", "http://m.eeo.com.cn/2019/0105/344821.shtml"],
-        ["智东西：TH2608 发布", "https://zhidx.com/news/35716.html"]],
-  notes: "思必驰选 fespl 做算法对标。fespl 是它的线性阵列离线前端 SDK，官方手册写明支持线性四麦和六麦，输入 16 kHz、16 位多通道音频，唤醒回调之后会再回调一次方位，返回类似 doa 95 这样的角度。这和场景一的唤醒后首次定向是同一个链路，所以可以拿同一段多通道录音，比它和本方案的方位误差、耗时和内存。公开精度方面，招股书里的正负 5 度是模组规格，大于 98% 是会议产品的方向检测率，都不是 fespl 的实测。核查六项里，离线是公开的，算法和部署芯片部分公开，执行单元、内存模型和时延都没公开。芯片线索是两条线：一是自研的太行芯片，TH1520 是双 DSP、常开毫瓦级，TH2608 加了 NPU；二是招股书说已经适配 34 种芯片架构，侧重低功耗芯片。fespl 具体部署在哪颗芯片，要随 SDK 版本确认。还要注意 fespl 是线阵，本方案现在仿真的是四麦方阵，比较前要先确认阵列几何能对上。下一步是申请 SDK 和目标平台版本。",
+  chip: "自研太行芯片：TH1520（双 DSP + AI 指令扩展，常开毫瓦级）、TH2608（Cortex-M + DSP + NPU，支持 INT8 / INT4 / INT1）；招股书：已完成 34 种芯片架构的深度适配，侧重低功耗芯片。C60 与 fespl 具体部署在哪颗芯片未公开。",
+  src: [["思必驰官网：C60 产品页", "https://meeting.aispeech.com/product/c60/"],
+        ["DUI Linux SDK 开发手册（fespl）", "https://www.duiopen.com/docs/ct_fesp_linux"],
+        ["思必驰招股书（申报稿，2026）印刷页 1-1-127 / 128 / 134", "https://dataclouds.cninfo.com.cn/sjother2/documents/2026/2026-05-25/1d4b495ace513224eeffac7f7ab4bfbf.pdf"],
+        ["PjTime：InfoComm China 2024", "http://www.pjtime.com/2024/4/292539158386.shtml"],
+        ["思必驰官网：MT200 发布（2026-07）", "https://meeting.aispeech.com/"],
+        ["渠道页：C60 规格与价格", "https://global.microless.com/product/aispeech-c60-ai-tracking-binocular-voice-camera-dual-1080p-lenses-close-up-panoramic-8-mic-array-speaker-tracking-12x-optical-zoom-ptz-auto-framing-for-zoom-teams-meetings-black-c60/?currency=usd"]],
+  notes: "思必驰这页分两层。产品层是 C60，思必驰自己的 AI 双目追踪摄像头：官网写明双 1080P 镜头、110 度视场、8 阵列线性麦克风、多模态声像追踪，也就是先用语音定位找到发言人方向，再用视觉锁定，云台推特写跟踪，和场景一的链路很像，只是用在会议室。2024 年 4 月 InfoComm China 已经展出，国内价格没公开，海外渠道大约 1370 到 2575 美元。算法层用它的线阵前端 SDK fespl 做对标：官方手册写明唤醒后会回调方位，可以拿同一段多通道录音直接比。部署芯片方面，思必驰有自研的太行芯片，TH1520 是双 DSP、常开毫瓦级，TH2608 加了 NPU；招股书说已适配 34 种芯片架构，侧重低功耗芯片。C60 和 fespl 具体用哪颗芯片、定位跑在哪个单元、资源和时延都没公开。另外，思必驰 2026 年 7 月新推了 MT200 追踪主机，用吊顶麦克风做声源定位，再和摄像机画面做视觉匹配，驱动 C40T、C60、C80 对准发言人，需要标定麦克风和摄像机位置。它代表了声像融合的方向，但阵列装在天花板、孔径大，和摄像机内置小阵列条件不同，所以作方向参照，不作效果对标。下一步是申请 fespl SDK 和目标平台版本做算法对比。",
 });
 
 p.writeFile({ fileName: OUT }).then(() => console.log("written", OUT));
