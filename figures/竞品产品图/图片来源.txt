@@ -12,3 +12,5 @@ xmos_respeaker.jpg     Seeed Wiki https://wiki.seeedstudio.com/respeaker_xvf3800
 cisco_quad.jpg         Webex / Cisco 官网 https://www.webex.com/us/en/devices/cameras.html
 owl4.jpg               Owl Labs 官网 https://owllabs.com/products/meeting-owl-3（页面现展示 Meeting Owl 4+）
 mi_c700.jpg            小米官网 https://www.mi.com/global/product/xiaomi-smart-camera-c700/
+ezviz_c6wi_4k.jpg：萤石商城 C6WI 旗舰系列商品页主图（https://www.ys7.com/item/165990.html，图片 https://mfs.ys7.com/mall/59923c4e73322e17aed64402b49980f9.png），2026-11 获取，白底合成。
+aispeech_c60.jpg：思必驰会议产品官网 C60 产品图（https://meeting.aispeech.com/product/c60/，图片 https://meeting.aispeech.com/en/react/assets/c60-CWqSZW85.webp），2026-11 获取，白底合成。
