@@ -11,6 +11,7 @@ ssl_baseline/
 ├─ ssl_baseline/            核心库
 │  ├─ geometry.py           阵列几何、远场时延、空间混叠频率
 │  ├─ doa.py                GCC-PHAT、SRP-PHAT（归一化空间相干度、起始段加权、亚网格插值）
+│  ├─ wake.py              唤醒词定向：唤醒词片段 → 方位 + 置信度（背景白化 GEVD-MUSIC），环形缓存与流式接口
 │  ├─ trigger.py            L0 常开触发：能量 + 谱通量，自适应噪声底
 │  ├─ tracker.py            圆周卡尔曼：方位 + 角速度，门控、静音保持、M-of-N 起始
 │  ├─ ptz.py                云台状态机：待机 / 转向 / 视觉确认 / 跟踪 / 静音保持；死区、电机门控、干扰方向表
@@ -19,8 +20,9 @@ ssl_baseline/
 ├─ scripts/
 │  ├─ run_static_eval.py          静态测向评测（阵列构型 × RT60 × 是否起始段加权）
 │  ├─ run_closed_loop_demo.py     闭环演示：画面外说话 → 转向 → 视觉确认 → 持续跟踪
-│  └─ run_tv_interference_demo.py 电视干扰演示：启用 / 不启用干扰方向表对比
-├─ tests/test_basic.py      9 个单元测试
+│  ├─ run_tv_interference_demo.py 电视干扰演示：启用 / 不启用干扰方向表对比
+│  └─ run_wake_doa_demo.py        唤醒词定向离线 demo：电视开 / 关 × 方法对比 × KWS 边界误差
+├─ tests/test_basic.py      13 个单元测试
 ├─ data/                    speech_zh.wav（中文 TTS 语音）、tv_en.wav（英文 TTS，模拟电视）
 └─ out/                     运行结果（json / csv / png）
 ```
@@ -41,6 +43,7 @@ python tests/test_basic.py                         # 单元测试（约 10 s）
 python scripts/run_static_eval.py --trials 100     # 静态评测（约 2 min）
 python scripts/run_closed_loop_demo.py             # 闭环演示（约 1 min）
 python scripts/run_tv_interference_demo.py         # 电视干扰演示（约 1 min）
+python scripts/run_wake_doa_demo.py --trials 100   # 唤醒词定向（约 1 min）
 ```
 
 ## 当前结果（仿真，2026-11-07）
@@ -66,6 +69,35 @@ python scripts/run_tv_interference_demo.py         # 电视干扰演示（约 1 
 
 - 不启用干扰方向表：跟踪器锁定电视，始终未转向真人
 - 启用：电视方向（310–330°）在“有声无人”4 s 后被屏蔽，真人开口 3.0 s 后入画
+
+## 唤醒词定向接口（2026-11-10）
+
+```python
+from ssl_baseline.wake import WakeWordLocalizer, localize_wake_segment
+
+loc = WakeWordLocalizer(mic_xy, fs=16000)        # 内含 3 s 多通道环形缓存
+loc.push(block)                                  # 每块 M x n 音频推入
+res = loc.on_wake(start_sample, end_sample)      # 唤醒回调：唤醒词起止（自开机以来的绝对样点号）
+res.az, res.conf, res.candidates                 # 方位（°）、置信度 [0, 1]、候选方位
+```
+
+方法：片段两端各放宽 0.1 s → 起始段加权估计唤醒词协方差 R_s → 用唤醒词前 1 s 背景估计 R_b → R_b 白化后做 MUSIC（GEVD-MUSIC）。电视等唤醒前就存在的定向干扰被白化掉。`WakeDOAConfig(method="srp_sub")` 为背景互谱扣除 + SRP-PHAT 的备选；`exclude` 可传入云台的干扰方向表。
+
+结果（仿真，每档 RT60 100 个随机房间，1 s 唤醒词，电视与人相隔 ≥45°，传感器 SNR 20 dB；误差 ≤10° 比例 / 粗大错误）：
+
+| RT60 | 条件 | SRP-PHAT + 起始段加权（原基线） | + 背景互谱扣除 | **GEVD-MUSIC（默认）** | 不用背景段的 MUSIC |
+|---|---|---|---|---|---|
+| 0.3 s | 电视关 | 94% / 0% | 91% / 0% | 91% / 0% | 91% / 0% |
+| 0.3 s | 电视 SIR 0 dB | 36% / 28% | 46% / 17% | **74% / 2%** | 37% / 45% |
+| 0.6 s | 电视关 | 88% / 0% | 79% / 0% | 88% / 0% | 86% / 0% |
+| 0.6 s | 电视 SIR +5 dB | 55% / 10% | 48% / 10% | **71% / 2%** | 60% / 16% |
+| 0.6 s | 电视 SIR 0 dB | 35% / 25% | 34% / 21% | **63% / 3%** | 36% / 39% |
+| 0.6 s | 电视 SIR −5 dB | 20% / 40% | 18% / 41% | **55% / 8%** | 13% / 60% |
+
+- KWS 起止点误差 σ = 0.1 s：影响在统计波动范围内。
+- 置信度按三等分：≤10° 比例 54% / 75% / 93%，可用于决定“直接转”还是“等更多观测”。
+- 单次测向 Python 约 6 ms。
+- 局限：要求唤醒前背景段里用户本人不说话；电视与人方位接近（<45°）的情况未评测。
 
 ## 关键设计与参数
 
