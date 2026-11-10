@@ -8,6 +8,7 @@ sys.path.insert(0, ROOT)
 from ssl_baseline import PRESETS, SRPPHAT, stft, gcc_phat, CircularKalman, TrackerConfig, EnergyFluxTrigger, \
     PTZController, PTZConfig, State, angdiff, aliasing_frequency
 from ssl_baseline.geometry import far_field_delays
+from ssl_baseline.wake import WakeDOA, WakeDOAConfig, WakeWordLocalizer, RingBuffer
 
 FS = 16000
 
@@ -91,6 +92,63 @@ def test_ptz_turns_to_out_of_view_source():
         motor = ctl.motor_on
         ctl.step(0.1, True, 150.0, 0.5, person_az=150.0 if angdiff(ctl.pan, 150) < 40 else None)
     assert angdiff(ctl.pan, 150.0) < 5.0
+
+
+def _two_source_scene(mic, az_t, az_i, sir_db=0.0, seed=3):
+    """1.3 s 只有干扰（白噪声定向源）+ 1.0 s 目标与干扰同时存在；返回 (x, start, end)。"""
+    pre, wake = int(1.6 * FS), FS
+    n = pre + wake + int(0.2 * FS)
+    xi = _plane_wave(mic, az_i, n, seed)
+    xt = np.zeros_like(xi); xt[:, pre:pre + wake] = _plane_wave(mic, az_t, wake, seed + 1)
+    xt *= 10 ** (sir_db / 20)
+    rng = np.random.default_rng(seed + 2)
+    return xt + xi + rng.normal(0, 0.03, xi.shape), pre, pre + wake
+
+
+def test_wake_doa_clean_plane_wave():
+    mic = PRESETS["square4"]
+    for method in ["gevd_music", "srp_sub"]:
+        wd = WakeDOA(mic, FS, WakeDOAConfig(method=method))
+        for az in [20.0, 200.0, 305.0]:
+            x = np.zeros((4, int(2.6 * FS))); s0 = int(1.5 * FS)
+            x[:, s0:s0 + FS] = _plane_wave(mic, az)
+            x += np.random.default_rng(0).normal(0, 0.01, x.shape)
+            r = wd.localize(x, s0, s0 + FS)
+            assert angdiff(r.az, az) < 3.0, (method, az, r.az)
+            assert 0.0 <= r.conf <= 1.0 and r.bg_used and r.n_frames > 0
+
+
+def test_wake_doa_suppresses_background_interferer():
+    """干扰在唤醒前就存在且与目标同样响：GEVD-MUSIC 应给出目标方位，不用背景段的 MUSIC 会被干扰拉偏或锁定。"""
+    mic = PRESETS["square4"]
+    x, s, e = _two_source_scene(mic, az_t=60.0, az_i=150.0, sir_db=0.0)
+    r = WakeDOA(mic, FS).localize(x, s, e)
+    assert angdiff(r.az, 60.0) < 5.0, r.az
+    assert any(angdiff(c[0], 60.0) < 5 for c in r.candidates)
+
+
+def test_wake_doa_exclude_sector():
+    mic = PRESETS["square4"]
+    x, s, e = _two_source_scene(mic, az_t=60.0, az_i=150.0, sir_db=0.0)
+    r = WakeDOA(mic, FS, WakeDOAConfig(bg_subtract=False, exclude=((40.0, 80.0),))).localize(x, s, e)
+    assert angdiff(r.az, 60.0) > 20.0  # 屏蔽区间内的方位不会被选中
+
+
+def test_ring_buffer_and_streaming_localizer():
+    rb = RingBuffer(2, 100)
+    data = np.vstack([np.arange(250), -np.arange(250)]).astype(float)
+    for i in range(0, 250, 30):
+        rb.push(data[:, i:i + 30])
+    x, a = rb.read(120, 260)
+    assert a == 150 and np.array_equal(x, data[:, 150:250])  # 超出缓存的部分被截掉
+    mic = PRESETS["square4"]
+    x, s, e = _two_source_scene(mic, az_t=250.0, az_i=10.0, sir_db=3.0)
+    loc = WakeWordLocalizer(mic, FS, buffer_s=3.0)
+    for i in range(0, x.shape[1], 256):
+        loc.push(x[:, i:i + 256])
+    r_stream = loc.on_wake(s, e)
+    r_off = WakeDOA(mic, FS).localize(x, s, e)
+    assert abs(r_stream.az - r_off.az) < 1e-6 and angdiff(r_stream.az, 250.0) < 5.0
 
 
 if __name__ == "__main__":

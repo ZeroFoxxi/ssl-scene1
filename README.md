@@ -27,6 +27,7 @@ python tests/test_basic.py                   # 单元测试
 python scripts/run_static_eval.py --trials 100
 python scripts/run_closed_loop_demo.py
 python scripts/run_tv_interference_demo.py
+python scripts/run_wake_doa_demo.py         # 唤醒词定向（电视干扰）
 ```
 
 依赖说明：numpy 与 pyroomacoustics 版本要匹配——numpy 2.x 用最新版 pyroomacoustics；numpy 1.x（如 Anaconda 自带的 1.26）用 `pyroomacoustics==0.7.4`，否则可能段错误。
@@ -34,4 +35,5 @@ python scripts/run_tv_interference_demo.py
 ## 当前进度
 
 - 已完成：调研与选型、竞品调研、初步仿真（静态测向、跟踪、闭环、电视干扰）、基线代码雏形
-- 下一步（W1）：对齐三方接口与 demo 硬件；把代码封装成“唤醒词片段测向”接口（输入多通道音频 + 唤醒词起止时间，输出方位 + 置信度）；离线 demo 脚本
+- 已完成（W1）：“唤醒词片段测向”接口（输入多通道音频 + 唤醒词起止样点，输出方位 + 置信度）与离线 demo；背景白化 GEVD-MUSIC 在电视干扰下明显优于 SRP-PHAT（见交接说明第 4 节）
+- 下一步：首次周会对齐接口与 demo 硬件；换真实阵列几何重跑；W2 用 LOCATA 复核
