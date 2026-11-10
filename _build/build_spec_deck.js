@@ -2,9 +2,10 @@
 const pptxgen = require('pptxgenjs');
 const path = require('path');
 const fs = require('fs');
+const { fixPptxLanguage } = require('./fix_pptx_language');
 const D = JSON.parse(fs.readFileSync(path.join(__dirname, 'spec_data.json'), 'utf8'));
 const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, '..'), '竞品规格调研_萤石与思必驰.pptx');
-const F = process.env.PPTX_FONT || 'Noto Sans CJK SC';
+const F = process.env.PPTX_FONT || 'Microsoft YaHei';
 const C = {navy:'17375E',text:'1F2937',gray:'5B6B7F',light:'EEF2F7',teal:'1F7A68',mint:'E3F1EE',amber:'B8691A',sand:'FBF0E3',blue:'2F6EB5',white:'FFFFFF',border:'CBD5E1'};
 const p = new pptxgen();
 p.layout='LAYOUT_WIDE';p.author='令狐雅熙';p.title='竞品规格调研：萤石与思必驰';p.subject='声源定位算法选型与证据口径';
@@ -103,4 +104,4 @@ function notes(s,rows){s.addNotes(rows.map(r=>r.join('｜')).join('\n\n'));}
  t(s,'关键页：S2 印刷页 8-1-1-206 / 207；S1 印刷页 1-1-134 / 137 / 196；S16 第 2 节；S13 资源章节。',.55,6.47,12.2,.36,{fontSize:10.5,color:C.gray});
  s.addNotes('可访问的原始资料已重新核对，访问日期 2026-11-10。S8 本轮仅返回页面框架，不将未能确认的八麦或离线追踪作为结论。平台媒体报道仅作线索，定位资源需向厂商确认。');
 }
-p.writeFile({fileName:OUT}).then(()=>console.log('written',OUT));
+p.writeFile({fileName:OUT}).then(async()=>{ await fixPptxLanguage(OUT); console.log('written',OUT); }).catch(error=>{ console.error(error); process.exitCode=1; });

@@ -1,0 +1,107 @@
+{
+  "as_of": "2026-11-10",
+  "pages": [
+    {
+      "vendor": "萤石",
+      "tag": "整机对标",
+      "title": "萤石 C6C｜整机功能对标，部署平台待核",
+      "lead": "听声辨位已有产品披露；算法芯片与资源指标须对应到具体 SKU。",
+      "object": "C6C 3MP 无极版",
+      "object_detail": "候选 SKU：CS-C6C-3H3WFRV  ·  4 麦 / 听声辨位 [1][2]",
+      "object_note": "2021 年产品披露；在售情况、可借样机与硬件版本待核验",
+      "object_label": "对标层级",
+      "object_value": "整机功能与转向响应",
+      "rows": [
+        {
+          "label": "部署芯片 / 执行单元",
+          "primary": "目标 SKU 的 SoC 型号与 DOA 运行单元待核实。",
+          "secondary": "异款拆解：新 C6 为 ECZ5450S，另一 C6C 为 HK2015-6；不能代替目标 SKU 证据。[3][4]",
+          "focus": true
+        },
+        {
+          "label": "定位算法",
+          "primary": "披露听声辨位；具体 DOA 方法及是否采用神经网络未披露。[1]"
+        },
+        {
+          "label": "内存 / 模型资源",
+          "primary": "定位模块运行 RAM、模型 / 资源文件大小未查到公开值。"
+        },
+        {
+          "label": "定位处理时延",
+          "primary": "DOA 处理耗时未披露；整机触发→转动 / 入画响应需另行实测。"
+        },
+        {
+          "label": "离线 / 在线",
+          "primary": "该 SKU 定位功能的离线依赖待核实；公司级端 / 云能力不代表单品配置。"
+        }
+      ],
+      "action_title": "下一步验证",
+      "action": "核验样机 SKU、阵列与主控；统一房间、距离、角度和干扰，测转向命中率及触发→转动 / 入画时间。",
+      "action_note": "按实际支持的声音触发方式分组；整机响应与算法处理耗时分别报告。",
+      "sources": [
+        {"id": "1", "label": "问询回复：印刷页 206–207", "grade": "监管披露", "url": "https://pdf.dfcfw.com/pdf/H2_AN202205051563734391_1.pdf#page=207"},
+        {"id": "2", "label": "官方商城：SKU 参数", "grade": "官方产品页", "url": "https://www.ys7.com/item/55090.html"},
+        {"id": "3", "label": "新 C6：异款拆解", "grade": "媒体拆解", "url": "https://www.eet-china.com/news/202204210910.html"},
+        {"id": "4", "label": "另一 C6C：异款拆解", "grade": "论坛拆解", "url": "https://www.mydigit.cn/thread-402247-1-1.html"}
+      ],
+      "notes": [
+        "选择边界：以 C6C/3MP 无极版作为与摄像头听声转向场景相关的整机候选，不将其称为已确认的现款或最终样机。监管披露确认该产品家族 4 麦与听声辨位；商城列 CS-C6C-3H3WFRV。购买或借用前还需核验完整 SKU、固件、硬件版本和麦克风配置。",
+        "芯片边界：新 C6 的 ECZ5450S、另一 C6C 型号的 HK2015-6 属异款拆解线索，尚不足以认定目标 3MP SKU 的主控或 DOA 执行单元。芯片含 CNN/NPU 也不能证明定位算法在该单元运行。公司级 SoC 供应商不替代单品芯片型号。",
+        "效果边界：问询回复印刷页 8-1-1-207 的高精度声源定位识别率 86.0%、行业平均 77.0% 为发行人实验室的公司级算法披露，未给完整角度阈值和测试场景，不作为本 SKU 的准确率，不与本方案 Acc@10° 直接比较。",
+        "早期参照：2019 年官方资讯介绍 1080P C6C 无极巡航版的 3 麦、360° 声源定位，并用掌声演示。该信息不能代替 3MP SKU 的触发机制。示例来源：https://www.ezviz.com/cn/news/2342.html 。",
+        "测试建议：固定并记录声音事件起始或其他预先约定的参考时刻，音频与视频同步，分别报告开始转动和目标入画；掌声触发与唤醒词触发分组统计。定位处理时间只能在可获得算法接口时另行测量。"
+      ]
+    },
+    {
+      "vendor": "思必驰",
+      "tag": "算法对标",
+      "title": "思必驰 fespl｜唤醒后定向的算法对标候选",
+      "lead": "已确认离线前端与方位回调；具体部署平台须对应到同一 SDK 版本。",
+      "object": "线性阵列 Linux SDK（fespl）",
+      "object_detail": "线性四 / 六麦  ·  16 kHz、16-bit 输入  ·  唤醒后返回 DOA [1]",
+      "object_note": "优先申请可运行算法包、支持的阵列几何与目标平台版本",
+      "object_label": "对标层级",
+      "object_value": "算法接口与资源开销",
+      "rows": [
+        {
+          "label": "部署芯片 / 执行单元",
+          "primary": "fespl 对应的芯片、构建版本与 CPU / DSP / NPU 执行位置待确认。",
+          "secondary": "平台线索：TH2608 含 Cortex-M、DSP、NPU；尚无与此 SDK 的绑定证据。[2]",
+          "focus": true
+        },
+        {
+          "label": "定位算法",
+          "primary": "唤醒后回调方位（如 {\"doa\":95}）；具体 DOA 实现未披露。[1]"
+        },
+        {
+          "label": "内存 / 模型资源",
+          "primary": "DOA 增量 / 峰值 RAM、模型或资源文件大小需向 SDK 提供方索取。"
+        },
+        {
+          "label": "定位处理时延",
+          "primary": "DOA 计算耗时、唤醒回调→方位输出延迟待测；须分别定义计时边界。"
+        },
+        {
+          "label": "离线 / 在线",
+          "primary": "fespl 文档描述为离线前端；构建平台、授权与断网条件按实际包确认。[1]"
+        }
+      ],
+      "action_title": "下一步验证",
+      "action": "申请 SDK 与目标板，匹配阵列几何、通道和输入格式；在同平台、同录音上比较角度误差、处理耗时与峰值 RAM。",
+      "action_note": "现有仿真为四麦方阵；须先确认 fespl 是否支持，不能按通道数直接认定兼容。",
+      "sources": [
+        {"id": "1", "label": "官方手册：fespl 接口", "grade": "官方技术文档", "url": "https://www.duiopen.com/docs/ct_fesp_linux"},
+        {"id": "2", "label": "TH2608：发布报道", "grade": "媒体报道", "url": "https://zhidx.com/news/35716.html"},
+        {"id": "3", "label": "招股书：模组与会议口径", "grade": "监管披露", "url": "https://dataclouds.cninfo.com.cn/sjother2/documents/2026/2026-05-25/1d4b495ace513224eeffac7f7ab4bfbf.pdf#page=138"}
+      ],
+      "notes": [
+        "已核实接口：官方 Linux SDK 开发手册第 2 节称 fespl 为线性四麦/六麦阵列前端，包含 AEC、DOA、波束成形和唤醒。duilite_fespl_feed 输入 16 kHz、有符号 16-bit 音频；DUILITE_CALLBACK_FESPL_DOA 在唤醒回调后返回角度 JSON。文档未明确 DOA 方法、具体芯片和执行单元，也未给可比的资源与时延。",
+        "SDK 边界：另一本 Linux SDK 集成手册 https://www.duiopen.com/docs/ct_common_linux_sdk 讨论 DDS 云端 SDK，并给出 Ubuntu 16.04 x86_64 包的说明。该说明不证明 fespl 离线前端的公开包、构建目标或芯片；本页不将两套 SDK 的平台信息合并。是否可取得 fespl 的 x86/ARM 等版本，须询问对应版本提供方。",
+        "芯片边界：TH2608 的 Cortex-M、DSP、NPU 为发布报道中的平台组成，作为可继续查询的芯片线索；尚不能证明 fespl 运行于 TH2608，也不能证明 DOA 使用 NPU。不再用供应商排名或 Xtensa DSP 专利标题推断定位算法部署芯片。",
+        "效果边界：招股书印刷页 1-1-137 的模组 ±5°、1-1-196 的会议方向检测率 >98%、扩声延迟 22 ms 以内，分别属于模组规格与会议拾扩音技术；均不作为 fespl 版本的准确率或 DOA 时延。",
+        "比较条件：SDK 若采用固定阵列资源，需匹配麦克风数、间距、阵列形状、通道顺序和采样格式。当前基线四麦方阵与 fespl 的线阵不可先验视作兼容。同平台同音频比较前，需确定两者均支持该阵列。",
+        "资源口径：分别记录完整前端峰值 RAM 与可分离的 DOA 增量；权重/资源文件、音频缓存和运行 RAM 分开。分别测 DOA 计算时间与唤醒回调至输出延迟，记录板卡、主频、执行单元、SDK 版本、窗口长度及重复次数。"
+      ]
+    }
+  ]
+}
