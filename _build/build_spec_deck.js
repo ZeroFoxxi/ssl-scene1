@@ -38,6 +38,20 @@ function notes(s,rows){s.addNotes(rows.map(r=>r.join('｜')).join('\n\n'));}
  callout(s,'当前证据不足以把“百 KB 级内存”或“几 M 模型”定为萤石、思必驰的定位预算。',6.12,.67);
  notes(s,D.rows);
 }
+// 2b. 五项指标总表
+{
+ const s=slide('五项指标总表：竞品定位模块的五项均未公开，只有公开参照有完整数据','“未公开”指本轮公开资料未查到；离线 / 在线只写有出处的结论。完整出处见配套 Excel“五项指标总表”。');
+ const pend=v=>/未公开|待/.test(v);
+ const head=D.matrix_cols.slice(0,7).map(v=>({text:v,options:{bold:true,color:C.white,fill:C.navy,align:'center'}}));
+ const body=D.matrix.map((r,i)=>{
+  const ref=r[0].startsWith('参照')||r[0].startsWith('本方案');
+  const fill=r[0].startsWith('参照')?C.light:(r[0].startsWith('本方案')?C.mint:C.white);
+  return r.slice(0,7).map((v,j)=>({text:v,options:{fill,bold:j===0,color:(j>=1&&j<=5&&pend(v))?C.amber:C.text}}));
+ });
+ s.addTable([head,...body],{x:.55,y:1.6,w:12.22,colW:[2.45,1.75,1.25,1.5,1.8,1.42,2.05],rowH:[.4,.6,.68,.6,.5,.55,.6,.6],fontFace:F,fontSize:10,color:C.text,margin:[.05,.07,.05,.07],border:{type:'solid',pt:.7,color:C.border},valign:'middle',autoPage:false});
+ callout(s,'对标路径：思必驰申请 SDK，在同一段多通道音频上做算法级对比；萤石用样机实测整机响应（触发→转动、触发→入画）。',6.28,.52);
+ s.addNotes('这页按选型需要的五项列出：内存占用、模型大小、运行在 CPU / DSP / NPU、离线还是在线、时延。萤石和思必驰的定位模块这五项都没有公开，表里如实写“未公开”。能看到的只有阵列和精度这类信息，放在最后一列。思必驰的 Linux SDK 手册定义为离线语音技术，这是有出处的；萤石只知道公司整体的音频算法可以放云端或设备端，具体产品没说。灰色一行是乐鑫的公开参照，五项都有数据：约 206 KB 内存、不用神经网络、CPU 约 8.1%、端侧、每 8 毫秒帧处理 0.65 毫秒。绿色一行是本方案现状，只有导向表大小是实测的，其他要移植后再测。补数据的路径是：思必驰申请 SDK 做算法级对比，萤石用样机实测整机响应。');
+}
 // 3. 萤石
 {
  const s=slide('萤石：锁定具体 SKU，单品规格与公司级指标分开','C6C 三麦 / 四麦来自不同资料对象；实测时记录样机 SKU、版本、触发方式和麦克风配置。');

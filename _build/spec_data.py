@@ -206,6 +206,18 @@ MEMORY = [['SRP-PHAT 当前 complex128', '6×119×G×16 bytes', 4016.25, 803.25,
  ['WakeDOA 当前两类导向表合计', '(6+4)×119×G×16 bytes', 6693.75, 1338.75, 669.375]]
 
 
+# 五项指标总表（选型所需口径）：对象, 内存占用, 模型大小, CPU / DSP / NPU, 离线 / 在线, 时延, 已公开的相关信息, 来源
+MATRIX = [
+    ["萤石 C6C 1080P 无极巡航版\nCS-C6C-1C2WFRV", "未公开", "未公开", "未公开", "未公开", "未公开", "3 麦、360° 声源定位（2019 官方资讯）", "S3、S18"],
+    ["萤石 C6C 300 万 AI 无极款\nCS-C6C-3H3WFRV", "未公开", "未公开", "未公开", "未公开（公司音频算法可云端或设备端部署）", "未公开", "4 麦、听声辨位；公司级“高精度声源定位”识别率 86.0%（实验室，非单品指标）", "S2、S17"],
+    ["思必驰 线性阵列 Linux SDK", "未公开（待申请规格）", "资源文件大小未公开", "支持平台待确认", "离线（手册定义为离线语音技术）", "未公开", "线性四 / 六麦；16 kHz 输入；唤醒后回调方位", "S16"],
+    ["思必驰 AI 阵列模组", "未公开", "未公开", "未公开", "待确认", "未公开", "双 / 四 / 六麦；±5° 定位（披露口径）", "S1、S15"],
+    ["思必驰 C40 / C60（会议）", "未公开", "未公开", "未公开", "待确认（离线指令不代表整条链路）", "未公开", "语音定位 + 视觉锁定发言人", "S1"],
+    ["参照：乐鑫 ESP-SR（ESP32-P4）", "约 206 KB（RAM 57 + PSRAM 149）", "无神经网络", "CPU 约 8.1%（400 MHz）", "端侧", "0.65 ms / 8 ms 帧（处理耗时）", "4 麦 MVDR，10° 网格", "S13"],
+    ["本方案（当前 Python）", "导向表 10°：SRP 401.6 KiB（不含其他内存）", "无训练权重", "Python，待移植后测", "离线仿真", "待测", "SRP-PHAT / GEVD-MUSIC", "measure_doa_memory.py"],
+]
+MATRIX_COLS = ["对象", "内存占用", "模型大小", "CPU / DSP / NPU", "离线 / 在线", "时延", "已公开的相关信息", "来源"]
+
 def build_excel(path):
     from openpyxl import Workbook
     from openpyxl.styles import Alignment, Font, PatternFill, Border, Side
@@ -249,6 +261,8 @@ def build_excel(path):
     sheet(ws2, ["编号", "证据等级", "来源", "链接"], [list(s) for s in SOURCES], [8, 10, 60, 80])
     ws3 = wb.create_sheet("缺口与获取途径")
     sheet(ws3, ["缺口", "获取途径", "用途"], GAPS, [32, 70, 36])
+    ws0 = wb.create_sheet("五项指标总表", 0)
+    sheet(ws0, MATRIX_COLS, MATRIX, [28, 24, 16, 20, 26, 22, 36, 14])
     ws4 = wb.create_sheet("对选型的含义")
     sheet(ws4, ["序号", "内容"], [[i + 1, t] for i, t in enumerate(IMPLICATIONS)], [8, 120])
     for row in ws2.iter_rows(min_row=2):
@@ -259,6 +273,6 @@ def build_excel(path):
 
 if __name__ == "__main__":
     build_excel(os.path.join(ROOT, "竞品规格调研_萤石与思必驰.xlsx"))
-    json.dump({"sources": SOURCES, "cols": COLS, "rows": ROWS, "gaps": GAPS, "implications": IMPLICATIONS, "memory": MEMORY},
+    json.dump({"sources": SOURCES, "cols": COLS, "rows": ROWS, "gaps": GAPS, "implications": IMPLICATIONS, "memory": MEMORY, "matrix": MATRIX, "matrix_cols": MATRIX_COLS},
               open(os.path.join(ROOT, "_build", "spec_data.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("written")
