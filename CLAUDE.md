@@ -23,6 +23,8 @@
 - numpy 1.x 用 `pyroomacoustics==0.7.4`；numpy 2.x 用最新版。
 - 画图字体按顺序回退：Microsoft YaHei → Noto Sans CJK SC → WenQuanYi Zen Hei → SimHei；云端缺中文字体时可先 `apt-get install -y fonts-noto-cjk`。
 - 结果输出到 `code/ssl_baseline/out/`，图片可复制到 `figures/`。
+- PPT 保留原稿字体与样式；无原稿约定时用微软雅黑（Microsoft YaHei），文字和表格显式设置中文 `zh-CN`。不要为云端渲染方便把交付 PPT 换成 Windows 未安装的字体；渲染替代只在临时字体配置里处理。
+- PPT 交付前检查实际文件中的字体与语言标签、文字完整与重叠、来源链接，以及 PDF 导出。
 
 ## 常用命令
 

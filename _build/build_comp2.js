@@ -1,81 +1,137 @@
-// 竞品补充页（2 页）：萤石整机对标、思必驰算法对标。用于插入既有 SSL 技术综述 PPT。
+// 竞品补充页（2 页）v3：萤石整机对标、思必驰算法对标。用于插入既有 SSL 技术综述 PPT。
+// 每页：左侧对标对象卡片；右上算法链路图；右下六项核查（状态标签）；底部部署芯片线索；来源。
 const pptxgen = require("pptxgenjs");
 const path = require("path");
 const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, ".."), "竞品补充页_萤石与思必驰.pptx");
+const IMG = (n) => path.join(__dirname, "..", "figures", "竞品产品图", n);
 const F = "Microsoft YaHei";
-const NAVY = "17375E", TEXT = "1F2937", GRAY = "5B6B7F", LIGHT = "EEF2F7", TEAL = "1F7A68", AMBER = "B8691A", BORDER = "CBD5E1", WHITE = "FFFFFF";
+const C = { navy: "17375E", text: "1F2937", gray: "5B6B7F", mute: "8A97A8", light: "F3F6FA", line: "D5DDE7", white: "FFFFFF",
+  teal: "1F7A68", tealL: "E3F1EE", amber: "B8691A", amberL: "FBF0E3", slate: "6B7785", slateL: "ECEFF3", ice: "DCE7F3" };
 
 const p = new pptxgen();
 p.layout = "LAYOUT_WIDE";
 p.title = "竞品补充页：萤石与思必驰";
-const T = (s, text, o) => s.addText(text, Object.assign({ fontFace: F, lang: "zh-CN", fontSize: 12, color: TEXT, margin: 0, valign: "top", paraSpaceAfter: 0 }, o));
-const cell = (t, o) => ({ text: t, options: Object.assign({ fontFace: F, lang: "zh-CN" }, o || {}) });
-const H = (t) => cell(t, { bold: true, color: WHITE, fill: { color: NAVY }, align: "center" });
+const T = (s, text, o) => s.addText(text, Object.assign({ fontFace: F, lang: "zh-CN", fontSize: 12, color: C.text, margin: 0, valign: "top", paraSpaceAfter: 0 }, o));
+const R = (s, x, y, w, h, fill, line, r) => s.addShape(p.shapes.ROUNDED_RECTANGLE, { x, y, w, h, fill: { color: fill }, line: line ? { color: line, width: 0.75 } : { type: "none" }, rectRadius: r === undefined ? 0.08 : r });
 
-// 标签行：“标签：内容”，未公开部分用橙色
-function lines(s, items, x, y, w, h, fs) {
-  const runs = [];
-  items.forEach((it, i) => {
-    runs.push({ text: it[0] + "：", options: { bold: true, color: NAVY, breakLine: false } });
-    it[1].forEach((seg, j) => {
-      const last = j === it[1].length - 1;
-      runs.push({ text: seg[0], options: { color: seg[1] ? AMBER : TEXT, bold: !!seg[1], breakLine: last && i < items.length - 1, paraSpaceAfter: last ? 7 : 0 } });
-    });
+const STATUS = { ok: ["已公开", C.teal, C.tealL], part: ["部分公开", C.amber, C.amberL], no: ["未公开", C.slate, C.slateL] };
+function chip(s, x, y, kind) {
+  const [t, fg, bg] = STATUS[kind];
+  s.addText(t, { shape: p.shapes.ROUNDED_RECTANGLE, x, y, w: 0.92, h: 0.3, fill: { color: bg }, line: { color: fg, width: 0.75 }, rectRadius: 0.15,
+    fontFace: F, lang: "zh-CN", fontSize: 10, bold: true, color: fg, align: "center", valign: "middle", margin: 0 });
+}
+function flow(s, x, y, w, steps, caption) {
+  T(s, caption, { x, y, w, h: 0.28, fontSize: 11, bold: true, color: C.navy });
+  const n = steps.length, gap = 0.32, bw = (w - gap * (n - 1)) / n, by = y + 0.36, bh = 0.78;
+  steps.forEach((st, i) => {
+    const bx = x + i * (bw + gap), hi = st[2];
+    R(s, bx, by, bw, bh, hi ? C.navy : C.white, hi ? null : C.line, 0.1);
+    T(s, st[0], { x: bx + 0.08, y: by + 0.09, w: bw - 0.16, h: 0.32, fontSize: 12, bold: true, color: hi ? C.white : C.navy, align: "center" });
+    T(s, st[1], { x: bx + 0.08, y: by + 0.41, w: bw - 0.16, h: 0.34, fontSize: 9.5, color: hi ? "CADCFC" : C.gray, align: "center" });
+    if (i < n - 1) s.addShape(p.shapes.LINE, { x: bx + bw + 0.04, y: by + bh / 2, w: gap - 0.08, h: 0, line: { color: C.mute, width: 1.25, endArrowType: "triangle" } });
   });
-  T(s, runs, { x, y, w, h, fontSize: fs || 12 });
 }
-
-function page(title, sub, rows, colW, items, src, notes, boxY, boxH) {
+function checks(s, x, y, w, rows) {
+  T(s, "算法与部署核查", { x, y, w, h: 0.28, fontSize: 11, bold: true, color: C.navy });
+  const rh = 0.47; let yy = y + 0.34;
+  rows.forEach((r, i) => {
+    if (i % 2 === 0) R(s, x, yy, w, rh, C.light, null, 0.04);
+    T(s, r[0], { x: x + 0.14, y: yy, w: 1.45, h: rh, fontSize: 11.5, bold: true, color: C.text, valign: "middle" });
+    chip(s, x + 1.62, yy + (rh - 0.3) / 2, r[1]);
+    T(s, r[2], { x: x + 2.68, y: yy, w: w - 2.8, h: rh, fontSize: 11, color: C.text, valign: "middle" });
+    yy += rh;
+  });
+}
+function page(d) {
   const s = p.addSlide();
-  s.background = { color: WHITE };
-  T(s, title, { x: 0.5, y: 0.3, w: 12.3, h: 0.6, fontSize: 22, bold: true, color: NAVY, valign: "middle" });
-  T(s, sub, { x: 0.5, y: 0.92, w: 12.3, h: 0.5, fontSize: 12, color: GRAY, valign: "middle" });
-  s.addTable(rows, { x: 0.5, y: 1.5, w: 12.33, colW, fontFace: F, fontSize: 11, color: TEXT, valign: "middle",
-    border: { type: "solid", pt: 0.75, color: BORDER }, margin: [0.05, 0.08, 0.05, 0.08], autoPage: false });
-  s.addShape(p.shapes.ROUNDED_RECTANGLE, { x: 0.5, y: boxY, w: 12.33, h: boxH, fill: { color: LIGHT }, line: { type: "none" }, rectRadius: 0.06 });
-  lines(s, items, 0.72, boxY + 0.18, 11.9, boxH - 0.25, 13);
-  T(s, src, { x: 0.5, y: boxY + boxH + 0.12, w: 12.33, h: 0.45, fontSize: 9, color: GRAY });
-  s.addNotes(notes);
+  s.background = { color: C.white };
+  // 标题
+  T(s, [{ text: "竞品对标丨", options: { color: C.mute } }, { text: d.title, options: { color: C.navy } }], { x: 0.5, y: 0.32, w: 10.6, h: 0.6, fontSize: 24, bold: true, valign: "middle" });
+  s.addText(d.tag, { shape: p.shapes.ROUNDED_RECTANGLE, x: 11.35, y: 0.42, w: 1.48, h: 0.4, fill: { color: C.navy }, line: { type: "none" }, rectRadius: 0.2,
+    fontFace: F, lang: "zh-CN", fontSize: 12, bold: true, color: C.white, align: "center", valign: "middle", margin: 0 });
+  T(s, d.lead, { x: 0.5, y: 0.94, w: 12.3, h: 0.36, fontSize: 13, color: C.gray, valign: "middle" });
+  // 左侧对象卡片
+  const cx = 0.5, cy = 1.45, cw = 4.15, ch = 4.35;
+  R(s, cx, cy, cw, ch, C.light, null, 0.1);
+  d.visual(s, cx + 0.25, cy + 0.22, cw - 0.5, 1.75);
+  T(s, d.object, { x: cx + 0.25, y: cy + 2.08, w: cw - 0.5, h: 0.38, fontSize: 16, bold: true, color: C.navy });
+  T(s, d.objectSub, { x: cx + 0.25, y: cy + 2.46, w: cw - 0.5, h: 0.3, fontSize: 11, color: C.gray });
+  T(s, d.facts.map((f, i) => [{ text: f[0] + "　", options: { bold: true, color: C.navy } }, { text: f[1], options: { breakLine: i < d.facts.length - 1 } }]).flat(),
+    { x: cx + 0.25, y: cy + 2.85, w: cw - 0.5, h: 1.4, fontSize: 11, paraSpaceAfter: 5 });
+  // 右侧：链路 + 核查
+  flow(s, 4.9, 1.45, 7.93, d.flow, d.flowCaption);
+  checks(s, 4.9, 2.72, 7.93, d.checks);
+  // 部署芯片线索条
+  R(s, 0.5, 5.98, 12.33, 0.72, C.tealL, null, 0.08);
+  s.addShape(p.shapes.RECTANGLE, { x: 0.5, y: 5.98, w: 0.09, h: 0.72, fill: { color: C.teal }, line: { type: "none" } });
+  T(s, [{ text: "部署芯片线索　", options: { bold: true, color: C.teal } }, { text: d.chip }], { x: 0.75, y: 5.98, w: 11.95, h: 0.72, fontSize: 11.5, valign: "middle" });
+  // 来源
+  T(s, d.src.map((r, i) => [{ text: "[" + (i + 1) + "] ", options: { color: C.mute } }, { text: r[0], options: { color: "2F6EB5", hyperlink: { url: r[1], tooltip: r[1] } } }, { text: i < d.src.length - 1 ? "　" : "" }]).flat(),
+    { x: 0.5, y: 6.82, w: 12.33, h: 0.35, fontSize: 9 });
+  s.addNotes(d.notes);
 }
 
-const U = (t) => [t, true];   // 未公开 / 待确认，标橙
-const N = (t) => [t, false];
+// ---------------- 第 1 页：萤石 ----------------
+page({
+  title: "萤石 C6C：云台摄像头整机对标",
+  tag: "整机对标",
+  lead: "形态与场景一一致：麦克风阵列定位声源后驱动云台转向；算法与资源未公开，需用样机实测整机响应",
+  visual: (s, x, y, w, h) => {
+    s.addShape(p.shapes.ROUNDED_RECTANGLE, { x, y, w, h, fill: { color: C.white }, line: { color: C.line, width: 0.75 }, rectRadius: 0.08 });
+    s.addImage({ path: IMG("ezviz_c6c.jpg"), x: x + (w - h + 0.2) / 2, y: y + 0.1, w: h - 0.2, h: h - 0.2, altText: "萤石 C6C 无极巡航版", sizing: { type: "contain", w: h - 0.2, h: h - 0.2 } });
+  },
+  object: "C6C 3MP 无极版",
+  objectSub: "候选样机：CS-C6C-3H3WFRV（版本待核）",
+  facts: [["阵列", "4 麦（问询回复，2021）；早期 1080P 款为 3 麦"], ["触发", "声音触发转向，官方示例为掌声"], ["公开精度", "“高精度声源定位”识别率 86.0%，行业平均 77.0%（公司级、实验室，非单品指标）"]],
+  flowCaption: "整机链路（公开功能）",
+  flow: [["声音触发", "掌声 / 异常声"], ["声源定位", "360°，4 麦", true], ["云台转向", "水平无限旋转"], ["人形跟踪", "视觉接管"]],
+  checks: [
+    ["定位算法", "part", "听声辨位 / 360° 声源定位已公开；具体 DOA 方法、是否用神经网络未公开"],
+    ["部署芯片", "part", "主控为萤石定制标记 SoC；目标 SKU 型号需拆机确认（见下方线索）"],
+    ["执行单元", "no", "CPU / DSP / NPU 未公开；定位实时驱动云台，判断在端侧运行"],
+    ["内存 / 模型", "no", "定位模块运行内存、模型 / 资源文件大小未公开"],
+    ["时延", "no", "算法耗时未公开；整机“触发 → 转动 / 入画”需样机实测"],
+    ["离线 / 在线", "part", "公司音频算法可云端或设备端部署，支持动态加载；单品配置未公开"],
+  ],
+  chip: "异款拆解：新 C6 主控为 ECZ5450S（定制标记，双核，带 CNN 模块）、C6C 1080P 主控为 HK2015-6；公司 SoC 供应商为富瀚微、海思、厦门威欣（问询回复，公司整体口径）。目标 3MP SKU 的主控与定位执行单元待拆机确认。",
+  src: [["问询回复 印刷页 8-1-1-61 / 110 / 199 / 206 / 207", "https://pdf.dfcfw.com/pdf/H2_AN202205051563734391_1.pdf"],
+        ["萤石官网资讯（2019，C6C 无极巡航版）", "https://www.ezviz.com/cn/news/2342.html"],
+        ["电子工程专辑：新 C6 拆解", "https://www.eet-china.com/news/202204210910.html"],
+        ["数码之家：C6C 1080P 拆解", "https://www.mydigit.cn/thread-402247-1-1.html"]],
+  notes: "萤石选 C6C 系列做整机对标，因为它和场景一的形态一样：麦克风阵列定位声源，再驱动云台转过去，入画后交给人形跟踪。候选样机是 3MP 无极版，问询回复披露是 4 麦；早期 1080P 款是 3 麦。公开精度只有一个公司级数字：高精度声源定位识别率 86%，行业平均 77%，是自家实验室测的，没说明角度阈值和场景，不能当成单品指标，也不能和本方案的 10 度命中率直接比。核查六项里，定位算法、部署芯片、离线在线是部分公开，执行单元、内存模型、时延都没公开。芯片线索来自拆解：新 C6 是定制标记的 ECZ5450S，双核带 CNN 模块；1080P 的 C6C 是 HK2015-6；公司层面的 SoC 供应商是富瀚微、海思、厦门威欣。这些是异款或公司整体信息，目标 3MP 型号的主控还要拆机确认。下一步是借或买样机，实测转向时延和命中率，再拆机看主控。",
+});
 
-// 第 1 页：萤石
-page(
-  "竞品对标丨萤石 C6C 系列：整机对标",
-  "选择理由：与场景一形态一致（云台摄像头 + 麦克风阵列 + 听声转向），用于对标整机定向效果与转向响应",
-  [[H("型号"), H("阵列"), H("定位能力（公开口径）"), H("对标用途")],
-   [cell("C6C 3MP 无极版\n（如 CS-C6C-3H3WFRV）", { bold: true }), "4 麦（问询回复，2021）", "听声辨位；公司披露“高精度声源定位”识别率 86.0%（行业平均 77.0%，自家实验室）", cell("首选对标样机（现款，4 麦）", { bold: true, color: TEAL })],
-   [cell("C6C 无极巡航版 1080P\n（CS-C6C-1C2WFRV）", { bold: true }), "3 麦（官网资讯，2019）", "360° 声源定位，判定声源后转向拍摄；官方示例为掌声触发", "早期型号，作参照"]],
-  [3.0, 2.3, 4.73, 2.3],
-  [["定位算法", [N("具体方法未公开；功能为听声辨位 / 360° 声源定位，可由掌声等异常声音触发，与“唤醒后定向”的触发方式不同。")]],
-   ["部署芯片", [N("主控为萤石定制标记芯片："), N("新 C6 为 ECZ5450S（双核 SoC，带 CNN 模块）；1080P C6C 为 HK2015-6（拆解推测为海康定制）。"), U("原厂型号未公开。"), N("公司 SoC 供应商为富瀚微、海思、厦门威欣（公司整体口径）。")]],
-   ["执行单元 / 离线", [N("定位需实时驱动云台，应在端侧运行（判断）；公司音频算法可云端或设备端部署，支持算法动态加载。"), U("定位跑在 CPU 还是 NPU 未公开。")]],
-   ["资源与时延", [U("定位模块的内存、模型大小、处理时延均未公开。")]],
-   ["对标方式", [N("采购 C6C 3MP 现款样机：同房间同点位实测“声音触发 → 开始转动 / 目标入画”时延与转向命中率；拆机确认主控型号后查其 CPU / NPU 算力。")]]],
-  "来源：萤石网络科创板问询回复（2022）印刷页 8-1-1-61、110、199、206、207；萤石官网资讯（2019，C6C 无极巡航版）；电子工程专辑、网易拆解报道（新 C6）；数码之家拆解（CS-C6C 1080P）。",
-  "萤石选 C6C 系列做整机对标，因为它和场景一的形态一样：云台摄像头加麦克风阵列，听到声音就转过去。首选 3MP 无极版，问询回复披露是 4 麦；2019 年的 1080P 无极巡航版是 3 麦，作参照。算法方法没公开，触发方式是掌声这类异常声音，和我们唤醒后定向不一样。芯片方面，萤石用的是打了自家定制标记的芯片，比如新 C6 的 ECZ5450S，双核带 CNN 模块，原厂型号查不到；公司层面的 SoC 供应商是富瀚微、海思和厦门威欣。定位要实时驱动云台，应该在端侧跑，但跑在 CPU 还是 NPU 没公开，内存、模型、时延也都没公开。所以对标方式是买现款样机实测转向时延和命中率，再拆机确认主控型号。",
-  3.1, 3.05
-);
-
-// 第 2 页：思必驰
-page(
-  "竞品对标丨思必驰：算法对标（唤醒后定向）",
-  "选择理由：前端 SDK 支持唤醒后回调声源方位，与场景一“唤醒后首次定向”链路一致，可在同一段多通道音频上做算法级对比",
-  [[H("方案"), H("阵列"), H("定位能力（公开口径）"), H("部署")],
-   [cell("线性阵列 Linux SDK（fespl）", { bold: true }), "线性四麦 / 六麦", "唤醒回调后返回方位（如 {\"doa\":95}）；16 kHz 输入", cell("离线；公开包为 x86_64，其他平台需商务提供", { color: TEXT })],
-   [cell("AI 麦克风阵列模组", { bold: true }), "双 / 四 / 六麦", "±5° 声源定位（招股书披露口径）；六麦环形 ±10°（2017 报道）", "端侧离线"],
-   [cell("太行芯片 TH1520 / TH2608", { bold: true }), "最多 6 麦 / 6 模拟 + 6 数字麦", "芯片平台，定位精度随方案而定", "TH1520 双 DSP；TH2608 CPU + DSP + NPU"]],
-  [3.0, 2.3, 4.73, 2.3],
-  [["定位算法", [N("自研 DOA 定位 + 音区分割，会议场景说话人方向检测率 > 98%（招股书）；"), U("具体方法未公开。")]],
-   ["部署芯片", [N("两条线：① 自研太行芯片——TH1520 双 DSP（专利印证为 Xtensa DSP），常开功耗毫瓦级；TH2608 增加 NPU，支持 INT8 / INT4 / INT1；② 通用芯片适配——已适配 34 种芯片架构，侧重低功耗芯片；第一大硬件供应商为杰理科技。")]],
-   ["执行单元 / 离线", [N("SDK 为离线语音技术；"), U("定位跑在 DSP 还是 NPU、在哪些客户芯片上部署未公开。")]],
-   ["资源与时延", [U("DOA 的内存、模型 / 资源文件大小、处理耗时均未公开；扩声延迟 ≤ 22 ms 不是定位时延。")]],
-   ["对标方式", [N("申请 Linux SDK 及目标平台版本，在同一段多通道音频（含电视干扰）上比较首次定向精度与耗时；同时索取 DOA 资源占用。")]]],
-  "来源：思必驰科创板招股说明书（申报稿，2026）印刷页 1-1-127、128、137、177、185、196、376；思必驰 DUI Linux SDK 开发手册（fespl）；DUI Linux SDK 集成手册；智东西 / 经济观察网 TH1520、TH2608 发布报道；a&s（2017，六麦环形）。",
-  "思必驰选来做算法对标，因为它的前端 SDK 支持唤醒后回调声源方位，正好对应场景一的唤醒后首次定向，可以拿同一段多通道音频直接比。公开资料里有三类：线性阵列 Linux SDK，支持四麦和六麦，唤醒后返回方位；麦克风阵列模组，招股书披露正负 5 度，早年的六麦环形是正负 10 度；还有自研的太行芯片。部署分两条线：一是自研芯片，TH1520 是双 DSP，专利印证是 Xtensa DSP，常开功耗毫瓦级，TH2608 加了 NPU；二是适配通用芯片，招股书说已经适配 34 种芯片架构，侧重低功耗芯片，第一大硬件供应商是杰理。定位跑在 DSP 还是 NPU、资源和时延都没有公开。对标方式是申请 SDK 和目标平台版本，在同一段音频上比精度和耗时，同时要资源占用数据。",
-  3.4, 3.05
-);
+// ---------------- 第 2 页：思必驰 ----------------
+page({
+  title: "思必驰 fespl：唤醒后定向的算法对标",
+  tag: "算法对标",
+  lead: "离线前端 SDK 在唤醒后回调声源方位，与场景一“唤醒后首次定向”链路一致，可在同一段多通道音频上做算法级对比",
+  visual: (s, x, y, w, h) => {
+    s.addShape(p.shapes.ROUNDED_RECTANGLE, { x, y, w, h, fill: { color: C.navy }, line: { type: "none" }, rectRadius: 0.08 });
+    T(s, "DUILITE_CALLBACK_FESPL_WAKEUP", { x: x + 0.22, y: y + 0.2, w: w - 0.4, h: 0.3, fontFace: "Consolas", fontSize: 10.5, color: "9FB4D3" });
+    T(s, "↓ 唤醒后", { x: x + 0.22, y: y + 0.5, w: w - 0.4, h: 0.28, fontSize: 10, color: "9FB4D3" });
+    T(s, "DUILITE_CALLBACK_FESPL_DOA", { x: x + 0.22, y: y + 0.78, w: w - 0.4, h: 0.3, fontFace: "Consolas", fontSize: 10.5, color: C.white, bold: true });
+    T(s, '{ "doa": 95 }', { x: x + 0.22, y: y + 1.12, w: w - 0.4, h: 0.45, fontFace: "Consolas", fontSize: 20, color: "7FD1B9", bold: true });
+  },
+  object: "线性阵列 Linux SDK（fespl）",
+  objectSub: "离线前端：回声消除、DOA、波束成形、唤醒",
+  facts: [["阵列", "线性四麦 / 六麦"], ["输入", "16 kHz、有符号 16-bit 多通道音频"], ["公开精度", "模组 ±5° 声源定位、会议方向检测率 > 98%（招股书，属模组 / 会议产品，非 fespl 实测）"]],
+  flowCaption: "SDK 链路（官方手册）",
+  flow: [["多通道音频", "线阵 4 / 6 麦"], ["唤醒", "唤醒词回调"], ["DOA 回调", "返回方位角", true], ["交给下游", "云台 / 波束成形"]],
+  checks: [
+    ["定位算法", "part", "唤醒后回调方位已公开；招股书称自研 DOA + 音区分割，具体方法未公开"],
+    ["部署芯片", "part", "自研太行芯片 + 通用芯片适配；fespl 对应平台随 SDK 版本确认"],
+    ["执行单元", "no", "定位跑在 CPU、DSP 还是 NPU 未公开"],
+    ["内存 / 模型", "no", "DOA 增量内存、资源文件大小未公开，需向 SDK 提供方索取"],
+    ["时延", "no", "DOA 计算耗时、唤醒回调到方位输出的延迟未公开"],
+    ["离线 / 在线", "ok", "手册定义 fespl 为离线语音前端"],
+  ],
+  chip: "自研太行芯片：TH1520（双 DSP + AI 指令扩展，常开毫瓦级）、TH2608（Cortex-M + DSP + NPU，支持 INT8 / INT4 / INT1）；招股书：已完成 34 种芯片架构的深度适配，侧重低功耗芯片。fespl 具体部署在哪颗芯片待随 SDK 版本确认。",
+  src: [["DUI Linux SDK 开发手册（fespl）", "https://www.duiopen.com/docs/ct_fesp_linux"],
+        ["思必驰招股书（申报稿，2026）印刷页 1-1-127 / 128 / 137 / 196", "https://dataclouds.cninfo.com.cn/sjother2/documents/2026/2026-05-25/1d4b495ace513224eeffac7f7ab4bfbf.pdf"],
+        ["经济观察网：TH1520 发布", "http://m.eeo.com.cn/2019/0105/344821.shtml"],
+        ["智东西：TH2608 发布", "https://zhidx.com/news/35716.html"]],
+  notes: "思必驰选 fespl 做算法对标。fespl 是它的线性阵列离线前端 SDK，官方手册写明支持线性四麦和六麦，输入 16 kHz、16 位多通道音频，唤醒回调之后会再回调一次方位，返回类似 doa 95 这样的角度。这和场景一的唤醒后首次定向是同一个链路，所以可以拿同一段多通道录音，比它和本方案的方位误差、耗时和内存。公开精度方面，招股书里的正负 5 度是模组规格，大于 98% 是会议产品的方向检测率，都不是 fespl 的实测。核查六项里，离线是公开的，算法和部署芯片部分公开，执行单元、内存模型和时延都没公开。芯片线索是两条线：一是自研的太行芯片，TH1520 是双 DSP、常开毫瓦级，TH2608 加了 NPU；二是招股书说已经适配 34 种芯片架构，侧重低功耗芯片。fespl 具体部署在哪颗芯片，要随 SDK 版本确认。还要注意 fespl 是线阵，本方案现在仿真的是四麦方阵，比较前要先确认阵列几何能对上。下一步是申请 SDK 和目标平台版本。",
+});
 
 p.writeFile({ fileName: OUT }).then(() => console.log("written", OUT));
