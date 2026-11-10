@@ -1,0 +1,114 @@
+[
+ {
+  "seed": 0,
+  "use_table": false,
+  "first_in_view_s": NaN,
+  "in_view_ratio_from_onset": 0.0,
+  "in_view_ratio_after_entry": null
+ },
+ {
+  "seed": 0,
+  "use_table": true,
+  "first_in_view_s": NaN,
+  "in_view_ratio_from_onset": 0.0,
+  "in_view_ratio_after_entry": null
+ },
+ {
+  "seed": 1,
+  "use_table": false,
+  "first_in_view_s": NaN,
+  "in_view_ratio_from_onset": 0.0,
+  "in_view_ratio_after_entry": null
+ },
+ {
+  "seed": 1,
+  "use_table": true,
+  "first_in_view_s": 1.97,
+  "in_view_ratio_from_onset": 0.88,
+  "in_view_ratio_after_entry": 1.0
+ },
+ {
+  "seed": 2,
+  "use_table": false,
+  "first_in_view_s": NaN,
+  "in_view_ratio_from_onset": 0.0,
+  "in_view_ratio_after_entry": null
+ },
+ {
+  "seed": 2,
+  "use_table": true,
+  "first_in_view_s": 3.12,
+  "in_view_ratio_from_onset": 0.807,
+  "in_view_ratio_after_entry": 1.0
+ },
+ {
+  "seed": 3,
+  "use_table": false,
+  "first_in_view_s": NaN,
+  "in_view_ratio_from_onset": 0.0,
+  "in_view_ratio_after_entry": null
+ },
+ {
+  "seed": 3,
+  "use_table": true,
+  "first_in_view_s": 12.82,
+  "in_view_ratio_from_onset": 0.199,
+  "in_view_ratio_after_entry": 1.0
+ },
+ {
+  "seed": 4,
+  "use_table": false,
+  "first_in_view_s": NaN,
+  "in_view_ratio_from_onset": 0.0,
+  "in_view_ratio_after_entry": null
+ },
+ {
+  "seed": 4,
+  "use_table": true,
+  "first_in_view_s": 11.09,
+  "in_view_ratio_from_onset": 0.307,
+  "in_view_ratio_after_entry": 1.0
+ },
+ {
+  "seed": 5,
+  "use_table": false,
+  "first_in_view_s": NaN,
+  "in_view_ratio_from_onset": 0.0,
+  "in_view_ratio_after_entry": null
+ },
+ {
+  "seed": 5,
+  "use_table": true,
+  "first_in_view_s": 3.02,
+  "in_view_ratio_from_onset": 0.813,
+  "in_view_ratio_after_entry": 1.0
+ },
+ {
+  "seed": 6,
+  "use_table": false,
+  "first_in_view_s": NaN,
+  "in_view_ratio_from_onset": 0.0,
+  "in_view_ratio_after_entry": null
+ },
+ {
+  "seed": 6,
+  "use_table": true,
+  "first_in_view_s": 2.16,
+  "in_view_ratio_from_onset": 0.867,
+  "in_view_ratio_after_entry": 1.0
+ },
+ {
+  "seed": 7,
+  "use_table": false,
+  "first_in_view_s": NaN,
+  "in_view_ratio_from_onset": 0.0,
+  "in_view_ratio_after_entry": null
+ },
+ {
+  "seed": 7,
+  "use_table": true,
+  "first_in_view_s": 2.06,
+  "in_view_ratio_from_onset": 0.873,
+  "in_view_ratio_after_entry": 1.0
+ }
+]
