@@ -83,9 +83,8 @@ RES_TAKE = [
 ]
 EFF_TAKE = [
     "IPDnet2（2025）在实录小阵列上同时给出参数量和计算量：Tiny 版 0.5 M、0.2 GFLOPs/s，精度与 SRP-DNN 相当，计算量约为其 1/40",
-    "参数量大不等于效果好；只用仿真训练在实录上明显下降（89% → 60%），需要实采数据",
+    "参数量大不等于效果好；只用仿真训练在实录上明显下降（5° 内准确率 89% → 60%）",
 ]
-PROPOSAL = "建议：资源以乐鑫（约 206 KB、400 MHz 下 CPU 约 8%）为量级参照，效果以 IPDnet2 的实录对比为参照；目标芯片确认后定具体预算"
 
 
 def build_excel(path):
@@ -111,8 +110,8 @@ def build_excel(path):
     sheet(ws, RES_COLS, [r[:-1] + [src(r[-1])] for r in RES], [18, 16, 24, 24, 28, 28, 30, 30, 50])
     ws2 = wb.create_sheet("效果参照")
     sheet(ws2, EFF_COLS, [r[:-1] + [src(r[-1])] for r in EFF], [18, 20, 46, 24, 16, 40, 50])
-    ws3 = wb.create_sheet("要点与建议")
-    sheet(ws3, ["类别", "内容"], [["资源", t] for t in RES_TAKE] + [["效果", t] for t in EFF_TAKE] + [["建议", PROPOSAL]], [10, 110])
+    ws3 = wb.create_sheet("要点")
+    sheet(ws3, ["类别", "内容"], [["资源", t] for t in RES_TAKE] + [["效果", t] for t in EFF_TAKE], [10, 110])
     ws5 = wb.create_sheet("2026 文献核查")
     sheet(ws5, CHECK_COLS, CHECK, [44, 12, 50, 16, 50])
     ws4 = wb.create_sheet("来源")
@@ -123,6 +122,6 @@ def build_excel(path):
 if __name__ == "__main__":
     build_excel(os.path.join(ROOT, "公开参照方案汇总.xlsx"))
     json.dump({"sources": SOURCES, "res_cols": RES_COLS, "res": RES, "eff_cols": EFF_COLS, "eff": EFF,
-               "res_take": RES_TAKE, "check": CHECK, "eff_take": EFF_TAKE, "proposal": PROPOSAL},
+               "res_take": RES_TAKE, "check": CHECK, "eff_take": EFF_TAKE},
               open(os.path.join(ROOT, "_build", "ref_data.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("ok", len(RES), len(EFF))
