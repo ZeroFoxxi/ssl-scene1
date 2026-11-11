@@ -8,17 +8,42 @@ import json, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# ---------------- 公开数据盘点 ----------------
-PUBLIC = [
-    # 名称, 内容与阵列, 规模, 方位真值, 许可, 本方案用途
-    ["RealMAN（NeurIPS 2024）", "真实录制；32 麦阵列，可抽子阵；普通话（音箱播放），静止 + 移动说话人", "语音 83.7 h（静止 48.3 h / 移动 35.4 h），噪声 144.5 h，32 个场景",
-     "有：方位、俯仰、距离（鱼眼摄像头自动标注）", "待核实（原调研记为 CC BY 4.0）", "真实数据预训练 / 微调；抽取几何接近的子阵"],
-    ["LOCATA（2018 挑战赛）", "真实录制；4 类阵列（含机器人头、平面阵）", "6 个任务，规模小", "有", "待核实（原调研记为 Open Data Commons）", "评测为主（Task 1 静态、Task 3 移动），不作训练主体"],
-    ["STARSS23（DCASE 2023）", "真实录制；4 通道四面体阵列 / FOA；13 类声音事件", "约 7.5 h，16 个房间", "有（事件级）", "待核实（原调研记为 MIT）", "异响扩展储备；几何与目标设备差异大"],
-    ["SSLR（Idiap）", "真实录制；机器人头 4 麦，含风扇自噪声", "约 25 h", "有", "非商用 EULA", "仅研究对比，不用于产品训练"],
-    ["AISHELL-1", "普通话近讲语音（单通道）", "约 178 h，400 人", "无（作仿真声源素材）", "待核实（OpenSLR 标注 Apache 2.0，另有来源不一致）", "仿真用干净语音素材"],
-    ["DEMAND / MUSAN", "环境噪声 / 噪声、音乐、语音素材（单通道）", "—", "无（作仿真干扰素材）", "待核实", "仿真用噪声、音乐、电视类干扰素材"],
+# ---------------- 数据集目录（许可于 2026-11-11 按官方页面核实） ----------------
+# 用途分类：评测 / 训练微调 / 仿真素材 / 仅研究 / 储备
+DS_COLS = ["数据集", "年份", "用途分类", "阵列与场景", "方位标注", "规模", "许可（已核实）", "可否商用", "结论与用途", "来源"]
+DATASETS = [
+    ["RealMAN", "2024", "训练微调", "实录；32 麦阵列，可抽小子阵；中文语音（音箱播放），32 个室内外场景，静止 + 移动", "有：方位、俯仰、距离",
+     "语音 83.7 h + 噪声 144.5 h", "CC BY 4.0", "可以", "采用：网络训练与微调的主力真实数据；抽取与目标几何接近的子阵", "https://github.com/Audio-WestlakeU/RealMAN"],
+    ["LOCATA", "2018", "评测", "实录；4 类阵列（含 12 麦机器人头、平面阵）；英语，单房间", "有",
+     "6 个任务，规模小", "ODC-BY", "可以", "采用：静态测向（Task 1）与跟踪（Task 3）评测，便于与文献对比", "https://zenodo.org/records/3630471"],
+    ["Treble10", "2025", "仿真素材", "物理精确仿真；含 6 麦圆阵（半径 3 cm）设备冲激响应；10 个带家具的真实房间", "有（几何已知）",
+     "3000+ 条冲激响应", "冲激响应子集 CC BY-NC-SA 4.0；6 通道语音子集 CC BY 4.0", "6 通道语音子集可以", "采用 6 通道语音子集：小阵列高逼真仿真，补充 pyroomacoustics", "https://huggingface.co/datasets/treble-technologies/Treble10-Speech"],
+    ["AISHELL-1", "2017", "仿真素材", "单通道近讲；中文，400 人", "无",
+     "约 178 h", "Apache 2.0", "可以", "采用：仿真用干净中文语音", "https://www.openslr.org/33/"],
+    ["MUSAN", "2015", "仿真素材", "单通道；音乐、语音、噪声三类", "无",
+     "音乐 / 语音 / 噪声", "CC BY 4.0", "可以", "采用：电视类干扰（音乐 + 语音节目）", "https://www.openslr.org/17/"],
+    ["DEMAND", "2013", "仿真素材", "多通道实录环境噪声（家居、办公、交通等）", "无",
+     "多种环境", "CC BY 4.0", "可以", "采用：多通道环境噪声", "https://zenodo.org/records/1227121"],
+    ["MISP 2021", "2021", "仅研究", "实录；远 / 中 / 近场麦克风 + 摄像机；中文对话，34 个真实家庭电视房间", "无直接方位标注（有视频）",
+     "141 h 音视频", "非商用协议（需签署）", "不可以", "仅研究：家居 + 电视干扰场景的效果参考", "https://mispchallenge.github.io/download.html"],
+    ["STARSS23", "2023", "储备", "实录；4 通道四面体阵列 / FOA；13 类声音事件，16 个房间", "有（事件级）",
+     "约 7.5 h", "MIT", "可以", "储备：异响扩展；几何与目标设备差异大", "https://zenodo.org/records/7709052"],
+    ["DCASE 2025 立体声 SELD", "2025", "储备", "由 STARSS23 转换：双通道 + 普通视角视频，含画面内 / 外标签", "有",
+     "13 类声音事件", "MIT", "可以", "储备：视听融合、画面内外判定", "https://zenodo.org/records/15559774"],
+    ["SSLR", "2018", "储备", "实录；Pepper 机器人头 4 麦，含风扇自噪声", "有",
+     "约 25 h", "受限下载，条款需申请", "未知", "储备：小孔径 + 自噪声，仅研究对比", "https://www.idiap.ch/dataset/sslr/"],
+    ["CAV3D", "2019", "储备", "实录；8 麦圆阵与摄像头共址", "有",
+     "20 段序列", "需申请，条款未公开", "未知", "储备：视听跟踪评测", "https://speechtek.fbk.eu/cav3d-dataset/"],
 ]
+# 已查但不纳入的数据集（Excel 记录原因）
+DS_EXCLUDED = [
+    ["MRSAudio", "2025", "双耳 / Ambisonics 录音与视频", "无小平面阵，格式与目标设备不同"],
+    ["trajectoRIR", "2025", "沿轨迹移动的麦克风录音与冲激响应（16 麦圆阵、12 麦线阵等）", "阵列大、单一房间；可作跟踪算法的补充测试"],
+    ["HARP", "2024", "仿真 7 阶 Ambisonics 冲激响应", "Ambisonics 格式，与小平面阵不符"],
+    ["RIR-Mega-Speech", "2026", "单通道混响语音（LibriSpeech 卷积）", "单通道，不能用于测向"],
+]
+# 仿真与实录差距（RealMAN 论文表 5，静止说话人，5° 内准确率）
+SIM_REAL = [["仅仿真训练（仿真语音 + 仿真噪声）", "60.4%"], ["仿真语音 + 真实噪声", "52.4%"], ["真实语音 + 仿真噪声", "80.0%"], ["真实语音 + 真实噪声", "89.2%"]]
 
 # ---------------- 仿真方案 ----------------
 SIM = [
@@ -27,7 +52,7 @@ SIM = [
     ["声源", "距离 0.5–5 m，方位 0–360°；静止 / 圆弧 / 直线 / 随机游走；唤醒词 + 连续语音"],
     ["干扰", "电视（语音、音乐节目）、空调 / 风扇扩散噪声、云台电机近场噪声；SIR −5～20 dB，SNR 0～30 dB"],
     ["增强", "阵元位置扰动、通道增益与相位失配、通道置换（对称阵列）"],
-    ["工具与规模", "pyroomacoustics（现有脚本）、gpuRIR（移动声源）；目标约 200 h 多通道数据（建议值）"],
+    ["工具与规模", "pyroomacoustics（现有脚本）、gpuRIR（移动声源）；Treble10 6 通道语音子集作高逼真补充；目标约 200 h 多通道数据（建议值）"],
 ]
 
 # ---------------- 自采集矩阵（每间房） ----------------
@@ -118,8 +143,10 @@ def build_excel(path):
     sheet(ws4, ["序号", "需要记录的内容"], [[i + 1, m] for i, m in enumerate(META)], [8, 80])
     ws5 = wb.create_sheet("时间计划")
     sheet(ws5, ["阶段", "时间（建议）", "内容", "负责", "产出"], TIMELINE, [16, 18, 60, 18, 20])
-    ws6 = wb.create_sheet("公开数据盘点")
-    sheet(ws6, ["数据集", "内容与阵列", "规模", "方位真值", "许可", "本方案用途"], PUBLIC, [22, 40, 30, 26, 28, 34])
+    ws6 = wb.create_sheet("数据集目录")
+    sheet(ws6, DS_COLS, DATASETS, [18, 8, 12, 46, 20, 20, 30, 16, 44, 50])
+    ws8 = wb.create_sheet("已查未纳入")
+    sheet(ws8, ["数据集", "年份", "内容", "不纳入原因"], DS_EXCLUDED, [20, 8, 50, 50])
     ws7 = wb.create_sheet("待确认")
     sheet(ws7, ["序号", "事项"], [[i + 1, c] for i, c in enumerate(CONFIRM)], [8, 80])
     wb.save(path)
@@ -129,7 +156,7 @@ def build_excel(path):
 if __name__ == "__main__":
     tot = build_excel(os.path.join(ROOT, "训练数据方案与采集计划.xlsx"))
     rows, _ = per_room_minutes()
-    json.dump({"public": PUBLIC, "sim": SIM, "matrix": MATRIX, "rooms": ROOMS, "meta": META, "timeline": TIMELINE,
+    json.dump({"datasets": DATASETS, "ds_cols": DS_COLS, "sim_real": SIM_REAL, "sim": SIM, "matrix": MATRIX, "rooms": ROOMS, "meta": META, "timeline": TIMELINE,
                "compare": COMPARE, "confirm": CONFIRM, "volume_rows": rows, "per_room_min": tot,
                "total_h": round(tot * 4 / 60, 1)},
               open(os.path.join(ROOT, "_build", "data_plan.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
