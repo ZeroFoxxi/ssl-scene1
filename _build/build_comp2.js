@@ -1,4 +1,4 @@
-// 竞品补充页（2 页）v4：萤石整机对标、思必驰算法对标。用于插入既有 SSL 技术综述 PPT。
+// 竞品补充页（3 页）：萤石整机对标、思必驰算法对标、竞品未公开时的参照。用于插入既有 SSL 技术综述 PPT。
 // 每页：左侧对标对象卡片；右上算法链路图；右下六项核查（状态标签）；底部部署芯片线索；来源。
 const pptxgen = require("pptxgenjs");
 const path = require("path");
@@ -134,5 +134,68 @@ page({
         ["经销商页：C60 规格与标价", "https://www.empirepro.com/products/ai-speech-aivis-c60"]],
   notes: "思必驰这页分两层。产品层是 C60，思必驰自己的 AI 双目追踪摄像头：官网写明双 1080P 镜头、110 度视场、8 阵列线性麦克风、多模态声像追踪，也就是先用语音定位找到发言人方向，再用视觉锁定，云台推特写跟踪，和场景一的链路很像，只是用在会议室。2023 年 7 月北京 InfoComm China 就已经展出，2024、2025 年继续参展；国内价格没公开，海外经销商标价约 2575 美元。算法层用它的线阵前端 SDK fespl 做对标：官方手册写明唤醒后会回调方位，可以拿同一段多通道录音直接比。部署芯片方面，思必驰有自研的太行芯片，TH1520 是双 DSP、常开毫瓦级，TH2608 加了 NPU；招股书说已适配 34 种芯片架构，侧重低功耗芯片。C60 和 fespl 具体用哪颗芯片、定位跑在哪个单元、资源和时延都没公开。另外，思必驰 2026 年 7 月新推了 MT200 追踪主机，用吊顶麦克风做声源定位，再和摄像机画面做视觉匹配，驱动 C40T、C60、C80 对准发言人，需要标定麦克风和摄像机位置。它代表了声像融合的方向，但阵列装在天花板、孔径大，和摄像机内置小阵列条件不同，所以作方向参照，不作效果对标。下一步是申请 fespl SDK 和目标平台版本做算法对比。",
 });
+
+// ---------------- 第 3 页：竞品未公开时的参照（资源 + 效果） ----------------
+function miniTable(s, x, y, colW, head, rows, fills) {
+  const cellOpt = (o) => Object.assign({ fontFace: F, lang: "zh-CN", fontSize: 10, color: C.text, valign: "middle" }, o);
+  const isNa = (t) => /^未公开|^未单列/.test(t);
+  const hd = head.map((h) => ({ text: h, options: cellOpt({ bold: true, color: C.white, fill: { color: C.navy }, align: "center" }) }));
+  const bd = rows.map((r, i) => r.map((v, j) => ({ text: v, options: cellOpt(Object.assign({ fill: { color: fills[i] } },
+    j === 0 ? { bold: true, color: C.navy } : isNa(v) ? { color: C.slate } : {})) })));
+  s.addTable([hd, ...bd], { x, y, w: colW.reduce((a, b) => a + b, 0), colW, rowH: [0.36, ...rows.map(() => 0.5)],
+    margin: [0.03, 0.07, 0.03, 0.07], border: { type: "solid", pt: 0.7, color: C.line }, autoPage: false });
+}
+{
+  const s = p.addSlide();
+  s.background = { color: C.white };
+  T(s, [{ text: "竞品对标丨", options: { color: C.mute } }, { text: "竞品未公开时的参照：资源与效果", options: { color: C.navy } }], { x: 0.5, y: 0.32, w: 10.6, h: 0.6, fontSize: 24, bold: true, valign: "middle" });
+  s.addText("公开参照", { shape: p.shapes.ROUNDED_RECTANGLE, x: 11.35, y: 0.42, w: 1.48, h: 0.4, fill: { color: C.navy }, line: { type: "none" }, rectRadius: 0.2,
+    fontFace: F, lang: "zh-CN", fontSize: 12, bold: true, color: C.white, align: "center", valign: "middle", margin: 0 });
+  T(s, "两家竞品的定位模块均未公开内存、模型、算力与时延；先用公开方案定量级，目标芯片确认后定预算", { x: 0.5, y: 0.94, w: 12.3, h: 0.36, fontSize: 13, color: C.gray, valign: "middle" });
+
+  // 左：资源参照
+  const lx = 0.5, lw = 6.0, ty = 1.48;
+  R(s, lx, ty, lw, 3.62, C.light, null, 0.1);
+  T(s, "资源参照：设备端公开方案与竞品公开信息", { x: lx + 0.2, y: ty + 0.12, w: lw - 0.4, h: 0.3, fontSize: 12.5, bold: true, color: C.navy });
+  miniTable(s, lx + 0.2, ty + 0.5, [1.55, 1.75, 1.05, 1.25], ["方案", "运行硬件", "内存", "算力"], [
+    ["乐鑫 ESP-SR（4 麦 MVDR）", "ESP32-P4 400 MHz（物联网芯片）", "约 206 KB", "CPU 约 8%"],
+    ["ODAS（8 麦 SRP-PHAT）", "树莓派 3（开发板，仅看量级）", "未单列", "单核约 14%"],
+    ["萤石 C6Wi 4K / RK3", "C6Wi 系列 1.0T 算力；RK3 A55 + NPU 3T", "未公开", "未公开"],
+    ["思必驰 C60 / DUI 前端", "未公开", "未公开", "未公开"],
+  ], [C.white, C.white, C.amberL, C.amberL]);
+  T(s, "传统方法在物联网芯片上约两百 KB 内存、CPU 不到 10%，可作资源量级参照", { x: lx + 0.2, y: ty + 2.98, w: lw - 0.4, h: 0.55, fontSize: 10.5, color: C.gray, valign: "middle" });
+
+  // 右：效果参照
+  const rx = 6.83, rw = 6.0;
+  R(s, rx, ty, rw, 3.62, C.light, null, 0.1);
+  T(s, "效果参照：IPDnet2（2025-09，实录小阵列）", { x: rx + 0.2, y: ty + 0.12, w: rw - 0.4, h: 0.3, fontSize: 12.5, bold: true, color: C.navy });
+  miniTable(s, rx + 0.2, ty + 0.5, [1.55, 1.05, 1.5, 1.5], ["模型", "参数量", "计算量", "误差 / 漏检（5°）"], [
+    ["SRP-DNN", "0.8 M", "7.7 GFLOPs/s", "1.6° / 18.6%"],
+    ["IPDnet2-Tiny", "0.5 M", "0.2 GFLOPs/s", "1.6° / 17.4%"],
+    ["IPDnet2-Small", "1.3 M", "0.9 GFLOPs/s", "1.4° / 13.5%"],
+    ["IPDnet2-Large", "7.8 M", "13.9 GFLOPs/s", "1.2° / 10.5%"],
+  ], [C.white, C.ice, C.ice, C.ice]);
+  T(s, "RealMAN 实录，4 麦圆阵 r 3 cm + 中心麦，两人说话混合。2026 年新论文均未报参数量与计算量；仅用仿真训练在实录上 5° 内准确率 89% → 60%（RealMAN）",
+    { x: rx + 0.2, y: ty + 2.98, w: rw - 0.4, h: 0.55, fontSize: 10.5, color: C.gray, valign: "middle" });
+
+  // 底部：建议 + 待确认
+  R(s, 0.5, 5.35, 12.33, 1.0, C.tealL, null, 0.08);
+  s.addShape(p.shapes.RECTANGLE, { x: 0.5, y: 5.35, w: 0.09, h: 1.0, fill: { color: C.teal }, line: { type: "none" } });
+  T(s, [
+    { text: "建议　", options: { bold: true, color: C.teal } },
+    { text: "资源按乐鑫量级控制，效果对标 IPDnet2 的实录结果；同一测试集上与竞品样机比较命中率、转向时延和误转次数", options: { breakLine: true } },
+    { text: "待确认　", options: { bold: true, color: C.amber } },
+    { text: "目标芯片 / 平台与资源预算；是否购买竞品样机实测；是否申请思必驰离线前端 SDK" },
+  ], { x: 0.75, y: 5.35, w: 11.95, h: 1.0, fontSize: 12, valign: "middle", paraSpaceAfter: 4 });
+
+  const src = [["乐鑫 ESP-SR：DOA 文档", "https://docs.espressif.com/projects/esp-sr/en/latest/esp32p4/direction_of_arrival/README.html"],
+    ["ODAS（arXiv 2103.03954）", "https://arxiv.org/abs/2103.03954"],
+    ["IPDnet2（arXiv 2509.21900）", "https://arxiv.org/abs/2509.21900"],
+    ["RealMAN（arXiv 2406.19959）", "https://arxiv.org/abs/2406.19959"],
+    ["空间语音感知综述 2026-07（arXiv 2607.02296）", "https://arxiv.org/abs/2607.02296"]];
+  T(s, src.map((r, i) => [{ text: "[" + (i + 1) + "] ", options: { color: C.mute } }, { text: r[0], options: { color: "2F6EB5", hyperlink: { url: r[1], tooltip: r[1] } } }, { text: i < src.length - 1 ? "　" : "" }]).flat(),
+    { x: 0.5, y: 6.6, w: 12.33, h: 0.35, fontSize: 9 });
+  s.addNotes("两家竞品都没有公开定位模块的内存、模型、算力和时延，所以先用公开方案定量级。左边是资源参照：乐鑫的定位模块跑在 400 MHz 的物联网芯片上，四麦约 206 KB 内存、CPU 约 8%，是最接近产品芯片的数字；ODAS 跑在树莓派 3 上，八麦定位单核约 14%，树莓派是通用开发板，只看量级。竞品只公开了整机芯片：萤石 C6Wi 系列写的是专用芯片、1.0T 算力，RK3 是四核 A55 加 3T NPU。右边是效果参照：IPDnet2 是 2025 年 9 月的论文，用真实录音，阵列是半径 3 厘米的四麦圆阵加中心麦，和场景一的小阵列接近，同时给了参数量和计算量。Tiny 版 0.5 M 参数、每秒 0.2 GFLOPs，精度和 0.8 M 的 SRP-DNN 相当，计算量约为它的四十分之一。截至 2026 年 11 月，2026 年的新论文都没有报参数量和计算量，2026 年 7 月的综述汇总的最新实录方法也到 IPDnet2 为止。另外只用仿真数据训练，在真实录音上准确率会明显下降，所以需要实采数据。建议资源按乐鑫的量级控制，效果对标 IPDnet2；需要确认的是目标芯片和资源预算、是否购买竞品样机实测、是否申请思必驰的离线前端 SDK。");
+}
 
 require("./zh_notes")(p, OUT);
