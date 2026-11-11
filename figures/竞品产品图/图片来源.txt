@@ -16,3 +16,5 @@ ezviz_c6wi_4k.jpg：萤石商城 C6WI 旗舰系列商品页主图（https://www.
 aispeech_c60.jpg：思必驰会议产品官网 C60 产品图（https://meeting.aispeech.com/product/c60/，图片 https://meeting.aispeech.com/en/react/assets/c60-CWqSZW85.webp），2026-11 获取，白底合成。
 ezviz_rk3.jpg：萤石商城 RK3 桌面机器人主图（https://www.ys7.com/item/927621.html，图片 https://mfs.ys7.com/mall/7323d77d86d99d0dc71e8ae80b3f1d63.png），2026-11 获取，白底裁边。
 aispeech_mt200.jpg：思必驰会议产品官网 MT200 产品图（https://meeting.aispeech.com/product/mt200/，图片 https://meeting.aispeech.com/en/react/assets/product-mt200-Cxtxkypg.png），2026-11 获取，白底裁边。
+soundai_pro_imager.jpg：声智科技官网 AI 工业声像仪（SoundAI Pro 系列）产品图（https://www.soundai.com/ai-industrial-terminal，图片 https://sai-cdn.soundai.info/cdn/soundai-website/industry-new/ai_chengxiangyi.png），2026-11 获取，背景转白、放大。
+soundai_locator.jpg：声智科技官网 AI 声源定位仪产品图（https://www.soundai.com/，图片 https://sai-cdn.soundai.info/cdn/soundai-website/industry-new/ai_locator.png），2026-11 获取，背景转白、放大。
