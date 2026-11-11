@@ -46,9 +46,9 @@ function takeaways(s, y, items, proposal) {
       fontFace: F, lang: "zh-CN", fontSize: 12, bold: true, color: C.white, valign: "middle", margin: [0, 12, 0, 12] });
   }
 }
-function sources(s, keys) {
+function sources(s, keys, y) {
   T(s, keys.map((k, i) => [{ text: "[" + (i + 1) + "] ", options: { color: C.mute } }, { text: D.sources[k][0], options: { color: "2F6EB5", hyperlink: { url: D.sources[k][1], tooltip: D.sources[k][1] } } }, { text: i < keys.length - 1 ? "　" : "" }]).flat(),
-    { x: 0.5, y: 6.78, w: 12.33, h: 0.45, fontSize: 9 });
+    { x: 0.5, y: y || 6.78, w: 12.33, h: 0.4, fontSize: 9 });
 }
 
 // ---------------- 第 1 页：资源参照 ----------------
@@ -56,28 +56,27 @@ function sources(s, keys) {
   const s = p.addSlide();
   header(s, "资源：定位模块的内存与算力", "资源参照", "竞品未公开定位模块资源；有公开数字的端侧方案只有乐鑫和 ODAS", 7.8);
   const keys = srcIdx(D.res.map((r) => r[8]));
-  const refs = D.res.map((r) => (keys.includes(r[8]) ? keys.indexOf(r[8]) + 1 : "仿真"));
-  const fills = D.res.map((r) => (r[1].startsWith("竞品") ? C.amberL : r[0].startsWith("本方案") ? C.ice : C.white));
-  table(s, D.res_cols.slice(0, 8), D.res.map((r) => r.slice(0, 8)), [1.55, 1.1, 1.6, 1.5, 1.72, 1.78, 1.6, 1.48], 1.42, 0.56, fills,
-    refs.map((x) => (x === "仿真" ? "本仓库" : x)));
-  T(s, [{ text: "■ ", options: { color: "E9C79B" } }, { text: "竞品　", options: { color: C.gray } }, { text: "■ ", options: { color: "B9CDE6" } }, { text: "本方案（仿真）　　灰字：未公开 / 待实测", options: { color: C.gray } }],
+  const refs = D.res.map((r) => keys.indexOf(r[8]) + 1);
+  const fills = D.res.map((r) => (r[1].startsWith("竞品") ? C.amberL : C.white));
+  table(s, D.res_cols.slice(0, 8), D.res.map((r) => r.slice(0, 8)), [1.55, 1.1, 1.6, 1.55, 1.85, 1.75, 1.5, 1.43], 1.42, 0.62, fills, refs);
+  T(s, [{ text: "■ ", options: { color: "E9C79B" } }, { text: "竞品　　", options: { color: C.gray } }, { text: "灰字：未公开", options: { color: C.gray } }],
     { x: 8.3, y: 1.06, w: 4.53, h: 0.24, fontSize: 9.5, align: "right" });
-  takeaways(s, 5.62, D.res_take);
+  takeaways(s, 5.2, D.res_take);
   sources(s, keys);
-  s.addNotes("这一页回答“同样的模型规格、算力开销”能参照什么。萤石和思必驰都没有公开定位模块的内存和算力，XMOS 也只公开了功能。目前能查到原文数字的端侧方案只有两个：乐鑫 ESP-SR 的定位模块，四麦约 206 KB 内存，400 MHz 芯片上每 8 毫秒一帧耗时 0.65 毫秒，CPU 约 8%；ODAS 开源框架在树莓派 3 上，八麦定位单核约 14%，跟踪一个声源约 0.8%。两者都是传统方法，没有神经网络。最后一行是本方案仿真基线：两套导向表（SRP 和 MUSIC）在 10 度网格、双精度下合计约 669 KB，不含工作缓存，单精度约减半；仿真里电视和人声一样响、混响 0.6 秒时，10 度内命中 63%，粗大错误 3%；算力要在目标芯片上实测。");
+  s.addNotes("这一页回答“同样的模型规格、算力开销”能参照什么。萤石和思必驰都没有公开定位模块的内存和算力，XMOS 也只公开了功能。目前能查到原文数字的端侧方案只有两个：乐鑫 ESP-SR 的定位模块，四麦约 206 KB 内存，400 MHz 芯片上每 8 毫秒一帧耗时 0.65 毫秒，CPU 约 8%；ODAS 开源框架在树莓派 3 上，八麦定位单核约 14%，跟踪一个声源约 0.8%。两者都是传统方法，没有神经网络。思必驰的 DUI 离线前端 SDK 有线阵、环阵和家居双麦三个版本，都把回声消除、声源定位、波束成形和唤醒做在一起，唤醒后回调方位，但手册没有写资源占用和运行平台。萤石 RK3 公开了整机的 CPU 和 NPU，定位模块本身的资源没有公开。");
 }
 
 // ---------------- 第 2 页：效果参照 ----------------
 {
   const s = p.addSlide();
-  header(s, "效果：精度与参数量", "效果参照", "学术论文给出同条件下的精度和参数量，但都没有给端侧内存与耗时；DCASE 任务更难，只作量级参考");
-  const keys = srcIdx(D.eff.map((r) => r[5]));
-  const refs = D.eff.map((r) => keys.indexOf(r[5]) + 1);
-  const fills = D.eff.map((r, i) => (r[0] === "FN-SSL" ? C.ice : C.white));
-  table(s, D.eff_cols.slice(0, 5), D.eff.map((r) => r.slice(0, 5)), [2.0, 4.15, 1.3, 2.2, 2.68], 1.42, 0.44, fills, refs);
-  takeaways(s, 5.12, D.eff_take, D.proposal);
-  sources(s, keys);
-  s.addNotes("这一页回答效果能参照什么。前四行来自 FN-SSL 论文，同一套条件下比较：两麦间距 8 厘米、在线处理，仿真和 LOCATA 实录都测了。0.8 M 参数的 SRP-DNN 已经接近 2.5 M 的 FN-SSL，5.6 M 的 Cross3D 反而更差，说明参数量大不等于效果好。RealMAN 数据集的结果说明，只用仿真数据训练，在真实录音上 5 度内准确率从 89% 降到 60%，所以需要实采数据。DCASE 是 13 类声音事件、多声源的定位，比单人说话难很多，第一名用了约 4700 万参数的集成模型，误差 13.6 度，只作量级参考。这些论文都只报参数量，没有给在端侧芯片上的内存和耗时。建议资源以乐鑫为量级参照，效果以 FN-SSL 论文的同条件对比为参照，目标芯片确认后再定具体预算。");
+  header(s, "效果：精度、参数量与计算量", "效果参照", "以 2025 年文献为主；IPDnet2 用实录小阵列，并同时给出参数量和计算量");
+  const keys = srcIdx(D.eff.map((r) => r[6]));
+  const refs = D.eff.map((r) => keys.indexOf(r[6]) + 1);
+  const fills = D.eff.map((r) => (r[0].startsWith("IPDnet2") ? C.ice : C.white));
+  table(s, D.eff_cols.slice(0, 6), D.eff.map((r) => r.slice(0, 6)), [1.6, 1.62, 3.03, 1.75, 1.35, 2.98], 1.42, 0.4, fills, refs);
+  takeaways(s, 5.45, D.eff_take, D.proposal);
+  sources(s, keys, 7.02);
+  s.addNotes("这一页回答效果能参照什么，以 2025 年的文献为主。前五行来自 IPDnet2 论文，2025 年 9 月，用 RealMAN 的真实录音，阵列是半径 3 厘米的四麦圆阵加中心麦，和场景一的小阵列接近，两个人说话混在一起。它同时给了参数量和每秒计算量：Tiny 版 0.5 M 参数、每秒 0.2 GFLOPs，精度和 0.8 M 的 SRP-DNN 相当，计算量约为它的四十分之一；Large 版 7.8 M 精度最好。LightDOA 是 2025 年 11 月的轻量模型，只有约 3.7 万参数，但只在仿真上测过。RealMAN 的结果说明只用仿真训练，在真实录音上 5 度内准确率从 89% 降到 60%，需要实采数据。DCASE 2025 是 13 类声音事件、多声源，比单人说话难很多，第一名用了约 5800 万参数的集成模型，误差 12.2 度，只作量级参考。这些论文给的是浮点计算量，没有给在端侧芯片上的内存和耗时。建议资源以乐鑫为量级参照，效果以 IPDnet2 的实录对比为参照，目标芯片确认后再定具体预算。");
 }
 
-p.writeFile({ fileName: OUT }).then(() => console.log("written", OUT));
+require("./zh_notes")(p, OUT);
