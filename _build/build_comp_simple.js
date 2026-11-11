@@ -1,9 +1,9 @@
-// 竞品补充页（精简版，3 页，蓝白相间标准表格；标题微软雅黑 16 加粗，表内 10 号）：竞品对比；端侧声源定位方案（设备实测）；学术界轻量模型。用于插入 mentor 的调研 PPT。
+// 竞品补充页（精简版，3 页，深蓝表头 + 浅蓝交替表格；标题微软雅黑 16 加粗，表内 10 号）：竞品对比；端侧声源定位方案（设备实测）；学术界轻量模型。用于插入 mentor 的调研 PPT。
 const pptxgen = require("pptxgenjs");
 const path = require("path");
 const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, ".."), "竞品补充页_精简版.pptx");
 const F = "Microsoft YaHei";
-const C = { title: "000000", text: "000000", gray: "595959", head: "4472C4", band: "D9E2F3", line: "FFFFFF", na: "7F7F7F" };
+const C = { title: "000000", text: "000000", gray: "595959", head: "4472C4", band: "CFD5EA", band2: "E9EBF5", line: "FFFFFF", na: "7F7F7F" };
 
 const p = new pptxgen();
 p.layout = "LAYOUT_WIDE";
@@ -22,11 +22,11 @@ function slide(title, rows, colW, rowH, notes, src) {
   const s = p.addSlide();
   s.background = { color: "FFFFFF" };
   T(s, title, { x: 0.5, y: 0.3, w: 12.3, h: 0.45, fontSize: 16, bold: true, color: C.title, valign: "middle" });
-  // 蓝白相间：表头之后逐行交替浅蓝 / 白；带 img 标记的图片行保持白底且不参与交替
+  // 表头深蓝白字；正文两种浅蓝逐行交替；白色细边框；带 img 标记的图片行保持白底且不参与交替
   let k = 0;
   rows.forEach((r, i) => {
     if (i === 0) return;
-    const fill = r.img ? "FFFFFF" : (k % 2 === 0 ? C.band : "FFFFFF");
+    const fill = r.img ? "FFFFFF" : (k % 2 === 0 ? C.band : C.band2);
     if (!r.img) k++;
     r.forEach((c) => { if (!c.options.fill) c.options.fill = { color: fill }; });
   });
@@ -52,7 +52,7 @@ function headImages(s, x0, y0, colW, h, imgs) {
 
 // ---------------- 第 1 页：竞品对比 ----------------
 const P1W = [1.45, 2.3, 2.05, 2.15, 2.1, 2.25];
-const IMGROW = Object.assign(P1W.map(() => cell("", { fill: { color: "FFFFFE" } })), { img: true });
+const IMGROW = Object.assign(P1W.map(() => cell("")), { img: true });
 const p1 = slide("竞品对比：萤石、思必驰", [
   [head(""), head("萤石 C6Wi 4K"), head("萤石 RK3（芯片参照）"), head("思必驰 C60"), head("思必驰 MT200"), head("思必驰离线前端 SDK")],
   IMGROW,
@@ -129,4 +129,4 @@ slide("学术界轻量声源定位模型：参数量与计算量", [
  ["DCASE 2025 Task 3 结果", "https://dcase.community/challenge2025/task-stereo-sound-event-localization-and-detection-in-regular-video-content-results"],
  ["空间语音感知综述（arXiv 2607.02296）", "https://arxiv.org/abs/2607.02296"]]);
 
-require("./zh_notes")(p, OUT).then(() => require("./table_style")(OUT));
+require("./zh_notes")(p, OUT);
