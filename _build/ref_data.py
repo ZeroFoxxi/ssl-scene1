@@ -2,7 +2,7 @@
 """公开参照方案汇总的唯一数据源：生成 Excel，并导出 JSON 供 PPT 使用。
 
 运行：python _build/ref_data.py  →  公开参照方案汇总.xlsx、_build/ref_data.json
-数字均摘自原文（来源列给出出处）；“本方案”一行为本仓库仿真结果。核对日期 2026-11-11。
+数字均摘自原文（来源列给出出处）。核对日期 2026-11-11。
 """
 import json, os
 
@@ -10,18 +10,18 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SOURCES = {
     "ESP": ("乐鑫 ESP-SR：DOA 文档（ESP32-P4）", "https://docs.espressif.com/projects/esp-sr/en/latest/esp32p4/direction_of_arrival/README.html"),
-    "ODAS19": ("Grondin & Michaud 2019：SRP-PHAT-HSDA 与 M3K（arXiv 1812.00115）", "https://arxiv.org/abs/1812.00115"),
-    "ODAS21": ("Grondin 等 2021：ODAS 框架（arXiv 2103.03954）", "https://arxiv.org/abs/2103.03954"),
+    "ODAS21": ("Grondin 等：ODAS 框架（arXiv 2103.03954）", "https://arxiv.org/abs/2103.03954"),
     "XMOS": ("XMOS XVF3800 用户指南", "https://www.xmos.com/documentation/XM-014888-PC/html/modules/fwk_xvf/doc/user_guide/03_using_the_host_application.html"),
-    "FESPL": ("思必驰 DUI Linux SDK 手册（fespl）", "https://www.duiopen.com/docs/ct_fesp_linux"),
+    "FESPL": ("思必驰 DUI Linux SDK 开发手册", "https://www.duiopen.com/docs/ct_fesp_linux"),
     "RK3": ("萤石商城：RK3 桌面机器人参数", "https://www.ys7.com/item/927621.html"),
-    "FNSSL": ("Wang 等 2023：FN-SSL（arXiv 2305.19610）", "https://arxiv.org/abs/2305.19610"),
+    "IPDNET2": ("Wang 等 2025-09：IPDnet2（arXiv 2509.21900）", "https://arxiv.org/abs/2509.21900"),
+    "LIGHTDOA": ("Li 等 2025-11：LightDOA（arXiv 2511.08012）", "https://arxiv.org/abs/2511.08012"),
     "REALMAN": ("Yang 等 2024：RealMAN 数据集（NeurIPS 2024，arXiv 2406.19959）", "https://arxiv.org/abs/2406.19959"),
-    "DCASE24": ("DCASE 2024 Task 3 结果页", "https://dcase.community/challenge2024/task-audio-and-audiovisual-sound-event-localization-and-detection-with-source-distance-estimation-results"),
+    "DCASE25": ("DCASE 2025 Task 3 结果页", "https://dcase.community/challenge2025/task-stereo-sound-event-localization-and-detection-in-regular-video-content-results"),
 }
 
 # ---------------- 资源参照（端侧部署，已公开内存 / 算力的方案优先） ----------------
-RES_COLS = ["方案", "性质", "运行平台", "阵列", "方法", "内存", "算力", "精度（原文口径）", "来源"]
+RES_COLS = ["方案", "性质", "运行平台", "阵列", "方法 / 功能", "内存", "算力", "精度（原文口径）", "来源"]
 RES = [
     ["乐鑫 ESP-SR DOA", "商用 SDK（端侧）", "ESP32-P4 @400 MHz", "4 麦圆阵 r = 5 cm（支持 2–8 麦）",
      "Capon / MVDR，10° 网格", "约 206 KB（RAM 57 + PSRAM 149）", "0.65 ms / 8 ms 帧，CPU 8.1%",
@@ -31,38 +31,39 @@ RES = [
      "以单位球距离计，不便换算角度", "ODAS21"],
     ["XMOS XVF3800", "商用语音芯片", "专用语音处理器", "4 麦（线阵 33 mm / 方阵 66 mm）",
      "未公开；主机可读说话人方位", "未单列", "未单列", "未公开", "XMOS"],
-    ["思必驰 fespl", "竞品 SDK", "未公开", "线性 4 / 6 麦",
-     "未公开；唤醒后回调方位", "未公开", "未公开", "未公开", "FESPL"],
+    ["思必驰 DUI 离线前端", "竞品 SDK", "未公开", "线阵 4 / 6 麦（fespl）；另有环阵、家居双麦版",
+     "回声消除 + 定位 + 波束成形 + 唤醒一体；唤醒后回调方位", "未公开（需加载各模块资源文件）", "未公开", "未公开", "FESPL"],
     ["萤石 RK3 桌面机器人", "竞品整机", "4 核 A55 1.5 GHz + NPU 3T（整机）", "2 麦",
      "未公开；180° 声源定位", "定位模块未公开", "定位模块未公开", "未公开", "RK3"],
-    ["本方案基线", "仓库仿真原型", "PC（Python）", "4 麦方阵 5.7 cm",
-     "唤醒段 GEVD-MUSIC + 卡尔曼跟踪", "导向表约 669 KB（两套、10° 网格、双精度）", "待目标芯片实测",
-     "仿真（SIR 0 dB、RT60 0.6 s）10° 内 63%", "本仓库"],
 ]
 
-# ---------------- 效果参照（学术评测，给出参数量） ----------------
-EFF_COLS = ["方案", "评测条件", "参数量", "仿真：5° 内准确率 / 平均误差", "实录：10° 内准确率 / 平均误差", "来源"]
+# ---------------- 效果参照（2025 年文献为主，给出参数量 / 计算量） ----------------
+EFF_COLS = ["方案", "出处", "评测条件", "参数量", "计算量", "精度（原文口径）", "来源"]
 EFF = [
-    ["IcoCNN", "FN-SSL 论文同条件对比：2 麦 8 cm、在线处理；实录为 LOCATA", "0.3 M", "51.4% / 8.1°", "93.2% / 3.9°", "FNSSL"],
-    ["SRP-DNN", "同上", "0.8 M", "86.9% / 3.0°", "92.5% / 4.3°", "FNSSL"],
-    ["FN-SSL", "同上", "2.5 M", "91.4% / 2.4°", "96.6% / 2.6°", "FNSSL"],
-    ["Cross3D", "同上", "5.6 M", "50.8% / 8.4°", "93.6% / 3.9°", "FNSSL"],
-    ["CRNN 基线（RealMAN）", "9 通道实录、静止说话人；真实数据训练 vs 仅仿真训练", "未报告",
-     "—", "5° 内：真实训练 89.2% / 2.2°；仅仿真 60.4% / 7.8°", "REALMAN"],
-    ["DCASE 2024 第 1 名", "STARSS23 实录，13 类声音事件、多声源（任务更难）", "46.9 M（集成）", "—", "DOA 误差 13.6°", "DCASE24"],
-    ["DCASE 2024 麦阵基线", "同上，麦克风阵列格式", "0.74 M", "—", "DOA 误差 34.1°", "DCASE24"],
+    ["SRP-DNN", "IPDnet2 论文 2025-09", "RealMAN 实录；4 麦圆阵 r = 3 cm + 中心麦；两人说话混合", "0.8 M", "7.7 GFLOPs/s",
+     "5° 容差：漏检 18.6%、虚警 10.8%、误差 1.6°", "IPDNET2"],
+    ["TF-Mamba", "同上", "同上", "1.6 M", "36.6 GFLOPs/s", "漏检 11.8%、虚警 9.4%、误差 1.4°", "IPDNET2"],
+    ["IPDnet2-Tiny", "同上", "同上", "0.5 M", "0.2 GFLOPs/s", "漏检 17.4%、虚警 11.8%、误差 1.6°", "IPDNET2"],
+    ["IPDnet2-Small", "同上", "同上", "1.3 M", "0.9 GFLOPs/s", "漏检 13.5%、虚警 9.5%、误差 1.4°", "IPDNET2"],
+    ["IPDnet2-Large", "同上", "同上", "7.8 M", "13.9 GFLOPs/s", "漏检 10.5%、虚警 6.6%、误差 1.2°", "IPDNET2"],
+    ["LightDOA", "论文 2025-11", "仅仿真；2 麦间距 16–18 cm；单声源", "37 k", "未报告",
+     "10° 分类准确率 71.7%（同条件 CRNN 309 k：71.1%）", "LIGHTDOA"],
+    ["CRNN 基线", "RealMAN 论文 2024", "9 通道实录、静止说话人；真实数据训练 vs 仅仿真训练", "未报告", "未报告",
+     "5° 内：真实训练 89.2%；仅仿真训练 60.4%", "REALMAN"],
+    ["DCASE 2025 Task 3", "比赛结果 2025", "立体声实录视频，13 类声音事件、多声源（任务更难）", "第 1 名 58.5 M（集成）；官方基线 0.73 M", "未报告",
+     "DOA 误差：第 1 名 12.2°；基线 23.0°", "DCASE25"],
 ]
 
 # ---------------- 要点 ----------------
 RES_TAKE = [
     "公开了定位模块内存与算力的只有乐鑫和 ODAS，两者都是传统方法：约 200 KB 内存、单核个位数到十几个百分点的 CPU",
-    "竞品（思必驰 fespl、萤石 RK3）与 XMOS 只公开功能或整机芯片，定位模块资源未公开",
+    "竞品（思必驰 DUI 离线前端、萤石 RK3）与 XMOS 只公开功能或整机芯片，定位模块资源未公开",
 ]
 EFF_TAKE = [
-    "同条件下 0.8 M 的 SRP-DNN 已接近 2.5 M 的 FN-SSL，5.6 M 的 Cross3D 反而更差：参数量大不等于效果好",
-    "学术模型只报参数量，未给端侧内存与耗时；只用仿真训练在实录上明显下降（89% → 60%），需要实采数据",
+    "IPDnet2（2025）在实录小阵列上同时给出参数量和计算量：Tiny 版 0.5 M、0.2 GFLOPs/s，精度与 SRP-DNN 相当，计算量约为其 1/40",
+    "参数量大不等于效果好；只用仿真训练在实录上明显下降（89% → 60%），需要实采数据",
 ]
-PROPOSAL = "建议：资源以乐鑫（约 206 KB、400 MHz 下 CPU 约 8%）为量级参照，效果以 FN-SSL 论文的同条件对比为参照；目标芯片确认后定具体预算"
+PROPOSAL = "建议：资源以乐鑫（约 206 KB、400 MHz 下 CPU 约 8%）为量级参照，效果以 IPDnet2 的实录对比为参照；目标芯片确认后定具体预算"
 
 
 def build_excel(path):
@@ -87,7 +88,7 @@ def build_excel(path):
     ws = wb.active; ws.title = "资源参照"
     sheet(ws, RES_COLS, [r[:-1] + [src(r[-1])] for r in RES], [18, 16, 24, 24, 28, 28, 30, 30, 50])
     ws2 = wb.create_sheet("效果参照")
-    sheet(ws2, EFF_COLS, [r[:-1] + [src(r[-1])] for r in EFF], [20, 46, 14, 24, 36, 50])
+    sheet(ws2, EFF_COLS, [r[:-1] + [src(r[-1])] for r in EFF], [18, 20, 46, 24, 16, 40, 50])
     ws3 = wb.create_sheet("要点与建议")
     sheet(ws3, ["类别", "内容"], [["资源", t] for t in RES_TAKE] + [["效果", t] for t in EFF_TAKE] + [["建议", PROPOSAL]], [10, 110])
     ws4 = wb.create_sheet("来源")
