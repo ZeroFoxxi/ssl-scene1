@@ -13,7 +13,11 @@ SOURCES = {
     "ODAS21": ("Grondin 等：ODAS 框架（arXiv 2103.03954）", "https://arxiv.org/abs/2103.03954"),
     "XMOS": ("XMOS XVF3800 用户指南", "https://www.xmos.com/documentation/XM-014888-PC/html/modules/fwk_xvf/doc/user_guide/03_using_the_host_application.html"),
     "FESPL": ("思必驰 DUI Linux SDK 开发手册", "https://www.duiopen.com/docs/ct_fesp_linux"),
+    "C6WI": ("萤石商城：C6WI 旗舰系列参数", "https://www.ys7.com/item/165990.html"),
+    "EZ6270": ("萤石官网：产品家族（1.0T 算力）", "https://www.ezviz.com/cn/news/6270.html"),
     "RK3": ("萤石商城：RK3 桌面机器人参数", "https://www.ys7.com/item/927621.html"),
+    "C60": ("思必驰官网：C60 产品页", "https://meeting.aispeech.com/product/c60/"),
+    "SURVEY26": ("Shao 等 2026-07：空间语音感知综述（arXiv 2607.02296）", "https://arxiv.org/abs/2607.02296"),
     "IPDNET2": ("Wang 等 2025-09：IPDnet2（arXiv 2509.21900）", "https://arxiv.org/abs/2509.21900"),
     "LIGHTDOA": ("Li 等 2025-11：LightDOA（arXiv 2511.08012）", "https://arxiv.org/abs/2511.08012"),
     "REALMAN": ("Yang 等 2024：RealMAN 数据集（NeurIPS 2024，arXiv 2406.19959）", "https://arxiv.org/abs/2406.19959"),
@@ -23,18 +27,22 @@ SOURCES = {
 # ---------------- 资源参照（端侧部署，已公开内存 / 算力的方案优先） ----------------
 RES_COLS = ["方案", "性质", "运行平台", "阵列", "方法 / 功能", "内存", "算力", "精度（原文口径）", "来源"]
 RES = [
-    ["乐鑫 ESP-SR DOA", "商用 SDK（端侧）", "ESP32-P4 @400 MHz", "4 麦圆阵 r = 5 cm（支持 2–8 麦）",
+    ["乐鑫 ESP-SR DOA", "商用 SDK（端侧）", "ESP32-P4 @400 MHz", "4 麦圆阵 r 5 cm（支持 2–8 麦）",
      "Capon / MVDR，10° 网格", "约 206 KB（RAM 57 + PSRAM 149）", "0.65 ms / 8 ms 帧，CPU 8.1%",
      "官方仿真 ±10° 内 100%", "ESP"],
-    ["ODAS", "开源框架（机器人）", "树莓派 3（Cortex-A53 1.2 GHz）", "8 / 16 麦",
-     "SRP-PHAT 层级搜索 + 卡尔曼跟踪", "未单列", "8 麦定位单核 14%；跟踪 1 个声源 0.8%",
-     "以单位球距离计，不便换算角度", "ODAS21"],
-    ["XMOS XVF3800", "商用语音芯片", "专用语音处理器", "4 麦（线阵 33 mm / 方阵 66 mm）",
-     "未公开；主机可读说话人方位", "未单列", "未单列", "未公开", "XMOS"],
-    ["思必驰 DUI 离线前端", "竞品 SDK", "未公开", "线阵 4 / 6 麦（fespl）；另有环阵、家居双麦版",
-     "回声消除 + 定位 + 波束成形 + 唤醒一体；唤醒后回调方位", "未公开（需加载各模块资源文件）", "未公开", "未公开", "FESPL"],
-    ["萤石 RK3 桌面机器人", "竞品整机", "4 核 A55 1.5 GHz + NPU 3T（整机）", "2 麦",
+    ["ODAS", "开源框架（机器人）", "树莓派 3（A53 1.2 GHz）", "8 / 16 麦",
+     "SRP-PHAT + 卡尔曼跟踪", "未单列", "8 麦定位单核 14%；跟踪 0.8%",
+     "非角度口径，不便换算", "ODAS21"],
+    ["XMOS XVF3800", "商用语音芯片", "专用语音处理器", "4 麦（33 / 66 mm）",
+     "未公开；可读说话人方位", "未单列", "未单列", "未公开", "XMOS"],
+    ["萤石 C6Wi 4K", "竞品整机（主对标）", "系列标注专用芯片、1.0T 算力", "3 麦",
+     "听声辨位、声源追踪", "未公开", "未公开", "未公开", "C6WI+EZ6270"],
+    ["萤石 RK3 桌面机器人", "竞品整机（芯片参照）", "4 核 A55 1.5 GHz + NPU 3T", "2 麦",
      "未公开；180° 声源定位", "定位模块未公开", "定位模块未公开", "未公开", "RK3"],
+    ["思必驰 C60", "竞品整机（主对标）", "未公开", "8 麦线阵",
+     "语音定位 + 视觉追踪", "未公开", "未公开", "未公开", "C60"],
+    ["思必驰 DUI 离线前端", "竞品 SDK（算法对标）", "未公开", "线阵 4 / 6 麦；另有环阵、双麦版",
+     "回声消除、定位、波束成形、唤醒一体；唤醒后回调方位", "未公开", "未公开", "未公开", "FESPL"],
 ]
 
 # ---------------- 效果参照（2025 年文献为主，给出参数量 / 计算量） ----------------
@@ -54,10 +62,24 @@ EFF = [
      "DOA 误差：第 1 名 12.2°；基线 23.0°", "DCASE25"],
 ]
 
+# ---------------- 2026 年文献核查（截至 2026-11-11，arXiv 与 DCASE 官网） ----------------
+CHECK_COLS = ["文献 / 来源", "时间", "内容", "是否纳入效果参照", "原因"]
+CHECK = [
+    ["Shao 等：空间语音感知综述（arXiv 2607.02296）", "2026-07", "汇总实录场景的学习类声源定位方法", "作依据",
+     "汇总表收录的最新方法到 2025 年，含 IPDnet2；无新的参数量 / 计算量数据"],
+    ["NeuralMUSIC（arXiv 2606.18664）", "2026-06", "神经网络 + MUSIC 混合，机器人场景；AV16.3 实录单人平均误差 7.64°", "否", "未报参数量与计算量"],
+    ["QK-GCC（arXiv 2609.38000）", "2026-09", "可学习的时延估计，替代 GCC-PHAT；32.2 万参数、每对 208 MFLOPs", "否", "组件级方法；仅仿真，麦克风间距 0.5 m，与场景一差异大"],
+    ["展开式 EM 网络（arXiv 2603.16278）", "2026-03", "说话人定位", "否", "仅仿真；未报参数量与计算量"],
+    ["神经声源跟踪的身份辅助关联（arXiv 2609.33373）", "2026-09", "多说话人跟踪中的方位关联", "否", "跟踪关联方法；未报参数量与计算量"],
+    ["阵列通用 DOA（arXiv 2608.09425、2609.34216）", "2026-08 / 09", "面向任意阵列几何的 DOA 估计", "否", "未报参数量与计算量"],
+    ["仿真器复杂度对定位模型的影响（arXiv 2610.05055）", "2026-10", "仿真逼真度与真实场景泛化", "否（数据方案参考）", "无资源数字；结论可用于仿真数据设计"],
+    ["DCASE 2026 Task 3", "2026", "改为语义声学成像（指标 mAP），视听第 1 名约 1.65 亿参数", "否", "不再报 DOA 误差，无法与往年和本场景对比"],
+]
+
 # ---------------- 要点 ----------------
 RES_TAKE = [
     "公开了定位模块内存与算力的只有乐鑫和 ODAS，两者都是传统方法：约 200 KB 内存、单核个位数到十几个百分点的 CPU",
-    "竞品（思必驰 DUI 离线前端、萤石 RK3）与 XMOS 只公开功能或整机芯片，定位模块资源未公开",
+    "四个竞品对象（萤石 C6Wi 4K、RK3，思必驰 C60、DUI 离线前端）与 XMOS 只公开功能或整机芯片，定位模块资源未公开",
 ]
 EFF_TAKE = [
     "IPDnet2（2025）在实录小阵列上同时给出参数量和计算量：Tiny 版 0.5 M、0.2 GFLOPs/s，精度与 SRP-DNN 相当，计算量约为其 1/40",
@@ -84,13 +106,15 @@ def build_excel(path):
         for i, w in enumerate(widths): ws.column_dimensions[chr(65 + i)].width = w
         ws.freeze_panes = "A2"
 
-    src = lambda k: SOURCES[k][1] if k in SOURCES else k
+    src = lambda k: "\n".join(SOURCES[x][1] if x in SOURCES else x for x in k.split("+"))
     ws = wb.active; ws.title = "资源参照"
     sheet(ws, RES_COLS, [r[:-1] + [src(r[-1])] for r in RES], [18, 16, 24, 24, 28, 28, 30, 30, 50])
     ws2 = wb.create_sheet("效果参照")
     sheet(ws2, EFF_COLS, [r[:-1] + [src(r[-1])] for r in EFF], [18, 20, 46, 24, 16, 40, 50])
     ws3 = wb.create_sheet("要点与建议")
     sheet(ws3, ["类别", "内容"], [["资源", t] for t in RES_TAKE] + [["效果", t] for t in EFF_TAKE] + [["建议", PROPOSAL]], [10, 110])
+    ws5 = wb.create_sheet("2026 文献核查")
+    sheet(ws5, CHECK_COLS, CHECK, [44, 12, 50, 16, 50])
     ws4 = wb.create_sheet("来源")
     sheet(ws4, ["代号", "名称", "链接"], [[k, v[0], v[1]] for k, v in SOURCES.items()], [10, 50, 90])
     wb.save(path)
@@ -99,6 +123,6 @@ def build_excel(path):
 if __name__ == "__main__":
     build_excel(os.path.join(ROOT, "公开参照方案汇总.xlsx"))
     json.dump({"sources": SOURCES, "res_cols": RES_COLS, "res": RES, "eff_cols": EFF_COLS, "eff": EFF,
-               "res_take": RES_TAKE, "eff_take": EFF_TAKE, "proposal": PROPOSAL},
+               "res_take": RES_TAKE, "check": CHECK, "eff_take": EFF_TAKE, "proposal": PROPOSAL},
               open(os.path.join(ROOT, "_build", "ref_data.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("ok", len(RES), len(EFF))
