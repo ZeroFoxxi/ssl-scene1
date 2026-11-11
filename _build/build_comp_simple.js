@@ -47,12 +47,12 @@ const P1W = [1.45, 2.3, 2.05, 2.15, 2.1, 2.25];
 FS = 10;
 const HB = (t) => head(t, { valign: "bottom", fill: { color: "FFFFFF" } });
 const p1 = slide("竞品对比：萤石、思必驰", [
-  [HB(""), HB("萤石 C6Wi 4K"), HB("萤石 RK3（芯片参照）"), HB("思必驰 C60"), HB("思必驰 MT200"), HB("思必驰离线前端 SDK（fespl）")],
-  [L("形态"), cell("家用云台摄像机"), cell("桌面机器人（带云台摄像头、7 英寸屏）"), cell("会议追踪摄像机"), cell("会议追踪主机（外接吊顶麦 + 多台摄像机）"), cell("离线语音前端 SDK")],
+  [HB(""), HB("萤石 C6Wi 4K"), HB("萤石 RK3（芯片参照）"), HB("思必驰 C60"), HB("思必驰 MT200"), HB("思必驰离线前端 SDK")],
+  [L("形态"), cell("家用云台摄像机"), cell("桌面机器人（带云台摄像头、7 英寸屏）"), cell("会议追踪摄像机"), cell("会议追踪主机（外接吊顶麦 + 多台摄像机）"), cell("离线语音前端 SDK：线阵版 fespl、环阵版 fespa、家居双麦版 fespd")],
   [L("发布 / 价格"), cell("2021-12；商城 519–2,079 元（系列）"), cell("2025-07 前上市；商城 1,299 元"), cell("2023-07 展出；海外标价约 2,575 美元"), cell("2026-07 发布；价格未公开"), cell("—")],
-  [L("麦克风"), cell("3 麦"), cell("2 麦"), cell("8 麦线阵"), cell("外接吊顶麦克风"), cell("线阵 4 / 6 麦；另有环阵、家居双麦版")],
+  [L("麦克风"), cell("3 麦"), cell("2 麦"), cell("8 麦线阵"), cell("外接吊顶麦克风"), cell("线阵 4 / 6 麦；环阵（麦数未注明）；家居双麦")],
   [L("规格"), cell("4K；Wi-Fi 5 + 网口；云台水平 340° / 垂直 125°"), cell("400 万像素；云台水平 340°；Wi-Fi 6"), cell("双 1080P：特写 12× 变焦 + 全景 110°"), cell("支持 C40T、C60、C80 摄像机"), cell("输入 16 kHz、16 bit 多通道")],
-  [L("定位流程"), cell("声音触发 → 听声辨位 → 云台转向 → AI 追踪"), cell("180° 声源定位；语音问答"), cell("语音定位 → 视觉锁定 → 云台特写"), cell("吊顶麦定位 + 画面匹配；需标定麦克风与摄像机位置，无需预设机位"), cell("回声消除、定位、波束成形、唤醒一体；唤醒后回调方位 {\"doa\": 95}；留声纹接口")],
+  [L("定位流程"), cell("声音触发 → 听声辨位 → 云台转向 → AI 追踪"), cell("180° 声源定位；语音问答"), cell("语音定位 → 视觉锁定 → 云台特写"), cell("吊顶麦定位 + 画面匹配；需标定麦克风与摄像机位置，无需预设机位"), cell("回声消除、定位、波束成形、唤醒一体；三个版本均在唤醒后回调方位 {\"doa\": 95}")],
   [L("产品芯片"), cell("专用芯片，1.0T 算力（系列口径，型号未公开）"), cell("4 核 A55 1.5 GHz + NPU 3T"), cell("未公开"), cell("未公开"), cell("未公开")],
   [L("公司芯片线索"), cell("早期 C6C：4 麦，公司级声源定位识别率 86.0%（实验室）；SoC 供应商：富瀚微、海思、厦门威欣（公司口径）", { colspan: 2 }),
     cell("自研 TH1520（双 DSP，常开毫瓦级）、TH2608（Cortex-M + DSP + NPU）；已适配 34 种芯片架构，侧重低功耗芯片", { colspan: 3 })],
@@ -64,15 +64,26 @@ const p1 = slide("竞品对比：萤石、思必驰", [
  ["萤石商城 RK3", "https://www.ys7.com/item/927621.html"], ["思必驰 C60", "https://meeting.aispeech.com/product/c60/"], ["思必驰会议产品（MT200）", "https://meeting.aispeech.com/"],
  ["DUI Linux SDK 手册", "https://www.duiopen.com/docs/ct_fesp_linux"], ["思必驰招股书（2026）", "https://dataclouds.cninfo.com.cn/sjother2/documents/2026/2026-05-25/1d4b495ace513224eeffac7f7ab4bfbf.pdf"]], 0.95);
 headImages(p1, 0.5, 1.0, P1W, 0.85, [null, ["ezviz_c6wi_4k.jpg", 800, 800], ["ezviz_rk3.jpg", 502, 773], ["aispeech_c60.jpg", 1200, 563], ["aispeech_mt200.jpg", 1200, 484], null]);
-// fespl 为软件，无产品图：画线阵 4 麦 / 6 麦示意
+// 离线前端 SDK 为软件，无产品图：画三个版本的阵列示意（线阵 4 / 6 麦、环阵、家居双麦）
 {
-  const x0 = 0.5 + P1W.slice(0, 5).reduce((a, b) => a + b, 0), gap = 0.24, d = 0.11;
-  [[4, 1.22], [6, 1.55]].forEach(([n, y]) => {
-    const span = gap * (n - 1), sx = x0 + 0.9 + (gap * 5 - span) / 2;
-    T(p1, "线阵 " + n + " 麦", { x: x0 + 0.08, y: y - 0.12, w: 0.7, h: 0.24, fontSize: 9, color: C.gray, valign: "middle" });
-    p1.addShape(p.shapes.LINE, { x: sx, y, w: span, h: 0, line: { color: "BFBFBF", width: 1 } });
-    for (let i = 0; i < n; i++) p1.addShape(p.shapes.OVAL, { x: sx + i * gap - d / 2, y: y - d / 2, w: d, h: d, fill: { color: "595959" }, line: { type: "none" } });
-  });
+  const x0 = 0.5 + P1W.slice(0, 5).reduce((a, b) => a + b, 0), d = 0.1, cy = 1.33, ly = 1.62;
+  const dot = (x, y) => p1.addShape(p.shapes.OVAL, { x: x - d / 2, y: y - d / 2, w: d, h: d, fill: { color: "595959" }, line: { type: "none" } });
+  const lab = (t, cx, w) => T(p1, t, { x: cx - w / 2, y: ly, w, h: 0.2, fontSize: 8.5, color: C.gray, align: "center", valign: "middle" });
+  // 线阵 6 点（4 麦 / 6 麦）
+  const lx = x0 + 0.15, g = 0.15;
+  p1.addShape(p.shapes.LINE, { x: lx, y: cy, w: g * 5, h: 0, line: { color: "BFBFBF", width: 1 } });
+  for (let k = 0; k < 6; k++) dot(lx + k * g, cy);
+  lab("线阵 4 / 6 麦", lx + g * 2.5, 0.95);
+  // 环阵（麦数未注明，画圆环 + 6 点示意）
+  const rcx = x0 + 1.33, r = 0.17;
+  p1.addShape(p.shapes.OVAL, { x: rcx - r, y: cy - r, w: 2 * r, h: 2 * r, fill: { type: "none" }, line: { color: "BFBFBF", width: 1 } });
+  for (let k = 0; k < 6; k++) dot(rcx + r * Math.cos(k * Math.PI / 3), cy + r * Math.sin(k * Math.PI / 3));
+  lab("环阵", rcx, 0.6);
+  // 家居双麦
+  const dcx = x0 + 1.9;
+  p1.addShape(p.shapes.LINE, { x: dcx - 0.1, y: cy, w: 0.2, h: 0, line: { color: "BFBFBF", width: 1 } });
+  dot(dcx - 0.1, cy); dot(dcx + 0.1, cy);
+  lab("家居双麦", dcx, 0.6);
 }
 
 // ---------------- 第 2 页：端侧声源定位方案（设备实测） ----------------
