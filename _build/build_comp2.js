@@ -113,7 +113,7 @@ page({
   img: ["aispeech_c60.jpg", 2.9, 1.36],
   object: "思必驰 C60 AI 双目追踪摄像头",
   objectSub: "会议场景 · 算法对标走线阵前端 SDK（fespl）",
-  info: [["发布", "2024-04 InfoComm China 已展出"], ["价格", "国内未公开；海外渠道约 1,370–2,575 美元"],
+  info: [["展出", "2023-07 北京 InfoComm China 已展出；2024、2025 年续展"], ["价格", "国内未公开；海外经销商标价约 2,575 美元"],
          ["阵列", "8 阵列线性麦克风"], ["镜头", "双 1080P：特写 12× 变焦 + 全景 110°"]],
   flowCaption: "C60 声像追踪链路（官方功能）",
   flow: [["多通道音频", "8 阵列线性麦"], ["语音定位", "声源方向", true], ["视觉锁定", "人脸 / 人形"], ["云台特写", "PTZ 跟踪发言人"]],
@@ -129,10 +129,10 @@ page({
   src: [["思必驰官网：C60 产品页", "https://meeting.aispeech.com/product/c60/"],
         ["DUI Linux SDK 开发手册（fespl）", "https://www.duiopen.com/docs/ct_fesp_linux"],
         ["思必驰招股书（申报稿，2026）印刷页 1-1-127 / 128 / 134", "https://dataclouds.cninfo.com.cn/sjother2/documents/2026/2026-05-25/1d4b495ace513224eeffac7f7ab4bfbf.pdf"],
-        ["PjTime：InfoComm China 2024", "http://www.pjtime.com/2024/4/292539158386.shtml"],
+        ["搜狐：InfoComm China 2023 参展报道", "https://m.sohu.com/a/704497309_714642"],
         ["思必驰官网：MT200 发布（2026-07）", "https://meeting.aispeech.com/"],
-        ["渠道页：C60 规格与价格", "https://global.microless.com/product/aispeech-c60-ai-tracking-binocular-voice-camera-dual-1080p-lenses-close-up-panoramic-8-mic-array-speaker-tracking-12x-optical-zoom-ptz-auto-framing-for-zoom-teams-meetings-black-c60/?currency=usd"]],
-  notes: "思必驰这页分两层。产品层是 C60，思必驰自己的 AI 双目追踪摄像头：官网写明双 1080P 镜头、110 度视场、8 阵列线性麦克风、多模态声像追踪，也就是先用语音定位找到发言人方向，再用视觉锁定，云台推特写跟踪，和场景一的链路很像，只是用在会议室。2024 年 4 月 InfoComm China 已经展出，国内价格没公开，海外渠道大约 1370 到 2575 美元。算法层用它的线阵前端 SDK fespl 做对标：官方手册写明唤醒后会回调方位，可以拿同一段多通道录音直接比。部署芯片方面，思必驰有自研的太行芯片，TH1520 是双 DSP、常开毫瓦级，TH2608 加了 NPU；招股书说已适配 34 种芯片架构，侧重低功耗芯片。C60 和 fespl 具体用哪颗芯片、定位跑在哪个单元、资源和时延都没公开。另外，思必驰 2026 年 7 月新推了 MT200 追踪主机，用吊顶麦克风做声源定位，再和摄像机画面做视觉匹配，驱动 C40T、C60、C80 对准发言人，需要标定麦克风和摄像机位置。它代表了声像融合的方向，但阵列装在天花板、孔径大，和摄像机内置小阵列条件不同，所以作方向参照，不作效果对标。下一步是申请 fespl SDK 和目标平台版本做算法对比。",
+        ["经销商页：C60 规格与标价", "https://www.empirepro.com/products/ai-speech-aivis-c60"]],
+  notes: "思必驰这页分两层。产品层是 C60，思必驰自己的 AI 双目追踪摄像头：官网写明双 1080P 镜头、110 度视场、8 阵列线性麦克风、多模态声像追踪，也就是先用语音定位找到发言人方向，再用视觉锁定，云台推特写跟踪，和场景一的链路很像，只是用在会议室。2023 年 7 月北京 InfoComm China 就已经展出，2024、2025 年继续参展；国内价格没公开，海外经销商标价约 2575 美元。算法层用它的线阵前端 SDK fespl 做对标：官方手册写明唤醒后会回调方位，可以拿同一段多通道录音直接比。部署芯片方面，思必驰有自研的太行芯片，TH1520 是双 DSP、常开毫瓦级，TH2608 加了 NPU；招股书说已适配 34 种芯片架构，侧重低功耗芯片。C60 和 fespl 具体用哪颗芯片、定位跑在哪个单元、资源和时延都没公开。另外，思必驰 2026 年 7 月新推了 MT200 追踪主机，用吊顶麦克风做声源定位，再和摄像机画面做视觉匹配，驱动 C40T、C60、C80 对准发言人，需要标定麦克风和摄像机位置。它代表了声像融合的方向，但阵列装在天花板、孔径大，和摄像机内置小阵列条件不同，所以作方向参照，不作效果对标。下一步是申请 fespl SDK 和目标平台版本做算法对比。",
 });
 
 require("./zh_notes")(p, OUT);
