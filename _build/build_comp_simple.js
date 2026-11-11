@@ -52,7 +52,7 @@ function headImages(s, x0, y0, colW, h, imgs) {
 
 // ---------------- 第 1 页：竞品对比 ----------------
 const P1W = [1.45, 2.3, 2.05, 2.15, 2.1, 2.25];
-const IMGROW = Object.assign(P1W.map(() => cell("")), { img: true });
+const IMGROW = Object.assign(P1W.map(() => cell("", { fill: { color: "FFFFFE" } })), { img: true });
 const p1 = slide("竞品对比：萤石、思必驰", [
   [head(""), head("萤石 C6Wi 4K"), head("萤石 RK3（芯片参照）"), head("思必驰 C60"), head("思必驰 MT200"), head("思必驰离线前端 SDK")],
   IMGROW,
@@ -129,4 +129,4 @@ slide("学术界轻量声源定位模型：参数量与计算量", [
  ["DCASE 2025 Task 3 结果", "https://dcase.community/challenge2025/task-stereo-sound-event-localization-and-detection-in-regular-video-content-results"],
  ["空间语音感知综述（arXiv 2607.02296）", "https://arxiv.org/abs/2607.02296"]]);
 
-require("./zh_notes")(p, OUT);
+require("./zh_notes")(p, OUT).then(() => require("./table_style")(OUT));
