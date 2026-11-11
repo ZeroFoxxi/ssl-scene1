@@ -1,4 +1,4 @@
-// 竞品补充页（精简版，3 页，朴素表格）：竞品对比；端侧 DOA 方案（设备实测）；学术界轻量模型。用于插入 mentor 的调研 PPT。
+// 竞品补充页（精简版，3 页，朴素表格）：竞品对比；端侧声源定位方案（设备实测）；学术界轻量模型。用于插入 mentor 的调研 PPT。
 const pptxgen = require("pptxgenjs");
 const path = require("path");
 const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, ".."), "竞品补充页_精简版.pptx");
@@ -23,16 +23,13 @@ function slide(title, rows, colW, rowH, notes, src) {
   T(s, title, { x: 0.5, y: 0.3, w: 12.3, h: 0.55, fontSize: 22, bold: true, color: C.title, valign: "middle" });
   s.addTable(rows, { x: 0.5, y: 1.0, w: colW.reduce((a, b) => a + b, 0), colW, rowH,
     margin: [0.03, 0.07, 0.03, 0.07], border: { type: "solid", pt: 0.75, color: C.line }, autoPage: false });
-  let y = 1.0 + rowH.reduce((a, b) => a + b, 0) + 0.15;
-  (notes || []).forEach((n) => { T(s, n, { x: 0.5, y, w: 12.3, h: 0.28, fontSize: 10.5, color: C.gray }); y += 0.3; });
-  T(s, src.map((r, i) => [{ text: "[" + (i + 1) + "] " }, { text: r[0], options: { color: C.link, hyperlink: { url: r[1], tooltip: r[1] } } }, { text: i < src.length - 1 ? "　" : "" }]).flat(),
-    { x: 0.5, y: 6.9, w: 12.3, h: 0.45, fontSize: 8.5, color: C.gray });
+  s.addNotes((notes || []).join("\n") + "\n\n来源：\n" + src.map((r, i) => (i + 1) + ". " + r[0] + "：" + r[1]).join("\n"));
 }
 
 // ---------------- 第 1 页：竞品对比 ----------------
-FS = 9.5;
+FS = 10.5;
 slide("竞品对比：萤石、思必驰", [
-  [head(""), head("萤石 C6Wi 4K"), head("萤石 RK3"), head("思必驰 C60"), head("思必驰 MT200"), head("思必驰离线前端 SDK（fespl）")],
+  [head(""), head("萤石 C6Wi 4K"), head("萤石 RK3（芯片参照）"), head("思必驰 C60"), head("思必驰 MT200（2026 新品）"), head("思必驰离线前端 SDK（fespl）")],
   [L("形态"), cell("家用云台摄像机"), cell("桌面机器人（带云台摄像头、7 英寸屏）"), cell("会议追踪摄像机"), cell("会议追踪主机（外接吊顶麦 + 多台摄像机）"), cell("离线语音前端 SDK")],
   [L("发布 / 价格"), cell("2021-12；商城 519–2,079 元（系列）"), cell("2025-07 前上市；商城 1,299 元"), cell("2023-07 展出；海外标价约 2,575 美元"), cell("2026-07 发布；价格未公开"), cell("—")],
   [L("麦克风"), cell("3 麦"), cell("2 麦"), cell("8 麦线阵"), cell("外接吊顶麦克风"), cell("线阵 4 / 6 麦；另有环阵、家居双麦版")],
@@ -43,35 +40,35 @@ slide("竞品对比：萤石、思必驰", [
     cell("自研 TH1520（双 DSP，常开毫瓦级）、TH2608（Cortex-M + DSP + NPU）；已适配 34 种芯片架构，侧重低功耗芯片", { colspan: 3 })],
   [L("离线 / 在线"), cell("端侧运行；支持算法商店加载"), cell("未公开"), cell("未公开"), cell("未公开"), cell("离线")],
   [L("算法、执行单元、内存、模型、时延"), cell("未公开"), cell("未公开"), cell("未公开"), cell("未公开"), cell("未公开")],
-], [1.45, 2.3, 2.05, 2.15, 2.1, 2.25], [0.36, 0.5, 0.5, 0.45, 0.55, 0.72, 0.5, 0.62, 0.45, 0.5],
-["萤石商城在售摄像机中，仅见 C6Wi 标注“3MIC 听声辨位”；RK3 公开了 CPU / NPU，列作芯片参照；MT200 用吊顶麦，与摄像机内置小阵列条件不同。"],
+], [1.45, 2.3, 2.05, 2.15, 2.1, 2.25], [0.41, 0.56, 0.56, 0.51, 0.62, 0.81, 0.56, 0.7, 0.51, 0.56],
+["萤石商城在售摄像机中，仅见 C6Wi 标注“3MIC 听声辨位”。RK3 不是摄像机，公开了 CPU / NPU，列作芯片参照。MT200 用外接吊顶麦，与摄像机内置小阵列条件不同。"],
 [["萤石商城 C6WI", "https://www.ys7.com/item/165990.html"], ["萤石官网（1.0T 算力）", "https://www.ezviz.com/cn/news/6270.html"], ["萤石问询回复", "https://pdf.dfcfw.com/pdf/H2_AN202205051563734391_1.pdf"],
  ["萤石商城 RK3", "https://www.ys7.com/item/927621.html"], ["思必驰 C60", "https://meeting.aispeech.com/product/c60/"], ["思必驰会议产品（MT200）", "https://meeting.aispeech.com/"],
  ["DUI Linux SDK 手册", "https://www.duiopen.com/docs/ct_fesp_linux"], ["思必驰招股书（2026）", "https://dataclouds.cninfo.com.cn/sjother2/documents/2026/2026-05-25/1d4b495ace513224eeffac7f7ab4bfbf.pdf"]]);
 
-// ---------------- 第 2 页：端侧 DOA 方案（设备实测） ----------------
-FS = 10;
+// ---------------- 第 2 页：端侧声源定位方案（设备实测） ----------------
+FS = 10.5;
 const G = (t, n) => cell(t, { rowspan: n, bold: true, align: "center", fill: { color: C.head } });
-slide("端侧 DOA 方案：设备上实测的资源与耗时", [
-  [head("类别"), head("方案（年份）"), head("麦克风"), head("方法"), head("参数量 / 内存"), head("计算量 / 耗时"), head("运行平台"), head("精度（原文口径）")],
+slide("端侧声源定位方案：设备实测的资源与耗时", [
+  [head("类别"), head("方案（年份）"), head("麦克风"), head("方法"), head("参数量 / 内存"), head("计算量 / 耗时"), head("运行平台"), head("精度（原文指标）")],
   [G("工业界", 2), B("乐鑫 ESP-SR（官方文档）"), cell("4 麦圆阵，半径 5 cm（支持 2–8 麦）"), cell("Capon / MVDR，10° 网格"), cell("内存约 206 KB"), cell("0.65 ms / 8 ms 帧，CPU 8.1%"), cell("ESP32-P4 400 MHz"), cell("官方仿真 ±10° 内 100%")],
   [B("XMOS XVF3800"), cell("4 麦（线阵 / 方阵）"), cell("未公开；可读说话人方位"), cell("未公开"), cell("未公开"), cell("专用语音芯片"), cell("未公开")],
   [G("学术界\n传统方法", 3), B("SpeechCompass（2025）"), cell("4 麦"), cell("GCC-PHAT + 核密度估计"), cell("—"), cell("处理 < 20 ms"), cell("STM32L5（Cortex-M33 110 MHz）"), cell("对话语音误差 11.1–22.1°")],
-  [B("SMP-PHAT（2022）"), cell("4 麦（ReSpeaker USB）"), cell("SRP-PHAT，合并麦克风对"), cell("—"), cell("约 0.10 ms / 帧"), cell("树莓派 4"), cell("平均误差 16.2°")],
-  [B("ODAS（2021）"), cell("8 麦"), cell("SRP-PHAT 层级搜索 + 卡尔曼跟踪"), cell("—"), cell("定位单核 14%；跟踪 1 个声源 0.8%"), cell("树莓派 3"), cell("—")],
-  [G("学术界\n神经网络", 2), B("SELDnet 端侧评测（2024）"), cell("4 通道"), cell("CRNN"), cell("0.84–0.89 M 参数"), cell("推理 0.17–0.22 s / 2 s 音频"), cell("树莓派 3"), cell("声音事件任务，不可直接比")],
-  [B("Cross3D-Edge（2025）"), cell("12 麦"), cell("SRP-PHAT + 3D CNN"), cell("0.14 M 参数；片上内存 0.82 MB"), cell("127 MFLOPS；8.59 ms / 帧"), cell("树莓派 4B"), cell("LOCATA Task 1 误差 4.1°")],
-], [1.0, 2.1, 1.5, 1.7, 1.5, 1.75, 1.6, 1.15], [0.38, 0.62, 0.5, 0.58, 0.5, 0.58, 0.55, 0.58],
-["ESP32-P4、STM32L5 为芯片级平台；树莓派为通用开发板，算力更宽裕，只作量级参考。各方案数据集与指标不同，精度不可直接比较。"],
+  [B("SMP-PHAT（2022）"), cell("4 麦（ReSpeaker USB）"), cell("SRP-PHAT，合并麦克风对"), cell("—"), cell("约 0.10 ms / 帧"), cell("树莓派 4（开发板）"), cell("平均误差 16.2°")],
+  [B("ODAS（2021）"), cell("8 麦"), cell("SRP-PHAT 层级搜索 + 卡尔曼跟踪"), cell("—"), cell("定位单核 14%；跟踪 1 个声源 0.8%"), cell("树莓派 3（开发板）"), cell("—")],
+  [G("学术界\n神经网络", 2), B("SELDnet 端侧评测（2024）"), cell("4 通道"), cell("CRNN"), cell("0.84–0.89 M 参数"), cell("推理 0.17–0.22 s / 2 s 音频"), cell("树莓派 3（开发板）"), cell("声音事件任务，不可直接比")],
+  [B("Cross3D-Edge（2025）"), cell("12 麦"), cell("SRP-PHAT + 3D CNN"), cell("0.14 M 参数；片上内存 0.82 MB"), cell("127 MFLOPS；8.59 ms / 帧"), cell("树莓派 4B（开发板）"), cell("LOCATA Task 1 误差 4.1°")],
+], [0.95, 2.3, 1.55, 1.75, 1.45, 1.6, 1.5, 1.2], [0.51, 0.82, 0.67, 0.77, 0.67, 0.77, 0.73, 0.77],
+["ESP32-P4、STM32L5 为芯片级平台；树莓派为通用开发板，算力更宽裕，只作量级参考。各方案数据集与指标不同，精度不可直接比较。DOA 即声源到达方向估计。"],
 [["乐鑫 ESP-SR DOA", "https://docs.espressif.com/projects/esp-sr/en/latest/esp32p4/direction_of_arrival/README.html"], ["XMOS XVF3800", "https://www.xmos.com/documentation/XM-014888-PC/html/modules/fwk_xvf/doc/user_guide/03_using_the_host_application.html"],
  ["SpeechCompass（arXiv 2502.08848）", "https://arxiv.org/abs/2502.08848"], ["SMP-PHAT（arXiv 2203.14409）", "https://arxiv.org/abs/2203.14409"], ["ODAS（arXiv 2103.03954）", "https://arxiv.org/abs/2103.03954"],
  ["SELD 端侧评测（arXiv 2409.11700）", "https://arxiv.org/abs/2409.11700"], ["Cross3D-Edge（arXiv 2503.02046）", "https://arxiv.org/abs/2503.02046"]]);
 
 // ---------------- 第 3 页：学术界轻量模型（参数量 / 计算量） ----------------
-FS = 10.5;
+FS = 12;
 const cond = cell("RealMAN 实录；4 麦圆阵（半径 3 cm）+ 中心麦；两人说话混合（IPDnet2 论文，2025-09）", { rowspan: 5 });
-slide("学术界轻量 DOA 模型：参数量与计算量（未在设备上实测）", [
-  [head("模型（年份）"), head("评测条件"), head("参数量"), head("计算量"), head("精度（原文口径）")],
+slide("学术界轻量声源定位模型：参数量与计算量", [
+  [head("模型（年份）"), head("评测条件"), head("参数量"), head("计算量（论文报告）"), head("精度（原文指标）")],
   [B("SRP-DNN"), cond, cell("0.8 M"), cell("7.7 GFLOPs/s"), cell("5° 容差：漏检 18.6%、虚警 10.8%、误差 1.6°")],
   [B("TF-Mamba"), cell("1.6 M"), cell("36.6 GFLOPs/s"), cell("漏检 11.8%、虚警 9.4%、误差 1.4°")],
   [B("IPDnet2-Tiny（2025）"), cell("0.5 M"), cell("0.2 GFLOPs/s"), cell("漏检 17.4%、虚警 11.8%、误差 1.6°")],
@@ -79,11 +76,11 @@ slide("学术界轻量 DOA 模型：参数量与计算量（未在设备上实�
   [B("IPDnet2-Large（2025）"), cell("7.8 M"), cell("13.9 GFLOPs/s"), cell("漏检 10.5%、虚警 6.6%、误差 1.2°")],
   [B("LightDOA（2025-11）"), cell("仅仿真；2 麦，间距 16–18 cm；单声源"), cell("37 k"), cell("未报告"), cell("10° 分类准确率 71.7%（同条件 CRNN 309 k：71.1%）")],
   [B("DCASE 2025 Task 3"), cell("立体声实录视频；13 类声音事件、多声源"), cell("第 1 名 58.5 M（集成）；官方基线 0.73 M"), cell("未报告"), cell("DOA 误差：第 1 名 12.2°；基线 23.0°")],
-], [2.2, 3.4, 2.0, 1.6, 3.1], [0.4, 0.5, 0.5, 0.5, 0.5, 0.5, 0.58, 0.58],
-["截至 2026-11：2026 年新论文均未报参数量与计算量；2026-07 综述汇总的最新实录方法到 IPDnet2 为止。",
- "RealMAN（2024）：只用仿真数据训练，实录 5° 内准确率 60.4%；用真实数据训练 89.2%。"],
+], [2.2, 3.1, 2.0, 1.9, 3.1], [0.58, 0.72, 0.72, 0.72, 0.72, 0.72, 0.84, 0.84],
+["本页模型均未在芯片或开发板上实测，计算量为论文报告值。",
+ "截至 2026-11：2026 年新论文均未报参数量与计算量；2026-07 综述汇总的最新实录方法到 IPDnet2 为止。"],
 [["IPDnet2（arXiv 2509.21900）", "https://arxiv.org/abs/2509.21900"], ["LightDOA（arXiv 2511.08012）", "https://arxiv.org/abs/2511.08012"],
  ["DCASE 2025 Task 3 结果", "https://dcase.community/challenge2025/task-stereo-sound-event-localization-and-detection-in-regular-video-content-results"],
- ["空间语音感知综述（arXiv 2607.02296）", "https://arxiv.org/abs/2607.02296"], ["RealMAN（arXiv 2406.19959）", "https://arxiv.org/abs/2406.19959"]]);
+ ["空间语音感知综述（arXiv 2607.02296）", "https://arxiv.org/abs/2607.02296"]]);
 
 require("./zh_notes")(p, OUT);
