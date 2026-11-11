@@ -96,35 +96,33 @@ headImages(p1, 0.5, IMG_Y + 0.07, P1W, 0.81, [null, ["ezviz_c6wi_4k.jpg", 800, 8
 }
 
 // ---------------- 第 2 页：端侧声源定位方案（设备实测） ----------------
-const G = (t, n) => cell(t, { rowspan: n, align: "center" });
 slide("端侧声源定位方案：设备实测的资源与耗时", [
   [head("类别"), head("方案（年份）"), head("麦克风"), head("方法"), head("能力"), head("参数量 / 内存"), head("计算量 / 耗时"), head("运行平台"), head("精度（原文指标）")],
-  [G("工业界", 2), B("乐鑫 ESP-SR（官方文档）"), cell("4 麦圆阵，半径 5 cm（支持 2–8 麦）"), cell("Capon / MVDR，10° 网格"), cell("单声源测向"), cell("内存约 206 KB"), cell("0.65 ms / 8 ms 帧，CPU 8.1%"), cell("ESP32-P4 400 MHz"), cell("官方仿真 ±10° 内 100%")],
-  [B("XMOS XVF3800"), cell("4 麦（线阵 / 方阵）"), cell("未公开"), cell("输出说话人方位"), cell("未公开"), cell("未公开"), cell("专用语音芯片"), cell("未公开")],
-  [G("学术界\n传统方法", 3), B("SpeechCompass（2025）"), cell("4 麦"), cell("GCC-PHAT + 核密度估计"), cell("多人对话，按方向区分说话人"), cell("—"), cell("处理 < 20 ms"), cell("STM32L5（Cortex-M33 110 MHz）"), cell("对话语音误差 11.1–22.1°")],
-  [B("SMP-PHAT（2022）"), cell("4 麦（ReSpeaker）"), cell("SRP-PHAT，合并麦克风对"), cell("测向，无跟踪"), cell("—"), cell("约 0.10 ms / 帧"), cell("树莓派 4（开发板）"), cell("平均误差 16.2°")],
-  [B("ODAS（2021）"), cell("8 麦"), cell("SRP-PHAT 层级搜索"), cell("多声源定位 + 卡尔曼跟踪"), cell("—"), cell("定位单核 14%；跟踪 1 个声源 0.8%"), cell("树莓派 3（开发板）"), cell("—")],
-  [G("学术界\n神经网络", 2), B("SELDnet 端侧评测（2024）"), cell("4 通道"), cell("CRNN"), cell("多声源：声音事件检测 + 定位"), cell("0.84–0.89 M 参数"), cell("推理 0.17–0.22 s / 2 s 音频"), cell("树莓派 3（开发板）"), cell("声音事件任务，不可直接比")],
-  [B("Cross3D-Edge（2025）"), cell("12 麦"), cell("SRP-PHAT + 3D CNN"), cell("单声源，含移动声源跟踪"), cell("0.14 M 参数；片上内存 0.82 MB"), cell("127 MFLOPS；8.59 ms / 帧"), cell("树莓派 4B（开发板）"), cell("LOCATA Task 1 误差 4.1°")],
-], [0.85, 2.15, 1.2, 1.5, 1.4, 1.35, 1.45, 1.3, 1.1], [0.45, 0.82, 0.66, 0.74, 0.66, 0.74, 0.72, 0.74],
+  [cell("工业界"), B("乐鑫 ESP-SR（官方文档）"), cell("4 麦圆阵，半径 5 cm"), cell("Capon / MVDR，10° 网格"), cell("单声源测向"), cell("内存约 206 KB"), cell("0.65 ms / 8 ms 帧，CPU 8.1%"), cell("ESP32-P4 400 MHz"), cell("官方仿真 ±10° 内 100%")],
+  [cell("工业界"), B("XMOS XVF3800"), cell("4 麦（线阵 / 方阵）"), cell("未公开"), cell("输出说话人方位"), cell("未公开"), cell("未公开"), cell("专用语音芯片"), cell("未公开")],
+  [cell("学术界\n传统方法"), B("SpeechCompass（2025）"), cell("4 麦"), cell("GCC-PHAT + 核密度估计"), cell("多人对话，按方向区分"), cell("—"), cell("处理 < 20 ms"), cell("STM32L5（M33 110 MHz）"), cell("对话语音误差 11.1–22.1°")],
+  [cell("学术界\n传统方法"), B("SMP-PHAT（2022）"), cell("4 麦（ReSpeaker）"), cell("SRP-PHAT，合并麦克风对"), cell("测向，无跟踪"), cell("—"), cell("约 0.10 ms / 帧"), cell("树莓派 4（开发板）"), cell("平均误差 16.2°")],
+  [cell("学术界\n传统方法"), B("ODAS（2021）"), cell("8 麦"), cell("SRP-PHAT 层级搜索"), cell("多声源定位 + 卡尔曼跟踪"), cell("—"), cell("定位单核 14%；跟踪 0.8%"), cell("树莓派 3（开发板）"), cell("—")],
+  [cell("学术界\n神经网络"), B("SELDnet 端侧评测（2024）"), cell("4 通道"), cell("CRNN"), cell("多声源：事件检测 + 定位"), cell("0.84–0.89 M 参数"), cell("推理 0.17–0.22 s / 2 s 音频"), cell("树莓派 3（开发板）"), cell("声音事件任务，不可直接比")],
+  [cell("学术界\n神经网络"), B("Cross3D-Edge（2025）"), cell("12 麦"), cell("SRP-PHAT + 3D CNN"), cell("单声源，含移动声源跟踪"), cell("0.14 M 参数；片上内存 0.82 MB"), cell("127 MFLOPS；8.59 ms / 帧"), cell("树莓派 4B（开发板）"), cell("LOCATA Task 1 误差 4.1°")],
+], [0.9, 1.95, 1.3, 1.45, 1.45, 1.35, 1.4, 1.3, 1.2], [0.5, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7],
 ["ESP32-P4、STM32L5 为芯片级平台；树莓派为通用开发板，算力更宽裕，只作量级参考。各方案数据集与指标不同，精度不可直接比较。DOA 即声源到达方向估计。"],
 [["乐鑫 ESP-SR DOA", "https://docs.espressif.com/projects/esp-sr/en/latest/esp32p4/direction_of_arrival/README.html"], ["XMOS XVF3800", "https://www.xmos.com/documentation/XM-014888-PC/html/modules/fwk_xvf/doc/user_guide/03_using_the_host_application.html"],
  ["SpeechCompass（arXiv 2502.08848）", "https://arxiv.org/abs/2502.08848"], ["SMP-PHAT（arXiv 2203.14409）", "https://arxiv.org/abs/2203.14409"], ["ODAS（arXiv 2103.03954）", "https://arxiv.org/abs/2103.03954"],
  ["SELD 端侧评测（arXiv 2409.11700）", "https://arxiv.org/abs/2409.11700"], ["Cross3D-Edge（arXiv 2503.02046）", "https://arxiv.org/abs/2503.02046"]]);
 
 // ---------------- 第 3 页：学术界轻量模型（参数量 / 计算量） ----------------
-const cond = cell("RealMAN 实录；4 麦圆阵（半径 3 cm）+ 中心麦；两人说话混合（IPDnet2 论文，2025-09）", { rowspan: 5 });
-const abil = cell("多声源（两人同时说话），支持移动声源", { rowspan: 5 });
+const COND = "RealMAN 实录，4 + 1 麦（半径 3 cm）；5° 容差", ABIL = "多声源，支持移动声源";
 slide("学术界轻量声源定位模型：参数量与计算量", [
   [head("模型（年份）"), head("评测条件"), head("能力"), head("参数量"), head("计算量（论文报告）"), head("精度（原文指标）")],
-  [B("SRP-DNN"), cond, abil, cell("0.8 M"), cell("7.7 GFLOPs/s"), cell("5° 容差：漏检 18.6%、虚警 10.8%、误差 1.6°")],
-  [B("TF-Mamba"), cell("1.6 M"), cell("36.6 GFLOPs/s"), cell("漏检 11.8%、虚警 9.4%、误差 1.4°")],
-  [B("IPDnet2-Tiny（2025）"), cell("0.5 M"), cell("0.2 GFLOPs/s"), cell("漏检 17.4%、虚警 11.8%、误差 1.6°")],
-  [B("IPDnet2-Small（2025）"), cell("1.3 M"), cell("0.9 GFLOPs/s"), cell("漏检 13.5%、虚警 9.5%、误差 1.4°")],
-  [B("IPDnet2-Large（2025）"), cell("7.8 M"), cell("13.9 GFLOPs/s"), cell("漏检 10.5%、虚警 6.6%、误差 1.2°")],
-  [B("LightDOA（2025-11）"), cell("仅仿真；2 麦，间距 16–18 cm"), cell("单声源"), cell("37 k"), cell("未报告"), cell("10° 分类准确率 71.7%（同条件 CRNN 309 k：71.1%）")],
-  [B("DCASE 2025 Task 3"), cell("立体声实录视频；13 类声音事件"), cell("多声源；含距离、画面内外判定"), cell("第 1 名 58.5 M（集成）；官方基线 0.73 M"), cell("未报告"), cell("DOA 误差：第 1 名 12.2°；基线 23.0°")],
-], [2.3, 2.4, 1.7, 1.6, 1.6, 2.7], [0.42, 0.72, 0.72, 0.72, 0.72, 0.72, 0.78, 0.78],
+  [B("SRP-DNN（IPDnet2 论文对比）"), cell(COND), cell(ABIL), cell("0.8 M"), cell("7.7 GFLOPs/s"), cell("漏检 18.6%、虚警 10.8%、误差 1.6°")],
+  [B("TF-Mamba（IPDnet2 论文对比）"), cell(COND), cell(ABIL), cell("1.6 M"), cell("36.6 GFLOPs/s"), cell("漏检 11.8%、虚警 9.4%、误差 1.4°")],
+  [B("IPDnet2-Tiny（2025）"), cell(COND), cell(ABIL), cell("0.5 M"), cell("0.2 GFLOPs/s"), cell("漏检 17.4%、虚警 11.8%、误差 1.6°")],
+  [B("IPDnet2-Small（2025）"), cell(COND), cell(ABIL), cell("1.3 M"), cell("0.9 GFLOPs/s"), cell("漏检 13.5%、虚警 9.5%、误差 1.4°")],
+  [B("IPDnet2-Large（2025）"), cell(COND), cell(ABIL), cell("7.8 M"), cell("13.9 GFLOPs/s"), cell("漏检 10.5%、虚警 6.6%、误差 1.2°")],
+  [B("LightDOA（2025-11）"), cell("仅仿真；2 麦，间距 16–18 cm"), cell("单声源"), cell("37 k"), cell("未报告"), cell("10° 分类准确率 71.7%（同条件 CRNN 71.1%）")],
+  [B("DCASE 2025 Task 3"), cell("立体声实录视频；13 类声音事件"), cell("多声源；含距离、画面内外"), cell("第 1 名 58.5 M；基线 0.73 M"), cell("未报告"), cell("DOA 误差：第 1 名 12.2°；基线 23.0°")],
+], [2.4, 2.75, 1.7, 1.45, 1.4, 2.6], [0.45, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66],
 ["本页模型均未在芯片或开发板上实测，计算量为论文报告值。",
  "截至 2026-11：2026 年新论文均未报参数量与计算量；2026-07 综述汇总的最新实录方法到 IPDnet2 为止。"],
 [["IPDnet2（arXiv 2509.21900）", "https://arxiv.org/abs/2509.21900"], ["LightDOA（arXiv 2511.08012）", "https://arxiv.org/abs/2511.08012"],
