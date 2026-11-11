@@ -1,9 +1,9 @@
-// 竞品补充页（精简版，3 页，朴素表格）：竞品对比；端侧声源定位方案（设备实测）；学术界轻量模型。用于插入 mentor 的调研 PPT。
+// 竞品补充页（精简版，3 页，蓝白相间标准表格；标题微软雅黑 16 加粗，表内 10 号）：竞品对比；端侧声源定位方案（设备实测）；学术界轻量模型。用于插入 mentor 的调研 PPT。
 const pptxgen = require("pptxgenjs");
 const path = require("path");
 const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, ".."), "竞品补充页_精简版.pptx");
 const F = "Microsoft YaHei";
-const C = { title: "1F2937", text: "262626", gray: "6B7280", head: "F2F2F2", line: "BFBFBF", na: "8C8C8C", link: "2F6EB5" };
+const C = { title: "000000", text: "000000", gray: "595959", head: "4472C4", band: "D9E2F3", line: "FFFFFF", na: "7F7F7F" };
 
 const p = new pptxgen();
 p.layout = "LAYOUT_WIDE";
@@ -11,19 +11,27 @@ p.title = "竞品补充页";
 
 const T = (s, text, o) => s.addText(text, Object.assign({ fontFace: F, lang: "zh-CN", fontSize: 12, color: C.text, margin: 0, valign: "top" }, o));
 const NA = /^(未公开|未报告|—)/;
-let FS = 10.5;
+const FS = 10;
 const cell = (t, o) => ({ text: t, options: Object.assign({ fontFace: F, lang: "zh-CN", fontSize: FS, color: NA.test(t) ? C.na : C.text, valign: "middle" }, o) });
-const head = (t, o) => cell(t, Object.assign({ bold: true, fill: { color: C.head }, align: "center" }, o));
-const L = (t, o) => cell(t, Object.assign({ bold: true, fill: { color: C.head } }, o));
-const B = (t, o) => cell(t, Object.assign({ bold: true }, o));
+const head = (t, o) => cell(t, Object.assign({ bold: true, color: "FFFFFF", fill: { color: C.head }, align: "center" }, o));
+const L = (t, o) => cell(t, o);
+const B = (t, o) => cell(t, o);
 
-function slide(title, rows, colW, rowH, notes, src, y0) {
-  y0 = y0 || 1.0;
+const Y0 = 0.85;
+function slide(title, rows, colW, rowH, notes, src) {
   const s = p.addSlide();
   s.background = { color: "FFFFFF" };
-  T(s, title, { x: 0.5, y: 0.3, w: 12.3, h: 0.55, fontSize: 22, bold: true, color: C.title, valign: "middle" });
-  s.addTable(rows, { x: 0.5, y: y0, w: colW.reduce((a, b) => a + b, 0), colW, rowH,
-    margin: [0.03, 0.07, 0.03, 0.07], border: { type: "solid", pt: 0.75, color: C.line }, autoPage: false });
+  T(s, title, { x: 0.5, y: 0.3, w: 12.3, h: 0.45, fontSize: 16, bold: true, color: C.title, valign: "middle" });
+  // 蓝白相间：表头之后逐行交替浅蓝 / 白；带 img 标记的图片行保持白底且不参与交替
+  let k = 0;
+  rows.forEach((r, i) => {
+    if (i === 0) return;
+    const fill = r.img ? "FFFFFF" : (k % 2 === 0 ? C.band : "FFFFFF");
+    if (!r.img) k++;
+    r.forEach((c) => { if (!c.options.fill) c.options.fill = { color: fill }; });
+  });
+  s.addTable(rows, { x: 0.5, y: Y0, w: colW.reduce((a, b) => a + b, 0), colW, rowH,
+    margin: [0.03, 0.07, 0.03, 0.07], border: { type: "solid", pt: 1, color: C.line }, autoPage: false });
   s.addNotes((notes || []).join("\n") + "\n\n来源：\n" + src.map((r, i) => (i + 1) + ". " + r[0] + "：" + r[1]).join("\n"));
   return s;
 }
@@ -44,10 +52,10 @@ function headImages(s, x0, y0, colW, h, imgs) {
 
 // ---------------- 第 1 页：竞品对比 ----------------
 const P1W = [1.45, 2.3, 2.05, 2.15, 2.1, 2.25];
-FS = 10;
-const HB = (t) => head(t, { valign: "bottom", fill: { color: "FFFFFF" } });
+const IMGROW = Object.assign(P1W.map(() => cell("")), { img: true });
 const p1 = slide("竞品对比：萤石、思必驰", [
-  [HB(""), HB("萤石 C6Wi 4K"), HB("萤石 RK3（芯片参照）"), HB("思必驰 C60"), HB("思必驰 MT200"), HB("思必驰离线前端 SDK")],
+  [head(""), head("萤石 C6Wi 4K"), head("萤石 RK3（芯片参照）"), head("思必驰 C60"), head("思必驰 MT200"), head("思必驰离线前端 SDK")],
+  IMGROW,
   [L("形态"), cell("家用云台摄像机"), cell("桌面机器人（带云台摄像头、7 英寸屏）"), cell("会议追踪摄像机"), cell("会议追踪主机（外接吊顶麦 + 多台摄像机）"), cell("离线语音前端 SDK：线阵版 fespl、环阵版 fespa、家居双麦版 fespd")],
   [L("发布 / 价格"), cell("2021-12；商城 519–2,079 元（系列）"), cell("2025-07 前上市；商城 1,299 元"), cell("2023-07 展出；海外标价约 2,575 美元"), cell("2026-07 发布；价格未公开"), cell("—")],
   [L("麦克风"), cell("3 麦"), cell("2 麦"), cell("8 麦线阵"), cell("外接吊顶麦克风"), cell("线阵 4 / 6 麦；环阵（麦数未注明）；家居双麦")],
@@ -58,15 +66,16 @@ const p1 = slide("竞品对比：萤石、思必驰", [
     cell("自研 TH1520（双 DSP，常开毫瓦级）、TH2608（Cortex-M + DSP + NPU）；已适配 34 种芯片架构，侧重低功耗芯片", { colspan: 3 })],
   [L("离线 / 在线"), cell("端侧运行；支持算法商店加载"), cell("未公开"), cell("未公开"), cell("未公开"), cell("离线")],
   [L("算法、执行单元、内存、模型、时延"), cell("未公开"), cell("未公开"), cell("未公开"), cell("未公开"), cell("未公开")],
-], P1W, [1.3, 0.48, 0.5, 0.45, 0.55, 0.72, 0.5, 0.62, 0.45, 0.5],
+], P1W, [0.36, 0.95, 0.45, 0.48, 0.42, 0.5, 0.66, 0.48, 0.58, 0.42, 0.48],
 ["萤石商城在售摄像机中，仅见 C6Wi 标注“3MIC 听声辨位”。RK3 不是摄像机，公开了 CPU / NPU，列作芯片参照。MT200 用外接吊顶麦，与摄像机内置小阵列条件不同。"],
 [["萤石商城 C6WI", "https://www.ys7.com/item/165990.html"], ["萤石官网（1.0T 算力）", "https://www.ezviz.com/cn/news/6270.html"], ["萤石问询回复", "https://pdf.dfcfw.com/pdf/H2_AN202205051563734391_1.pdf"],
  ["萤石商城 RK3", "https://www.ys7.com/item/927621.html"], ["思必驰 C60", "https://meeting.aispeech.com/product/c60/"], ["思必驰会议产品（MT200）", "https://meeting.aispeech.com/"],
- ["DUI Linux SDK 手册", "https://www.duiopen.com/docs/ct_fesp_linux"], ["思必驰招股书（2026）", "https://dataclouds.cninfo.com.cn/sjother2/documents/2026/2026-05-25/1d4b495ace513224eeffac7f7ab4bfbf.pdf"]], 0.95);
-headImages(p1, 0.5, 1.0, P1W, 0.85, [null, ["ezviz_c6wi_4k.jpg", 800, 800], ["ezviz_rk3.jpg", 502, 773], ["aispeech_c60.jpg", 1200, 563], ["aispeech_mt200.jpg", 1200, 484], null]);
+ ["DUI Linux SDK 手册", "https://www.duiopen.com/docs/ct_fesp_linux"], ["思必驰招股书（2026）", "https://dataclouds.cninfo.com.cn/sjother2/documents/2026/2026-05-25/1d4b495ace513224eeffac7f7ab4bfbf.pdf"]]);
+const IMG_Y = Y0 + 0.36;
+headImages(p1, 0.5, IMG_Y + 0.07, P1W, 0.81, [null, ["ezviz_c6wi_4k.jpg", 800, 800], ["ezviz_rk3.jpg", 502, 773], ["aispeech_c60.jpg", 1200, 563], ["aispeech_mt200.jpg", 1200, 484], null]);
 // 离线前端 SDK 为软件，无产品图：画三个版本的阵列示意（线阵 4 / 6 麦、环阵、家居双麦）
 {
-  const x0 = 0.5 + P1W.slice(0, 5).reduce((a, b) => a + b, 0), d = 0.1, cy = 1.33, ly = 1.62;
+  const x0 = 0.5 + P1W.slice(0, 5).reduce((a, b) => a + b, 0), d = 0.1, cy = IMG_Y + 0.36, ly = IMG_Y + 0.64;
   const dot = (x, y) => p1.addShape(p.shapes.OVAL, { x: x - d / 2, y: y - d / 2, w: d, h: d, fill: { color: "595959" }, line: { type: "none" } });
   const lab = (t, cx, w) => T(p1, t, { x: cx - w / 2, y: ly, w, h: 0.2, fontSize: 8.5, color: C.gray, align: "center", valign: "middle" });
   // 线阵 6 点（4 麦 / 6 麦）
@@ -87,8 +96,7 @@ headImages(p1, 0.5, 1.0, P1W, 0.85, [null, ["ezviz_c6wi_4k.jpg", 800, 800], ["ez
 }
 
 // ---------------- 第 2 页：端侧声源定位方案（设备实测） ----------------
-FS = 10;
-const G = (t, n) => cell(t, { rowspan: n, bold: true, align: "center", fill: { color: C.head } });
+const G = (t, n) => cell(t, { rowspan: n, align: "center" });
 slide("端侧声源定位方案：设备实测的资源与耗时", [
   [head("类别"), head("方案（年份）"), head("麦克风"), head("方法"), head("能力"), head("参数量 / 内存"), head("计算量 / 耗时"), head("运行平台"), head("精度（原文指标）")],
   [G("工业界", 2), B("乐鑫 ESP-SR（官方文档）"), cell("4 麦圆阵，半径 5 cm（支持 2–8 麦）"), cell("Capon / MVDR，10° 网格"), cell("单声源测向"), cell("内存约 206 KB"), cell("0.65 ms / 8 ms 帧，CPU 8.1%"), cell("ESP32-P4 400 MHz"), cell("官方仿真 ±10° 内 100%")],
@@ -98,14 +106,13 @@ slide("端侧声源定位方案：设备实测的资源与耗时", [
   [B("ODAS（2021）"), cell("8 麦"), cell("SRP-PHAT 层级搜索"), cell("多声源定位 + 卡尔曼跟踪"), cell("—"), cell("定位单核 14%；跟踪 1 个声源 0.8%"), cell("树莓派 3（开发板）"), cell("—")],
   [G("学术界\n神经网络", 2), B("SELDnet 端侧评测（2024）"), cell("4 通道"), cell("CRNN"), cell("多声源：声音事件检测 + 定位"), cell("0.84–0.89 M 参数"), cell("推理 0.17–0.22 s / 2 s 音频"), cell("树莓派 3（开发板）"), cell("声音事件任务，不可直接比")],
   [B("Cross3D-Edge（2025）"), cell("12 麦"), cell("SRP-PHAT + 3D CNN"), cell("单声源，含移动声源跟踪"), cell("0.14 M 参数；片上内存 0.82 MB"), cell("127 MFLOPS；8.59 ms / 帧"), cell("树莓派 4B（开发板）"), cell("LOCATA Task 1 误差 4.1°")],
-], [0.85, 2.15, 1.2, 1.5, 1.4, 1.35, 1.45, 1.3, 1.1], [0.51, 0.82, 0.67, 0.77, 0.67, 0.77, 0.73, 0.77],
+], [0.85, 2.15, 1.2, 1.5, 1.4, 1.35, 1.45, 1.3, 1.1], [0.45, 0.82, 0.66, 0.74, 0.66, 0.74, 0.72, 0.74],
 ["ESP32-P4、STM32L5 为芯片级平台；树莓派为通用开发板，算力更宽裕，只作量级参考。各方案数据集与指标不同，精度不可直接比较。DOA 即声源到达方向估计。"],
 [["乐鑫 ESP-SR DOA", "https://docs.espressif.com/projects/esp-sr/en/latest/esp32p4/direction_of_arrival/README.html"], ["XMOS XVF3800", "https://www.xmos.com/documentation/XM-014888-PC/html/modules/fwk_xvf/doc/user_guide/03_using_the_host_application.html"],
  ["SpeechCompass（arXiv 2502.08848）", "https://arxiv.org/abs/2502.08848"], ["SMP-PHAT（arXiv 2203.14409）", "https://arxiv.org/abs/2203.14409"], ["ODAS（arXiv 2103.03954）", "https://arxiv.org/abs/2103.03954"],
  ["SELD 端侧评测（arXiv 2409.11700）", "https://arxiv.org/abs/2409.11700"], ["Cross3D-Edge（arXiv 2503.02046）", "https://arxiv.org/abs/2503.02046"]]);
 
 // ---------------- 第 3 页：学术界轻量模型（参数量 / 计算量） ----------------
-FS = 11;
 const cond = cell("RealMAN 实录；4 麦圆阵（半径 3 cm）+ 中心麦；两人说话混合（IPDnet2 论文，2025-09）", { rowspan: 5 });
 const abil = cell("多声源（两人同时说话），支持移动声源", { rowspan: 5 });
 slide("学术界轻量声源定位模型：参数量与计算量", [
@@ -117,7 +124,7 @@ slide("学术界轻量声源定位模型：参数量与计算量", [
   [B("IPDnet2-Large（2025）"), cell("7.8 M"), cell("13.9 GFLOPs/s"), cell("漏检 10.5%、虚警 6.6%、误差 1.2°")],
   [B("LightDOA（2025-11）"), cell("仅仿真；2 麦，间距 16–18 cm"), cell("单声源"), cell("37 k"), cell("未报告"), cell("10° 分类准确率 71.7%（同条件 CRNN 309 k：71.1%）")],
   [B("DCASE 2025 Task 3"), cell("立体声实录视频；13 类声音事件"), cell("多声源；含距离、画面内外判定"), cell("第 1 名 58.5 M（集成）；官方基线 0.73 M"), cell("未报告"), cell("DOA 误差：第 1 名 12.2°；基线 23.0°")],
-], [2.3, 2.4, 1.7, 1.6, 1.6, 2.7], [0.58, 0.72, 0.72, 0.72, 0.72, 0.72, 0.84, 0.84],
+], [2.3, 2.4, 1.7, 1.6, 1.6, 2.7], [0.42, 0.72, 0.72, 0.72, 0.72, 0.72, 0.78, 0.78],
 ["本页模型均未在芯片或开发板上实测，计算量为论文报告值。",
  "截至 2026-11：2026 年新论文均未报参数量与计算量；2026-07 综述汇总的最新实录方法到 IPDnet2 为止。"],
 [["IPDnet2（arXiv 2509.21900）", "https://arxiv.org/abs/2509.21900"], ["LightDOA（arXiv 2511.08012）", "https://arxiv.org/abs/2511.08012"],
