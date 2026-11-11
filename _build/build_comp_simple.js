@@ -47,7 +47,7 @@ const P1W = [1.45, 2.3, 2.05, 2.15, 2.1, 2.25];
 FS = 10;
 const HB = (t) => head(t, { valign: "bottom", fill: { color: "FFFFFF" } });
 const p1 = slide("竞品对比：萤石、思必驰", [
-  [HB(""), HB("萤石 C6Wi 4K"), HB("萤石 RK3（芯片参照）"), HB("思必驰 C60"), HB("思必驰 MT200（2026 新品）"), HB("思必驰离线前端 SDK（fespl）")],
+  [HB(""), HB("萤石 C6Wi 4K"), HB("萤石 RK3（芯片参照）"), HB("思必驰 C60"), HB("思必驰 MT200"), HB("思必驰离线前端 SDK（fespl）")],
   [L("形态"), cell("家用云台摄像机"), cell("桌面机器人（带云台摄像头、7 英寸屏）"), cell("会议追踪摄像机"), cell("会议追踪主机（外接吊顶麦 + 多台摄像机）"), cell("离线语音前端 SDK")],
   [L("发布 / 价格"), cell("2021-12；商城 519–2,079 元（系列）"), cell("2025-07 前上市；商城 1,299 元"), cell("2023-07 展出；海外标价约 2,575 美元"), cell("2026-07 发布；价格未公开"), cell("—")],
   [L("麦克风"), cell("3 麦"), cell("2 麦"), cell("8 麦线阵"), cell("外接吊顶麦克风"), cell("线阵 4 / 6 麦；另有环阵、家居双麦版")],
@@ -63,7 +63,8 @@ const p1 = slide("竞品对比：萤石、思必驰", [
 [["萤石商城 C6WI", "https://www.ys7.com/item/165990.html"], ["萤石官网（1.0T 算力）", "https://www.ezviz.com/cn/news/6270.html"], ["萤石问询回复", "https://pdf.dfcfw.com/pdf/H2_AN202205051563734391_1.pdf"],
  ["萤石商城 RK3", "https://www.ys7.com/item/927621.html"], ["思必驰 C60", "https://meeting.aispeech.com/product/c60/"], ["思必驰会议产品（MT200）", "https://meeting.aispeech.com/"],
  ["DUI Linux SDK 手册", "https://www.duiopen.com/docs/ct_fesp_linux"], ["思必驰招股书（2026）", "https://dataclouds.cninfo.com.cn/sjother2/documents/2026/2026-05-25/1d4b495ace513224eeffac7f7ab4bfbf.pdf"]], 0.95);
-headImages(p1, 0.5, 1.0, P1W, 0.85, [null, ["ezviz_c6wi_4k.jpg", 800, 800], ["ezviz_rk3.jpg", 502, 773], ["aispeech_c60.jpg", 1200, 563], null, null]);
+headImages(p1, 0.5, 1.0, P1W, 0.85, [null, ["ezviz_c6wi_4k.jpg", 800, 800], ["ezviz_rk3.jpg", 502, 773], ["aispeech_c60.jpg", 1200, 563], ["aispeech_mt200.jpg", 1200, 484], null]);
+T(p1, "软件 SDK，无产品实物", { x: 0.5 + P1W.slice(0, 5).reduce((a, b) => a + b, 0), y: 1.0, w: P1W[5], h: 0.85, fontSize: 10, color: C.na, align: "center", valign: "middle" });
 
 // ---------------- 第 2 页：端侧声源定位方案（设备实测） ----------------
 FS = 10.5;
