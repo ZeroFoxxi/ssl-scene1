@@ -3,7 +3,7 @@ const pptxgen = require("pptxgenjs");
 const path = require("path");
 const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, ".."), "竞品补充页_精简版.pptx");
 const F = "Microsoft YaHei";
-const C = { title: "000000", text: "000000", gray: "595959", head: "4472C4", band: "CFD5EA", band2: "E9EBF5", line: "FFFFFF", na: "7F7F7F" };
+const C = { title: "000000", text: "000000", gray: "595959", head: "134074", band: "EAF2F8", band2: "FFFFFF", line: "D0D7E1", na: "7F7F7F" };
 
 const p = new pptxgen();
 p.layout = "LAYOUT_WIDE";
@@ -22,7 +22,7 @@ function slide(title, rows, colW, rowH, notes, src) {
   const s = p.addSlide();
   s.background = { color: "FFFFFF" };
   T(s, title, { x: 0.5, y: 0.3, w: 12.3, h: 0.45, fontSize: 16, bold: true, color: C.title, valign: "middle" });
-  // 表头深蓝白字；正文两种浅蓝逐行交替；白色细边框；带 img 标记的图片行保持白底且不参与交替
+  // 表头深蓝（#134074）白字加粗；正文浅蓝（#EAF2F8）与白色逐行交替；浅灰蓝细边框；带 img 标记的图片行保持白底且不参与交替
   let k = 0;
   rows.forEach((r, i) => {
     if (i === 0) return;
@@ -31,7 +31,7 @@ function slide(title, rows, colW, rowH, notes, src) {
     r.forEach((c) => { if (!c.options.fill) c.options.fill = { color: fill }; });
   });
   s.addTable(rows, { x: 0.5, y: Y0, w: colW.reduce((a, b) => a + b, 0), colW, rowH,
-    margin: [0.03, 0.07, 0.03, 0.07], border: { type: "solid", pt: 1, color: C.line }, autoPage: false });
+    margin: [0.03, 0.07, 0.03, 0.07], border: { type: "solid", pt: 0.75, color: C.line }, autoPage: false });
   s.addNotes((notes || []).join("\n") + "\n\n来源：\n" + src.map((r, i) => (i + 1) + ". " + r[0] + "：" + r[1]).join("\n"));
   return s;
 }
