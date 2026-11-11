@@ -656,23 +656,23 @@ pres.addSection({ title: "方案选型" });
 pres.addSection({ title: "数据集与评测" });
 {
   const s = newSlide("数据集与评测");
-  title(s, "公开数据集：首轮用 LOCATA 与自录唤醒词数据，其余按场景贴近程度作为候选");
+  title(s, "公开数据集：首轮评测用 LOCATA 与自录数据，网络训练以 RealMAN 为主");
   const top = (t, o) => cell(t, Object.assign({ fill: { color: TEAL_L } }, o || {}));
   const C = (t) => cell(t, { align: "center" });
   const TC = (t) => top(t, { align: "center" });
   table(s, [
     [H("数据集（出处）"), H("采集方式与阵列"), H("动态声源"), H("视频"), H("规模"), H("许可"), H("本方案用途")],
-    [top("LOCATA（2018 挑战赛；IEEE/ACM TASLP 2020）", { bold: true }), top("真实；4 类阵列（含 12 麦机器人头、助听器）"), TC("✓"), TC("—"), top("Task 1：单静止声源；Task 3：单移动说话人（阵列均静止）"), TC("Open Data Commons"), top("首轮：Task 1 静态测向、Task 3 移动跟踪", { bold: true, color: TEAL })],
+    [top("LOCATA（2018 挑战赛；IEEE/ACM TASLP 2020）", { bold: true }), top("真实；4 类阵列（含 12 麦机器人头、助听器）"), TC("✓"), TC("—"), top("Task 1：单静止声源；Task 3：单移动说话人（阵列均静止）"), TC("ODC-BY"), top("首轮：Task 1 静态测向、Task 3 移动跟踪", { bold: true, color: TEAL })],
     [top("自录唤醒词数据（待采集）", { bold: true }), top("目标阵列或通用 4 麦阵列；标注唤醒词起止样点与方位真值"), TC("✓"), TC("可选"), top("按 5 个演示场景采集"), TC("自有"), top("首轮：唤醒后首次定向与输出时延", { bold: true, color: TEAL })],
-    [cell("RealMAN（NeurIPS 2024）", { bold: true }), "真实；32 麦阵列，可抽子阵", C("✓ 35 h"), C("—"), "83 h 语音 + 144 h 噪声，32 个场景", C("CC BY 4.0"), "候选：几何接近的子阵作参考（待阵列信息确认）"],
-    [cell("CAV3D（FBK，IEEE TMM 2019）", { bold: true }), "真实；8 麦圆阵与摄像头共址", C("✓"), C("✓"), "20 段序列（单人 / 干扰 / 多人）", C("见官网"), "候选：视听跟踪评测"],
-    [cell("SSLR（Idiap，ICRA 2018）", { bold: true }), "真实；Pepper 机器人头 4 麦（5.8 × 6.9 cm），含风扇自噪声", C("部分"), C("—"), "约 25 h 回放 + 真人录音", C("EULA 非商用"), "候选：小孔径 + 自噪声"],
-    [cell("STARSS23（DCASE 2023）", { bold: true }), "真实；4 通道四面体阵列（MIC）/ FOA", C("✓"), C("360°"), "168 段约 7.5 h，16 个房间，13 类", C("MIT"), "候选：异响扩展"],
-    [cell("DCASE2025 立体声 SELD", { bold: true }), "由 STARSS23 转换：双通道 + 普通视角视频", C("✓"), C("✓"), "13 类，含画面内 / 外标签", C("见 Zenodo"), "候选：画面内外判定"],
-  ], { x: 0.55, y: 1.42, w: 12.25, colW: [2.45, 2.85, 0.95, 0.65, 2.3, 1.15, 1.9], rowH: [0.45, 0.68, 0.62, 0.6, 0.55, 0.6, 0.55, 0.55], fontSize: 11 });
-  T(s, "数据年份不影响测向评测的物理有效性，关键看阵列几何与场景是否贴近；LOCATA 仍是声源定位与跟踪的常用公开基准。非商用许可的数据仅用于研究对比。AV16.3（2004）等经典视听数据作对比参考。",
+    [cell("RealMAN（NeurIPS 2024）", { bold: true }), "真实；32 麦阵列，可抽子阵；中文，32 个场景", C("✓ 35 h"), C("—"), "83 h 语音 + 144 h 噪声", C("CC BY 4.0"), cell("网络阶段：训练与微调主力（抽几何接近的子阵）", { color: TEAL })],
+    [cell("Treble10（2025）", { bold: true }), "物理精确仿真；6 麦圆阵（半径 3 cm）设备冲激响应，10 个带家具房间", C("—"), C("—"), "3000+ 条冲激响应", C("6 通道语音子集 CC BY 4.0"), cell("网络阶段：小阵列高逼真仿真", { color: TEAL })],
+    [cell("MISP 2021（挑战赛数据）", { bold: true }), "真实；远 / 中 / 近场麦克风 + 摄像机；中文，34 个家庭电视房间", C("未注明"), C("✓"), "141 h 音视频", cell("非商用协议", { align: "center", color: AMBER }), cell("仅研究：家居 + 电视干扰参考", { color: AMBER })],
+    [cell("STARSS23（2023）/ DCASE 2025 立体声版", { bold: true }), "真实；4 通道四面体阵列 / FOA；2025 版转为双通道 + 普通视角视频", C("✓"), C("✓"), "约 7.5 h，13 类事件，含画面内 / 外标签", C("MIT"), "储备：异响扩展、画面内外判定"],
+    [cell("SSLR（2018）/ CAV3D（2019）", { bold: true }), "Pepper 机器人头 4 麦含风扇噪声 / 8 麦圆阵与摄像头共址", C("✓"), C("CAV3D ✓"), "约 25 h / 20 段序列", cell("需申请，条款未公开", { align: "center", color: AMBER }), "储备：小孔径、视听跟踪评测"],
+  ], { x: 0.55, y: 1.42, w: 12.25, colW: [2.35, 3.0, 0.8, 0.75, 2.05, 1.4, 1.9], rowH: [0.45, 0.62, 0.6, 0.55, 0.6, 0.55, 0.6, 0.6], fontSize: 10.5 });
+  T(s, "数据年份不影响测向评测的物理有效性，关键看阵列几何与场景是否贴近。许可于 2026-11 按官方页面核实；非商用或条款未公开的数据仅用于研究对比。完整选型见《训练数据方案与采集计划》。",
     { x: 0.55, y: 6.2, w: 12.25, h: 0.6, fontSize: 10.5, color: GRAY });
-  s.addNotes("数据集分首轮和候选。首轮只用两类：一是 LOCATA，Task 1 是单个静止声源、阵列静止，用来验证静态测向；Task 3 是单个移动说话人、阵列静止，用来验证跟踪。二是自录的唤醒词数据：用目标阵列或通用 4 麦阵列，按 5 个演示场景采集，标注唤醒词的起止样点和方位真值，专门测唤醒后的首次定向精度和输出时延，这是公开数据集没有的。其余作为候选：RealMAN 是 2024 年的真实录制数据，可以抽取几何接近的子阵作参考，但能否代表目标设备要等阵列信息确认；CAV3D 摄像头和麦阵共址，适合后续视听跟踪；SSLR 是小孔径加风扇自噪声；STARSS23 和 DCASE 2025 立体声版本用于异响扩展和画面内外判定。数据年份不影响测向评测的物理有效性，关键是阵列几何和场景是否贴近。");
+  s.addNotes("数据集分首轮和后续网络阶段。首轮只用两类：一是 LOCATA，Task 1 是单个静止声源、阵列静止，用来验证静态测向；Task 3 是单个移动说话人、阵列静止，用来验证跟踪。二是自录的唤醒词数据：按 5 个演示场景采集，标注唤醒词的起止样点和方位真值，专门测唤醒后的首次定向精度和输出时延，这是公开数据集没有的。到网络阶段，RealMAN 是训练和微调的主力真实数据，中文、带方位标注，可以抽出和目标几何接近的子阵，许可 CC BY 4.0；Treble10 是 2025 年的高逼真仿真数据，有半径 3 厘米的 6 麦圆阵，6 通道语音子集 CC BY 4.0。MISP 2021 最贴近家居电视场景，但只允许非商用研究。STARSS23 和 DCASE 2025 立体声版本留给异响扩展和画面内外判定；SSLR 和 CAV3D 需要申请，条款未公开。许可都在 2026 年 11 月按官方页面核实过。");
 }
 
 // 12. 数据方案
@@ -693,8 +693,8 @@ pres.addSection({ title: "数据集与评测" });
       [{ text: "端到端：", options: { bold: true } }, { text: "唤醒 → 定向 → 云台转动的时延与转向命中率；长时无人录音（含电视）测误转" }],
     ] },
     { h: "网络阶段储备", fill: LIGHT, c: NAVY, items: [
-      [{ text: "仿真训练：", options: { bold: true } }, { text: "gpuRIR / pyroomacoustics，按产品几何；电视、音乐干扰；阵元扰动与通道失配" }],
-      [{ text: "真实微调：", options: { bold: true } }, { text: "RealMAN 子阵（待阵列信息确认）；素材 AISHELL-1、DEMAND、MUSAN 等" }],
+      [{ text: "仿真训练：", options: { bold: true } }, { text: "gpuRIR / pyroomacoustics，按产品几何，Treble10 小阵列高逼真补充；电视、音乐干扰；阵元扰动与通道失配" }],
+      [{ text: "真实微调：", options: { bold: true } }, { text: "RealMAN 子阵（训练与微调主力）；素材 AISHELL-1、DEMAND、MUSAN" }],
     ] },
   ];
   cols.forEach((c, i) => {
@@ -887,5 +887,6 @@ if (SHORT) {
 (async () => {
   await pres.writeFile({ fileName: OUT });
   await applyTheme(OUT, THEME);
+  await require("./zh_notes").fixFile(OUT);
   console.log("written", OUT);
 })();

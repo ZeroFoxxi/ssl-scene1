@@ -41,7 +41,7 @@ const newSlide = () => pres.addSlide({ masterName: "CONTENT" });
   s.addShape(pres.shapes.OVAL, { x: 10.68, y: 3.53, w: 0.44, h: 0.44, fill: { color: RED }, line: { type: "none" } });
   T(s, "声源定位（SSL）· 场景一：摄像头转向说话人", { x: 0.8, y: 2.25, w: 9, h: 0.45, fontSize: 15, color: ICE });
   T(s, "训练数据方案与采集计划", { x: 0.8, y: 2.75, w: 9, h: 0.9, fontSize: 34, bold: true, color: WHITE });
-  T(s, "公开数据盘点 · 仿真方案 · 自采集方案 · 时间计划 · 对比规范", { x: 0.8, y: 3.75, w: 9, h: 0.5, fontSize: 18, color: ICE });
+  T(s, "数据集选型 · 仿真方案 · 自采集方案 · 时间计划 · 对比规范", { x: 0.8, y: 3.75, w: 9, h: 0.5, fontSize: 18, color: ICE });
   T(s, "汇报人：令狐雅熙　　2026.11", { x: 0.8, y: 6.4, w: 6, h: 0.4, fontSize: 12, color: ICE });
   s.addNotes("这份材料回答训练数据从哪来、要不要自己采、采什么、什么时候采，以及和竞品比较时统一哪些条件。所有数量和时间都是建议值，需要和深圳同事、目标硬件确认后再定。");
 }
@@ -49,10 +49,10 @@ const newSlide = () => pres.addSlide({ masterName: "CONTENT" });
 // 2. 结论
 {
   const s = newSlide();
-  title(s, "结论：仿真作训练主体，公开真实数据预训练与评测，自采数据用于微调和测试", "公开数据的阵列几何都与目标设备不同；自采是关键路径，需在 11 月下旬定稿方案");
+  title(s, "结论：仿真打底、真实数据微调、自采数据测试；公开数据按用途选型", "公开数据的阵列几何都与目标设备不同；自采是关键路径，需在 11 月下旬定稿方案");
   const pts = [
-    ["三类数据各司其职", "仿真：按目标几何大规模生成，作训练主体；公开真实数据（RealMAN 等）：预训练与评测；自采：最贴近设备，用于微调和最终测试", TEAL],
-    ["公开数据不能直接当主体", "几何、麦克风数量、场景与目标设备都不同；RealMAN 可抽几何接近的子阵作补充，许可证需逐项核实", AMBER],
+    ["三类数据各司其职", "仿真：按目标几何大规模生成，作训练打底；真实数据（RealMAN）：网络微调，缩小仿真与实录的差距；自采：最贴近设备，用于微调和最终测试", TEAL],
+    ["为什么必须有真实数据", "RealMAN 实验（静止说话人，5° 内准确率）：只用仿真训练 60.4%，用真实数据训练 89.2%。仿真负责覆盖面，真实数据负责贴近实际", AMBER],
     ["自采规模（建议）", "4 类房间，每间约 " + Math.round(D.per_room_min / 60 * 10) / 10 + " h，共约 " + D.total_h + " h；其中有效语音约 7.5 h，适合微调与测试，不足以单独训练", NAVY],
     ["关键路径与依赖", "11 月下旬方案定稿 → 12 月上中旬深圳准备与试录 → 12 月中旬至 1 月上旬采集 → 1 月中下旬交付；前置依赖为阵列 / 样机与录音合规流程", RED],
   ];
@@ -63,24 +63,62 @@ const newSlide = () => pres.addSlide({ masterName: "CONTENT" });
     T(s, p[0], { x: x + 0.95, y: y + 0.22, w: w - 1.2, h: 0.55, fontSize: 15, bold: true, color: NAVY, valign: "middle" });
     T(s, p[1], { x: x + 0.3, y: y + 0.9, w: w - 0.55, h: h - 1.0, fontSize: 13 });
   });
-  s.addNotes("先说结论。训练数据分三类：仿真按目标设备的阵列几何大规模生成，作为训练主体；RealMAN 这类公开真实数据用于预训练和评测；自己采集的数据最贴近设备，用于微调和最终测试。公开数据的阵列几何、麦克风数量都和目标设备不一样，不能直接当训练主体，许可证也要逐项核实。自采按 4 类房间算，每间约 4.4 小时，共约 17.5 小时，其中有效语音约 7.5 小时，用来微调和测试足够，单独训练不够。自采是关键路径：建议 11 月下旬把方案定下来，12 月上中旬深圳准备和试录，12 月中旬到 1 月上旬正式采集，1 月中下旬交付。前提是先确定用哪套阵列或样机，并走完录音的合规流程。");
+  s.addNotes("先说结论。训练数据分三类：仿真按目标设备的阵列几何大规模生成，用来打底；RealMAN 这类公开真实数据用于网络微调，缩小仿真和实录之间的差距；自己采集的数据最贴近设备，用于微调和最终测试。为什么一定要有真实数据：RealMAN 论文里，同样的网络只用仿真数据训练，在真实录音上 5 度内准确率是 60.4%，用真实数据训练是 89.2%。自采按 4 类房间算，每间约 4.4 小时，共约 17.5 小时，其中有效语音约 7.5 小时，用来微调和测试足够，单独训练不够。自采是关键路径：建议 11 月下旬把方案定下来，12 月上中旬深圳准备和试录，12 月中旬到 1 月上旬正式采集，1 月中下旬交付。");
 }
 
-// 3. 公开数据盘点
+// 3. 数据集选型总览
 {
   const s = newSlide();
-  title(s, "公开数据盘点：RealMAN 最接近可训练的真实数据，其余以评测或素材为主");
-  const rows = [[H("数据集"), H("内容与阵列"), H("规模"), H("方位真值"), H("许可"), H("本方案用途")]];
-  D.public.forEach((r, i) => rows.push([cell(r[0], { bold: true }), r[1], r[2], r[3], cell(r[4], { color: r[4].startsWith("待核实") || r[4].startsWith("非商用") ? AMBER : TEXT }), cell(r[5], { color: i === 0 ? TEAL : TEXT, bold: i === 0 })]));
-  table(s, rows, { x: 0.55, y: 1.42, w: 12.25, colW: [1.9, 2.9, 2.2, 1.85, 1.6, 1.8], fontSize: 10.5 });
-  T(s, "许可证以下载包内的许可文件为准，用于公司项目前需合规确认；非商用数据仅用于研究对比。", { x: 0.55, y: 6.45, w: 12.25, h: 0.35, fontSize: 10.5, color: GRAY });
-  s.addNotes("公开数据里，RealMAN 最接近可以拿来训练的真实数据：32 麦阵列，可以抽取和目标几何接近的子阵，有 83.7 小时语音，其中 35.4 小时是移动说话人，还有 144.5 小时噪声，方位真值是用鱼眼摄像头自动标的。LOCATA 规模小，主要用来评测。STARSS23 是声音事件数据，留给异响扩展。SSLR 是非商用许可，只能研究对比。AISHELL-1、DEMAND、MUSAN 是单通道素材，用来做仿真的声源和干扰。许可证一律以下载包里的文件为准，用到公司项目前要过合规。");
+  title(s, "数据集选型：按用途分四类，每个数据集的许可都已按官方页面核实", "绿色：可商用并采用；橙色：仅限研究；灰色：储备，暂不使用");
+  const pick = (cat) => D.datasets.filter((r) => r[2] === cat);
+  const groups = [
+    ["评测", "与文献对比、验证测向与跟踪", TEAL, pick("评测").concat([["自采测试集", "", "", "", "", "", "自有", "可以", "最终测试：场景一 5 个演示场景、电视干扰"]])],
+    ["训练与微调", "网络训练的真实数据", TEAL, pick("训练微调").concat([["自采微调集", "", "", "", "", "", "自有", "可以", "按目标设备微调"]])],
+    ["仿真素材", "按目标几何生成仿真数据的输入", NAVY, pick("仿真素材")],
+    ["仅研究 / 储备", "许可受限或几何差异大", AMBER, pick("仅研究").concat(pick("储备"))],
+  ];
+  const w = 2.95, gap = 0.15, y0 = 1.45, h = 5.25;
+  groups.forEach((g, i) => {
+    const x = 0.55 + i * (w + gap);
+    box(s, x, y0, w, h, LIGHT, null, "用途" + i);
+    s.addShape(pres.shapes.RECTANGLE, { x, y: y0, w, h: 0.08, fill: { color: g[2] }, line: { type: "none" } });
+    T(s, g[0], { x: x + 0.2, y: y0 + 0.2, w: w - 0.4, h: 0.4, fontSize: 15, bold: true, color: NAVY });
+    T(s, g[1], { x: x + 0.2, y: y0 + 0.6, w: w - 0.4, h: 0.32, fontSize: 10.5, color: GRAY });
+    let yy = y0 + 1.02;
+    const n = g[3].length, ih = Math.min(1.0, (h - 1.15) / n);
+    g[3].forEach((r) => {
+      const ok = r[7] === "可以" || r[7].startsWith("6 通道");
+      const restricted = r[2] === "仅研究";
+      const c = restricted ? AMBER : (r[2] === "储备" ? "8A94A2" : TEAL);
+      s.addShape(pres.shapes.RECTANGLE, { x: x + 0.2, y: yy + 0.06, w: 0.06, h: ih - 0.18, fill: { color: c }, line: { type: "none" } });
+      T(s, [{ text: r[0] + (r[1] ? "（" + r[1] + "）" : ""), options: { bold: true, color: TEXT, breakLine: true } },
+            { text: (r[8].includes("：") ? r[8].split("：").slice(1).join("：") : r[8]), options: { color: TEXT, fontSize: 10, breakLine: true } },
+            { text: "许可：" + r[6], options: { color: GRAY, fontSize: 9 } }],
+        { x: x + 0.36, y: yy, w: w - 0.5, h: ih - 0.06, fontSize: 11, valign: "top" });
+      yy += ih;
+    });
+  });
+  s.addNotes("数据集按用途分四类。评测用 LOCATA，它是声源定位和跟踪最常用的公开基准，方便和论文结果对比；最终测试用自己采集的数据。训练和微调的真实数据用 RealMAN，它是中文、真实录音、带方位标注，32 麦阵列可以抽出和目标设备几何接近的小子阵，许可是 CC BY 4.0，可以商用。仿真素材有四个：AISHELL-1 中文干净语音，MUSAN 的音乐和语音当电视类干扰，DEMAND 多通道环境噪声，以及 2025 年的 Treble10，它有一个半径 3 厘米的 6 麦圆阵，在 10 个带家具的真实房间里做了物理精确仿真，6 通道语音子集是 CC BY 4.0。最后一列是仅研究和储备：MISP 2021 最贴近场景一，中文、真实家庭电视房间，但只允许非商用研究；STARSS23、DCASE 2025 立体声数据留给异响和视听融合扩展；SSLR 和 CAV3D 要申请，条款未公开。");
+}
+
+// 3b. 数据集明细
+{
+  const s = newSlide();
+  title(s, "数据集明细：年份、阵列、标注与许可（2026-11 按官方页面核实）");
+  const rows = [[H("数据集"), H("年份"), H("阵列与场景"), H("方位标注"), H("规模"), H("许可"), H("结论与用途")]];
+  D.datasets.forEach((r) => {
+    const c = r[2] === "仅研究" ? AMBER : (r[2] === "储备" ? "8A94A2" : TEAL);
+    rows.push([cell(r[0], { bold: true, color: NAVY }), cell(r[1], { align: "center" }), r[3], r[4], r[5], cell(r[6], { color: r[7] === "不可以" || r[7] === "未知" ? AMBER : TEXT }), cell(r[8], { color: c })]);
+  });
+  table(s, rows, { x: 0.55, y: 1.25, w: 12.25, colW: [1.5, 0.6, 3.35, 1.3, 1.35, 1.75, 2.4], fontSize: 9, rowH: 0.42 });
+  T(s, "旧数据集（如 AISHELL-1、MUSAN）只作语音和噪声素材，年份不影响使用；测向数据主要看阵列几何和场景是否贴近。", { x: 0.55, y: 6.72, w: 12.25, h: 0.3, fontSize: 10, color: GRAY });
+  s.addNotes("这一页是明细。每个数据集的许可都在 2026 年 11 月按官方页面核实过：RealMAN 是 CC BY 4.0，LOCATA 是开放数据库署名许可 ODC-BY，Treble10 的冲激响应子集禁止商用、6 通道语音子集是 CC BY 4.0，AISHELL-1 是 Apache 2.0，MUSAN 和 DEMAND 是 CC BY 4.0，STARSS23 和 DCASE 2025 立体声数据是 MIT，MISP 2021 是非商用协议，SSLR 和 CAV3D 需要申请、条款没有公开。AISHELL-1、MUSAN 这类老数据只当语音和噪声素材，年份不影响使用。");
 }
 
 // 4. 仿真方案
 {
   const s = newSlide();
-  title(s, "仿真方案：按目标几何生成约 200 h 作训练主体，现有脚本已覆盖主要场景");
+  title(s, "仿真方案：按目标几何生成约 200 h 作训练打底，现有脚本已覆盖主要场景");
   const rows = [[H("项目"), H("建议设置")]];
   D.sim.forEach((r) => rows.push([cell(r[0], { bold: true, color: NAVY }), r[1]]));
   table(s, rows, { x: 0.55, y: 1.42, w: 8.1, colW: [1.6, 6.5], fontSize: 12 });
@@ -164,4 +202,4 @@ const newSlide = () => pres.addSlide({ masterName: "CONTENT" });
   s.addNotes("最后是待确认的五件事：用哪套阵列或样机；深圳同事的人力、场地和时间；录音的合规流程；唤醒词文本以及能否拿到唤醒模块给出的起止时间；目标芯片和算力预算。前两项决定采集能不能按计划启动。");
 }
 
-(async () => { await pres.writeFile({ fileName: OUT }); await applyTheme(OUT, THEME); console.log("written", OUT); })();
+(async () => { await pres.writeFile({ fileName: OUT }); await applyTheme(OUT, THEME); await require("./zh_notes").fixFile(OUT); console.log("written", OUT); })();
