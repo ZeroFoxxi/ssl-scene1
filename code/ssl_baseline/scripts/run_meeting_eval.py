@@ -21,6 +21,9 @@
   M   MUSIC（不用背景段）
   G   GEVD-MUSIC：用开口前约 1 s 的背景段白化（背景段里通常是上一位发言人的尾音、远端扬声器、空调）
   G'  G，开口起点有误差（σ = 0.1 s，模拟语音活动检测 / 换人检测不准）
+  T   自适应背景（ssl_baseline/turn.py）：开口前干扰仍在 → 背景取开口前 0.5 s；开口前已安静 → 背景取长期噪声协方差
+      （由无人说话时段估计：C4 为空调噪声，其他条件只有传感器噪声）→ GEVD-MUSIC
+  T'  T，开口起点有误差（σ = 0.1 s）
 
 阵列：
   sq4   方形 4 麦，外接圆半径 2.83 cm（孔径 5.7 cm，与既有仿真相同）
@@ -43,6 +46,7 @@ from ssl_baseline import metrics
 from ssl_baseline.geometry import ring_array
 from ssl_baseline.sim import make_room, highpass
 from ssl_baseline.wake import WakeDOA, WakeDOAConfig
+from ssl_baseline.turn import TurnDOA, TurnDOAConfig
 
 FS = 16000
 T_ON = 3.0                      # B 开口时刻（s）；之前 A 在说话
@@ -50,7 +54,7 @@ B_LEN = 1.2                     # 统计用的 B 语音长度（s）
 WINDOWS = [0.3, 0.5, 1.0]       # 判决窗口：B 开口后多久给出方位
 SPEECH_ONSETS = [1.05, 3.5, 5.31, 7.67, 9.52, 12.36, 14.95]   # speech_zh.wav 中"静音后起始"的位置（s）
 CONDS = ["C1 换人", "C2 抢话", "C3 远端扬声器", "C4 空调噪声"]
-METHODS = ["S SRP-PHAT", "S2 SRP+背景扣除", "M MUSIC", "G GEVD-MUSIC", "G' GEVD+起点误差"]
+METHODS = ["S SRP-PHAT", "S2 SRP+背景扣除", "M MUSIC", "G GEVD-MUSIC", "G' GEVD+起点误差", "T 自适应背景", "T' 自适应+起点误差"]
 FRONT = ((85.0, 275.0),)        # 屏蔽背后（前墙方向）
 
 ARRAYS = {
@@ -149,9 +153,14 @@ def mix(rng, r, cond):
     y = r["yB"] + (r["yA_ov"] if cond == "C2 抢话" else r["yA_gap"])
     if cond == "C3 远端扬声器":
         y = y + r["yF"] * np.sqrt(pB / band_power(r["yF"], s0, s1))
+    sig_n = np.sqrt(np.mean(r["yB"][:, s0:s1] ** 2) / 1e3)
+    k = int(2.0 * FS)
+    noise = rng.normal(0, sig_n, (y.shape[0], k))       # 无人说话时段（用于长期噪声协方差）
     if cond == "C4 空调噪声":
-        y = y + r["yV"] * np.sqrt(pB / band_power(r["yV"], s0, s1) / 10 ** 0.5)
-    return y + rng.normal(0, np.sqrt(np.mean(r["yB"][:, s0:s1] ** 2) / 1e3), y.shape)
+        g = np.sqrt(pB / band_power(r["yV"], s0, s1) / 10 ** 0.5)
+        y = y + r["yV"] * g
+        noise = noise + r["yV"][:, :k] * g
+    return y + rng.normal(0, sig_n, y.shape), noise
 
 
 def main():
@@ -170,6 +179,7 @@ def main():
             METHODS[2]: WakeDOA(xy, FS, WakeDOAConfig(bg_subtract=False, **base)),
             METHODS[3]: WakeDOA(xy, FS, WakeDOAConfig(**base)),
         }
+    turn = {arr: TurnDOA(xy, FS, TurnDOAConfig(exclude=FRONT)) for arr, xy in ARRAYS.items()}
     sl = {"sq4": slice(0, 4), "lin4": slice(4, 8)}
     rng = np.random.default_rng(2026)
     raw, tcost = [], []
@@ -178,17 +188,20 @@ def main():
         for k in range(a.trials):
             r = render_trial(rng, sp, en, rt)
             for cond in CONDS:
-                y = mix(rng, r, cond)
+                y, ynoise = mix(rng, r, cond)
                 jit = int(rng.normal(0, a.onset_jitter) * FS)
                 for arr in ARRAYS:
-                    x = y[sl[arr]]
+                    x = y[sl[arr]]; turn[arr].set_noise(ynoise[sl[arr]])
                     for win in WINDOWS:
                         s, e = r["start"], r["start"] + int(win * FS)
                         res = {}
                         for m in METHODS[:4]:
                             tt = time.perf_counter(); res[m] = est[arr][m].localize(x, s, e).az
                             if m == METHODS[3]: tcost.append(time.perf_counter() - tt)
-                        res[METHODS[4]] = est[arr][METHODS[3]].localize(x, s + jit, max(e + jit, s + jit + int(0.2 * FS))).az
+                        js, je = s + jit, max(e + jit, s + jit + int(0.2 * FS))
+                        res[METHODS[4]] = est[arr][METHODS[3]].localize(x, js, je).az
+                        res[METHODS[5]] = turn[arr].localize(x, s, e).az
+                        res[METHODS[6]] = turn[arr].localize(x, js, je).az
                         for m, az in res.items():
                             eB, eA = float(metrics.angdiff(az, r["azB"])), float(metrics.angdiff(az, r["azA"]))
                             raw.append({"rt60": rt, "cond": cond, "array": arr, "win": win, "method": m,
@@ -237,9 +250,9 @@ def plot(summary, rts, path):
     rt = rts[-1]
     get = lambda **kw: next(r for r in summary if all(r[k] == v for k, v in kw.items()))
     fig, axs = plt.subplots(1, 3, figsize=(13.0, 3.7), dpi=200, gridspec_kw={"width_ratios": [1.25, 1.25, 1]})
-    show = [METHODS[0], METHODS[1], METHODS[3], METHODS[4]]
+    show = [METHODS[0], METHODS[2], METHODS[3], METHODS[5]]
     cols = [LIGHT, GRAY, TEAL, NAVY]
-    labels = ["SRP-PHAT", "SRP + 背景扣除", "GEVD-MUSIC", "GEVD-MUSIC（起点误差 0.1 s）"]
+    labels = ["SRP-PHAT", "MUSIC", "GEVD-MUSIC（固定背景段）", "自适应背景 GEVD-MUSIC"]
     xs = np.arange(len(CONDS)); bw = 0.2
     for ax, arr, ttl in zip(axs[:2], ["sq4", "lin4"], ["方形 4 麦（孔径 5.7 cm）", "4 麦线阵（孔径 10.5 cm）"]):
         for i, (m, c, lb) in enumerate(zip(show, cols, labels)):
@@ -254,9 +267,9 @@ def plot(summary, rts, path):
     axs[0].legend(fontsize=7, frameon=False, loc="upper right", ncol=2)
     ax = axs[2]
     for arr, c, lb in [("sq4", TEAL, "方形 4 麦"), ("lin4", NAVY, "4 麦线阵")]:
-        for m, ls in [(METHODS[3], "-"), (METHODS[0], ":")]:
+        for m, ls, nm in [(METHODS[5], "-", "自适应背景"), (METHODS[0], ":", "SRP-PHAT")]:
             v = [np.mean([get(rt60=rt, cond=cn, array=arr, win=w, method=m)["acc10"] for cn in CONDS]) * 100 for w in WINDOWS]
-            ax.plot(WINDOWS, v, ls, color=c, marker="o", ms=4, lw=1.6, label=f"{lb} · {'GEVD-MUSIC' if m == METHODS[3] else 'SRP-PHAT'}")
+            ax.plot(WINDOWS, v, ls, color=c, marker="o", ms=4, lw=1.6, label=f"{lb} · {nm}")
     ax.set_xticks(WINDOWS); ax.set_xlabel("判决窗口：B 开口后（s）"); ax.set_ylim(0, 100)
     ax.set_title("判决越晚越准：四种条件平均", fontsize=10, fontweight="bold", color=NAVY)
     ax.legend(fontsize=7, frameon=False, loc="lower right"); ax.grid(color="#E3E8EF", lw=0.7); ax.spines[["top", "right"]].set_visible(False)
