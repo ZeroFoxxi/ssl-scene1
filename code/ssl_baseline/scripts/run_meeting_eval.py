@@ -118,10 +118,11 @@ def ac_noise(n, rng):
     return x / np.sqrt(np.mean(x ** 2))
 
 
-def render_trial(rng, sp, en, rt60):
+def render_trial(rng, sp, en, rt60, mic_xy=None):
     dims, c, people, azs, ia, ib, spk, vent = make_scene(rng)
-    # 两种阵列一起仿真：前 4 路 sq4，后 4 路 lin4
-    mic_xy = np.hstack([ARRAYS["sq4"], ARRAYS["lin4"]])
+    # 默认两种阵列一起仿真：前 4 路 sq4，后 4 路 lin4
+    if mic_xy is None:
+        mic_xy = np.hstack([ARRAYS["sq4"], ARRAYS["lin4"]])
     mics = np.vstack([mic_xy + c[:2, None], np.full((1, mic_xy.shape[1]), c[2])])
     n = int((T_ON + B_LEN) * FS)
     hA, hB, hS, hV = (rirs(dims, rt60, p, mics) for p in (people[ia], people[ib], spk, vent))
