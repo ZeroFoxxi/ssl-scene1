@@ -2,6 +2,8 @@
 """会议室换人测向：IPDnet2（官方预训练 Small 版，1.26 M 参数，RealMAN 实录训练）与传统方法在同一仿真、同一阵列上比较。
 
 阵列：IPDnet2 预训练模型对应的 5 麦（半径 3 cm 圆周 4 麦 + 中心 1 麦），传统方法用同样 5 路。
+安装旋转角 --rot（默认 45°）：0° 时两个圆周麦正对前墙 / 房间纵轴。仿真发现传统方法 0° 安装明显变差（前墙强反射 + 阵列朝向），
+而预训练 IPDnet2 在混响较强时反而 45° 更差（对安装朝向敏感）；两种安装都保留结果。IPDnet2 输出的阵列坐标方位加旋转角换回房间坐标。
 场景、条件、指标与 run_meeting_eval.py 相同（同一随机种子 → 同一批房间与座位）。
 
 方法：
@@ -14,7 +16,7 @@
 运行（需要 torch 与官方仓库）：
   git clone https://github.com/Audio-WestlakeU/FN-SSL
   IPDNET2_DIR=FN-SSL/IPDnet2 python scripts/run_meeting_ipdnet2.py --trials 100
-输出：out/meeting_ipdnet2.csv、out/meeting_ipdnet2_summary.json、out/fig_meeting_ipdnet2.png
+输出：out/meeting_ipdnet2_rot<角度>.csv、out/meeting_ipdnet2_rot<角度>_summary.json、out/fig_meeting_ipdnet2_rot<角度>.png
 """
 import argparse, csv, json, os, sys, time
 import numpy as np
@@ -28,6 +30,11 @@ from ssl_baseline.turn import TurnDOA, TurnDOAConfig
 from ssl_baseline.ipdnet2_adapter import IPDnet2Localizer, ARRAY_XY
 
 FS = R.FS
+
+
+def mic_xy(rot_deg):
+    c, s = np.cos(np.deg2rad(rot_deg)), np.sin(np.deg2rad(rot_deg))
+    return np.array([[c, -s], [s, c]]) @ ARRAY_XY          # 房间坐标中的阵元位置
 METHODS = ["S SRP-PHAT", "G GEVD-MUSIC", "T 自适应背景", "N IPDnet2", "N2 IPDnet2+扣除开口前方向"]
 
 
@@ -36,25 +43,28 @@ def main():
     ap.add_argument("--trials", type=int, default=100)
     ap.add_argument("--rt60", type=float, nargs="+", default=[0.3, 0.6])
     ap.add_argument("--ipdnet2-dir", default=None)
+    ap.add_argument("--rot", type=float, default=45.0, help="阵列安装旋转角（°）；输出文件名带 _rot<角度>")
     a = ap.parse_args()
+    ROT_DEG, MIC_XY = a.rot, mic_xy(a.rot)
+    tag = f"_rot{int(round(a.rot))}"
     sp, en = R.load("speech_zh.wav"), R.load("tv_en.wav")
     base = dict(pad_post=0.0, exclude=R.FRONT)
-    srp = WakeDOA(ARRAY_XY, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, **base))
-    gev = WakeDOA(ARRAY_XY, FS, WakeDOAConfig(**base))
-    turn = TurnDOA(ARRAY_XY, FS, TurnDOAConfig(exclude=R.FRONT))
+    srp = WakeDOA(MIC_XY, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, **base))
+    gev = WakeDOA(MIC_XY, FS, WakeDOAConfig(**base))
+    turn = TurnDOA(MIC_XY, FS, TurnDOAConfig(exclude=R.FRONT))
     net = IPDnet2Localizer(a.ipdnet2_dir)
     rng = np.random.default_rng(2026)
     raw, tnet = [], []
     for rt in a.rt60:
         t0 = time.time()
         for k in range(a.trials):
-            r = R.render_trial(rng, sp, en, rt, mic_xy=ARRAY_XY)
+            r = R.render_trial(rng, sp, en, rt, mic_xy=MIC_XY)
             for cond in R.CONDS:
                 y, ynoise = R.mix(rng, r, cond)
                 rng.normal()   # 与 run_meeting_eval 的随机数消耗对齐（起点误差抽样）
                 turn.set_noise(ynoise)
                 s0 = r["start"]; ton = s0 / FS
-                tt = time.perf_counter(); tr = net.tracks(y[:, : s0 + int(max(R.WINDOWS) * FS)]); tnet.append(time.perf_counter() - tt)
+                tt = time.perf_counter(); tr = net.tracks(y[:, : s0 + int(max(R.WINDOWS) * FS)]); tr = ((tr[0] + ROT_DEG) % 360.0, tr[1]); tnet.append(time.perf_counter() - tt)
                 for win in R.WINDOWS:
                     e = s0 + int(win * FS)
                     res = {METHODS[0]: srp.localize(y, s0, e).az, METHODS[1]: gev.localize(y, s0, e).az,
@@ -81,23 +91,23 @@ def main():
                                     "wrong20": round(float((e > 20).mean()), 3),
                                     "stuck_prev": round(float(np.mean([x["stuck_prev"] for x in sel])), 3), "n": len(sel)})
     out = os.path.join(ROOT, "out"); os.makedirs(out, exist_ok=True)
-    with open(os.path.join(out, "meeting_ipdnet2.csv"), "w", newline="", encoding="utf-8-sig") as fh:
+    with open(os.path.join(out, f"meeting_ipdnet2{tag}.csv"), "w", newline="", encoding="utf-8-sig") as fh:
         w = csv.DictWriter(fh, fieldnames=list(summary[0].keys())); w.writeheader(); w.writerows(summary)
     audio_s = (R.T_ON + max(R.WINDOWS))
     json.dump({"config": {"trials_per_rt60": a.trials, "rt60": a.rt60, "windows_s": R.WINDOWS,
-                          "array": "5 麦：半径 3 cm 圆周 4 麦 + 中心（IPDnet2 预训练模型对应几何）",
+                          "array": f"5 麦：半径 3 cm 圆周 4 麦 + 中心（IPDnet2 预训练模型对应几何），整体旋转 {ROT_DEG:.0f}° 安装", "rot_deg": ROT_DEG,
                           "ipdnet2": {"checkpoint": "ipdnet2_small.ckpt（官方，RealMAN 训练）", "params": net.n_params,
                                       "cpu_pytorch_s_per_clip": round(float(np.mean(tnet)), 3), "clip_s": audio_s}},
-               "summary": summary}, open(os.path.join(out, "meeting_ipdnet2_summary.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+               "summary": summary}, open(os.path.join(out, f"meeting_ipdnet2{tag}_summary.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"\n{'RT60':>4} {'窗口':>4} {'条件':<10} {'方法':<24} {'MAE':>6} {'≤10°':>6} {'>20°':>6} {'停上一位':>6}")
     for r in summary:
         if r["win"] == 0.5:
             print(f"{r['rt60']:>4} {r['win']:>4} {r['cond']:<10} {r['method']:<24} {r['mae']:>6.1f} {r['acc10']*100:>5.0f}% {r['wrong20']*100:>5.0f}% {r['stuck_prev']*100:>5.0f}%")
     print("IPDnet2 参数量", net.n_params, "；CPU（纯 PyTorch Mamba）每段", audio_s, "s 音频耗时", round(float(np.mean(tnet)), 2), "s")
-    plot(summary, a.rt60, os.path.join(out, "fig_meeting_ipdnet2.png"))
+    plot(summary, a.rt60, ROT_DEG, os.path.join(out, f"fig_meeting_ipdnet2{tag}.png"))
 
 
-def plot(summary, rts, path):
+def plot(summary, rts, rot, path):
     import matplotlib; matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     import logging; logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)
@@ -118,7 +128,7 @@ def plot(summary, rts, path):
             for b, vv in zip(bars, v):
                 ax.text(b.get_x() + b.get_width() / 2, vv + 1, f"{vv:.0f}", ha="center", fontsize=6, color="#333")
         ax.set_xticks(xs); ax.set_xticklabels([c.split(" ")[1] for c in R.CONDS]); ax.set_ylim(0, 118)
-        ax.set_title(f"RT60 {rt} s：B 开口后 0.5 s 判决", fontsize=10, fontweight="bold", color=NAVY)
+        ax.set_title(f"RT60 {rt} s：B 开口后 0.5 s 判决（阵列旋转 {rot:.0f}°）", fontsize=10, fontweight="bold", color=NAVY)
         ax.grid(axis="y", color="#E3E8EF", lw=0.7); ax.spines[["top", "right"]].set_visible(False); ax.set_axisbelow(True)
     axs[0].set_ylabel("误差 ≤10° 的比例（%）")
     axs[0].legend(fontsize=6.5, frameon=False, loc="upper right", ncol=2)
