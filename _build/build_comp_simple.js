@@ -99,24 +99,24 @@ headImages(p1, 0.5, IMG_Y + 0.07, P1W, 0.81, [null, ["ezviz_c6wi_4k.jpg", 800, 8
 const SAW = [1.45, 3.35, 3.0, 4.5];
 const SAROW = Object.assign(SAW.map(() => cell("")), { img: true });
 const pSA = slide("竞品对比：声智科技", [
-  [head(""), head("声智 AI 工业声像仪（SoundAI Pro）"), head("声智 AI 声源定位仪"), head("声智语音模组与麦克风阵列方案")],
+  [head(""), head("声智 AI 工业声像仪（SoundAI Pro）"), head("声智 AI 声源定位仪"), head("声智离在线语音模组")],
   SAROW,
-  [L("形态"), cell("手持工业声学成像仪（官网标注原型机）"), cell("声源定位设备"), cell("离在线语音模组（全志 R328、国芯 GX8008）；麦克风阵列方案（已量产，模组及整机供应）")],
+  [L("形态"), cell("手持工业声学成像仪（官网标注原型机）"), cell("工业声源定位设备"), cell("离在线语音模组（全志 R328、国芯 GX8008）")],
   [L("发布 / 价格"), cell("官网在展；发布时间、价格未公开"), cell("官网在展；发布时间、价格未公开"), cell("R328 模组 2019-11、GX8008 模组 2019-12；价格未公开")],
-  [L("麦克风"), cell("128 通道 MEMS 阵列"), cell("未公开"), cell("R328 模组 2 / 4 / 8 麦；GX8008 模组 4 麦；阵列方案用英飞凌 IM69D130 数字麦克风")],
+  [L("麦克风"), cell("128 通道 MEMS 阵列"), cell("未公开"), cell("R328 模组 2 / 4 / 8 麦；GX8008 模组 4 麦")],
   [L("规格"), cell("2–100 kHz；检测距离 0.3–150 m；10.1 英寸屏；高清摄像头；IP54；续航 > 4 h"), cell("未公开"), cell("远场唤醒、远场识别；离线命令词")],
-  [L("定位功能"), cell("声源成像叠加摄像头画面；单声源、多声源、全景声场定位"), cell("远距离跟踪声源位置"), cell("Azero：回声消除、降噪、声源定位、波束赋形；模组适用摄像头、会议机等")],
+  [L("定位功能"), cell("工业声源（泄漏、放电、设备异响）成像，叠加摄像头画面；单声源、多声源、全景声场定位"), cell("官网原文：远距离测井跟踪声源位置"), cell("Azero：回声消除、降噪、声源定位、波束赋形；模组适用摄像头、会议机等")],
   [L("产品芯片"), cell("未公开"), cell("未公开"), cell("全志 R328；国芯 GX8008（多核异构含 DSP，运行约 100 mW、待机 < 25 mW）")],
   [L("公司线索"), cell("2016 年源于中科院声学所；远场交互系统 SoundAI Azero；官网称参与 Arm、RISC-V 生态，与 Cadence、英飞凌、博世、NVIDIA、Google 合作；产品线已扩展到声学成像、工业检测、耳机与助听", { colspan: 3 })],
   [L("离线 / 在线"), cell("端侧成像 + 云端 AI 分析"), cell("未公开"), cell("离在线混合")],
   [L("算法、执行单元、内存、模型、时延"), cell("未公开"), cell("未公开"), cell("未公开")],
 ], SAW, [0.36, 0.95, 0.5, 0.42, 0.42, 0.5, 0.55, 0.48, 0.55, 0.38, 0.45],
-["声智当前没有摄像头追踪说话人的产品；与场景一最接近的是 SoundAI Pro（摄像头 + 麦克风阵列做声源成像）和早期语音模组（适用摄像头、会议机，含声源定位）。模组资料为 2019 年发布信息。"],
+["声智当前没有摄像头追踪说话人的产品。SoundAI Pro 与 AI 声源定位仪定位的是工业声源（泄漏、放电、设备异响），不是说话人；语音模组集成声源定位算法，适用摄像头、会议机，资料为 2019–2020 年发布信息。英飞凌合作页的麦克风阵列方案未查到声源定位的原文描述，未列入。"],
 [["声智官网（AI 工业终端 / SoundAI Pro）", "https://www.soundai.com/ai-industrial-terminal"], ["声智官网", "https://www.soundai.com/"],
  ["深圳湾：声智 × 全志 R328 模组（2019-11）", "https://www.shenzhenware.com/articles/13583"], ["深圳湾：声智 × 国芯 GX8008 模组（2019-12）", "https://www.shenzhenware.com/articles/13718"],
- ["21ic：声智离在线混合语音模组（2020-05）", "https://www.21ic.com/article/731027.html"], ["英飞凌：SoundAI 麦克风阵列解决方案", "https://www.infineon.cn/partners/partner-ecosystems/greater-china/powersensor/solution/smart-home-appliances/soundai-microphone-array"]]);
+ ["21ic：声智离在线混合语音模组（2020-05）", "https://www.21ic.com/article/731027.html"]]);
 headImages(pSA, 0.5, IMG_Y + 0.07, SAW, 0.81, [null, ["soundai_pro_imager.jpg", 411, 318], ["soundai_locator.jpg", 321, 345], null]);
-// 模组与阵列方案：画 2 / 4 / 8 麦示意
+// 离在线语音模组：画 2 / 4 / 8 麦示意
 {
   const x0 = 0.5 + SAW.slice(0, 3).reduce((a, b) => a + b, 0), d = 0.1, cy = IMG_Y + 0.36, ly = IMG_Y + 0.64;
   const dot = (x, y) => pSA.addShape(p.shapes.OVAL, { x: x - d / 2, y: y - d / 2, w: d, h: d, fill: { color: "595959" }, line: { type: "none" } });
