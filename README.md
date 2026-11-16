@@ -56,6 +56,7 @@ python scripts/run_static_eval.py --trials 100
 python scripts/run_closed_loop_demo.py
 python scripts/run_tv_interference_demo.py
 python scripts/run_wake_doa_demo.py         # 唤醒词定向（电视干扰）
+python scripts/run_meeting_eval.py          # 会议室换人测向（场景一选型）
 ```
 
 依赖说明：numpy 与 pyroomacoustics 版本要匹配——numpy 2.x 用最新版 pyroomacoustics；numpy 1.x（如 Anaconda 自带的 1.26）用 `pyroomacoustics==0.7.4`，否则可能段错误。

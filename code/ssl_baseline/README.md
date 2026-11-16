@@ -21,7 +21,8 @@ ssl_baseline/
 │  ├─ run_static_eval.py          静态测向评测（阵列构型 × RT60 × 是否起始段加权）
 │  ├─ run_closed_loop_demo.py     闭环演示：画面外说话 → 转向 → 视觉确认 → 持续跟踪
 │  ├─ run_tv_interference_demo.py 电视干扰演示：启用 / 不启用干扰方向表对比
-│  └─ run_wake_doa_demo.py        唤醒词定向离线 demo：电视开 / 关 × 方法对比 × KWS 边界误差
+│  ├─ run_wake_doa_demo.py        唤醒词定向离线 demo：电视开 / 关 × 方法对比 × KWS 边界误差
+│  └─ run_meeting_eval.py         会议室换人测向评测：换人 / 抢话 / 远端扬声器 / 空调 × 方法 × 阵列 × 判决窗口
 ├─ tests/test_basic.py      13 个单元测试
 ├─ data/                    speech_zh.wav（中文 TTS 语音）、tv_en.wav（英文 TTS，模拟电视）
 └─ out/                     运行结果（json / csv / png）
@@ -44,6 +45,7 @@ python scripts/run_static_eval.py --trials 100     # 静态评测（约 2 min）
 python scripts/run_closed_loop_demo.py             # 闭环演示（约 1 min）
 python scripts/run_tv_interference_demo.py         # 电视干扰演示（约 1 min）
 python scripts/run_wake_doa_demo.py --trials 100   # 唤醒词定向（约 1 min）
+python scripts/run_meeting_eval.py --trials 100    # 会议室换人测向（约 6 min）
 ```
 
 ## 当前结果（仿真，2026-11-07）
