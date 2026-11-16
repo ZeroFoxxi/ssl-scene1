@@ -1,7 +1,7 @@
 // 竞品补充页（精简版，4 页，深蓝表头 + 浅蓝交替表格；标题微软雅黑 16 加粗，表内 10 号）：竞品对比；端侧声源定位方案（设备实测）；学术界轻量模型。用于插入 mentor 的调研 PPT。
 const pptxgen = require("pptxgenjs");
 const path = require("path");
-const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, ".."), "竞品补充页_精简版.pptx");
+const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, "..", "01_场景一_摄像头声源定位", "竞品调研"), "竞品补充页_精简版.pptx");
 const F = "Microsoft YaHei";
 const C = { title: "000000", text: "000000", gray: "595959", head: "134074", band: "EAF2F8", band2: "FFFFFF", line: "D0D7E1", na: "7F7F7F" };
 

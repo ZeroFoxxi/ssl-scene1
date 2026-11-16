@@ -3,7 +3,7 @@ const pptxgen = require("pptxgenjs");
 const path = require("path");
 const { applyTheme } = require((process.env.PPTX_SKILL || "/mnt/skills/public/pptx") + "/scripts/apply_theme.js");
 
-const OUT = path.join(process.env.OUT_DIR || __dirname, "声源定位竞品调研_听声转向与发言人跟踪.pptx");
+const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, "..", "01_场景一_摄像头声源定位", "竞品调研"), "声源定位竞品调研_听声转向与发言人跟踪.pptx");
 const FONT = "Microsoft YaHei";
 const NAVY = "17375E", TEXT = "1F2937", GRAY = "5B6B7F", LIGHT = "EEF2F7", LIGHT2 = "F6F8FB";
 const RED = "C7000B", RED_L = "FBE9EA", TEAL = "1F7A68", TEAL_L = "E3F1EE", TEAL_M = "9FD0C4";

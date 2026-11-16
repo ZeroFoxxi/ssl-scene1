@@ -2,7 +2,7 @@
 // 每页：左侧对标对象卡片；右上算法链路图；右下六项核查（状态标签）；底部部署芯片线索；来源。
 const pptxgen = require("pptxgenjs");
 const path = require("path");
-const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, ".."), "竞品补充页_萤石与思必驰.pptx");
+const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, "..", "01_场景一_摄像头声源定位", "竞品调研", "旧版"), "竞品补充页_萤石与思必驰.pptx");
 const IMG = (n) => path.join(__dirname, "..", "figures", "竞品产品图", n);
 const F = "Microsoft YaHei";
 const C = { navy: "17375E", text: "1F2937", gray: "5B6B7F", mute: "8A97A8", light: "F3F6FA", line: "D5DDE7", white: "FFFFFF",

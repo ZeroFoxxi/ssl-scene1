@@ -2,7 +2,7 @@
 const pptxgen = require("pptxgenjs");
 const path = require("path");
 const D = require("./ref_data.json");
-const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, ".."), "公开参照方案汇总.pptx");
+const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, "..", "01_场景一_摄像头声源定位", "竞品调研"), "公开参照方案汇总.pptx");
 const F = "Microsoft YaHei";
 const C = { navy: "17375E", text: "1F2937", gray: "5B6B7F", mute: "8A97A8", light: "F3F6FA", line: "D5DDE7", white: "FFFFFF",
   teal: "1F7A68", tealL: "E3F1EE", slate: "8A94A2", ice: "E8F0F9", amberL: "FBF0E3" };

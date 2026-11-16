@@ -5,7 +5,7 @@ const fs = require("fs");
 const { applyTheme } = require((process.env.PPTX_SKILL || "/mnt/skills/public/pptx") + "/scripts/apply_theme.js");
 
 const D = JSON.parse(fs.readFileSync(path.join(__dirname, "data_plan.json"), "utf-8"));
-const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, ".."), "训练数据方案与采集计划.pptx");
+const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, "..", "01_场景一_摄像头声源定位", "训练数据"), "训练数据方案与采集计划.pptx");
 const FONT = "Microsoft YaHei";
 const NAVY = "17375E", TEXT = "1F2937", GRAY = "5B6B7F", LIGHT = "EEF2F7", LIGHT2 = "F6F8FB";
 const RED = "C7000B", RED_L = "FBE9EA", TEAL = "1F7A68", TEAL_L = "E3F1EE", AMBER = "B8691A", AMBER_L = "FBF0E3";
