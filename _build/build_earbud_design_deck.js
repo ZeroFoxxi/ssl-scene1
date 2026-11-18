@@ -132,7 +132,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 {
   const s = newSlide("整体架构",
     "图中增强按本地方案（A）画出，B、C 见第 10 页；时延容忍度：入耳式约 10–20 ms，开放式约 5–6 ms（Stone & Moore 2008）",
-    "定位与融合运行在主耳，图中居中画出是为了表示它汇集两耳的数据。Stone & Moore 2008：https://www.researchgate.net/publication/5266175_Tolerable_Hearing_Aid_Delays_V_Estimation_of_Limits_for_Open_Canal_Fittings");
+    "为什么分主副耳：测向要用左右耳麦克风之间的相位关系，必须把几路音频放在同一颗芯片上一起算，不能两边各算一半。让一只耳机（主耳）汇集并计算，耳间只需单向传 1 路音频（256 kbps）、只有一颗 DSP 跑约 12 MFLOPS，结果只回传 8 字节；若两耳各算一遍，链路流量和计算量都翻倍，得到的方位却相同。主耳多耗约 3 mW，可按电量定期交换主副角色；一只耳机摘下时，另一只自动变为主耳，退化为本地 2 麦定位。定位与融合运行在主耳，图中居中画出是为了表示它汇集两耳的数据。Stone & Moore 2008：https://www.researchgate.net/publication/5266175_Tolerable_Hearing_Aid_Delays_V_Estimation_of_Limits_for_Open_Canal_Fittings");
   key(s, "定位走旁路：两耳之间只为定位传 1 路音频，结果是控制量，不进入你听到的声音");
   T(s, "副耳", { x: 0.6, y: 1.55, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
   T(s, "主耳", { x: 8.33, y: 1.55, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
