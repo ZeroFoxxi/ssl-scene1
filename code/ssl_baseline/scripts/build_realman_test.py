@@ -10,6 +10,8 @@
   同一场景、不同位置（折叠后方位差 ≥10°）的两条话语直接相加：
   叠加换人：A 在 B 开口前 0.2–0.6 s 说完；叠加抢话：A 在 B 开口后 0.2–0.8 s 说完。
   A 的结束取自 A 话语文件的末尾（文件截在说话结束处），两段都带各自的真实背景噪声（叠加后底噪比单段约高 3 dB）。
+  话语文件前后已截掉静音，A、B 都没有覆盖的时段（A 开始前、A 说完到 B 开口之间）会是绝对零值——真实房间不会出现，
+  因此用同一场景的真实背景噪声填补：从各话语中能量处于噪声底附近、连续 ≥0.1 s 的片段（字词间停顿）拼成噪声库，按原电平填入，边界 10 ms 渐变。
 输出：work/realman_test/realman_test.npz
 运行：python scripts/build_realman_test.py
 """
@@ -37,6 +39,34 @@ def load(base_path):
     return sps.resample_poly(x, 1, 3, axis=1)
 
 
+def noise_bank(utts, need):
+    """同一场景的真实背景噪声：取各话语中 CH0 帧能量在噪声底（10% 分位）+3 dB 以内、连续 ≥0.1 s 的片段，拼接到 need 个样点。"""
+    pieces, tot = [], 0
+    for f, _ in utts:
+        x = load(f); fr = 320
+        e = 10 * np.log10(np.mean(x[0, : x.shape[1] // fr * fr].reshape(-1, fr) ** 2, 1) + 1e-12)
+        low = e <= np.percentile(e, 10) + 3
+        d = np.diff(np.r_[0, low.astype(int), 0]); st, en = np.where(d == 1)[0], np.where(d == -1)[0]
+        for a, b in zip(st, en):
+            if b - a >= 5:                                                   # ≥0.1 s
+                pieces.append(x[:, a * fr: b * fr]); tot += (b - a) * fr
+        if tot >= need:
+            break
+    return np.concatenate(pieces, 1) if pieces else None
+
+
+def fill(seg, bank, a, b, rng):
+    """把 seg[:, a:b]（原为零）用噪声库中随机一段填上，两端 10 ms 渐变。"""
+    n = b - a
+    if n <= 0 or bank is None or bank.shape[1] <= n:
+        return
+    st = rng.integers(0, bank.shape[1] - n); piece = bank[:, st: st + n].copy()
+    r = min(160, n // 2)
+    if r > 0:
+        w = np.ones(n); w[:r] = np.linspace(0, 1, r); w[-r:] = np.linspace(1, 0, r); piece *= w
+    seg[:, a:b] += piece
+
+
 def main():
     lab = {}
     for kind in ["static", "moving"]:
@@ -51,6 +81,8 @@ def main():
         utts = [(f, fold(90.0 - lab[os.path.basename(f).replace("_CH0", "")])) for f in files if os.path.basename(f).replace("_CH0", "") in lab]
         utts = [u for u in utts if abs(u[1]) <= 80]
         bs = [utts[i] for i in rng.permutation(len(utts))[:PER_SCENE]]
+        bank = noise_bank(utts, 30 * FS)
+        print(f"{sc}: 噪声库 {0 if bank is None else bank.shape[1] / FS:.1f} s", flush=True)
         n0 = len(X)
         for fb, azb in bs:
             for cond, (lo, hi) in [(2, (-0.6, -0.2)), (3, (0.2, 0.8))]:
@@ -65,7 +97,9 @@ def main():
                 st = end - xa.shape[1]                                        # A 在片段中的开始位置
                 a0, a1 = max(0, st), min(N, end)
                 seg[:, a0:a1] += xa[:, a0 - st: a1 - st]
-                valid = a0
+                fill(seg, bank, 0, a0, rng)                                   # A 开始前
+                fill(seg, bank, a1, ON, rng)                                  # A 说完到 B 开口之间
+                valid = 0
                 X.append(seg.astype(np.float32))
                 meta.append({"az": azb, "cond": cond, "valid_from": valid, "src": f"{sc}:{os.path.basename(fb)}", "extra": f"A={os.path.basename(fa)} 方位 {aza:.1f}°"})
         print(f"{sc}: 话语 {len(utts)}，样本 {len(X) - n0}", flush=True)

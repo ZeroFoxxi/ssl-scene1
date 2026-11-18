@@ -49,13 +49,14 @@ for arr, m, label in [("6麦线阵 17.5cm", "SRP-PHAT", "SRP-PHAT"), ("6麦线�
     rows3.append([arr.replace("麦线阵 ", " 麦线阵，").replace("cm", " cm"), label, f"{s['latency_median_s']:.2f} s", pct(s["aim_within_2s"]),
                   f"{s['wrong_per_min']:.1f}", pct(s["framed_ratio"])])
 
-# 第 4 页：真实录音（LOCATA）——结果文件存在时填入，否则留【待补】
+# 第 4 页：真实录音（RealMAN 6 麦 3 cm；LOCATA 5 麦）——误差 ≤10° / ≤20° 的比例
 rows4, n4 = [], {}
-p = os.path.join(OUT, "locata_eval.json")
-if os.path.exists(p):
-    le = json.load(open(p, encoding="utf-8")); n4 = le["n"]
-    for m, r in le["methods"].items():
-        rows4.append([m] + [f"{100 * r[k]['acc10']:.0f}% / {100 * r[k]['acc20']:.0f}%" if k in r else "—" for k in ["实录单声源", "实录多声源", "叠加换人", "叠加抢话", "全部"]])
+rm = load("realman_eval.json"); lo = load("locata_eval_ep12.json")
+n4 = {"realman": sum(rm["n"].values()), "locata": sum(lo["n"].values())}
+f2 = lambda r: f"{100 * r['acc10']:.0f}% / {100 * r['acc20']:.0f}%"
+for m in rm["methods"]:
+    rows4.append([m, f2(rm["methods"][m]["叠加换人"]), f2(rm["methods"][m]["叠加抢话"]), f2(rm["methods"][m]["全部"]),
+                  f"{rm['methods'][m]['全部']['mae']:.1f}°", f2(lo["methods"][m]["全部"])])
 
 json.dump({"rows1": rows1, "rows2": rows2, "rows3": rows3, "rows4": rows4, "n4": n4,
            "nn_params": nn["params"], "nn_macs": nn["macs_per_decision"]},
