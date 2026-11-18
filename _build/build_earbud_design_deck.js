@@ -51,7 +51,7 @@ const chartBase = { catAxisLabelFontFace: F, valAxisLabelFontFace: F, dataLabelF
   valGridLine: { color: "E8E8E8", size: 0.5 }, catGridLine: { style: "none" }, catAxisLineColor: "BFBFBF", valAxisLineShow: false };
 const axisTitle = (o) => Object.assign({ catAxisTitleFontSize: 10.5, catAxisTitleColor: "404040", catAxisTitleFontFace: F, valAxisTitleFontSize: 10.5, valAxisTitleColor: "404040", valAxisTitleFontFace: F }, o);
 
-const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似；代码 code/earbud_ssl/";
+const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 
 // ================= 1 封面 =================
 {
@@ -70,14 +70,17 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似；�
     "本页汇总整体方案的主要结论。关键风险在第 11 页，需要确认的事项在第 14 页。");
   table(s, [
     [head("项目"), head("结论")],
-    [bold("整体架构"), cell("实时听的声音在每只耳机本地处理；两耳之间只为定位传 1 路音频，链路时延不进入用户听到的声音")],
+    [bold("运行位置与算力"), cell("全部端侧、离线；定位与融合在主耳音频 DSP，约 12 MFLOPS，方向模板约 120–250 KB（估算）")],
+    [bold("定位侧架构"), cell("两耳之间只为定位传 1 路音频（旁路），不进入声音通路；这部分对三种增强方案都通用")],
+    [bold("增强侧架构"), cell("三种方案未定：本地增强时延最低但分不开相邻的人；两耳组阵或目标说话人提取能分开，但时延处在边缘（第 11 页）")],
     [bold("麦克风"), cell("每耳 2 个即可；6 / 8 麦在仿真中精度提升不明显，耳间带宽却增加 2–4 倍")],
     [bold("耳机与摄像头"), cell("同时运行；一次定位中，声音先发现说话人，唇动给出开口时刻，声学随后测向")],
     [bold("摄像头"), cell("720p 级、视场约 80°；平时低分辨率找人脸，需要时只读嘴部区域（2 m 处嘴宽约 19 像素）")],
     [bold("功耗"), cell("以 FreeClip 2 S 为基准（约 37 mW / 只，通话 6 h），新增约 6–13 mW，续航约 4.5–5.2 h（未含 NPU）")],
     [bold("关键风险", { color: C.red }), cell("单只耳机 2 麦对相隔 25° 的人只能提升约 2 dB；两耳组阵约 8 dB，但声音通路时延约 17.5–20 ms 起，处在入耳式容忍度（约 10–20 ms）的边缘", { color: C.red })],
+    [bold("说话人移动"), cell("后续扩展：说话人地图中每个人从固定方位改为方位 + 角速度跟踪，视觉负责身份延续；12 月仿真")],
     [bold("需要确认"), cell("耳机之间专用链路的时延；目标说话人提取在耳机芯片上的时延与功耗；两耳采样同步能否 ≤ 50 µs")],
-  ], 0.6, 1.55, [1.9, 10.2], [0.42, 0.62, 0.55, 0.55, 0.55, 0.55, 0.75, 0.62]);
+  ], 0.6, 1.45, [1.9, 10.2], [0.38, 0.44, 0.44, 0.44, 0.44, 0.44, 0.44, 0.44, 0.62, 0.44, 0.44]);
 }
 
 // ================= 3 场景价值 =================
@@ -101,7 +104,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似；�
 
 // ================= 4 整体架构 =================
 {
-  const s = newSlide("实时听的声音在每只耳机本地处理；两耳之间只为定位传 1 路音频",
+  const s = newSlide("定位只占 1 路耳间音频，不进入声音通路；增强按本地方案画出，另两种见第 11 页",
     "时延容忍度：入耳式约 10–20 ms，开放式约 5–6 ms（Stone & Moore 2008）",
     "定位与融合运行在主耳，图中居中画出是为了表示它汇集两耳的数据。Stone & Moore 2008：https://www.researchgate.net/publication/5266175_Tolerable_Hearing_Aid_Delays_V_Estimation_of_Limits_for_Open_Canal_Fittings");
   T(s, "副耳", { x: 0.6, y: 1.5, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
@@ -173,7 +176,8 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似；�
   line(s, 0.6 + 4 * (w + gx) + w / 2, 1.6 + h, 0.6 + w / 2, 1.6 + 1.5, { dash: "dash" });
   para(s, ["第 3、4 步依赖唇动给出的时刻，这是音频与视觉协同的具体环节（深蓝框）。",
     "有 2 个干扰说话人时，用唇动门控的背景白化，方位误差 ≤ 10° 的比例从 58% 升到 96%（仿真）。",
-    "第 6 步保留纯声学候选：视觉差或缺失时只剩声学结果，仿真中从未比纯声学差。"], 0.6, 4.7, 12.1, 1.9);
+    "第 6 步保留纯声学候选：视觉差或缺失时只剩声学结果，仿真中从未比纯声学差。",
+    "说话人移动（后续）：地图中每个人从固定方位改为方位 + 角速度跟踪；视觉负责“是同一个人”，人走出视野后靠声学继续跟。"], 0.6, 4.6, 12.1, 2.1);
 }
 
 // ================= 7 传输与编码 =================
@@ -271,7 +275,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似；�
 {
   const s = newSlide("单只耳机分不开相邻的人；能分开的两种做法，声音通路时延都处在入耳式容忍度的边缘",
     "信干比为理论计算（已知干扰方位置零，混响下）；时延：星闪为第三方评测，C 为研究报告；容忍度：Stone & Moore 2008",
-    "信干比：刚性球头部模型，MVDR 置零，设计方位误差 2–3°，白噪声增益 ≥ −10 dB，直达混响比 0 dB，0.5–4 kHz 平均（code/earbud_ssl/scripts/null_rejection.py）。\n时延：星闪约 20 ms、蓝牙 15–40 ms 为手机到耳机的第三方评测（https://ngxptech.com/huawei-freebuds-pro-5-review-is-nearlink-better/），耳机之间专用链路未知；C 的 17.5 ms 来自 Wireless Hearables With Programmable Speech AI Accelerators（https://arxiv.org/pdf/2503.18698），Look Once to Hear 目标 < 20 ms。定位侧的输出对三种做法通用。");
+    "信干比：刚性球头部模型，MVDR 置零，设计方位误差 2–3°，白噪声增益 ≥ −10 dB，直达混响比 0 dB，0.5–4 kHz 平均。\n时延：星闪约 20 ms、蓝牙 15–40 ms 为手机到耳机的第三方评测（https://ngxptech.com/huawei-freebuds-pro-5-review-is-nearlink-better/），耳机之间专用链路未知；C 的 17.5 ms 来自 Wireless Hearables With Programmable Speech AI Accelerators（https://arxiv.org/pdf/2503.18698），Look Once to Hear 目标 < 20 ms。定位侧的输出对三种做法通用。");
   s.addChart(p.charts.BAR, [{ name: "信干比提升", labels: ["A 本地 2 麦", "B 两耳组阵"], values: [2.4, 8.3] }],
     Object.assign({ x: 0.6, y: 1.5, w: 5.4, h: 2.75, barDir: "bar", chartColors: [C.red, C.navy], showValue: true, dataLabelPosition: "outEnd", dataLabelFormatCode: "0.0",
       valAxisMinVal: 0, valAxisMaxVal: 10, showLegend: false, showTitle: true, title: "对相隔 25° 的干扰，信干比提升（dB）" }, chartBase));
@@ -331,7 +335,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似；�
 // ================= 13 明显问题排查 =================
 {
   const s = newSlide("12 项排查中，1 项是关键风险；其余可以通过设计解决、不致命或需要决策",
-    "各项依据见前文各页与 明显问题排查.md",
+    "各项依据见前文各页",
     "视觉变差（唇动错 30%、方位误差 6°、检出 70%、开口时刻误差 ±0.3 s）的仿真：定位仍 68–83%，仅视觉 38–46%。");
   const J = (t, color) => cell(t, { color: color || C.ink, bold: true });
   table(s, [
@@ -425,6 +429,24 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似；�
     [bold("增强分辨力"), cell("理论波束计算：固定超指向与已知干扰方位的 MVDR 置零"), cell("未含时变与估计噪声；不是增强算法的实现")],
     [bold("功耗"), cell("FreeClip 2 S 官方电池与续航推算基准；器件取公开资料"), cell("多为检索摘要，原文未逐一核实；NPU 无数据")],
   ], 0.6, 1.5, [1.8, 6.0, 4.33], [0.42, 0.5, 0.5, 0.5, 0.5, 0.56, 0.5, 0.5]);
+}
+
+{
+  const s = newSlide("附录 A5　定位算法初步比较（预研储备，整体方案确认后再正式选型）", SIM + "；每个条件 120 次，开口后 0.5 s 判决",
+    "四个条件：S1 混响（RT60 0.5 s）无干扰；S2 混响 + 2 个干扰（各低 6 dB）；S3 强混响（0.8 s）+ 嘈杂 + 2 个干扰；S4 混响 + 2 个干扰（与目标一样响）。GEVD-MUSIC 用唇动给出的开口时刻划分背景段做白化，5° 网格。估算算力约 12 MFLOPS，方向模板约 120–250 KB。另做了四项稳健性验证（转头、对话轮流、墙面反射、视觉变差），倾向不变。");
+  const labels = ["S1 混响", "S2 + 2 个干扰", "S3 强混响 + 干扰", "S4 干扰同样响"];
+  s.addChart(p.charts.BAR, [
+    { name: "SRP-PHAT", labels, values: [57, 22, 4, 8] },
+    { name: "MUSIC", labels, values: [94, 58, 36, 28] },
+    { name: "GEVD-MUSIC（背景白化）", labels, values: [98, 97, 87, 72] },
+    { name: "GEVD-MUSIC + 视觉", labels, values: [98, 97, 93, 82] },
+  ], Object.assign({ x: 0.6, y: 1.5, w: 8.2, h: 4.9, barDir: "col", barGrouping: "clustered", chartColors: ["C8C8C8", "9A9A9A", C.navyLt, C.navy],
+    showValue: true, dataLabelPosition: "outEnd", valAxisMinVal: 0, valAxisMaxVal: 100, showLegend: true, legendPos: "t",
+    showTitle: true, title: "方位误差 ≤10° 的比例（%）" }, chartBase));
+  para(s, ["有干扰说话人时，SRP-PHAT 只有 4–22%，不适用。",
+    "关键是背景白化：唇动给出开口时刻，开口前的一段只有干扰和噪声，用来估计背景。",
+    "倾向：GEVD-MUSIC + 起始段加权 + 5° 网格，再与人脸软融合；经典信号处理，不需要训练数据。",
+    "需要实测数据复核；微型神经网络作为对照，留到有匹配数据后再比。"], 9.1, 1.7, 3.65, 4.6, { fontSize: 12 });
 }
 
 p.writeFile({ fileName: OUT }).then((f) => console.log("saved", f));
