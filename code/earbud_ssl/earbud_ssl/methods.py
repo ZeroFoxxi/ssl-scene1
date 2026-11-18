@@ -100,3 +100,44 @@ def fuse_soft(p, grid, faces, lam=0.2, mu=0.1, gate_deg=8.0):
         if s > best_s:
             best, best_s = float(az), s
     return best
+
+
+def diffuse_coherence(H_diff, fmask):
+    """扩散场空间协方差（各方向传递函数的平均外积），(F,M,M)，迹归一化为 M。"""
+    Hd = H_diff[:, :, fmask]  # (K,M,F)
+    G = np.einsum("kmf,knf->fmn", Hd, Hd.conj()) / Hd.shape[0]
+    M = G.shape[1]
+    return G * (M / np.trace(G, axis1=1, axis2=2).real)[:, None, None]
+
+
+def rotate_background(Rb, Hgrid, grid, fmask, Gamma, delta_deg, n_dirs=3, min_sep=20.0):
+    """IMU 补偿的背景协方差：从背景协方差估出 n_dirs 个干扰方向，逐频点拟合
+    Rb ≈ Σ p_k a_k a_k^H + σ·Γ（Γ 为扩散场协方差），再把干扰方向按头部转角 delta 平移（声源不动、头转 delta，
+    头部坐标下方位减 delta），重建转头后的背景协方差。"""
+    A = np.transpose(Hgrid[:, :, fmask], (2, 1, 0))  # (F,M,G)
+    A = A / np.linalg.norm(A, axis=1, keepdims=True)
+    # 宽带波束功率谱找干扰方向
+    P = np.real(np.einsum("fmg,fmn,fng->g", A.conj(), Rb, A))
+    order = np.argsort(-P)
+    dirs = []
+    for k in order:
+        if all(abs((grid[k] - grid[j] + 180) % 360 - 180) >= min_sep for j in dirs):
+            dirs.append(int(k))
+        if len(dirs) >= n_dirs:
+            break
+    step = grid[1] - grid[0]
+    shift = int(round(delta_deg / step))
+    new = [(j - shift) % len(grid) for j in dirs]
+    F, M, _ = Rb.shape
+    out = np.empty_like(Rb)
+    for f in range(F):
+        basis = [np.outer(A[f, :, j], A[f, :, j].conj()) for j in dirs] + [Gamma[f]]
+        X = np.stack([b.reshape(-1) for b in basis], 1)
+        X = np.concatenate([X.real, X.imag], 0)
+        y = np.concatenate([Rb[f].reshape(-1).real, Rb[f].reshape(-1).imag])
+        coef = np.clip(np.linalg.lstsq(X, y, rcond=None)[0], 0, None)
+        R = coef[-1] * Gamma[f]
+        for c, j in zip(coef[:-1], new):
+            R = R + c * np.outer(A[f, :, j], A[f, :, j].conj())
+        out[f] = R
+    return out

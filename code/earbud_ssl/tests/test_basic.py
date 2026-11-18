@@ -74,6 +74,28 @@ def test_methods_quiet_and_fusion():
     assert Mth.fuse_with_faces(p_srp, grid, [(5.0, 0.1)]) == Mth.peak(p_srp, grid)  # 没有在说话的人脸 → 退回声学
 
 
+def test_rotate_background():
+    """背景里有一个 40° 的干扰；头向左转 20° 后，旋转后的背景协方差应与"转头后直接测得的背景"接近。"""
+    from earbud_ssl import methods as Mth
+    from earbud_ssl.sim import render_source
+    rng = np.random.default_rng(3)
+    fmask = (FREQS >= 200) & (FREQS <= 7000)
+    grid = np.arange(-180, 180, 5.0)
+    mics = earbud_mics()
+    Hg = sphere_tf(azimuth_points(grid, 1.5), mics, FREQS)
+    Hd = sphere_tf(fibonacci_sphere(16, 2.0), mics, FREQS)
+    Gam = Mth.diffuse_coherence(Hd, fmask)
+    S = stft(rng.standard_normal(16000))
+    def bg(yaw):
+        y = render_source(S, sphere_tf(azimuth_points([40 - yaw], 1.5), mics, FREQS)[0], Hd, rng)
+        return Mth.covariance(y, fmask, np.ones(y.shape[2]))
+    R0, R20 = bg(0.0), bg(20.0)
+    Rrot = Mth.rotate_background(R0, Hg, grid, fmask, Gam, 20.0, n_dirs=1)
+    err_rot = np.linalg.norm(Rrot - R20) / np.linalg.norm(R20)
+    err_stale = np.linalg.norm(R0 - R20) / np.linalg.norm(R20)
+    assert err_rot < 0.5 * err_stale, (err_rot, err_stale)
+
+
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for t in tests:

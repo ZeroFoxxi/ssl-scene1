@@ -5,8 +5,9 @@
 - `earbud_ssl/sphere.py`：刚性球头部模型（Duda & Martens 1998）——点声源到球面附近麦克风的传递函数；自由场对照；耳机麦克风位置。
 - `earbud_ssl/sim.py`：STFT 域双耳仿真：直达声 + 多方向扩散混响尾 + 语音谱形扩散噪声；两耳同步误差。
 - `earbud_ssl/doa.py`：路线 A（两耳组阵，4 麦 SRP-PHAT，头部模板）、路线 B（每耳本地 2 麦 + 耳间电平差，只传参数）及对照方法。
-- `earbud_ssl/methods.py`：算法选型的候选方法（SRP-PHAT、MUSIC、GEVD-MUSIC、起始段加权）与音视频融合（硬规则、软融合）。
+- `earbud_ssl/methods.py`：算法选型的候选方法（SRP-PHAT、MUSIC、GEVD-MUSIC、起始段加权）与音视频融合（硬规则、软融合）；扩散场协方差与 IMU 旋转背景。
 - `scripts/run_min_validation.py`：最小验证主脚本；`scripts/plot_min_validation.py`：画图。
+- `scripts/run_robustness.py --test turn|turntaking`：稳健性验证（转头、对话轮流，各约 10 分钟）；`scripts/plot_robustness.py`：画图。
 - `scripts/run_algo_selection.py`：算法选型主脚本（约 6 分钟）；`scripts/tune_fusion.py`：在开发种子上调软融合参数；`scripts/plot_algo_selection.py`：画图。
 
 ```bash
@@ -16,4 +17,4 @@ python scripts/run_min_validation.py --reps 2     # 约 3 分钟
 python scripts/plot_min_validation.py
 ```
 
-结果与解读见 `02_耳机声源定位/最小验证_刚性球模型.md`、`02_耳机声源定位/算法选型.md`。
+结果与解读见 `02_耳机声源定位/最小验证_刚性球模型.md`、`02_耳机声源定位/算法选型.md`、`02_耳机声源定位/稳健性验证.md`。
