@@ -50,6 +50,30 @@ def test_sync_error_shifts_phase():
     assert np.allclose(Ys[:2], 1) and not np.allclose(Ys[2:], 1)
 
 
+def test_methods_quiet_and_fusion():
+    """安静单声源下 SRP-PHAT、MUSIC、GEVD-MUSIC 都应测准；融合应选中在说话且声学支持的人脸。"""
+    from earbud_ssl import methods as Mth
+    rng = np.random.default_rng(1)
+    fmask = (FREQS >= 200) & (FREQS <= 7000)
+    grid = np.arange(-180, 180, 2.0)
+    mics = earbud_mics()
+    Hg = sphere_tf(azimuth_points(grid, 1.5), mics, FREQS)
+    Hd = sphere_tf(fibonacci_sphere(8, 2.0), mics, FREQS)
+    az = 24.0
+    Y = simulate(stft(rng.standard_normal(16000)), sphere_tf(azimuth_points([az], 1.5), mics, FREQS)[0], Hd, rng, snr_db=25)
+    from earbud_ssl.sim import diffuse_noise
+    Yb = diffuse_noise(Hd, Y.shape[2], rng, np.ones(len(FREQS))) * np.sqrt(np.mean(np.abs(Y) ** 2)) * 0.05
+    w = np.ones(Y.shape[2])
+    p_srp = Mth.srp_phat(Y, Hg, fmask, w)
+    p_mu = Mth.music(Mth.covariance(Y, fmask, w), Hg, fmask)
+    p_gevd = Mth.music(Mth.covariance(Y, fmask, w), Hg, fmask, Mth.covariance(Yb, fmask, np.ones(Yb.shape[2])))
+    for p in (p_srp, p_mu, p_gevd):
+        assert abs(Mth.peak(p, grid) - az) <= 4
+    faces = [(-30.0, 0.9), (25.0, 0.8), (5.0, 0.1)]  # 只有 25° 那张脸在说话且有声学支持
+    assert Mth.fuse_with_faces(p_srp, grid, faces) == 25.0
+    assert Mth.fuse_with_faces(p_srp, grid, [(5.0, 0.1)]) == Mth.peak(p_srp, grid)  # 没有在说话的人脸 → 退回声学
+
+
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for t in tests:

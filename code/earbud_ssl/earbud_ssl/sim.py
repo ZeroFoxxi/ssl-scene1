@@ -66,3 +66,35 @@ def apply_sync_error(Y, freqs, ear_mics, delay_s):
     Y = Y.copy()
     Y[ear_mics] *= np.exp(-2j * np.pi * freqs * delay_s)[None, :, None]
     return Y
+
+
+def render_source(src_stft, H, H_diff, rng, rt60=0.0, drr_db=np.inf):
+    """单个声源在各麦的 STFT：直达声 + 扩散混响尾（混响尾能量按 DRR 相对直达声设定）。
+    src_stft: (F,T)；H: (M,F)；H_diff: (K,M,F)。返回 (M,F,T)。"""
+    F, T = src_stft.shape
+    direct = H[:, :, None] * src_stft[None]
+    if not (rt60 > 0 and np.isfinite(drr_db)):
+        return direct
+    K, M, _ = H_diff.shape
+    L = int(np.ceil(rt60 * 16000 / HOP))
+    amp = 10 ** (-3 * np.arange(L) * HOP / (rt60 * 16000))
+    tail = np.zeros((M, F, T), complex)
+    for k in range(K):
+        c = (rng.standard_normal((L, F)) + 1j * rng.standard_normal((L, F))) * amp[:, None]
+        r = np.zeros((F, T), complex)
+        for l in range(L):
+            r[:, l:] += c[l][:, None] * src_stft[:, : T - l]
+        tail += H_diff[k][:, :, None] * r[None]
+    act = np.abs(src_stft).sum(0) > 0
+    p_d = np.mean(np.abs(direct[:, :, act]) ** 2)
+    p_t = np.mean(np.abs(tail[:, :, act]) ** 2)
+    return direct + tail * np.sqrt(p_d / p_t * 10 ** (-drr_db / 10))
+
+
+def diffuse_noise(H_diff, T, rng, psd):
+    K, M, F = H_diff.shape
+    noise = np.zeros((M, F, T), complex)
+    for k in range(K):
+        n = (rng.standard_normal((F, T)) + 1j * rng.standard_normal((F, T))) * np.sqrt(psd)[:, None]
+        noise += H_diff[k][:, :, None] * n[None]
+    return noise
