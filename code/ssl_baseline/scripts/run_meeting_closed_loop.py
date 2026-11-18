@@ -53,6 +53,7 @@ def lin(n, aperture):
 
 ARRAYS = {"6麦线阵 17.5cm": lin(6, 0.175), "4麦线阵 17.5cm": lin(4, 0.175)}
 METHODS = ["SRP-PHAT", "GEVD-MUSIC", "GEVD-MUSIC+远端冻结"]
+NN_METHODS = ["小网络+远端冻结"]                               # 加 --nn-ckpt 时才评测；只用于训练时的 6 麦线阵 17.5 cm
 
 
 # ---------------- 场景与信号 ----------------
@@ -192,7 +193,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--trials", type=int, default=30)
     ap.add_argument("--rt60", type=float, nargs="+", default=[0.3, 0.6])
+    ap.add_argument("--nn-ckpt", default=None, help="小网络模型路径（work/models/*.pt）；给出则加评小网络")
+    ap.add_argument("--tag", default="")
     a = ap.parse_args()
+    nn_est = None
+    if a.nn_ckpt:
+        from ssl_baseline.nn_doa import NNDOA
+        nn_est = NNDOA(a.nn_ckpt)
     sp, en = R.load("speech_zh.wav"), R.load("tv_en.wav")
     names = list(ARRAYS); xys = [ARRAYS[n] for n in names]
     idx = np.cumsum([0] + [x.shape[1] for x in xys]); allxy = np.hstack(xys)
@@ -218,8 +225,8 @@ def main():
                 nb = len(e_db)
                 srp_raw = np.array([raws[n].localize(x, max(0, int(((b + 1) * DT - 0.3) * FS)), int((b + 1) * DT * FS)).az
                                     if (b + 1) * DT >= 0.35 else 0.0 for b in range(nb)])
-                for m in METHODS:
-                    est = ests[n]["SRP-PHAT" if m == "SRP-PHAT" else "GEVD-MUSIC"]
+                for m in METHODS + (NN_METHODS if (nn_est is not None and n == names[0]) else []):
+                    est = nn_est if m in NN_METHODS else ests[n]["SRP-PHAT" if m == "SRP-PHAT" else "GEVD-MUSIC"]
                     pans, cmds = closed_loop(x, e_db, far_db, srp_raw, est, freeze=m.endswith("冻结"))
                     r = evaluate(pans, cmds, turns, azs)
                     rows.append({"rt60": rt, "trial": k, "array": n, "method": m, **{kk: round(v, 4) if isinstance(v, float) else v for kk, v in r.items()}})
@@ -229,8 +236,10 @@ def main():
     summary = []
     for rt in a.rt60 + ["平均"]:
         for n in names:
-            for m in METHODS:
+            for m in METHODS + NN_METHODS:
                 sel = [r for r in rows if (rt == "平均" or r["rt60"] == rt) and r["array"] == n and r["method"] == m]
+                if not sel:
+                    continue
                 lat = np.array([r["latency_median_s"] for r in sel])
                 summary.append({"rt60": rt, "array": n, "method": m,
                                 "latency_median_s": round(float(np.median(lat[np.isfinite(lat)])), 2) if np.isfinite(lat).any() else None,
@@ -238,15 +247,15 @@ def main():
                                 "wrong_per_min": round(float(np.mean([r["wrong_per_min"] for r in sel])), 2),
                                 "framed_ratio": round(float(np.mean([r["framed_ratio"] for r in sel])), 3), "n_trials": len(sel)})
     out = os.path.join(ROOT, "out"); os.makedirs(out, exist_ok=True)
-    with open(os.path.join(out, "closed_loop_meeting.csv"), "w", newline="", encoding="utf-8-sig") as fh:
+    with open(os.path.join(out, f"closed_loop_meeting{a.tag}.csv"), "w", newline="", encoding="utf-8-sig") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
     json.dump({"config": {"trials_per_rt60": a.trials, "rt60": a.rt60, "duration_s": DUR, "pan_speed_deg_s": PAN_SPEED,
                           "aim_deg": AIM_DEG, "arrays": {n: np.round(ARRAYS[n], 4).tolist() for n in names}},
-               "summary": summary, "example": example}, open(os.path.join(out, "closed_loop_meeting_summary.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+               "summary": summary, "example": example}, open(os.path.join(out, f"closed_loop_meeting{a.tag}_summary.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"\n{'RT60':>4} {'阵列':<14} {'方法':<22} {'时延中位数':>8} {'2s内对准':>8} {'误转/分':>7} {'对准时间':>8}")
     for s in summary:
         print(f"{str(s['rt60']):>4} {s['array']:<14} {s['method']:<22} {str(s['latency_median_s']):>8} {s['aim_within_2s']*100:>7.0f}% {s['wrong_per_min']:>7.2f} {s['framed_ratio']*100:>7.0f}%")
-    plot(summary, example, names, os.path.join(out, "fig_closed_loop_meeting.png"))
+    plot(summary, example, names, os.path.join(out, f"fig_closed_loop_meeting{a.tag}.png"))
 
 
 def plot(summary, ex, names, path):
