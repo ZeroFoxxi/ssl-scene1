@@ -5,7 +5,13 @@ const pptxgen = require("pptxgenjs");
 const path = require("path");
 const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, "..", "02_耳机声源定位"), "耳机摄像头听觉辅助_整体设计方案.pptx");
 const F = "Microsoft YaHei";
-const C = { text: "1F1F1F", gray: "595959", light: "8C8C8C", navy: "134074", navy2: "5B7FA6", pale: "EAF2F8", red: "B03A2E", redPale: "FBEDEB", grayPale: "F3F3F3", line: "D0D7E1", green: "2E7D32" };
+// 配色方案：THEME=navy（深蓝）| minimal（极简：深灰 + 单一红色强调）| teal（深青绿 + 琥珀）
+const THEMES = {
+  navy: { text: "1F1F1F", gray: "595959", light: "8C8C8C", navy: "134074", navy2: "5B7FA6", s2: "8DA9C4", s3: "BCCCDC", pale: "EAF2F8", red: "B03A2E", redPale: "FBEDEB", grayPale: "F3F3F3", greenPale: "EEF6EE", line: "D0D7E1", green: "2E7D32", band1: "D8E8D8", band2: "FFF2CC", band2t: "8A6D00" },
+  minimal: { text: "1F1F1F", gray: "595959", light: "8C8C8C", navy: "262626", navy2: "7F7F7F", s2: "BFBFBF", s3: "D9D9D9", pale: "F5F5F5", red: "C8102E", redPale: "F5F5F5", grayPale: "F5F5F5", greenPale: "F5F5F5", line: "D9D9D9", green: "262626", band1: "EDEDED", band2: "F6E3E6", band2t: "C8102E" },
+  teal: { text: "1F1F1F", gray: "595959", light: "8C8C8C", navy: "0F5257", navy2: "4E8A8E", s2: "9CC3C5", s3: "C9DEDF", pale: "EAF3F3", red: "C2410C", redPale: "FDF0E9", grayPale: "F3F3F3", greenPale: "EAF3F3", line: "CFDFE0", green: "0F5257", band1: "D5E8E8", band2: "FDECD3", band2t: "9A5B00" },
+};
+const C = THEMES[process.env.THEME || "navy"];
 
 const p = new pptxgen();
 p.layout = "LAYOUT_WIDE"; // 13.33 × 7.5 in
@@ -226,11 +232,11 @@ const SRC_SIM = "仿真：刚性球头部模型（无耳廓），混响用多方
   s.addChart(p.charts.BAR, [
     { name: "干扰比目标低 6 dB", labels, values: [90, 91, 91, 92, 94] },
     { name: "干扰与目标一样响", labels, values: [64, 66, 64, 72, 72] },
-  ], Object.assign({ x: 0.5, y: 1.45, w: 6.6, h: 4.5, barDir: "col", barGrouping: "clustered", chartColors: [C.navy, "8DA9C4"],
+  ], Object.assign({ x: 0.5, y: 1.45, w: 6.6, h: 4.5, barDir: "col", barGrouping: "clustered", chartColors: [C.navy, C.s2],
     showValue: true, dataLabelPosition: "outEnd", valAxisMinVal: 0, valAxisMaxVal: 100, showLegend: true, legendPos: "t",
     showTitle: true, title: "测向精度：方位误差 ≤10° 的比例（%，纯声学）" }, chartText));
   s.addChart(p.charts.BAR, [{ name: "耳间带宽", labels, values: [256, 512, 256, 768, 1024] }],
-    Object.assign({ x: 7.3, y: 1.45, w: 5.5, h: 4.5, barDir: "col", chartColors: ["8C8C8C"], showValue: true, dataLabelPosition: "outEnd",
+    Object.assign({ x: 7.3, y: 1.45, w: 5.5, h: 4.5, barDir: "col", chartColors: [C.navy2], showValue: true, dataLabelPosition: "outEnd",
       valAxisMinVal: 0, valAxisMaxVal: 1200, showLegend: false, showTitle: true, title: "副耳 → 主耳带宽（kbps）" }, chartText));
   T(s, "推荐：每耳 2 麦，主耳用本耳 2 路 + 副耳 1 路共 3 路测向。若增强采用两耳组阵（第 11 页），麦克风与链路需按增强需求重新确定。",
     { x: 0.5, y: 6.05, w: 11.0, h: 0.45, fontSize: 12, color: C.text, valign: "middle" });
@@ -249,7 +255,7 @@ const SRC_SIM = "仿真：刚性球头部模型（无耳廓），混响用多方
     { name: "720p / 80°（推荐）", labels, values: px(1280, 80) },
     { name: "1080p / 100°", labels, values: px(1920, 100) },
     { name: "设计目标 20 像素", labels, values: d.map(() => 20) },
-  ], Object.assign({ x: 0.5, y: 1.45, w: 7.4, h: 4.7, chartColors: ["BFBFBF", "8DA9C4", C.navy, "5B7FA6", C.red], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 6,
+  ], Object.assign({ x: 0.5, y: 1.45, w: 7.4, h: 4.7, chartColors: [C.s3, C.s2, C.navy, C.navy2, C.red], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 6,
     valAxisMinVal: 0, valAxisMaxVal: 45, showLegend: true, legendPos: "r", showTitle: true, title: "对方嘴宽在画面中的像素数（估算）",
     showCatAxisTitle: true, catAxisTitle: "对方距离", catAxisTitleFontSize: 10, catAxisTitleColor: "404040", catAxisTitleFontFace: F }, chartText));
   T(s, "两级读出", { x: 8.3, y: 1.5, w: 4.5, h: 0.4, fontSize: 14, bold: true, color: C.navy, valign: "middle" });
@@ -292,10 +298,10 @@ const SRC_SIM = "仿真：刚性球头部模型（无耳廓），混响用多方
   T(s, "C 不依赖阵列孔径：Look Once to Hear 可在多人中只放大目标（研究报告）", { x: 0.5, y: 4.2, w: 5.4, h: 0.5, fontSize: 11, color: C.gray, valign: "middle" });
   const X0 = 6.5, X1 = 12.7, ms = (v) => X0 + (X1 - X0) * v / 30, Y = 2.55;
   T(s, "声音通路时延与容忍度（ms）", { x: X0, y: 1.5, w: 6.2, h: 0.35, fontSize: 11, bold: true, color: "404040", valign: "middle" });
-  rect(s, ms(0), Y - 0.45, ms(6) - ms(0), 0.9, "D8E8D8");
-  rect(s, ms(10), Y - 0.45, ms(20) - ms(10), 0.9, "FFF2CC");
+  rect(s, ms(0), Y - 0.45, ms(6) - ms(0), 0.9, C.band1);
+  rect(s, ms(10), Y - 0.45, ms(20) - ms(10), 0.9, C.band2);
   T(s, "开放式\n≤ 5–6", { x: ms(0), y: Y - 0.42, w: ms(6) - ms(0), h: 0.5, fontSize: 9.5, color: C.green, align: "center" });
-  T(s, "入耳式 ≤ 10–20", { x: ms(10), y: Y - 0.42, w: ms(20) - ms(10), h: 0.3, fontSize: 9.5, color: "8A6D00", align: "center" });
+  T(s, "入耳式 ≤ 10–20", { x: ms(10), y: Y - 0.42, w: ms(20) - ms(10), h: 0.3, fontSize: 9.5, color: C.band2t, align: "center" });
   line(s, X0, Y + 0.45, X1, Y + 0.45, { arrow: false, color: "404040", width: 1 });
   [0, 5, 10, 15, 20, 25, 30].forEach((v) => { line(s, ms(v), Y + 0.45, ms(v), Y + 0.53, { arrow: false, color: "404040", width: 1 });
     T(s, String(v), { x: ms(v) - 0.25, y: Y + 0.55, w: 0.5, h: 0.25, fontSize: 9.5, color: "404040", align: "center" }); });
@@ -324,7 +330,7 @@ const SRC_SIM = "仿真：刚性球头部模型（无耳廓），混响用多方
     T(s, name, { x: 0.5, y, w: 2.7, h: 0.45, fontSize: 12.5, bold: i === 2, align: "right", valign: "middle" });
     if (lo === null) { T(s, "【待确认】网络推理功耗未知", { x: X0 + 0.05, y, w: 5, h: 0.45, fontSize: 12, color: C.light, valign: "middle" }); return; }
     rect(s, X0, y + 0.07, h2x(lo) - X0, 0.32, color);
-    if (hi > lo) rect(s, h2x(lo), y + 0.07, h2x(hi) - h2x(lo), 0.32, "BCCCDC");
+    if (hi > lo) rect(s, h2x(lo), y + 0.07, h2x(hi) - h2x(lo), 0.32, C.s3);
     T(s, lo === hi ? `${lo} h` : `${lo}–${hi} h`, { x: h2x(hi) + 0.1, y, w: 1.4, h: 0.45, fontSize: 12.5, bold: i === 2, valign: "middle" });
   });
   line(s, X0, 5.3, X1, 5.3, { arrow: false, color: "404040", width: 1 });
@@ -343,7 +349,7 @@ const SRC_SIM = "仿真：刚性球头部模型（无耳廓），混响用多方
   const groups = [
     { x: 0.5, y: 1.45, w: 6.05, h: 1.75, title: "关键风险", color: C.red, fill: C.redPale, items: ["增强能否分开相邻说话人：本地 2 麦约 2 dB；两耳组阵或目标说话人提取时延约 17.5–20 ms 起（第 11 页）", "相对已有产品的增量价值：取决于上一项"] },
     { x: 6.78, y: 1.45, w: 6.05, h: 1.75, title: "可通过设计解决", color: C.navy, fill: C.pale, items: ["摄像头看不清嘴 → 720p 级 + 嘴部区域读出", "声音通路时延 → 定位走旁路，增强在本地（架构 A）", "两耳带宽与同步 → 只转发 1 路；同步 ≤ 50 µs 待确认", "开放式形态更难 → 推荐入耳式"] },
-    { x: 0.5, y: 3.4, w: 6.05, h: 2.0, title: "不致命", color: C.green, fill: "EEF6EE", items: ["功耗：续航约 4.5–5.2 h（估算）", "摄像头看不到：软融合平稳降级（视觉很差时仍 68–83%）", "锁定慢：已在地图中的人可立即切换", "佩戴者自己说话：骨声纹检测，冻结定位"] },
+    { x: 0.5, y: 3.4, w: 6.05, h: 2.0, title: "不致命", color: C.green, fill: C.greenPale, items: ["功耗：续航约 4.5–5.2 h（估算）", "摄像头看不到：软融合平稳降级（视觉很差时仍 68–83%）", "锁定慢：已在地图中的人可立即切换", "佩戴者自己说话：骨声纹检测，冻结定位"] },
     { x: 6.78, y: 3.4, w: 6.05, h: 2.0, title: "需要决策或复核", color: C.gray, fill: C.grayPale, items: ["社交接受度、拍摄隐私 → 图像不出模组、指示灯（产品决策）", "仿真与真实差距 → 需样机、实测头部数据、视觉真实指标"] },
   ];
   groups.forEach((g) => {
