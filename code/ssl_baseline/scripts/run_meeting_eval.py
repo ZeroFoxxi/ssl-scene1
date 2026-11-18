@@ -56,6 +56,7 @@ SPEECH_ONSETS = [1.05, 3.5, 5.31, 7.67, 9.52, 12.36, 14.95]   # speech_zh.wav �
 CONDS = ["C1 换人", "C2 抢话", "C3 远端扬声器", "C4 空调噪声"]
 METHODS = ["S SRP-PHAT", "S2 SRP+背景扣除", "M MUSIC", "G GEVD-MUSIC", "G' GEVD+起点误差", "T 自适应背景", "T' 自适应+起点误差"]
 FRONT = ((85.0, 275.0),)        # 屏蔽背后（前墙方向）
+WALL_D = 0.08                   # 阵列中心到前墙的距离（m），其他脚本可改
 
 ARRAYS = {
     "sq4": ring_array(4, 0.0283, 45.0),
@@ -77,7 +78,7 @@ def make_scene(rng):
     """返回房间尺寸、阵列中心、参会人位置列表、A/B 下标、扬声器与空调位置。"""
     while True:
         L, W, H = rng.uniform(5.0, 10.0), rng.uniform(4.0, 7.0), rng.uniform(2.6, 3.2)
-        c = np.array([0.08, W / 2 + rng.uniform(-0.3, 0.3), rng.uniform(1.6, 2.0)])
+        c = np.array([WALL_D, W / 2 + rng.uniform(-0.3, 0.3), rng.uniform(1.6, 2.0)])
         x0, x1 = rng.uniform(1.0, 1.8), L - rng.uniform(0.8, 1.5)
         if x1 - x0 < 2.0:
             continue
