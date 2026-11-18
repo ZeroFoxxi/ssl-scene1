@@ -1,0 +1,235 @@
+{
+ "setup": {
+  "array": "2+1",
+  "trials": 100,
+  "seed": 41,
+  "modes": {
+   "continuous": "干扰一直说话",
+   "pauses": "干扰说 1–3 s、停 0.3–1.5 s，与目标无关",
+   "turn": "轮流说话：上一个人停下 0.1–0.5 s 后目标开口，目标说话时干扰不说"
+  },
+  "detector": "同 run_timing.py 的 raw：白化后最大广义特征值（频点中位数），背景时间常数 1 s、短时 0.25 s"
+ },
+ "results": {
+  "S2 混响 + 2 个干扰（SIR 6 dB）": {
+   "continuous": {
+    "lip_onset_acc10": {
+     "acoustic": 91.0,
+     "with_vision": 93.0
+    },
+    "acoustic_onset": {
+     "2.0": {
+      "detect_rate": 82.0,
+      "false_alarm_per_min": 33.23863636363637,
+      "delay_median_s": 0.16,
+      "acc10_detected": 89.02439024390245,
+      "acc10_detected_with_vision": 96.34146341463415
+     },
+     "2.5": {
+      "detect_rate": 65.0,
+      "false_alarm_per_min": 14.488636363636363,
+      "delay_median_s": 0.16,
+      "acc10_detected": 90.76923076923077,
+      "acc10_detected_with_vision": 95.38461538461539
+     },
+     "3.0": {
+      "detect_rate": 43.0,
+      "false_alarm_per_min": 6.392045454545455,
+      "delay_median_s": 0.192,
+      "acc10_detected": 95.34883720930233,
+      "acc10_detected_with_vision": 97.67441860465115
+     },
+     "3.5": {
+      "detect_rate": 20.0,
+      "false_alarm_per_min": 2.9829545454545454,
+      "delay_median_s": 0.128,
+      "acc10_detected": 100.0,
+      "acc10_detected_with_vision": 100.0
+     }
+    }
+   },
+   "pauses": {
+    "lip_onset_acc10": {
+     "acoustic": 94.0,
+     "with_vision": 98.0
+    },
+    "acoustic_onset": {
+     "2.0": {
+      "detect_rate": 80.0,
+      "false_alarm_per_min": 32.81250000000001,
+      "delay_median_s": 0.096,
+      "acc10_detected": 87.5,
+      "acc10_detected_with_vision": 90.0
+     },
+     "2.5": {
+      "detect_rate": 69.0,
+      "false_alarm_per_min": 20.454545454545453,
+      "delay_median_s": 0.128,
+      "acc10_detected": 94.20289855072464,
+      "acc10_detected_with_vision": 97.10144927536231
+     },
+     "3.0": {
+      "detect_rate": 54.0,
+      "false_alarm_per_min": 10.65340909090909,
+      "delay_median_s": 0.128,
+      "acc10_detected": 94.44444444444444,
+      "acc10_detected_with_vision": 96.29629629629629
+     },
+     "3.5": {
+      "detect_rate": 31.0,
+      "false_alarm_per_min": 2.9829545454545454,
+      "delay_median_s": 0.16,
+      "acc10_detected": 100.0,
+      "acc10_detected_with_vision": 100.0
+     }
+    }
+   },
+   "turn": {
+    "lip_onset_acc10": {
+     "acoustic": 98.0,
+     "with_vision": 99.0
+    },
+    "acoustic_onset": {
+     "2.0": {
+      "detect_rate": 72.0,
+      "false_alarm_per_min": 26.420454545454547,
+      "delay_median_s": 0.192,
+      "acc10_detected": 100.0,
+      "acc10_detected_with_vision": 100.0
+     },
+     "2.5": {
+      "detect_rate": 60.0,
+      "false_alarm_per_min": 15.34090909090909,
+      "delay_median_s": 0.192,
+      "acc10_detected": 100.0,
+      "acc10_detected_with_vision": 100.0
+     },
+     "3.0": {
+      "detect_rate": 46.0,
+      "false_alarm_per_min": 8.948863636363637,
+      "delay_median_s": 0.224,
+      "acc10_detected": 100.0,
+      "acc10_detected_with_vision": 100.0
+     },
+     "3.5": {
+      "detect_rate": 31.0,
+      "false_alarm_per_min": 5.113636363636363,
+      "delay_median_s": 0.288,
+      "acc10_detected": 100.0,
+      "acc10_detected_with_vision": 100.0
+     }
+    }
+   }
+  },
+  "S4 混响 + 2 个干扰（SIR 0 dB）": {
+   "continuous": {
+    "lip_onset_acc10": {
+     "acoustic": 74.0,
+     "with_vision": 89.0
+    },
+    "acoustic_onset": {
+     "2.0": {
+      "detect_rate": 65.0,
+      "false_alarm_per_min": 39.63068181818182,
+      "delay_median_s": 0.128,
+      "acc10_detected": 60.0,
+      "acc10_detected_with_vision": 78.46153846153847
+     },
+     "2.5": {
+      "detect_rate": 40.0,
+      "false_alarm_per_min": 24.715909090909093,
+      "delay_median_s": 0.128,
+      "acc10_detected": 72.5,
+      "acc10_detected_with_vision": 85.0
+     },
+     "3.0": {
+      "detect_rate": 21.0,
+      "false_alarm_per_min": 11.505681818181818,
+      "delay_median_s": 0.128,
+      "acc10_detected": 76.19047619047619,
+      "acc10_detected_with_vision": 85.71428571428571
+     },
+     "3.5": {
+      "detect_rate": 12.0,
+      "false_alarm_per_min": 5.113636363636363,
+      "delay_median_s": 0.14400000000000002,
+      "acc10_detected": 75.0,
+      "acc10_detected_with_vision": 91.66666666666666
+     }
+    }
+   },
+   "pauses": {
+    "lip_onset_acc10": {
+     "acoustic": 79.0,
+     "with_vision": 88.0
+    },
+    "acoustic_onset": {
+     "2.0": {
+      "detect_rate": 70.0,
+      "false_alarm_per_min": 41.33522727272728,
+      "delay_median_s": 0.096,
+      "acc10_detected": 52.85714285714286,
+      "acc10_detected_with_vision": 74.28571428571429
+     },
+     "2.5": {
+      "detect_rate": 55.00000000000001,
+      "false_alarm_per_min": 33.66477272727273,
+      "delay_median_s": 0.128,
+      "acc10_detected": 58.18181818181818,
+      "acc10_detected_with_vision": 80.0
+     },
+     "3.0": {
+      "detect_rate": 38.0,
+      "false_alarm_per_min": 19.176136363636363,
+      "delay_median_s": 0.128,
+      "acc10_detected": 57.89473684210527,
+      "acc10_detected_with_vision": 76.31578947368422
+     },
+     "3.5": {
+      "detect_rate": 20.0,
+      "false_alarm_per_min": 11.505681818181818,
+      "delay_median_s": 0.064,
+      "acc10_detected": 75.0,
+      "acc10_detected_with_vision": 90.0
+     }
+    }
+   },
+   "turn": {
+    "lip_onset_acc10": {
+     "acoustic": 99.0,
+     "with_vision": 99.0
+    },
+    "acoustic_onset": {
+     "2.0": {
+      "detect_rate": 44.0,
+      "false_alarm_per_min": 38.77840909090909,
+      "delay_median_s": 0.288,
+      "acc10_detected": 100.0,
+      "acc10_detected_with_vision": 100.0
+     },
+     "2.5": {
+      "detect_rate": 34.0,
+      "false_alarm_per_min": 26.420454545454547,
+      "delay_median_s": 0.32,
+      "acc10_detected": 100.0,
+      "acc10_detected_with_vision": 100.0
+     },
+     "3.0": {
+      "detect_rate": 20.0,
+      "false_alarm_per_min": 16.61931818181818,
+      "delay_median_s": 0.32,
+      "acc10_detected": 100.0,
+      "acc10_detected_with_vision": 100.0
+     },
+     "3.5": {
+      "detect_rate": 14.000000000000002,
+      "false_alarm_per_min": 10.227272727272727,
+      "delay_median_s": 0.352,
+      "acc10_detected": 100.0,
+      "acc10_detected_with_vision": 100.0
+     }
+    }
+   }
+  }
+ }
+}

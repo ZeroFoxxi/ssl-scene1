@@ -55,6 +55,7 @@ def music(Rs, Hgrid, fmask, Rb=None, loading=1e-2):
         Rb = Rb + (loading * np.trace(Rb, axis1=1, axis2=2).real / M + 1e-12)[:, None, None] * np.eye(M)
         Li = np.linalg.inv(np.linalg.cholesky(Rb))
         Rw = Li @ Rs @ Li.conj().transpose(0, 2, 1)
+        Rw = 0.5 * (Rw + Rw.conj().transpose(0, 2, 1))  # 去掉数值误差带来的非厄米部分，避免特征分解偶发不收敛
         En = np.linalg.eigh(Rw)[1][:, :, :-1]
         Aw = Li @ A
     num = np.sum(np.abs(Aw) ** 2, axis=1)
