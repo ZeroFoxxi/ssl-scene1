@@ -89,7 +89,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
     [bold("增强侧架构"), cell("三种方案未定：本地增强时延最低但分不开相邻的人；两耳组阵能分开但需几毫秒级耳间音频链路；目标说话人提取时延在边缘（第 11 页）")],
     [bold("麦克风"), cell("每耳 2 个即可；6 / 8 麦在仿真中精度提升不明显，耳间带宽却增加 2–4 倍")],
     [bold("耳机与摄像头"), cell("同时运行；一次定位中，声音先发现说话人，唇动给出开口时刻，声学随后测向")],
-    [bold("摄像头"), cell("720p 级、视场约 80°，平时低分辨率找人脸，需要时只读嘴部区域。装 1 个（主耳）还是 2 个未定，12 月仿真对比后再定（第 9 页）。像素门槛、唇动精度、NPU 功耗【待确认】")],
+    [bold("摄像头"), cell("720p 级、视场约 80°，平时低分辨率找人脸，需要时只读嘴部区域；按主耳 1 个前向摄像头设计。像素门槛、唇动精度、NPU 功耗【待确认】")],
     [bold("功耗"), cell("以 FreeClip 2 S 为基准（约 37 mW / 只，通话 6 h），新增约 6–13 mW，续航约 4.5–5.2 h（未含 NPU）")],
     [bold("关键风险", { color: C.red }), cell("定位能找到要听的人，但“只放大他”要靠增强把相隔 20–30° 的人分开：单只耳机 2 麦只提升约 2 dB，分不开；两耳组阵约 8 dB，前提是两耳间有几毫秒级的音频链路（助听器有，蓝牙 / 星闪约 15–40 ms 不够）；目标说话人提取约 17.5–20 ms，在入耳式容忍度边缘", { color: C.red })],
     [bold("说话人移动"), cell("后续扩展：说话人地图中每个人从固定方位改为方位 + 角速度跟踪，视觉负责身份延续；12 月仿真")],
@@ -119,7 +119,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 // ================= 4 整体架构 =================
 {
   const s = newSlide("整体架构",
-    "图中增强按本地方案（A）画出，B、C 见第 11 页；摄像头按两只耳机都装画出，只装主耳的方案见第 9 页；时延容忍度：入耳式约 10–20 ms，开放式约 5–6 ms（Stone & Moore 2008）",
+    "图中增强按本地方案（A）画出，B、C 见第 11 页；摄像头按 1 个（主耳）画出；时延容忍度：入耳式约 10–20 ms，开放式约 5–6 ms（Stone & Moore 2008）",
     "定位与融合运行在主耳，图中居中画出是为了表示它汇集两耳的数据。Stone & Moore 2008：https://www.researchgate.net/publication/5266175_Tolerable_Hearing_Aid_Delays_V_Estimation_of_Limits_for_Open_Canal_Fittings");
   T(s, "副耳", { x: 0.6, y: 1.5, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
   T(s, "主耳", { x: 8.33, y: 1.5, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
@@ -133,17 +133,16 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
   T(s, "目标方位，每 16 ms 下发两耳", { x: 3.3, y: 2.62, w: 3.4, h: 0.3, fontSize: 11, color: C.navy });
   box(s, "定位与融合\n（主耳）", 5.5, 3.6, 2.3, 1.0, { fill: C.navy, line: C.navy, color: "FFFFFF", bold: true, text: { fontSize: 12.5 } });
   line(s, 6.65, 3.6, 6.65, 2.95, { color: C.navy });
-  box(s, "取 1 路麦克风音频", 0.6, 3.5, 2.3, 0.5); box(s, "摄像头 + NPU", 0.6, 4.3, 2.3, 0.5);
-  line(s, 2.9, 3.75, 5.5, 3.9); line(s, 2.9, 4.55, 5.5, 4.35);
-  T(s, "1 路音频 16 kHz（耳间链路）", { x: 3.0, y: 3.42, w: 2.5, h: 0.3, fontSize: 10, color: C.gray });
-  T(s, "人脸元数据（耳间链路）", { x: 3.0, y: 4.55, w: 2.5, h: 0.3, fontSize: 10, color: C.gray });
+  box(s, "取 1 路麦克风音频", 0.6, 3.85, 2.3, 0.5);
+  line(s, 2.9, 4.1, 5.5, 4.1);
+  T(s, "1 路音频 16 kHz（耳间链路）", { x: 3.0, y: 3.77, w: 2.5, h: 0.3, fontSize: 10, color: C.gray });
   box(s, "本耳 2 路麦克风音频", 10.43, 3.35, 2.3, 0.45); box(s, "摄像头 + NPU", 10.43, 3.9, 2.3, 0.45); box(s, "IMU：头部朝向", 10.43, 4.45, 2.3, 0.45);
   line(s, 10.43, 3.57, 7.8, 3.9); line(s, 10.43, 4.12, 7.8, 4.12); line(s, 10.43, 4.67, 7.8, 4.35);
   table(s, [
     [head("通路"), head("做什么"), head("时延要求"), head("跨耳传输")],
     [bold("实时听"), cell("每只耳机用本地麦克风朝目标增强，与透传混合后播放"), cell("入耳式 ≤ 约 10–20 ms"), cell("不跨耳")],
     [bold("定位"), cell("主耳汇集 3 路音频，与视觉融合，算出目标方位"), cell("开口后约 0.5 s 内"), cell("1 路音频")],
-    [bold("视觉"), cell("人脸方位、唇动分数、开口时刻"), cell("几十毫秒可接受"), cell("人脸元数据")],
+    [bold("视觉"), cell("前向摄像头（主耳）给出人脸方位、唇动分数、开口时刻"), cell("几十毫秒可接受"), cell("不跨耳")],
   ], 0.6, 5.2, [1.4, 6.2, 2.5, 2.0], [0.36, 0.38, 0.38, 0.38]);
 }
 
@@ -239,9 +238,9 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 
 // ================= 9 摄像头 =================
 {
-  const s = newSlide("摄像头：分辨率与数量",
-    "嘴宽按 5 cm、小孔成像估算；20 像素为本方案的设计目标，需视觉同事确认；双摄像头做法：VueBuds（CHI 2026）",
-    "双摄像头：VueBuds 两只耳机各装一个，各向外偏 5–10°，拼接后视场约 98–108°（https://www.washington.edu/news/2026/04/14/cameras-in-wireless-earbuds-vuebuds/ ，https://arxiv.org/abs/2603.29095）。参考：低分辨率视频中嘴部约 45 × 17 像素时仍能做唇动检测（Liu 等，https://personalpages.surrey.ac.uk/w.wang/papers/LiuWJ_SSPD_2011.pdf）；未找到最小像素数的系统结论。人脸检测要求低得多（SCRFD 可处理小于 16 像素的人脸，https://arxiv.org/abs/2105.04714）。");
+  const s = newSlide("摄像头分辨率",
+    "嘴宽按 5 cm、小孔成像估算；20 像素为本方案的设计目标，需视觉同事确认",
+    "参考：低分辨率视频中嘴部约 45 × 17 像素时仍能做唇动检测（Liu 等，https://personalpages.surrey.ac.uk/w.wang/papers/LiuWJ_SSPD_2011.pdf）；未找到最小像素数的系统结论。人脸检测要求低得多（SCRFD 可处理小于 16 像素的人脸，https://arxiv.org/abs/2105.04714）。");
   const d = [1, 1.5, 2, 2.5, 3];
   const px = (W, fov) => d.map((x) => Math.round((W / 2) / Math.tan((fov / 2) * Math.PI / 180) * 0.05 / x));
   const labels = d.map((x) => x + " m");
@@ -251,15 +250,10 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
     { name: "720p，80°（推荐）", labels, values: px(1280, 80) },
     { name: "1080p，100°", labels, values: px(1920, 100) },
     { name: "设计目标 20 像素", labels, values: d.map(() => 20) },
-  ], Object.assign({ x: 0.6, y: 1.4, w: 7.4, h: 3.3, chartColors: ["C8C8C8", "9A9A9A", C.navy, C.navyLt, C.red], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 6,
+  ], Object.assign({ x: 0.6, y: 1.5, w: 7.4, h: 4.6, chartColors: ["C8C8C8", "9A9A9A", C.navy, C.navyLt, C.red], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 6,
     valAxisMinVal: 0, valAxisMaxVal: 45, showLegend: true, legendPos: "r", showTitle: true, title: "对方嘴宽在画面里占多少像素" }, chartBase,
     axisTitle({ showCatAxisTitle: true, catAxisTitle: "对方距离", showValAxisTitle: true, valAxisTitle: "像素" })));
-  table(s, [
-    [head("摄像头数量"), head("视野"), head("功耗与成本")],
-    [bold("每只耳机 1 个"), cell("两侧互补；脸会挡住各自内侧，VueBuds 两个各外偏 5–10°，合成约 100°"), cell("两只耳机都增加摄像头功耗")],
-    [bold("只在主耳 1 个"), cell("对侧一部分被脸挡住；正前方 ±30° 内是否够用待验证"), cell("副耳不增加；成本减半；主耳续航不变")],
-  ], 0.6, 4.8, [1.4, 3.6, 2.4], [0.36, 0.6, 0.6]);
-  T(s, "数量未定：12 月仿真比较两种做法对定位的影响（只装主耳时，对侧看不到的人退化为纯声学），再结合功耗与成本确定。", { x: 0.6, y: 6.4, w: 7.4, h: 0.42, fontSize: 11, color: C.gray, valign: "middle" });
+  T(s, "按 1 个前向摄像头（装在主耳）设计，与《技术洞察》一致。如果硬件两只耳机都装，融合流程不变，只是把两路人脸结果合并。", { x: 0.6, y: 6.25, w: 7.4, h: 0.5, fontSize: 11.5, color: C.gray, valign: "middle" });
   sub(s, "两级读出", 8.4, 1.6, 4.3);
   box(s, "平时：整幅画面合并像素输出\n低分辨率，1–2 fps", 8.4, 2.05, 4.3, 0.75);
   line(s, 10.55, 2.8, 10.55, 3.1);
@@ -329,7 +323,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 {
   const s = newSlide("功耗估算（以 FreeClip 2 S 为基准）",
     "基准：FreeClip 2 S 每只 60 mAh、通话 6 h（华为官网），按 3.7 V 约 37 mW；器件功耗取公开资料；NPU 未计入；分项见附录 A3",
-    "华为官网规格页：https://consumer.huawei.com/hk/headphones/freeclip2-s/specs/。每多 1 mW，续航约少 10 分钟。按主耳（有摄像头和定位计算）估算；只在主耳装摄像头时，副耳不增加摄像头的约 1.9–8.8 mW，整副耳机的续航仍受主耳限制。");
+    "华为官网规格页：https://consumer.huawei.com/hk/headphones/freeclip2-s/specs/。每多 1 mW，续航约少 10 分钟。按主耳（装摄像头、做定位计算）估算；副耳只多耳间传输一项。");
   const X0 = 3.2, X1 = 8.6, h2x = (v) => X0 + (X1 - X0) * v / 6.5;
   T(s, "续航（每只耳机，浅色段为估算区间）", { x: 0.6, y: 1.55, w: 8, h: 0.32, fontSize: 11.5, color: "404040", valign: "middle" });
   [["基准（通话）", 6.0, 6.0, "9A9A9A"], ["推荐配置", 4.5, 5.2, C.navy], ["唇动档极少触发", 5.3, 5.4, C.navy], ["两耳组阵增强（B）", 4.1, 4.9, C.navy], ["目标说话人提取（C）", null, null]].forEach(([n, lo, hi, c], i) => {
@@ -389,8 +383,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
     [ctr("3"), bold("两耳采样同步能否 ≤ 50 µs"), cell("两耳组阵定位的前提"), cell("链路、芯片")],
     [ctr("4"), bold("唇动检测需要嘴部多少像素；NPU 功耗与精度"), cell("决定摄像头分辨率与功耗"), cell("视觉")],
     [ctr("5"), bold("佩戴形态：入耳式还是开放式"), cell("开放式时延要求约 5–6 ms，增强更难"), cell("产品")],
-    [ctr("6"), bold("摄像头装几个：只在主耳 1 个，还是两只耳机都装"), cell("影响视野、功耗与成本；12 月仿真先比较对定位的影响"), cell("产品、视觉")],
-  ], 0.6, 1.6, [0.5, 5.0, 4.6, 2.0], [0.42, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55]);
+  ], 0.6, 1.6, [0.5, 5.0, 4.6, 2.0], [0.42, 0.55, 0.55, 0.55, 0.55, 0.55]);
 }
 
 // ================= 附录 =================
