@@ -146,6 +146,7 @@ def plot(s1, s2, fmax, tm, path):
     for n, c in zip(PART2, [TEAL, NAVY, ORANGE]):
         ax.plot([w * 100 for w in WALLS], [best(s2, array=n, win=0.5, wall=w) for w in WALLS], "-o", color=c, ms=4, lw=1.6, label=n)
     ax.set_xscale("log"); ax.set_xticks([w * 100 for w in WALLS]); ax.set_xticklabels([f"{w*100:g}" for w in WALLS])
+    ax.minorticks_off()
     ax.set_xlabel("阵列中心到前墙的距离（cm）"); ax.set_ylim(30, 100)
     ax.set_title("离墙距离的影响（0.5 s 判决）", fontsize=10, fontweight="bold", color=NAVY)
     ax.legend(fontsize=8, frameon=False); ax.grid(color="#E3E8EF", lw=0.7); ax.spines[["top", "right"]].set_visible(False)
