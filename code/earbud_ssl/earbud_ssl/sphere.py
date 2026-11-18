@@ -71,3 +71,17 @@ def fibonacci_sphere(n, r):
     phi = np.arccos(1 - 2 * i / n)
     theta = np.pi * (1 + 5 ** 0.5) * i
     return r * np.stack([np.cos(theta) * np.sin(phi), np.sin(theta) * np.sin(phi), np.cos(phi)], 1)
+
+
+def earbud_mic_set(name, a=HEAD_RADIUS, out=0.008, down=0.012):
+    """麦克风配置（主耳为左耳）。每耳局部布局：前、后（x = ±0.75 cm），3 麦加下方 1 个，4 麦为 1.5 × 1.2 cm 矩形。
+    name: '2+2' | '3+3' | '4+4' | '2+1' | '3+1'（主耳麦数 + 副耳传到主耳的路数）。返回 (M,3)。"""
+    h = 0.0075
+    local = {1: [[h, 0, 0]], 2: [[h, 0, 0], [-h, 0, 0]], 3: [[h, 0, 0], [-h, 0, 0], [0, 0, -0.012]],
+             4: [[h, 0, 0], [-h, 0, 0], [h, 0, -0.012], [-h, 0, -0.012]]}
+    nL, nR = (int(x) for x in name.split("+"))
+    pts = []
+    for n, side in ((nL, 1), (nR, -1)):
+        for p in local[n]:
+            pts.append([p[0], side * (a + out), -down + p[2]])
+    return np.array(pts)

@@ -9,6 +9,8 @@
 - `scripts/run_min_validation.py`：最小验证主脚本；`scripts/plot_min_validation.py`：画图。
 - `earbud_ssl/room.py`：鞋盒房间镜像声源法 + 头部模型查表（表缓存在 `cache/`，不进仓库，首次运行约 10 秒生成）。
 - `scripts/run_robustness.py --test turn|turntaking|room|vision`：稳健性验证（各约 8–12 分钟）；`scripts/plot_robustness.py`、`scripts/plot_robustness2.py`：画图。
+- `scripts/run_mic_count.py --config 2+1|2+2|3+1|3+3|4+4`：麦克风数量对比（各约 2.5 分钟）；`scripts/plot_mic_count.py`：画图。
+- `scripts/beam_rejection.py`：增强一侧的空间分辨力（理论波束图，用于明显问题排查，不是增强算法实现）。
 - `scripts/run_algo_selection.py`：算法选型主脚本（约 6 分钟）；`scripts/tune_fusion.py`：在开发种子上调软融合参数；`scripts/plot_algo_selection.py`：画图。
 
 ```bash
