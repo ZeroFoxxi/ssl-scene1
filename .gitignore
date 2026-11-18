@@ -16,3 +16,6 @@ node_modules/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# 训练数据与语音素材（可由脚本重新生成 / 下载，不进仓库）
+code/ssl_baseline/work/
