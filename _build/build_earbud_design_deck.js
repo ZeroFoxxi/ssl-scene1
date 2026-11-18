@@ -45,6 +45,8 @@ function newSlide(title, source, notes) {
   if (notes) s.addNotes(notes);
   return s;
 }
+// 每页一句要点（mentor：突出重要的点）
+const key = (s, text) => T(s, text, { x: 0.6, y: 1.14, w: 12.13, h: 0.36, fontSize: 13.5, bold: true, color: C.ink, valign: "middle" });
 function box(s, text, x, y, w, h, o) {
   o = o || {};
   s.addShape(p.shapes.RECTANGLE, { x, y, w, h, fill: { color: o.fill || "FFFFFF" }, line: { color: o.line || C.box, width: o.lw || 0.75 } });
@@ -74,55 +76,66 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
   T(s, "耳机摄像头无障碍听觉辅助", { x: 0.9, y: 2.5, w: 11, h: 0.8, fontSize: 32, bold: true, valign: "middle" });
   T(s, "整体设计方案与明显问题排查", { x: 0.9, y: 3.35, w: 11, h: 0.5, fontSize: 18, color: C.gray, valign: "middle" });
   T(s, "2026 年 11 月", { x: 0.9, y: 4.15, w: 4, h: 0.4, fontSize: 13, color: C.light, valign: "middle" });
-  s.addNotes("按“应用场景价值 → 整体设计方案 → 具体算法模型”的顺序，本次汇报整体设计方案，并排查有没有明显问题。数字为仿真或按公开资料估算，需样机复核；方法见附录 A4。");
+  s.addNotes("按“应用场景价值 → 整体设计方案 → 具体算法模型”的顺序，本次汇报整体设计方案，并排查有没有明显问题。数字为仿真或按公开资料估算，需样机复核；方法见附录 A8。");
 }
 
 // ================= 2 结论 =================
 {
   const s = newSlide("整体方案结论",
-    "数字为仿真（刚性球头部模型）或按公开资料估算，需样机复核；各项详见后续页",
-    "本页汇总整体方案的主要结论。关键风险在第 11 页，需要确认的事项在第 14 页。");
+    "数字为仿真（刚性球头部模型）或按公开资料估算，需样机复核",
+    "关键风险见第 10 页，需要确认的事项见第 12 页，明显问题逐项排查见附录 A1。");
+  key(s, "定位侧仿真可行；能否在多人中只听清一个人，取决于增强能否在时延要求内分开相邻的人");
+  const R = (t, o) => cell(t, Object.assign({ fontSize: 12.5 }, o)), H = (t, o) => bold(t, Object.assign({ fontSize: 12.5 }, o));
   table(s, [
-    [head("项目"), head("结论")],
-    [bold("运行位置与算力"), cell("全部端侧、离线；定位与融合在主耳音频 DSP，约 12 MFLOPS，方向模板约 120–250 KB（估算）")],
-    [bold("定位侧架构"), cell("两耳之间只为定位传 1 路音频（旁路），不进入声音通路；这部分对三种增强方案都通用")],
-    [bold("增强侧架构"), cell("三种方案未定：本地增强时延最低但分不开相邻的人；两耳组阵能分开但需几毫秒级耳间音频链路；目标说话人提取时延在边缘（第 11 页）")],
-    [bold("麦克风"), cell("每耳 2 个即可；6 / 8 麦在仿真中精度提升不明显，耳间带宽却增加 2–4 倍")],
-    [bold("耳机与摄像头"), cell("同时运行；一次定位中，声音先发现说话人，唇动给出开口时刻，声学随后测向")],
-    [bold("摄像头"), cell("两只耳机各 1 个（耳柄）；平时低分辨率找人脸，需要时只读嘴部区域；要看清 2 m 外的嘴需 720p 级（视场约 80°）。朝向需保证正前方 ±30° 有覆盖；像素门槛、唇动精度、NPU 功耗【待确认】")],
-    [bold("功耗"), cell("以 FreeClip 2 S 为基准（约 37 mW / 只，通话 6 h），新增约 6–13 mW，续航约 4.5–5.2 h（未含 NPU）")],
-    [bold("关键风险", { color: C.red }), cell("定位能找到要听的人，但“只放大他”要靠增强把相隔 20–30° 的人分开：单只耳机 2 麦只提升约 2 dB，分不开；两耳组阵约 8 dB，前提是两耳间有几毫秒级的音频链路（助听器有，蓝牙 / 星闪约 15–40 ms 不够）；目标说话人提取约 17.5–20 ms，在入耳式容忍度边缘", { color: C.red })],
-    [bold("说话人移动"), cell("后续扩展：说话人地图中每个人从固定方位改为方位 + 角速度跟踪，视觉负责身份延续；12 月仿真")],
-    [bold("需要确认"), cell("耳机之间能否有几毫秒级的音频链路；目标说话人提取在耳机芯片上的时延与功耗；两耳采样同步能否 ≤ 50 µs")],
-  ], 0.6, 1.4, [1.9, 10.2], [0.38, 0.42, 0.42, 0.42, 0.42, 0.42, 0.62, 0.42, 0.85, 0.42, 0.42]);
+    [head("项目", { fontSize: 12.5 }), head("结论", { fontSize: 12.5 })],
+    [H("场景价值"), R("在多人中自动锁定正在和我说话的那一个人；已有产品只增强正前方，或增强整组说话人")],
+    [H("定位方案"), R("每耳 2 麦，副耳转发 1 路，主耳 DSP 测向并与人脸融合；约 12 MFLOPS，全部端侧")],
+    [H("耳机与摄像头"), R("同时运行；对话中唇动给出开口时刻，开口后 0.5 s 锁定（仿真 89–95%）")],
+    [H("摄像头"), R("两耳各 1 个，720p 级；平时低分辨率找人脸，对话中只读嘴部区域")],
+    [H("功耗"), R("对话少时续航 4.3–5.2 h；对话多时取决于摄像头读嘴部区域的功耗【待确认】")],
+    [H("关键风险", { color: C.red }), R("分开相邻的人，需要几毫秒级的耳间音频链路，或在耳机上跑目标说话人提取（时延约 20 ms）", { color: C.red })],
+    [H("后续"), R("说话人移动时的跟踪，12 月仿真")],
+  ], 0.6, 1.7, [2.1, 10.03], [0.48, 0.62, 0.62, 0.62, 0.62, 0.62, 0.62, 0.62]);
 }
 
 // ================= 3 场景价值 =================
 {
-  const s = newSlide("应用场景与已有产品对比",
-    "来源：HearingTracker、Hearing Review、Look Once to Hear（CHI 2024）、VueBuds（CHI 2026）；“能 / 否”为根据公开描述的判断",
-    "来源：\nHearingTracker（Meta Ray-Ban Gen 2 Conversation Focus，5–6 麦阵列）https://www.hearingtracker.com/news/meta-ray-ban-gen-2-conversation-focus-ai-speech-enhancement-for-hearing-loss\nHearing Review（AirPods Pro Conversation Boost）https://hearingreview.com/inside-hearing/events/apple-announces-conversation-boost-for-airpods-pro\nLook Once to Hear（CHI 2024）https://arxiv.org/html/2405.06289v2\nVueBuds（CHI 2026）https://arxiv.org/abs/2603.29095\n助听器耳间链路：检索摘要提及 Signia e2e，原文未核实。");
-  const Y = (t) => ctr(t || "能"), N = (t) => ctr(t || "否", { color: C.light }), D = () => ctr("—", { color: C.light });
+  const s = newSlide("应用场景与已有产品",
+    "麦克风数量：Apple 规格页、HearingTracker / Techlicious、Phonak 白皮书；“能 / 不能”为根据公开描述的判断",
+    "AirPods Pro 2：规格页列出双波束成形麦克风 + 朝内麦克风，每只 3 个为按列表推得（https://www.apple.com/sg/airpods-pro/specs/）。Ray-Ban Meta 二代：5 个麦克风（https://www.hearingtracker.com/hearing-glasses/meta-ray-ban-glasses-in-hearadvisor-testing-how-do-they-perform-as-hearing-aids）。Phonak StereoZoom：两只助听器各 2 个麦克风，经无线链路组成 4 麦双耳波束（https://www.phonak.com/content/dam/phonak/en/evidence-library/white-paper/technical-paper/Phonak_Insight_StereoZoom.pdf）。Look Once to Hear（CHI 2024，https://arxiv.org/html/2405.06289v2）与 VueBuds（CHI 2026，https://arxiv.org/abs/2603.29095）为研究原型，未列入麦克风数量图。助听器：Phonak SpeechSensor 判断主要说话人在前、侧或后方并切换指向模式（https://www.phonak.com/content/dam/phonak/en/evidence-library/field-studies/PH_FieldStudyNews_LumityDirectionalBeamforming_210x297_EN_028-2475-02_V1-00.pdf）；Signia IX 厂商称可同时跟踪并增强多个说话人（https://hearingreview.com/hearing-products/hearing-aids/signias-integrated-xperience-hearing-aid-platform-pinpoints-multiple-speakers-in-real-time），证据多为厂商资料。");
+  key(s, "已有产品增强正前方或整组说话人，分不出哪一个在和你说话；本方案用摄像头 + 两耳定位锁定那一个人");
+  // 麦克风数量柱状图（手绘，按类别着色）
+  const cat = { "耳机": C.navyLt, "眼镜": "A6A6A6", "助听器": "5B7FA6", "本方案": C.navy };
+  const rows = [["AirPods Pro 2", "耳机", 6, "（每只 3）"], ["Ray-Ban Meta 二代", "眼镜", 5, ""], ["Phonak 双耳助听器", "助听器", 4, "（每只 2）"], ["本方案", "本方案", 4, "（每只 2）"]];
+  T(s, "整副设备的麦克风数量（个）", { x: 0.6, y: 1.6, w: 6, h: 0.3, fontSize: 12, bold: true, color: "404040" });
+  const X0 = 2.95, X1 = 5.3, v2x = (v) => X0 + (X1 - X0) * v / 6;
+  rows.forEach(([n, c, v, d], i) => { const y = 2.05 + i * 0.62;
+    T(s, n, { x: 0.6, y, w: 2.25, h: 0.42, fontSize: 11.5, bold: c === "本方案", align: "right", valign: "middle" });
+    s.addShape(p.shapes.RECTANGLE, { x: X0, y: y + 0.07, w: v2x(v) - X0, h: 0.28, fill: { color: cat[c] }, line: NONE });
+    T(s, `${v} ${d}`, { x: v2x(v) + 0.08, y, w: 1.1, h: 0.42, fontSize: 10.5, color: C.gray, valign: "middle" }); });
+  line(s, X0, 4.55, X0, 2.0, { arrow: false, color: "BFBFBF" });
+  let lx = 0.6; Object.entries(cat).forEach(([k, c]) => { s.addShape(p.shapes.RECTANGLE, { x: lx, y: 4.72, w: 0.2, h: 0.16, fill: { color: c }, line: NONE });
+    T(s, k, { x: lx + 0.26, y: 4.66, w: 0.9, h: 0.28, fontSize: 10.5, color: C.gray, valign: "middle" }); lx += 1.25; });
+  T(s, "麦克风数量都在 4–6 个：差别不在数量，而在能不能两耳组阵、有没有摄像头告诉它该听谁。", { x: 0.6, y: 5.2, w: 5.7, h: 0.8, fontSize: 13, bold: true, color: C.navy, valign: "middle" });
+  // 按类别列重要信息
   table(s, [
-    [head("产品 / 研究"), head("增强正前方", { align: "center" }), head("多人中只增强一个人", { align: "center" }), head("转头后仍跟住", { align: "center" }), head("无需注册", { align: "center" }), head("耳机形态", { align: "center" }), head("做法")],
-    [bold("AirPods Pro 对话增强、听力辅助"), Y(), N(), N(), Y(), Y(), cell("波束聚焦正前方；听力辅助按听力图补偿")],
-    [bold("Meta Ray-Ban Gen 2 Conversation Focus"), Y(), N(), N(), Y(), N(), cell("镜腿 5–6 麦阵列波束成形")],
-    [bold("助听器双耳指向"), Y(), N(), N(), Y(), Y(), cell("专用耳间链路组成双耳阵列，按头朝向")],
-    [bold("Look Once to Hear（CHI 2024）"), Y(), Y(), Y(), N(), Y(), cell("先看着目标几秒注册声纹，再做目标说话人提取")],
-    [bold("VueBuds（CHI 2026）"), D(), D(), D(), D(), Y(), cell("耳机装摄像头做视觉问答，不做听觉辅助")],
-    [bold("本方案", { color: C.navy }), Y(), ctr("能，有前提", { color: C.red }), Y(), Y(), Y(), cell("摄像头人脸 + 唇动，与两耳定位融合，自动锁定")],
-  ], 0.6, 1.55, [3.1, 1.15, 1.6, 1.25, 1.0, 1.0, 3.0], [0.45, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55]);
-  T(s, "前提：增强侧能把相隔 20–30° 的相邻说话人分开，见第 11 页。目标用户：听力损失或老年人群；嘈杂场合本来就戴着耳机的普通用户。",
-    { x: 0.6, y: 5.6, w: 12.1, h: 0.5, fontSize: 12, color: C.gray, valign: "middle" });
+    [head("类别"), head("代表"), head("能做到"), head("做不到")],
+    [bold("耳机"), cell("AirPods Pro 2"), cell("增强正前方"), cell("多人中只听一个人")],
+    [bold("眼镜"), cell("Ray-Ban Meta 二代"), cell("增强正前方"), cell("多人中只听一个人")],
+    [bold("助听器"), cell("Phonak、Signia IX"), cell("判断说话人方向；同时增强多个说话人（厂商称）"), cell("锁定和你说话的那一个人")],
+    [bold("研究原型"), cell("Look Once to Hear"), cell("只放大注册过的人"), cell("免注册")],
+    [bold("本方案", { color: C.navy }), cell("耳机 + 摄像头"), cell("自动锁定、转头跟住、免注册"), cell("分开相邻的人【有前提，第 10 页】", { color: C.red })],
+  ], 6.55, 1.6, [1.05, 1.75, 1.9, 1.48], [0.4, 0.5, 0.5, 0.75, 0.5, 0.62]);
 }
 
 // ================= 4 整体架构 =================
 {
   const s = newSlide("整体架构",
-    "图中增强按本地方案（A）画出，B、C 见第 11 页；时延容忍度：入耳式约 10–20 ms，开放式约 5–6 ms（Stone & Moore 2008）",
-    "定位与融合运行在主耳，图中居中画出是为了表示它汇集两耳的数据。Stone & Moore 2008：https://www.researchgate.net/publication/5266175_Tolerable_Hearing_Aid_Delays_V_Estimation_of_Limits_for_Open_Canal_Fittings");
-  T(s, "副耳", { x: 0.6, y: 1.5, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
-  T(s, "主耳", { x: 8.33, y: 1.5, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
+    "图中增强按本地方案（A）画出，B、C 见第 10 页；时延容忍度：入耳式约 10–20 ms，开放式约 5–6 ms（Stone & Moore 2008）",
+    "为什么分主副耳：测向要用左右耳麦克风之间的相位关系，必须把几路音频放在同一颗芯片上一起算，不能两边各算一半。让一只耳机（主耳）汇集并计算，耳间只需单向传 1 路音频（256 kbps）、只有一颗 DSP 跑约 12 MFLOPS，结果只回传 8 字节；若两耳各算一遍，链路流量和计算量都翻倍，得到的方位却相同。主耳多耗约 3 mW，可按电量定期交换主副角色；一只耳机摘下时，另一只自动变为主耳，退化为本地 2 麦定位。定位与融合运行在主耳，图中居中画出是为了表示它汇集两耳的数据。Stone & Moore 2008：https://www.researchgate.net/publication/5266175_Tolerable_Hearing_Aid_Delays_V_Estimation_of_Limits_for_Open_Canal_Fittings");
+  key(s, "定位走旁路：两耳之间只为定位传 1 路音频，结果是控制量，不进入你听到的声音");
+  T(s, "副耳", { x: 0.6, y: 1.55, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
+  T(s, "主耳", { x: 8.33, y: 1.55, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
   const ear = (x0) => { box(s, "2 个麦克风", x0, 1.9, 1.25, 0.55); box(s, "本地增强", x0 + 1.55, 1.9, 1.25, 0.55, { line: C.navy, color: C.navy, bold: true }); box(s, "扬声器", x0 + 3.1, 1.9, 1.25, 0.55);
     line(s, x0 + 1.25, 2.175, x0 + 1.55, 2.175); line(s, x0 + 2.8, 2.175, x0 + 3.1, 2.175); };
   ear(0.6); ear(8.38);
@@ -147,144 +160,148 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
   ], 0.6, 5.2, [1.4, 6.2, 2.5, 2.0], [0.36, 0.38, 0.38, 0.38]);
 }
 
+// ================= 6a 接收：从声波到主耳 DSP =================
+{
+  const s = newSlide("一个声音进来：耳机怎么接收",
+    "PDM 时钟、抽取滤波为数字麦常规做法；时钟漂移补偿、缓存、摄像头时间基准见附录 A10；格式与速率见附录 A5",
+    "副耳只取 1 路麦克风音频转发，另一路只用于副耳本地增强。实时听通路的采样率与时延由增强模块决定，不经过定位。主耳音频 DSP 按两耳的采样计数把 3 路音频对齐到同一时刻，再进入第 6 页的处理。");
+  const ear = (label, y, n, fwd) => {
+    T(s, label, { x: 0.6, y, w: 0.8, h: 0.9, fontSize: 13, bold: true, valign: "middle" });
+    box(s, "声波", 1.45, y + 0.2, 0.75, 0.5, { line: C.rule, color: C.gray });
+    line(s, 2.2, y + 0.45, 2.45, y + 0.45);
+    box(s, "2 个 MEMS 数字麦\n耳柄前后，间距 1.5 cm", 2.45, y, 2.15, 0.9);
+    line(s, 4.6, y + 0.45, 5.35, y + 0.45);
+    T(s, "PDM 1 bit\n约 1–3 MHz", { x: 4.62, y: y - 0.42, w: 0.75, h: 0.42, fontSize: 9.5, color: C.gray, align: "center", valign: "bottom" });
+    box(s, "抽取滤波\n（音频编解码器）", 5.35, y, 1.75, 0.9);
+    line(s, 7.1, y + 0.45, 7.75, y + 0.45);
+    T(s, n, { x: 7.05, y: y - 0.42, w: 0.8, h: 0.42, fontSize: 9.5, color: C.gray, align: "center", valign: "bottom" });
+    T(s, "实时听：增强 → 扬声器，不经过定位（第 10 页）", { x: 5.35, y: y + 0.95, w: 3.3, h: 0.28, fontSize: 9.5, color: C.light });
+    box(s, fwd, 7.75, y, 1.95, 0.9, { line: fwd.startsWith("主耳") ? C.navy : C.box, color: fwd.startsWith("主耳") ? C.navy : C.ink, bold: fwd.startsWith("主耳") });
+  };
+  key(s, "每只耳机 2 个数字麦；副耳转发 1 路，主耳 DSP 按采样计数对齐 3 路（两耳同步误差需 ≤ 50 µs）");
+  ear("副耳", 1.95, "16 kHz\n16 bit", "取 1 路\n加采样计数");
+  ear("主耳", 3.7, "16 kHz\n16 bit", "主耳音频 DSP\n3 路按采样计数对齐");
+  line(s, 8.72, 2.85, 8.72, 3.7, { color: C.navy });
+  T(s, "耳间链路：1 路 PCM，256 kbps\n两耳采样同步 ≤ 50 µs", { x: 8.85, y: 2.95, w: 3.9, h: 0.6, fontSize: 10.5, color: C.navy, valign: "middle" });
+  // 其他输入
+  T(s, "同时进入主耳 DSP 的其他输入", { x: 0.6, y: 5.0, w: 6, h: 0.3, fontSize: 12, bold: true, color: C.navy });
+  table(s, [
+    [head("器件"), head("接收什么"), head("输出给定位"), head("速率")],
+    [bold("骨声纹传感器"), cell("佩戴者自己说话时颅骨的振动"), cell("自语音标志（是 / 否）"), cell("每 16 ms 1 个")],
+    [bold("IMU"), cell("头部转动"), cell("偏航角"), cell("200 Hz")],
+    [bold("摄像头 + NPU（两耳各一）"), cell("前方画面，图像不出模组"), cell("人脸方位、唇动分数、曝光时间戳；副耳的经耳间链路"), cell("每张脸 16 字节，1–15 fps")],
+  ], 0.6, 5.35, [2.4, 2.9, 4.5, 2.33], [0.32, 0.34, 0.34, 0.34]);
+  // 右侧小结
+  line(s, 9.7, 4.15, 9.95, 4.15);
+  T(s, "每 16 ms 一帧：3 路对齐的音频、人脸列表、头部朝向、自语音标志，进入下一页的处理", { x: 10.0, y: 3.7, w: 2.75, h: 0.9, fontSize: 10.5, color: C.ink, valign: "middle" });
+}
+
+// ================= 6b 处理：主耳 DSP 上每一步 =================
+{
+  const s = newSlide("信号怎么处理：主耳 DSP 上的每一步",
+    "计算量为估算（3 路、218 个频点、72 个方向、每 0.25 s 扫描一次）；高通与扫描间隔为设计值，其余参数为仿真中使用的值；需在目标芯片上实测",
+    "第 5 步的白化：用背景协方差的 Cholesky 分解把干扰和噪声变成白噪声，此时目标方向在特征分解中最突出（GEVD-MUSIC）。有人脸时可只扫描人脸附近 ±10°，第 6 步约降到 1.7 MFLOPS。仿真中，2 个干扰说话人时，唇动门控背景白化使方位误差 ≤ 10° 的比例从 58% 升到 96%。说话人移动（后续）：第 8 步的说话人地图从固定方位改为方位 + 角速度跟踪。");
+  key(s, "9 步经典信号处理，全部在主耳 DSP 上：约 12 MFLOPS（估算），其中约四分之三花在第 5、6 步（白化与方向扫描）");
+  const S = (t) => cell(t, { fontSize: 10 }), B = (t) => bold(t, { fontSize: 10 }), N = (t) => ctr(t, { fontSize: 10 });
+  table(s, [
+    [head("步骤"), head("做什么"), head("输入 → 输出"), head("参数"), head("每秒计算量", { align: "center" })],
+    [B("1 高通"), S("去掉直流和低频风噪"), S("3 路 PCM → 3 路 PCM"), S("4 阶，100 Hz"), N("1.0 M")],
+    [B("2 分帧 + FFT"), S("每 16 ms 取最近 32 ms，加窗做 FFT"), S("3 × 512 点 → 3 × 218 个频点"), S("汉宁窗；保留 200–7000 Hz"), N("1.2 M")],
+    [B("3 判帧"), S("用唇动、能量、骨声纹判断这一帧是背景、目标还是跳过"), S("唇动、帧能量、自语音 → 帧类型"), S("目标嘴闭上 > 0.2 s 为背景；开口后为目标"), N("0.2 M")],
+    [B("4 协方差"), S("每个频点算 3 路之间的相关矩阵，分背景、目标两份"), S("3 × 218 频点 → 218 × 两个 3×3"), S("背景递推，时间常数约 1 s；目标从开口起累计，能量上升的帧加权"), N("0.7 M")],
+    [B("5 背景白化", { color: C.navy }), S("用背景矩阵把干扰和噪声白化，再做特征分解"), S("218 × 两个 3×3 → 218 个噪声子空间"), S("每 0.25 s 一次"), N("1.0 M", { bold: true, color: C.navy })],
+    [B("6 方向扫描", { color: C.navy }), S("72 个方向逐个取预存模板，与噪声子空间比较，频点平均得空间谱"), S("模板 72 × 218 × 3 → 72 个分数"), S("每 5° 一个方向；模板含头部影响，约 184 KB"), N("8.2 M", { bold: true, color: C.navy })],
+    [B("7 找峰"), S("取空间谱峰值，抛物线插值"), S("72 个分数 → 候选方位"), S("在 5° 网格之间插值，输出不受网格限制"), N("很小")],
+    [B("8 与人脸融合"), S("每张人脸：方位 ±8° 内空间谱最大值 + 0.1 ×（唇动 − 0.5）；纯声学峰值 − 0.05 也参选；取最高"), S("候选方位、人脸列表 → 目标方位"), S("人脸方位先按摄像头位置换算到头部中心，再按曝光时刻的 IMU 角度换到世界坐标"), N("很小")],
+    [B("9 输出"), S("用 IMU 把目标方位换回头部坐标，打包下发两耳增强"), S("目标方位等 → 8 字节"), S("每 16 ms 一次；开口后约 0.5 s 首次锁定"), N("很小")],
+    [B("合计"), S("主耳音频 DSP，全部端侧离线"), S(""), S("内存：模板约 184 KB + 协方差约 31 KB"), N("约 12 M")],
+  ], 0.6, 1.6, [1.45, 3.75, 2.55, 3.25, 1.13], [0.34, 0.4, 0.4, 0.5, 0.5, 0.4, 0.5, 0.36, 0.55, 0.45, 0.4]);
+}
+
 // ================= 5 协同时序 =================
 {
   const s = newSlide("耳机与摄像头的协同时序",
-    "摄像头常开约占通话功耗的 5–40%（视传感器而定），所以平时只做低分辨率监测；状态机见附录 A2",
-    "摄像头档位：监测档（低分辨率 1–2 fps）、唇动档（嘴部区域 10–15 fps，与《技术洞察》的视觉帧率一致）。");
-  const xs = [1.6, 3.48, 5.36, 7.24, 9.12, 11.0], w = 1.73;
-  ["平时", "对方开口", "约 0.1 s", "0.1–0.5 s", "约 0.5 s", "之后"].forEach((t, i) => {
-    T(s, t, { x: xs[i], y: 1.55, w, h: 0.35, fontSize: 12.5, bold: true, color: C.navy, align: "center", valign: "middle" });
-  });
-  line(s, 1.6, 1.95, 12.73, 1.95, { arrow: true, color: C.navy, width: 1.25 });
-  T(s, "音频", { x: 0.6, y: 2.2, w: 0.9, h: 0.85, fontSize: 13, bold: true, valign: "middle" });
-  T(s, "摄像头", { x: 0.6, y: 3.25, w: 0.9, h: 0.85, fontSize: 13, bold: true, valign: "middle" });
-  const audio = ["持续估计背景", "", "（1）发现有人说话；拿不准时叫醒摄像头", "（3）按开口时刻测向", "（4）融合，锁定目标", "下发目标方位；IMU 补偿转头"];
-  const cam = ["低分辨率监测，1–2 fps", "", "切到唇动档，10–15 fps", "（2）唇动给出开口时刻", "人脸方位、唇动参与打分", "回到监测"];
-  audio.forEach((t, i) => { if (t) box(s, t, xs[i], 2.2, w, 0.85, { text: { fontSize: 11 } }); });
-  cam.forEach((t, i) => { if (t) box(s, t, xs[i], 3.25, w, 0.85, { text: { fontSize: 11 } }); });
-  line(s, xs[2] + w / 2, 3.05, xs[2] + w / 2, 3.25, { color: C.navy });
-  line(s, xs[3] + w / 2, 3.25, xs[3] + w / 2, 3.05, { color: C.navy });
-  para(s, ["同时处理：音频一直在跑（每 16 ms 一帧，功耗低）；摄像头平时只做低分辨率监测。",
-    "一次定位里有先后：（1）声音先发现有人说话 →（2）唇动给出开口时刻 →（3）声学按这个时刻测向 →（4）融合锁定。",
-    "视觉晚到几十毫秒不影响结果：两路按采样 / 曝光时刻对齐，说话人位置记在世界坐标里，转头由 IMU 补偿。"], 0.6, 4.55, 12.1, 2.0);
-}
-
-// ================= 6 融合流程 =================
-{
-  const s = newSlide("声学与视觉融合流程",
-    SIM + "；软融合参数在单独的开发数据上确定",
-    "软融合：每个候选人的得分 = 空间谱在其方位 ±8° 内的最大值 + 0.1 ×（唇动分数 − 0.5）；空间谱峰值本身也作为“无人脸”候选，得分 = 峰值 − 0.05。只在唇动分数高的人脸里选的硬规则，在唇动误判时会排除目标，仿真中比纯声学低约 5 个百分点。降级规则见附录 A2。");
-  const steps = [["头部朝向", "积分 IMU 偏航角"], ["自语音判断", "佩戴者说话时跳过本帧"], ["背景更新", "只用目标嘴闭上超过 0.2 s 的帧"],
-    ["声学测向", "开口后的帧，背景白化后扫描 72 个方向"], ["说话人地图", "视觉结果换到世界坐标"],
-    ["软融合", "声学得分 + 唇动加分，保留纯声学候选"], ["新声源", "没有人脸对应时，摄像头切唇动档"], ["锁定与切换", "正前方 ±30° 内在说话的人"], ["输出", "目标方位下发两耳"]];
-  const w = 2.2, h = 1.0, gx = 0.28;
-  steps.forEach(([t, d], i) => {
-    const row = Math.floor(i / 5), col = i % 5, x = 0.6 + col * (w + gx), y = 1.6 + row * 1.5;
-    const key = i === 2 || i === 3;
-    s.addShape(p.shapes.RECTANGLE, { x, y, w, h, fill: { color: "FFFFFF" }, line: { color: key ? C.navy : C.box, width: key ? 1.5 : 0.75 } });
-    T(s, `${i + 1}. ${t}`, { x: x + 0.12, y: y + 0.1, w: w - 0.24, h: 0.32, fontSize: 12.5, bold: true, color: key ? C.navy : C.ink });
-    T(s, d, { x: x + 0.12, y: y + 0.46, w: w - 0.24, h: 0.5, fontSize: 11, color: C.gray });
-    if (col < 4 && i < steps.length - 1) line(s, x + w, y + h / 2, x + w + gx, y + h / 2);
-  });
-  line(s, 0.6 + 4 * (w + gx) + w / 2, 1.6 + h, 0.6 + w / 2, 1.6 + 1.5, { dash: "dash" });
-  para(s, ["第 3、4 步依赖唇动给出的时刻，这是音频与视觉协同的具体环节（深蓝框）。",
-    "有 2 个干扰说话人时，用唇动门控的背景白化，方位误差 ≤ 10° 的比例从 58% 升到 96%（仿真）。",
-    "第 6 步保留纯声学候选：视觉差或缺失时只剩声学结果，仿真中从未比纯声学差。",
-    "说话人移动（后续）：地图中每个人从固定方位改为方位 + 角速度跟踪；视觉负责“是同一个人”，人走出视野后靠声学继续跟。"], 0.6, 4.6, 12.1, 2.1);
-}
-
-// ================= 7 传输与编码 =================
-{
-  const s = newSlide("输入传输与编码格式",
-    SIM + "；同步先例：ClearBuds（MobiSys 2022）< 64 µs；完整规格见附录 A1",
-    "同步实验：混响 RT60 0.5 s、2 个干扰说话人，开口后 0.5 s 判决，每档 72 次。ClearBuds：https://arxiv.org/abs/2206.13611；TWS 播放侧左右同步通常 < 25 µs（audioXpress LE Audio 测试指南）。LC3 码率与时延：https://www.forasoft.com/learn/audio-for-video/articles-audio/lc3-lc3plus-bluetooth-le-audio");
+    "准确率为仿真（2 个干扰说话人，干扰低 6 dB / 一样响，加视觉），见附录 A2；3 s、切换时间为设计值；唇动档常开影响续航，见第 11 页",
+    "为什么对话中摄像头要保持唇动档：开口时刻决定哪些帧算背景、从哪一帧开始测向，误差需在 ±0.1 s 内（附录 A2）；摄像头若等声学发现有人说话再切到唇动档，就看不到开口那一刻，而只靠声学检测开口，检出率和误报率无法兼顾（附录 A2）。对话中轮换时的停顿通常只有约 0.2 s（Stivers 等 2009，PNAS，跨 10 种语言的统计），也来不及在停顿里再切换。对话中有人插话，只要在正前方 ±30° 内，唇动档同样能看到他开口。");
+  key(s, "同时运行：对话中摄像头保持唇动档，给出对方开口的时刻；声学据此测向，开口后 0.5 s 锁定（仿真）");
+  const X0 = 2.0, X1 = 12.6, tx = (t) => X0 + (t + 1) / 2 * (X1 - X0);
+  const lane = (label, y) => T(s, label, { x: 0.6, y, w: 1.3, h: 0.5, fontSize: 12.5, bold: true, valign: "middle" });
+  const bar = (t0, t1, y, text, fill, color) => { s.addShape(p.shapes.RECTANGLE, { x: tx(t0), y, w: tx(t1) - tx(t0), h: 0.5, fill: { color: fill }, line: { color: "FFFFFF", width: 1 } });
+    T(s, text, { x: tx(t0) + 0.06, y, w: tx(t1) - tx(t0) - 0.12, h: 0.5, fontSize: 10.5, color: color || C.ink, align: "center", valign: "middle" }); };
+  lane("摄像头", 1.85); lane("音频", 2.55); lane("输出", 3.25);
+  bar(-1, 1, 1.85, "唇动档：只读正前方 ±30° 内人脸的嘴部区域，10–15 fps；对话中一直保持", C.navyPale);
+  bar(-1, 0, 2.55, "背景递推：只用对方闭嘴的帧（至少 0.5 s，时间常数 1 s）", "E4E4E4");
+  bar(0, 0.5, 2.55, "目标帧累计（起始段加权）", C.navy, "FFFFFF");
+  bar(0.5, 1, 2.55, "跟踪：每 0.25 s 扫描", "E4E4E4");
+  bar(-1, 0.3, 3.25, "保持上一个目标的方位", "F0F0F0", C.gray);
+  bar(0.3, 0.5, 3.25, "初步方位", C.navyLt);
+  bar(0.5, 1, 3.25, "锁定：方位 + 置信度，每 16 ms", C.navy, "FFFFFF");
+  s.addShape(p.shapes.LINE, { x: tx(0), y: 1.75, w: 0, h: 2.25, line: { color: C.red, width: 1.25, dashType: "dash" } });
+  line(s, X0, 4.0, X1, 4.0, { arrow: false, color: "7F7F7F" });
+  [[-1, "−1.0 s"], [-0.5, "−0.5 s"], [0, "0 开口"], [0.3, "0.3 s"], [0.5, "0.5 s"], [1, "1.0 s"]].forEach(([t, l]) => {
+    line(s, tx(t), 4.0, tx(t), 4.07, { arrow: false, color: "7F7F7F" });
+    T(s, l, { x: tx(t) - 0.5, y: 4.08, w: 1.0, h: 0.25, fontSize: 10, color: t === 0 ? C.red : "595959", align: "center" }); });
+  T(s, "唇动给出开口时刻，误差需 ≤ ±0.1 s", { x: tx(0) - 3.2, y: 4.32, w: 3.1, h: 0.28, fontSize: 10, color: C.red, align: "right" });
+  T(s, "初步 86%", { x: tx(0.3) - 0.5, y: 4.32, w: 1.0, h: 0.28, fontSize: 10, color: C.navy, align: "center" });
+  T(s, "锁定 89–95%", { x: tx(0.5) - 0.2, y: 4.32, w: 1.3, h: 0.28, fontSize: 10, color: C.navy, align: "left" });
   table(s, [
-    [head("数据"), head("从 → 到"), head("格式"), head("速率", { align: "center" })],
-    [bold("定位音频"), cell("副耳 → 主耳"), cell("1 路 PCM 16 kHz / 16 bit，带时间戳"), ctr("256 kbps")],
-    [bold("人脸元数据"), cell("两耳 NPU → 主耳"), cell("每张脸 16 字节（方位、唇动分数等）"), ctr("≤ 1.2 kB/s")],
-    [bold("定位结果"), cell("主耳 → 两耳增强"), cell("每 16 ms 8 字节"), ctr("0.5 kB/s")],
-    [bold("图像"), cell("传感器 → NPU"), cell("不出模组，只输出检测结果"), ctr("—")],
-  ], 0.6, 1.6, [1.4, 1.75, 3.55, 1.2], [0.42, 0.48, 0.48, 0.48, 0.48]);
-  sub(s, "耳间编码", 0.6, 4.25, 3);
-  para(s, ["PCM 16 bit（首选）：相位完整；链路每侧约 2.6 mW（估算）",
-    "ADPCM 4 bit（64 kbps）：功耗约 1/4，对测向的影响待确认",
-    "LC3（32 kbps）：感知编码可能破坏相位，不用于定位"], 0.6, 4.65, 7.3, 1.6, { fontSize: 12.5 });
-  s.addChart(p.charts.LINE, [{ name: "≤10° 的比例", labels: ["0", "10", "25", "50", "100", "200"], values: [63, 61, 61, 60, 8, 7] }],
-    Object.assign({ x: 8.3, y: 1.5, w: 4.45, h: 4.6, chartColors: [C.navy], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 7,
-      showValue: true, dataLabelPosition: "t", valAxisMinVal: 0, valAxisMaxVal: 80, showLegend: false,
-      showTitle: true, title: "两耳同步误差对测向的影响（仿真）" }, chartBase,
-      axisTitle({ showCatAxisTitle: true, catAxisTitle: "同步误差（µs）", showValAxisTitle: true, valAxisTitle: "方位误差 ≤10° 的比例（%）" })));
-  T(s, "同步误差 50 µs 以内精度基本不变，100 µs 时测向失效；两耳采样同步需 ≤ 50 µs。", { x: 8.3, y: 6.15, w: 4.45, h: 0.6, fontSize: 11.5, color: C.gray });
+    [head("情况"), head("摄像头"), head("开口时刻由谁给"), head("锁定")],
+    [bold("对话中（3 s 内有人说话）"), cell("唇动档，10–15 fps"), cell("唇动"), cell("0.3 s 初步，0.5 s 锁定（仿真）")],
+    [bold("安静后的第一句"), cell("还在监测档；声学发现语音后切到唇动档，切换时间【待确认】"), cell("声学检测，不可靠；唇动只确认是谁在说"), cell("约 0.5–1 s（估计）")],
+    [bold("安静（3 s 无人说话）"), cell("监测档，1–2 fps"), cell("—"), cell("保持上一个目标")],
+    [bold("暗光、遮挡、目标在视野外"), cell("关或监测档"), cell("声学"), cell("纯声学，置信度降一级")],
+  ], 0.6, 4.72, [2.6, 4.0, 3.2, 2.33], [0.34, 0.38, 0.5, 0.38, 0.38]);
 }
 
 // ================= 8 麦克风数量 =================
 {
   const s = newSlide("麦克风数量（4 / 6 / 8 麦）",
     SIM + "；同一批 100 个场景，混响 + 2 个干扰说话人；统计误差约 ±4 个百分点",
-    "设置：混响 RT60 0.5 s、2 个干扰说话人、SNR 10 dB；GEVD-MUSIC，开口后 0.5 s 判决。加视觉后各配置为 95–97%（干扰低 6 dB）、79–84%（干扰同样响）。带宽按 16 kHz / 16 bit PCM。");
+    "设置：混响 RT60 0.5 s、2 个干扰说话人、SNR 10 dB；GEVD-MUSIC，开口后 0.5 s 判决。图中为加视觉的结果。纯声学时：干扰低 6 dB 为 90 / 91 / 91 / 92 / 94%，干扰同样响为 64 / 66 / 64 / 72 / 72%，6 / 8 麦在干扰同样响时多约 8 个百分点。带宽按 16 kHz / 16 bit PCM。");
+  key(s, "每耳 2 个即可：加视觉后 6 / 8 麦最多只多 4 个百分点，耳间带宽却要 3–4 倍");
   const labels = ["主耳 2 + 副耳 1", "每耳 2", "主耳 3 + 副耳 1", "每耳 3", "每耳 4"];
   s.addChart(p.charts.BAR, [
-    { name: "干扰比目标低 6 dB", labels, values: [90, 91, 91, 92, 94] },
-    { name: "干扰与目标一样响", labels, values: [64, 66, 64, 72, 72] },
+    { name: "干扰比目标低 6 dB", labels, values: [96, 95, 97, 95, 95] },
+    { name: "干扰与目标一样响", labels, values: [80, 79, 81, 82, 84] },
   ], Object.assign({ x: 0.6, y: 1.5, w: 6.7, h: 4.7, barDir: "col", barGrouping: "clustered", chartColors: [C.navy, C.navyLt],
     showValue: true, dataLabelPosition: "outEnd", valAxisMinVal: 0, valAxisMaxVal: 100, showLegend: true, legendPos: "t",
-    showTitle: true, title: "方位误差 ≤10° 的比例（%，纯声学）" }, chartBase));
+    showTitle: true, title: "方位误差 ≤10° 的比例（%，加视觉）" }, chartBase));
   s.addChart(p.charts.BAR, [{ name: "耳间带宽", labels, values: [256, 512, 256, 768, 1024] }],
     Object.assign({ x: 7.55, y: 1.5, w: 5.2, h: 4.7, barDir: "col", chartColors: ["9A9A9A"], showValue: true, dataLabelPosition: "outEnd",
       valAxisMinVal: 0, valAxisMaxVal: 1200, showLegend: false, showTitle: true, title: "副耳传到主耳的带宽（kbps）" }, chartBase));
-  T(s, "推荐每耳 2 个麦克风，主耳用本耳 2 路 + 副耳 1 路共 3 路测向。6 / 8 麦的提升在统计误差（约 ±4 个百分点）以内，耳间带宽却增加 2–4 倍。若增强采用两耳组阵（第 11 页），麦克风和链路要按增强的需求重新确定。",
+  T(s, "主耳用本耳 2 路 + 副耳 1 路共 3 路测向。若增强采用两耳组阵（第 10 页），麦克风和链路要按增强的需求重新确定。",
     { x: 0.6, y: 6.2, w: 12.1, h: 0.6, fontSize: 12, color: C.gray, valign: "middle" });
-}
-
-// ================= 9 摄像头 =================
-{
-  const s = newSlide("摄像头分辨率",
-    "嘴宽按 5 cm、小孔成像估算；20 像素为本方案的设计目标，需视觉同事确认",
-    "参考：低分辨率视频中嘴部约 45 × 17 像素时仍能做唇动检测（Liu 等，https://personalpages.surrey.ac.uk/w.wang/papers/LiuWJ_SSPD_2011.pdf）；未找到最小像素数的系统结论。人脸检测要求低得多（SCRFD 可处理小于 16 像素的人脸，https://arxiv.org/abs/2105.04714）。");
-  const d = [1, 1.5, 2, 2.5, 3];
-  const px = (W, fov) => d.map((x) => Math.round((W / 2) / Math.tan((fov / 2) * Math.PI / 180) * 0.05 / x));
-  const labels = d.map((x) => x + " m");
-  s.addChart(p.charts.LINE, [
-    { name: "QVGA，100°", labels, values: px(320, 100) },
-    { name: "VGA，100°", labels, values: px(640, 100) },
-    { name: "720p，80°（推荐）", labels, values: px(1280, 80) },
-    { name: "1080p，100°", labels, values: px(1920, 100) },
-    { name: "设计目标 20 像素", labels, values: d.map(() => 20) },
-  ], Object.assign({ x: 0.6, y: 1.5, w: 7.4, h: 4.6, chartColors: ["C8C8C8", "9A9A9A", C.navy, C.navyLt, C.red], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 6,
-    valAxisMinVal: 0, valAxisMaxVal: 45, showLegend: true, legendPos: "r", showTitle: true, title: "对方嘴宽在画面里占多少像素" }, chartBase,
-    axisTitle({ showCatAxisTitle: true, catAxisTitle: "对方距离", showValAxisTitle: true, valAxisTitle: "像素" })));
-  T(s, "两只耳机各 1 个摄像头，两路人脸结果在主耳合并。正前方的人落在两边视野的内侧边缘，朝向和视场需保证正前方 ±30° 有覆盖（例如前倾布局，两边视野在正前方重叠）。", { x: 0.6, y: 6.2, w: 7.4, h: 0.55, fontSize: 11.5, color: C.gray, valign: "middle" });
-  sub(s, "两级读出", 8.4, 1.6, 4.3);
-  box(s, "平时：整幅画面合并像素输出\n低分辨率，1–2 fps", 8.4, 2.05, 4.3, 0.75);
-  line(s, 10.55, 2.8, 10.55, 3.1);
-  box(s, "人脸检测，得到人脸框", 8.4, 3.1, 4.3, 0.55);
-  line(s, 10.55, 3.65, 10.55, 3.95);
-  box(s, "需要时：只读嘴部区域的原分辨率像素\n约 64 × 64，10–15 fps，判断唇动", 8.4, 3.95, 4.3, 0.85, { line: C.navy, lw: 1.5 });
-  para(s, ["2 m 处嘴宽：QVGA 3 像素，720p 19 像素", "两级读出省带宽和 NPU 算力；图像不出模组", "代价：传感器比 QVGA 贵，功耗更高（第 12 页）"], 8.4, 5.0, 4.3, 1.8, { fontSize: 12 });
 }
 
 // ================= 10 输出 =================
 {
-  const s = newSlide("耳机输出",
-    "开口后约 0.5 s 锁定为仿真中的判决窗；已在说话人地图中的人轮到他说话时可立即切换",
-    "只有新加入的说话人才有约 0.5 s 的锁定延迟。");
+  const s = newSlide("耳机怎么输出",
+    "规则中的数值为设计值，需在体验测试中调整；增强、混合、限幅由增强模块实现，定位只提供控制量",
+    "声音通路时延：入耳式 ≤ 约 10–20 ms，开放式 ≤ 约 5–6 ms（Stone & Moore 2008）。按方位还原方向感属于音效渲染，《技术洞察》定为现阶段不做，所以两耳播放同一路增强语音。");
+  key(s, "定位每 16 ms 给增强模块 8 字节控制量；增强后的语音与透传混合，两耳播放同一路");
   sub(s, "定位结果：每 16 ms 一条，8 字节", 0.6, 1.6, 8);
   const seg = [["目标方位", 2, "头部坐标，0.01°"], ["置信度", 1, "0–1"], ["在说话", 1, "目标此刻是否在说话"], ["干扰方位 × 3", 3, "主要干扰方位，供增强置零"], ["序号", 1, "丢包检测"]];
   let x = 0.6; const unit = 1.5;
   seg.forEach(([n, b, d], i) => {
     const w = b * unit;
-    s.addShape(p.shapes.RECTANGLE, { x, y: 2.1, w, h: 0.6, fill: { color: i === 0 ? C.navyPale : "FFFFFF" }, line: { color: C.navy, width: 1 } });
-    T(s, `${n}（${b} B）`, { x, y: 2.1, w, h: 0.6, fontSize: 12, bold: i === 0, align: "center", valign: "middle" });
-    T(s, d, { x: x + 0.05, y: 2.78, w: w - 0.1, h: 0.5, fontSize: 10.5, color: C.gray, align: "center" });
+    s.addShape(p.shapes.RECTANGLE, { x, y: 2.0, w, h: 0.55, fill: { color: i === 0 ? C.navyPale : "FFFFFF" }, line: { color: C.navy, width: 1 } });
+    T(s, `${n}（${b} B）`, { x, y: 2.0, w, h: 0.55, fontSize: 12, bold: i === 0, align: "center", valign: "middle" });
+    T(s, d, { x: x + 0.05, y: 2.6, w: w - 0.1, h: 0.3, fontSize: 10.5, color: C.gray, align: "center" });
     x += w;
   });
-  sub(s, "声音输出（增强模块负责），接口要求", 0.6, 3.7, 8);
-  para(s, ["增强目标方向的语音；目标没在说话时降低增强量，避免放大噪声。",
-    "两耳播放同一路增强后的目标语音（与《技术洞察》一致）；按方位还原方向感属于音效渲染，现阶段不做。",
-    "与透传环境声混合，比例可调（默认目标高约 6–12 dB，待确认），总输出过限幅器。",
-    "骨声纹检测到佩戴者在说话时，降低透传中自己声音的增益。",
-    "声音通路时延：入耳式 ≤ 约 10–20 ms，开放式 ≤ 约 5–6 ms。"], 0.6, 4.1, 12.1, 2.6);
+  sub(s, "从控制量到耳朵（每只耳机）", 0.6, 3.1, 8);
+  const chain = [["定位结果", "8 字节 / 16 ms"], ["增强", "朝目标方位，干扰方位置零"], ["混合", "目标比透传高 6–12 dB"], ["限幅", "保护听力"], ["扬声器", "两耳同一路"]];
+  chain.forEach(([t, d], i) => { const bx = 0.6 + i * 2.5;
+    box(s, t + "\n" + d, bx, 3.5, 2.05, 0.75, { line: i === 0 ? C.navy : C.box, color: i === 0 ? C.navy : C.ink, text: { fontSize: 11 } });
+    if (i < chain.length - 1) line(s, bx + 2.05, 3.875, bx + 2.5, 3.875); });
+  table(s, [
+    [head("情况"), head("输出怎么变"), head("取值")],
+    [bold("目标换人或方位跳变 > 10°"), cell("在新旧方位之间渐变，避免声音突跳"), cell("0.2 s 内完成")],
+    [bold("置信度 < 0.5"), cell("增强量减半，接近透传"), cell("置信度恢复后 0.5 s 内回到正常")],
+    [bold("目标没在说话"), cell("增强量降低，避免放大背景噪声"), cell("降 6 dB")],
+    [bold("佩戴者自己说话"), cell("冻结方位；透传中自己声音降增益"), cell("骨声纹判断")],
+    [bold("两耳链路中断"), cell("用最近一次方位；超时后退回透传"), cell("1 s")],
+  ], 0.6, 4.5, [3.2, 5.6, 3.33], [0.32, 0.36, 0.36, 0.36, 0.36, 0.36]);
 }
 
 // ================= 11 关键风险 =================
@@ -292,6 +309,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
   const s = newSlide("关键风险：增强能否分开相邻说话人",
     "信干比为理论计算（已知干扰方位置零，混响下）；时延：蓝牙 / 星闪为第三方评测，专用链路与 C 为专利与研究报告；容忍度：Stone & Moore 2008",
     "信干比：刚性球头部模型，MVDR 置零，设计方位误差 2–3°，白噪声增益 ≥ −10 dB，直达混响比 0 dB，0.5–4 kHz 平均。\n时延：星闪约 20 ms、蓝牙 15–40 ms 为手机到耳机的第三方评测（https://ngxptech.com/huawei-freebuds-pro-5-review-is-nearlink-better/），助听器专用耳间链路（如近场磁感应，约 10 MHz）用于双耳波束成形，专利与文献中耳间交换音频的时延为 0.5–5 ms 量级（检索摘要，原文未核实；https://hearingreview.com/practice-building/practice-management/continuing-education/it-s-sync-or-stream-the-differences-between-wireless-hearing-aid-features ，https://arxiv.org/pdf/2307.08858）；本耳机能否有这样的链路待确认。C 的 17.5 ms 来自 Wireless Hearables With Programmable Speech AI Accelerators（https://arxiv.org/pdf/2503.18698），Look Once to Hear 目标 < 20 ms。定位侧的输出对三种做法通用。");
+  key(s, "单只耳机分不开相邻的人；两耳组阵要几毫秒级的耳间音频链路，目标说话人提取时延约 20 ms 在边缘");
   s.addChart(p.charts.BAR, [{ name: "信干比提升", labels: ["A 本地 2 麦", "B 两耳组阵"], values: [2.4, 8.3] }],
     Object.assign({ x: 0.6, y: 1.5, w: 5.4, h: 2.75, barDir: "bar", chartColors: [C.red, C.navy], showValue: true, dataLabelPosition: "outEnd", dataLabelFormatCode: "0.0",
       valAxisMinVal: 0, valAxisMaxVal: 10, showLegend: false, showTitle: true, title: "对相隔 25° 的干扰，信干比提升（dB）" }, chartBase));
@@ -323,53 +341,31 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 // ================= 12 功耗 =================
 {
   const s = newSlide("功耗估算（以 FreeClip 2 S 为基准）",
-    "基准：FreeClip 2 S 每只 60 mAh、通话 6 h（华为官网），按 3.7 V 约 37 mW；器件功耗取公开资料；NPU 未计入；分项见附录 A3",
+    "基准：FreeClip 2 S 每只 60 mAh、通话 6 h（华为官网），按 3.7 V 约 37 mW；器件功耗取公开资料；NPU 未计入；唇动档按传感器全幅、60 fps 的工作功耗计，是上限；分项见附录 A7",
     "华为官网规格页：https://consumer.huawei.com/hk/headphones/freeclip2-s/specs/。每多 1 mW，续航约少 10 分钟。按主耳估算（摄像头 + 定位计算 + 耳间接收）；副耳为摄像头 + 耳间发送，没有定位计算，略低。");
+  key(s, "对话少时续航约 4.3–5.2 h；对话多时，续航取决于摄像头读嘴部区域的功耗（均未计 NPU）");
   const X0 = 3.2, X1 = 8.6, h2x = (v) => X0 + (X1 - X0) * v / 6.5;
-  T(s, "续航（每只耳机，浅色段为估算区间）", { x: 0.6, y: 1.55, w: 8, h: 0.32, fontSize: 11.5, color: "404040", valign: "middle" });
-  [["基准（通话）", 6.0, 6.0, "9A9A9A"], ["推荐配置", 4.5, 5.2, C.navy], ["唇动档极少触发", 5.3, 5.4, C.navy], ["两耳组阵增强（B）", 4.1, 4.9, C.navy], ["目标说话人提取（C）", null, null]].forEach(([n, lo, hi, c], i) => {
+  T(s, "续航（每只耳机；唇动档时间 = 对话时间占比；浅色段为估算区间）", { x: 0.6, y: 1.55, w: 8, h: 0.32, fontSize: 11.5, color: "404040", valign: "middle" });
+  [["基准（通话）", 6.0, 6.0, "9A9A9A"], ["对话占 10%", 4.3, 5.2, C.navy], ["对话占 50%", 2.6, 4.6, C.navy], ["两耳组阵增强（B）", 3.9, 4.9, C.navy], ["目标说话人提取（C）", null, null]].forEach(([n, lo, hi, c], i) => {
     const y = 2.05 + i * 0.68;
-    T(s, n, { x: 0.6, y, w: 2.45, h: 0.4, fontSize: 12.5, bold: i === 1, align: "right", valign: "middle" });
+    T(s, n, { x: 0.6, y, w: 2.45, h: 0.4, fontSize: 12.5, align: "right", valign: "middle" });
     if (lo === null) { T(s, "网络推理功耗未知，待确认", { x: X0, y, w: 5, h: 0.4, fontSize: 12, color: C.light, valign: "middle" }); return; }
     s.addShape(p.shapes.RECTANGLE, { x: X0, y: y + 0.08, w: h2x(lo) - X0, h: 0.24, fill: { color: c }, line: NONE });
     if (hi > lo) s.addShape(p.shapes.RECTANGLE, { x: h2x(lo), y: y + 0.08, w: h2x(hi) - h2x(lo), h: 0.24, fill: { color: C.navyLt }, line: NONE });
-    T(s, lo === hi ? `${lo} h` : `${lo}–${hi} h`, { x: h2x(hi) + 0.1, y, w: 1.3, h: 0.4, fontSize: 12.5, bold: i === 1, valign: "middle" });
+    T(s, lo === hi ? `${lo} h` : `${lo}–${hi} h`, { x: h2x(hi) + 0.1, y, w: 1.3, h: 0.4, fontSize: 12.5, valign: "middle" });
   });
   line(s, X0, 5.55, X1, 5.55, { arrow: false, color: "7F7F7F" });
   [0, 2, 4, 6].forEach((v) => { line(s, h2x(v), 5.55, h2x(v), 5.62, { arrow: false, color: "7F7F7F" });
     T(s, v + " h", { x: h2x(v) - 0.3, y: 5.65, w: 0.6, h: 0.25, fontSize: 10, color: "595959", align: "center" }); });
   table(s, [
     [head("新增部分（每只耳机）"), head("功耗", { align: "center" })],
-    [bold("摄像头唇动档（约 10% 时间）"), ctr("1.5–8 mW")],
+    [bold("摄像头唇动档（对话 10% / 50%）"), ctr("1.5–8 / 7.5–41 mW")],
     [bold("定位与融合计算"), ctr("≤ 3 mW")],
     [bold("耳间定位音频"), ctr("0.7–2.6 mW")],
     [bold("摄像头低分辨率监测"), ctr("0.4–0.8 mW")],
     [bold("NPU 人脸与唇动"), ctr("待确认", { color: C.light })],
-    [bold("合计（不含 NPU）"), ctr("约 6–13 mW", { bold: true })],
-  ], 9.3, 1.6, [2.3, 1.13], [0.4, 0.45, 0.45, 0.45, 0.45, 0.45, 0.45]);
-}
-
-// ================= 13 明显问题排查 =================
-{
-  const s = newSlide("明显问题排查",
-    "各项依据见前文各页",
-    "视觉变差（唇动错 30%、方位误差 6°、检出 70%、开口时刻误差 ±0.3 s）的仿真：定位仍 68–83%，仅视觉 38–46%。");
-  const J = (t, color) => cell(t, { color: color || C.ink, bold: true });
-  table(s, [
-    [head("可能的问题"), head("判断"), head("依据与解法")],
-    [bold("增强能否分开相邻的说话人"), J("关键风险", C.red), cell("本地 2 麦约 2 dB；两耳组阵约 8 dB，需几毫秒级耳间音频链路（蓝牙 / 星闪不够）；目标说话人提取约 17.5–20 ms", { color: C.red })],
-    [bold("相对已有产品的增量价值"), J("取决于上一项"), cell("已有产品能增强正前方；增量在于自动锁定那一个人、转头跟住、无需注册")],
-    [bold("摄像头看不清嘴"), J("设计可解决"), cell("QVGA 时 2 m 外嘴宽约 3 像素；改为 720p 级 + 嘴部区域读出，约 19 像素")],
-    [bold("声音通路时延"), J("设计可解决"), cell("定位走旁路、增强在本地（A）；B、C 见第一项")],
-    [bold("两耳带宽与同步"), J("设计可解决，待确认"), cell("定位只转发 1 路；同步需 ≤ 50 µs（ClearBuds 先例 < 64 µs）")],
-    [bold("开放式形态"), J("设计可规避"), cell("推荐入耳式；开放式时延要求约 5–6 ms，增强更难")],
-    [bold("功耗与续航"), J("不致命"), cell("续航约 4.5–5.2 h（估算）；摄像头以监测为主；NPU 待确认")],
-    [bold("摄像头看不到（侧脸、遮挡、暗光）"), J("不致命"), cell("软融合平稳降级；视觉很差时定位仍 68–83%（仿真）")],
-    [bold("锁定慢、漏听开头"), J("不致命"), cell("已在地图中的人可立即切换；只有新加入的人约 0.5 s")],
-    [bold("佩戴者自己说话"), J("不致命"), cell("骨声纹检测到自语音时冻结定位")],
-    [bold("社交接受度、拍摄隐私"), J("需产品决策"), cell("图像不出模组；拍摄指示灯；只在开启听觉辅助时工作")],
-    [bold("仿真与真实的差距"), J("需复核"), cell("刚性球无耳廓、混响为近似、视觉为假设；需样机和实测数据")],
-  ], 0.6, 1.5, [3.4, 1.9, 6.8], [0.38, 0.42, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38]);
+    [bold("合计（不含 NPU）"), ctr("约 6–15 / 11–47 mW", { bold: true })],
+  ], 8.95, 1.6, [2.15, 1.63], [0.4, 0.45, 0.45, 0.45, 0.45, 0.45, 0.45]);
 }
 
 // ================= 14 需要确认 =================
@@ -377,37 +373,138 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
   const s = newSlide("待确认事项",
     "若前两项都做不到，场景可收窄为“知道谁在说话、他在哪”，配合字幕或转写使用",
     "前两项决定增强能否在时延要求内分开相邻说话人，即场景能否提供增量价值。");
+  key(s, "前两项决定增强能否在时延要求内分开相邻的人；定位侧不依赖它们，可以先推进");
   table(s, [
     [head("", { align: "center" }), head("事项"), head("为什么要确认"), head("找谁")],
     [ctr("1"), bold("耳机之间能否有几毫秒级的音频链路"), cell("决定两耳组阵增强（B）是否可行；助听器有此类链路"), cell("链路、芯片")],
     [ctr("2"), bold("目标说话人提取在耳机芯片上的时延与功耗"), cell("决定 C 是否可行"), cell("增强、芯片")],
     [ctr("3"), bold("两耳采样同步能否 ≤ 50 µs"), cell("两耳组阵定位的前提"), cell("链路、芯片")],
-    [ctr("4"), bold("唇动检测需要嘴部多少像素；NPU 功耗与精度"), cell("决定摄像头分辨率与功耗"), cell("视觉")],
+    [ctr("4"), bold("摄像头只读嘴部区域时的功耗；唇动检测需要多少像素；NPU 功耗"), cell("对话中唇动档常开，决定续航"), cell("视觉、传感器")],
     [ctr("5"), bold("佩戴形态：入耳式还是开放式"), cell("开放式时延要求约 5–6 ms，增强更难"), cell("产品")],
-  ], 0.6, 1.6, [0.5, 5.0, 4.6, 2.0], [0.42, 0.55, 0.55, 0.55, 0.55, 0.55]);
+  ], 0.6, 1.7, [0.5, 5.0, 4.6, 2.03], [0.48, 0.7, 0.7, 0.7, 0.7, 0.7]);
 }
 
-// ================= 附录 =================
+// ================= 13 明显问题排查 =================
 {
-  const s = newSlide("附录 A1　数据流规格", "", "同步要求见第 7 页；编码取舍：PCM 首选，ADPCM 待验证，LC3 不用于定位。");
+  const s = newSlide("附录 A1　明显问题排查",
+    "各项依据见前文各页",
+    "视觉变差（唇动错 30%、方位误差 6°、检出 70%、开口时刻误差 ±0.3 s）的仿真：定位仍 68–83%，仅视觉 38–46%。");
+  const J = (t, color) => cell(t, { color: color || C.ink, bold: true });
+  table(s, [
+    [head("可能的问题"), head("判断"), head("依据与解法")],
+    [bold("增强能否分开相邻的说话人"), J("关键风险", C.red), cell("本地 2 麦约 2 dB；两耳组阵约 8 dB，需几毫秒级耳间音频链路（蓝牙 / 星闪不够）；目标说话人提取约 17.5–20 ms", { color: C.red })],
+    [bold("相对已有产品的增量价值"), J("取决于上一项"), cell("已有产品能增强正前方或整组说话人；增量在于自动锁定和你说话的那一个人、转头跟住、无需注册")],
+    [bold("摄像头看不清嘴"), J("设计可解决"), cell("QVGA 时 2 m 外嘴宽约 3 像素；改为 720p 级 + 嘴部区域读出，约 19 像素")],
+    [bold("声音通路时延"), J("设计可解决"), cell("定位走旁路、增强在本地（A）；B、C 见第一项")],
+    [bold("两耳带宽与同步"), J("设计可解决，待确认"), cell("定位只转发 1 路；同步需 ≤ 50 µs（ClearBuds 先例 < 64 µs）")],
+    [bold("开放式形态"), J("设计可规避"), cell("推荐入耳式；开放式时延要求约 5–6 ms，增强更难")],
+    [bold("功耗与续航"), J("需确认"), cell("对话少时约 4.3–5.2 h；对话占一半时约 2.6–4.6 h（按全幅上限），取决于嘴部区域读出与 NPU 的功耗")],
+    [bold("摄像头看不到（侧脸、遮挡、暗光）"), J("不致命"), cell("软融合平稳降级；视觉很差时定位仍 68–83%（仿真）")],
+    [bold("锁定慢、漏听开头"), J("不致命"), cell("对话中开口后 0.3 s 初步、0.5 s 锁定（仿真）；安静后的第一句约 0.5–1 s（估计）")],
+    [bold("佩戴者自己说话"), J("不致命"), cell("骨声纹检测到自语音时冻结定位")],
+    [bold("社交接受度、拍摄隐私"), J("需产品决策"), cell("图像不出模组；拍摄指示灯；只在开启听觉辅助时工作")],
+    [bold("仿真与真实的差距"), J("需复核"), cell("刚性球无耳廓、混响为近似、视觉为假设；需样机和实测数据")],
+  ], 0.6, 1.5, [3.4, 1.9, 6.8], [0.38, 0.42, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.38]);
+}
+
+// ================= 5b 协同时序的时间要求（仿真） =================
+{
+  const s = newSlide("附录 A2　协同时序的时间要求（仿真）",
+    "仿真：刚性球头部模型，主耳 2 路 + 副耳 1 路，混响 RT60 0.5 s + 2 个干扰说话人；每个条件 100 次；检出指开口后 0.5 s 内",
+    "设置：目标开口前 2.5 s 不说话，干扰全程说话；GEVD-MUSIC，5° 网格。左图开口时刻由唇动给出（±0.1 s 误差）、背景 1 s；中图判决窗 0.5 s、背景 1 s；右图开口时刻由唇动给出、判决窗 0.5 s。纯声学（不加视觉）时左图为：干扰低 6 dB 52/70/85/96/100%，一样响 48/58/67/79/82%。声学开口检测：短时协方差（时间常数 0.25 s）经递推背景（1 s）白化后的最大广义特征值，频点取中位数；检出后回溯到能量回落处作为开口时刻，检出时延中位数 0.1–0.2 s。另试了“只计新方向的能量”，误报和检出都更差。");
+  const lc = (x, title, labels, a, b, xt) => s.addChart(p.charts.LINE, [{ name: "干扰低 6 dB", labels, values: a }, { name: "干扰一样响", labels, values: b }],
+    Object.assign({ x, y: 1.3, w: 3.95, h: 3.0, chartColors: [C.navy, C.navyLt], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 6,
+      showValue: true, dataLabelPosition: "t", dataLabelFontSize: 9, valAxisMinVal: 0, valAxisMaxVal: 110, valAxisMajorUnit: 20, showLegend: true, legendPos: "b",
+      showTitle: true, title, titleFontSize: 11 }, chartBase, axisTitle({ showCatAxisTitle: true, catAxisTitle: xt })));
+  lc(0.6, "开口后听多久（加视觉）", ["0.1", "0.2", "0.3", "0.5", "0.8"], [81, 85, 86, 95, 100], [73, 78, 86, 89, 89], "判决窗（s）");
+  lc(4.69, "开口时刻偏差", ["−0.3", "−0.2", "−0.1", "0", "+0.1", "+0.2", "+0.3"], [62, 80, 93, 97, 96, 88, 84], [38, 54, 70, 81, 82, 73, 65], "偏差（s，负为偏早）");
+  lc(8.78, "开口前的背景长度", ["0.1", "0.25", "0.5", "1.0"], [84, 90, 94, 96], [62, 68, 76, 79], "背景长度（s）");
+  T(s, "纵轴：方位误差 ≤ 10° 的比例（%）", { x: 0.6, y: 4.3, w: 6, h: 0.25, fontSize: 9.5, color: C.light });
+  [[0.6, "开口后 0.3 s 给初步方位，0.5 s 锁定"], [4.69, "唇动给的开口时刻误差需在 ±0.1 s 内；偏早比偏晚影响大"], [8.78, "背景至少 0.5 s，按时间常数 1 s 递推"]].forEach(([x, t]) =>
+    T(s, t, { x, y: 4.55, w: 3.95, h: 0.45, fontSize: 11.5, bold: true, color: C.navy, valign: "middle" }));
+  sub(s, "摄像头看不到开口时，只靠声学检测开口", 0.6, 5.1, 7);
+  table(s, [
+    [head("检测阈值"), head("干扰低 6 dB：检出率", { align: "center" }), head("每分钟误报", { align: "center" }), head("干扰一样响：检出率", { align: "center" }), head("每分钟误报", { align: "center" })],
+    [bold("2.0 dB"), ctr("76%"), ctr("33"), ctr("59%"), ctr("46")],
+    [bold("2.5 dB"), ctr("56%"), ctr("17"), ctr("34%"), ctr("24")],
+    [bold("3.0 dB"), ctr("39%"), ctr("5"), ctr("17%"), ctr("12")],
+  ], 0.6, 5.45, [1.3, 1.75, 1.3, 1.75, 1.3], [0.32, 0.32, 0.32, 0.32]);
+  T(s, "仿真中干扰一直在说话：这种检测方法检出多则误报多，两者无法兼顾，所以对话中由唇动给开口时刻（第 7 页）。干扰有停顿时声学检测会好一些，12 月再仿真。",
+    { x: 8.3, y: 5.45, w: 4.43, h: 1.28, fontSize: 11.5, color: C.ink, valign: "middle" });
+}
+
+// ================= 7 传输与编码 =================
+{
+  const s = newSlide("附录 A3　两耳传输、编码与同步",
+    SIM + "；同步先例：ClearBuds（MobiSys 2022）< 64 µs；完整规格见附录 A5",
+    "同步实验：混响 RT60 0.5 s、2 个干扰说话人，开口后 0.5 s 判决，每档 72 次。ClearBuds：https://arxiv.org/abs/2206.13611；TWS 播放侧左右同步通常 < 25 µs（audioXpress LE Audio 测试指南）。LC3 码率与时延：https://www.forasoft.com/learn/audio-for-video/articles-audio/lc3-lc3plus-bluetooth-le-audio");
+  table(s, [
+    [head("数据"), head("从 → 到"), head("格式"), head("速率", { align: "center" })],
+    [bold("定位音频"), cell("副耳 → 主耳"), cell("1 路 PCM 16 kHz / 16 bit，带时间戳"), ctr("256 kbps")],
+    [bold("人脸元数据"), cell("两耳 NPU → 主耳"), cell("每张脸 16 字节（方位、唇动分数等）"), ctr("≤ 1.2 kB/s")],
+    [bold("定位结果"), cell("主耳 → 两耳增强"), cell("每 16 ms 8 字节"), ctr("0.5 kB/s")],
+    [bold("图像"), cell("传感器 → NPU"), cell("不出模组，只输出检测结果"), ctr("—")],
+  ], 0.6, 1.6, [1.4, 1.75, 3.55, 1.2], [0.42, 0.48, 0.48, 0.48, 0.48]);
+  sub(s, "耳间编码", 0.6, 4.25, 3);
+  para(s, ["PCM 16 bit（首选）：相位完整；链路每侧约 2.6 mW（估算）",
+    "ADPCM 4 bit（64 kbps）：功耗约 1/4，对测向的影响待确认",
+    "LC3（32 kbps）：感知编码可能破坏相位，不用于定位"], 0.6, 4.65, 7.3, 1.6, { fontSize: 12.5 });
+  s.addChart(p.charts.LINE, [{ name: "≤10° 的比例", labels: ["0", "10", "25", "50", "100", "200"], values: [63, 61, 61, 60, 8, 7] }],
+    Object.assign({ x: 8.3, y: 1.5, w: 4.45, h: 4.6, chartColors: [C.navy], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 7,
+      showValue: true, dataLabelPosition: "t", valAxisMinVal: 0, valAxisMaxVal: 80, showLegend: false,
+      showTitle: true, title: "两耳同步误差对测向的影响（仿真）" }, chartBase,
+      axisTitle({ showCatAxisTitle: true, catAxisTitle: "同步误差（µs）", showValAxisTitle: true, valAxisTitle: "方位误差 ≤10° 的比例（%）" })));
+  T(s, "同步误差 50 µs 以内精度基本不变，100 µs 时测向失效；两耳采样同步需 ≤ 50 µs。", { x: 8.3, y: 6.15, w: 4.45, h: 0.6, fontSize: 11.5, color: C.gray });
+}
+
+// ================= 9 摄像头 =================
+{
+  const s = newSlide("附录 A4　摄像头分辨率",
+    "嘴宽按 5 cm、小孔成像估算；20 像素为本方案的设计目标，需视觉同事确认",
+    "参考：低分辨率视频中嘴部约 45 × 17 像素时仍能做唇动检测（Liu 等，https://personalpages.surrey.ac.uk/w.wang/papers/LiuWJ_SSPD_2011.pdf）；未找到最小像素数的系统结论。人脸检测要求低得多（SCRFD 可处理小于 16 像素的人脸，https://arxiv.org/abs/2105.04714）。");
+  const d = [1, 1.5, 2, 2.5, 3];
+  const px = (W, fov) => d.map((x) => Math.round((W / 2) / Math.tan((fov / 2) * Math.PI / 180) * 0.05 / x));
+  const labels = d.map((x) => x + " m");
+  s.addChart(p.charts.LINE, [
+    { name: "QVGA，100°", labels, values: px(320, 100) },
+    { name: "VGA，100°", labels, values: px(640, 100) },
+    { name: "720p，80°（推荐）", labels, values: px(1280, 80) },
+    { name: "1080p，100°", labels, values: px(1920, 100) },
+    { name: "设计目标 20 像素", labels, values: d.map(() => 20) },
+  ], Object.assign({ x: 0.6, y: 1.5, w: 7.4, h: 4.6, chartColors: ["C8C8C8", "9A9A9A", C.navy, C.navyLt, C.red], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 6,
+    valAxisMinVal: 0, valAxisMaxVal: 45, showLegend: true, legendPos: "r", showTitle: true, title: "对方嘴宽在画面里占多少像素" }, chartBase,
+    axisTitle({ showCatAxisTitle: true, catAxisTitle: "对方距离", showValAxisTitle: true, valAxisTitle: "像素" })));
+  T(s, "两只耳机各 1 个摄像头，两路人脸结果在主耳合并。正前方的人落在两边视野的内侧边缘，朝向和视场需保证正前方 ±30° 有覆盖（例如前倾布局，两边视野在正前方重叠）。", { x: 0.6, y: 6.2, w: 7.4, h: 0.55, fontSize: 11.5, color: C.gray, valign: "middle" });
+  sub(s, "两级读出", 8.4, 1.6, 4.3);
+  box(s, "平时：整幅画面合并像素输出\n低分辨率，1–2 fps", 8.4, 2.05, 4.3, 0.75);
+  line(s, 10.55, 2.8, 10.55, 3.1);
+  box(s, "人脸检测，得到人脸框", 8.4, 3.1, 4.3, 0.55);
+  line(s, 10.55, 3.65, 10.55, 3.95);
+  box(s, "需要时：只读嘴部区域的原分辨率像素\n约 64 × 64，10–15 fps，判断唇动", 8.4, 3.95, 4.3, 0.85, { line: C.navy, lw: 1.5 });
+  para(s, ["2 m 处嘴宽：QVGA 3 像素，720p 19 像素", "两级读出省带宽和 NPU 算力；图像不出模组", "代价：传感器比 QVGA 贵，功耗更高（第 11 页）"], 8.4, 5.0, 4.3, 1.8, { fontSize: 12 });
+}
+
+{
+  const s = newSlide("附录 A5　数据流规格", "", "同步要求见附录 A3；编码取舍：PCM 首选，ADPCM 待验证，LC3 不用于定位。");
   table(s, [
     [head("数据流"), head("从 → 到"), head("内容与格式"), head("速率"), head("时延要求")],
     [bold("麦克风采集"), cell("麦克风 → 本耳芯片"), cell("数字麦 PDM → PCM 16 kHz / 16 bit；32 ms 帧、16 ms 帧移"), cell("每路 256 kbps（片内）"), cell("—")],
     [bold("定位音频"), cell("副耳 → 主耳"), cell("1 路 PCM 16 kHz（首选 16 bit 无压缩）；带采样计数与时间戳；两耳采样同步 ≤ 50 µs"), cell("256 kbps"), cell("≤ 100 ms（旁路）")],
     [bold("图像"), cell("传感器 → NPU"), cell("平时低分辨率整幅；需要时嘴部区域（约 64 × 64 像素）原分辨率"), cell("不出模组"), cell("—")],
-    [bold("人脸元数据"), cell("两耳 NPU → 主耳"), cell("每张脸 16 字节：曝光时间戳 4 B、编号 1 B、方位角 2 B、仰角 2 B、人脸框 2 B、唇动分数 1 B、置信度 1 B、保留 3 B"), cell("≤ 1.2 kB/s"), cell("≤ 100 ms")],
+    [bold("人脸元数据"), cell("两耳 NPU → 主耳"), cell("每张脸 16 字节：曝光时间戳 4 B、编号 1 B、方位角 2 B、仰角 2 B、人脸宽度 2 B（用于估距离）、唇动分数 1 B、置信度 1 B、保留 3 B"), cell("≤ 1.2 kB/s"), cell("≤ 100 ms")],
     [bold("摄像头控制"), cell("主耳 → 两耳摄像头"), cell("开 / 关、档位（监测 / 唇动）、嘴部区域坐标"), cell("事件触发"), cell("≤ 50 ms")],
     [bold("头部朝向"), cell("IMU → 本耳芯片"), cell("偏航角，200 Hz"), cell("片内"), cell("—")],
     [bold("定位结果"), cell("主耳 → 两耳增强"), cell("每 16 ms 8 字节：目标方位 2 B、置信度 1 B、是否在说话 1 B、3 个干扰方位 3 B、序号 1 B"), cell("0.5 kB/s"), cell("≤ 50 ms")],
   ], 0.6, 1.5, [1.4, 1.8, 5.6, 1.7, 1.63], [0.42, 0.5, 0.6, 0.5, 0.6, 0.5, 0.45, 0.6]);
 }
+
 {
-  const s = newSlide("附录 A2　状态机与降级", "", "");
+  const s = newSlide("附录 A6　状态机与降级", "", "");
   table(s, [
     [head("状态"), head("进入条件"), head("音频"), head("摄像头"), head("输出")],
     [bold("待机"), cell("未开启听觉辅助"), cell("关"), cell("关"), cell("—")],
-    [bold("建立"), cell("刚开启，或换了环境"), cell("定位"), cell("唇动档，直到视野里的人都确认"), cell("无目标")],
-    [bold("锁定"), cell("选中目标"), cell("定位 + 背景递推"), cell("低分辨率监测"), cell("目标方位、置信度")],
+    [bold("安静"), cell("3 s 内无人说话"), cell("背景递推、跟踪上一个目标"), cell("监测档，1–2 fps"), cell("保持上一个目标")],
+    [bold("对话中"), cell("声学检测到语音，且正前方 ±30° 内有人脸"), cell("定位 + 唇动门控背景"), cell("唇动档，只读嘴部区域，10–15 fps"), cell("目标方位、置信度")],
     [bold("确认"), cell("新声源 / 前后判断不一致 / 置信度低 / 转头 > 30°"), cell("定位"), cell("唇动档，直到确认完成"), cell("保持上一次目标")],
     [bold("降级"), cell("光线差、遮挡、目标在视野外"), cell("纯声学"), cell("关或监测"), cell("置信度降一级")],
   ], 0.6, 1.5, [1.2, 4.4, 1.9, 2.9, 1.73], [0.42, 0.42, 0.42, 0.42, 0.42, 0.42]);
@@ -420,8 +517,9 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
     [bold("两耳链路中断"), cell("主耳退化为本地 2 麦定位，置信度降两级")],
   ], 0.6, 4.3, [3.6, 8.53], [0.42, 0.42, 0.42, 0.42, 0.42, 0.42]);
 }
+
 {
-  const s = newSlide("附录 A3　功耗分项（本地增强方案，每只耳机）", "",
+  const s = newSlide("附录 A7　功耗分项（本地增强方案，每只耳机）", "",
     "器件参考：nRF5340 射频电流（https://www.nordicsemi.com/-/media/Software-and-other-downloads/Product-Briefs/nRF5340-SoC-PB.pdf），协议开销按 ×2 估；NXP RT600 内核电流（AN13468）作为计算功耗上限参考；HM0360 监测模式 140–256 µA、VGA 60 fps 约 14.5 mW（https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/4287/HM0360-MWA-00FP963.pdf）；OV02C 2 MP 约 82 mW；VueBuds 摄像头典型 < 5 mW。");
   table(s, [
     [head("部分"), head("功耗"), head("依据")],
@@ -429,13 +527,14 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
     [bold("耳间定位音频"), cell("0.7 mW（ADPCM）/ 2.6 mW（PCM）"), cell("射频约 5 nJ/bit × 协议开销 2")],
     [bold("定位与融合计算"), cell("≤ 约 3 mW"), cell("约 12 MFLOPS，按偏老工艺 MCU 约 0.19 mW/MHz 估上限")],
     [bold("摄像头低分辨率监测"), cell("约 0.4–0.8 mW"), cell("低功耗传感器常开监测模式")],
-    [bold("摄像头唇动档（约 10% 时间）"), cell("约 1.5–8 mW"), cell("VGA 到 2 MP 级传感器工作功耗 × 10%；嘴部区域读出可降低，降多少待确认")],
+    [bold("摄像头唇动档（对话时常开）"), cell("对话 10%：约 1.5–8 mW；50%：约 7.5–41 mW"), cell("VGA 到 2 MP 级传感器全幅工作功耗 × 对话时间占比；只读嘴部区域可降低，降多少待确认")],
     [bold("NPU 人脸与唇动"), cell("待确认"), cell("需目标芯片数据")],
     [bold("两耳组阵增强（B）额外"), cell("每侧 +2.6–5.2 mW"), cell("双向持续传 1–2 路 PCM")],
   ], 0.6, 1.5, [3.0, 3.2, 5.93], [0.42, 0.46, 0.46, 0.46, 0.46, 0.56, 0.46, 0.46]);
 }
+
 {
-  const s = newSlide("附录 A4　仿真与估算方法", "", "");
+  const s = newSlide("附录 A8　仿真与估算方法", "", "");
   table(s, [
     [head("项目"), head("方法"), head("局限")],
     [bold("头部与麦克风"), cell("刚性球头部模型（解析解）；每耳 2 麦，耳柄前后间距 1.5 cm"), cell("无耳廓、躯干；佩戴偏差未建模")],
@@ -449,8 +548,8 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 }
 
 {
-  const s = newSlide("附录 A5　定位算法初步比较（预研储备）", SIM + "；每个条件 120 次，开口后 0.5 s 判决",
-    "四个条件：S1 混响（RT60 0.5 s）无干扰；S2 混响 + 2 个干扰（各低 6 dB）；S3 强混响（0.8 s）+ 嘈杂 + 2 个干扰；S4 混响 + 2 个干扰（与目标一样响）。GEVD-MUSIC 用唇动给出的开口时刻划分背景段做白化，5° 网格。估算算力约 12 MFLOPS，方向模板约 120–250 KB。另做了四项稳健性验证（转头、对话轮流、墙面反射、视觉变差），倾向不变。");
+  const s = newSlide("附录 A9　定位算法初步比较（预研储备）", SIM + "；每个条件 120 次，开口后 0.5 s 判决",
+    "四个条件：S1 混响（RT60 0.5 s）无干扰；S2 混响 + 2 个干扰（各低 6 dB）；S3 强混响（0.8 s）+ 嘈杂 + 2 个干扰；S4 混响 + 2 个干扰（与目标一样响）。GEVD-MUSIC 用唇动给出的开口时刻划分背景段做白化，5° 网格。本页为两耳 4 麦（2 + 2）的比较，方向模板约 245 KB；推荐的 3 路配置（主耳 2 + 副耳 1）约 184 KB，算力约 12 MFLOPS（第 6 页）。另做了四项稳健性验证（转头、对话轮流、墙面反射、视觉变差），倾向不变。");
   const labels = ["S1 混响", "S2 + 2 个干扰", "S3 强混响 + 干扰", "S4 干扰同样响"];
   s.addChart(p.charts.BAR, [
     { name: "SRP-PHAT", labels, values: [57, 22, 4, 8] },
@@ -464,6 +563,21 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
     "关键是背景白化：唇动给出开口时刻，开口前的一段只有干扰和噪声，用来估计背景。",
     "倾向：GEVD-MUSIC + 起始段加权 + 5° 网格，再与人脸软融合；经典信号处理，不需要训练数据。",
     "需要实测数据复核；微型神经网络作为对照，留到有匹配数据后再比。"], 9.1, 1.7, 3.65, 4.6, { fontSize: 12 });
+}
+
+
+{
+  const s = newSlide("附录 A10　时间同步与标定", "晶振偏差、装配位置为典型值；要求中的数值为设计值，需与链路、芯片、视觉同事确认",
+    "开口时刻误差预算：仿真要求总误差 ≤ ±0.1 s（附录 A2）；摄像头 10–15 fps 本身带来 67–100 ms 的帧间隔，所以留给时钟对齐的误差约 20 ms。摄像头离头部中心约 8 cm：1 m 处约 4.6°，2 m 处约 2.3°。");
+  table(s, [
+    [head("项目"), head("问题"), head("做法"), head("要求")],
+    [bold("两耳采样时钟漂移"), cell("两颗晶振相差 20 ppm 时，每 2.5 s 漂 50 µs，正好用完同步预算"), cell("副耳每帧带采样计数；主耳持续估计漂移，用重采样补偿"), cell("对齐误差 ≤ 50 µs【待确认】")],
+    [bold("副耳音频晚到"), cell("耳间链路有时延"), cell("主耳本地 2 路先缓存，等副耳数据到达后对齐"), cell("缓存 100 ms，约 6.4 KB")],
+    [bold("摄像头与音频的时间基准"), cell("曝光时间和采样时刻来自不同时钟"), cell("曝光时间戳统一换算到主耳音频时钟"), cell("误差 ≤ 20 ms")],
+    [bold("摄像头不在头部中心"), cell("摄像头在耳柄上，离头部中心约 8 cm；1 m 处不换算差约 4.6°"), cell("按人脸大小估距离，把人脸方位换算到头部中心"), cell("换算后残差 ≤ 1°")],
+    [bold("IMU 偏航角漂移"), cell("陀螺积分会慢慢漂"), cell("用人脸方位和声学峰值定期重新校准说话人地图"), cell("漂移在 ±5° 内被校正")],
+    [bold("摄像头与麦克风相对位置"), cell("每副耳机装配有偏差"), cell("出厂标定，写入方向模板与换算参数"), cell("—")],
+  ], 0.6, 1.5, [2.4, 3.9, 3.9, 1.93], [0.42, 0.62, 0.5, 0.5, 0.62, 0.5, 0.5]);
 }
 
 p.writeFile({ fileName: OUT }).then((f) => console.log("saved", f));
