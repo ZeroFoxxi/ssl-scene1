@@ -272,7 +272,7 @@ def build_excel(path):
 
 
 if __name__ == "__main__":
-    build_excel(os.path.join(ROOT, "竞品规格调研_萤石与思必驰.xlsx"))
+    build_excel(os.path.join(ROOT, "01_场景一_摄像头声源定位", "竞品调研", "竞品规格调研_萤石与思必驰.xlsx"))
     json.dump({"sources": SOURCES, "cols": COLS, "rows": ROWS, "gaps": GAPS, "implications": IMPLICATIONS, "memory": MEMORY, "matrix": MATRIX, "matrix_cols": MATRIX_COLS},
               open(os.path.join(ROOT, "_build", "spec_data.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("written")

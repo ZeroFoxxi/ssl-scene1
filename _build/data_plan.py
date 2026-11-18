@@ -154,7 +154,7 @@ def build_excel(path):
 
 
 if __name__ == "__main__":
-    tot = build_excel(os.path.join(ROOT, "训练数据方案与采集计划.xlsx"))
+    tot = build_excel(os.path.join(ROOT, "01_场景一_摄像头声源定位", "训练数据", "训练数据方案与采集计划.xlsx"))
     rows, _ = per_room_minutes()
     json.dump({"datasets": DATASETS, "ds_cols": DS_COLS, "sim_real": SIM_REAL, "sim": SIM, "matrix": MATRIX, "rooms": ROOMS, "meta": META, "timeline": TIMELINE,
                "compare": COMPARE, "confirm": CONFIRM, "volume_rows": rows, "per_room_min": tot,

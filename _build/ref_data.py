@@ -120,7 +120,7 @@ def build_excel(path):
 
 
 if __name__ == "__main__":
-    build_excel(os.path.join(ROOT, "公开参照方案汇总.xlsx"))
+    build_excel(os.path.join(ROOT, "01_场景一_摄像头声源定位", "竞品调研", "公开参照方案汇总.xlsx"))
     json.dump({"sources": SOURCES, "res_cols": RES_COLS, "res": RES, "eff_cols": EFF_COLS, "eff": EFF,
                "res_take": RES_TAKE, "check": CHECK, "eff_take": EFF_TAKE},
               open(os.path.join(ROOT, "_build", "ref_data.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)

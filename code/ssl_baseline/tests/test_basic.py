@@ -9,6 +9,7 @@ from ssl_baseline import PRESETS, SRPPHAT, stft, gcc_phat, CircularKalman, Track
     PTZController, PTZConfig, State, angdiff, aliasing_frequency
 from ssl_baseline.geometry import far_field_delays
 from ssl_baseline.wake import WakeDOA, WakeDOAConfig, WakeWordLocalizer, RingBuffer
+from ssl_baseline.turn import TurnDOA
 
 FS = 16000
 
@@ -149,6 +150,23 @@ def test_ring_buffer_and_streaming_localizer():
     r_stream = loc.on_wake(s, e)
     r_off = WakeDOA(mic, FS).localize(x, s, e)
     assert abs(r_stream.az - r_off.az) < 1e-6 and angdiff(r_stream.az, 250.0) < 5.0
+
+
+def test_turn_doa_adaptive_background():
+    """换人测向：干扰持续到开口后 → 判为 interf 并压掉干扰；上一位在开口前已停 → 判为 quiet，不白化上一位。"""
+    mic = PRESETS["square4"]
+    # 1) 干扰一直在（同 SIR 0 dB）
+    x, s, e = _two_source_scene(mic, az_t=60.0, az_i=150.0, sir_db=0.0)
+    r = TurnDOA(mic, FS).localize(x, s, s + FS // 2)
+    assert r.mode == "interf" and angdiff(r.az, 60.0) < 5.0, (r.mode, r.az)
+    # 2) 上一位（150°）在开口前 0.4 s 停止，新发言人在 60°
+    n = int(2.8 * FS); s0 = int(1.8 * FS)
+    xa = np.zeros((4, n)); xa[:, :s0 - int(0.4 * FS)] = _plane_wave(mic, 150.0, s0 - int(0.4 * FS), 5)
+    xb = np.zeros((4, n)); xb[:, s0:s0 + FS // 2] = _plane_wave(mic, 60.0, FS // 2, 6)
+    rng = np.random.default_rng(7); noise = rng.normal(0, 0.01, (4, n))
+    loc = TurnDOA(mic, FS); loc.set_noise(rng.normal(0, 0.01, (4, FS)))
+    r = loc.localize(xa + xb + noise, s0, s0 + FS // 2)
+    assert r.mode == "quiet" and angdiff(r.az, 60.0) < 3.0, (r.mode, r.az)
 
 
 if __name__ == "__main__":

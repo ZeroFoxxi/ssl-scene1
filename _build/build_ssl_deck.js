@@ -4,7 +4,7 @@ const path = require("path");
 const { applyTheme } = require((process.env.PPTX_SKILL || "/mnt/skills/public/pptx") + "/scripts/apply_theme.js");
 
 const SHORT = process.env.SHORT === "1";
-const OUT = path.join(process.env.OUT_DIR || __dirname, SHORT ? "场景一专项_汇报精简版_raw.pptx" : "场景一专项_摄像头声源定位与跟踪_方案选型与数据集.pptx");
+const OUT = path.join(process.env.OUT_DIR || path.join(__dirname, "..", "01_场景一_摄像头声源定位", "方案选型"), SHORT ? "场景一专项_汇报精简版_raw.pptx" : "场景一专项_摄像头声源定位与跟踪_方案选型与数据集.pptx");
 const FIGDIR = path.join(__dirname, "..", "figures");
 const img = (n) => path.join(FIGDIR, n);
 const FONT = "Microsoft YaHei";
