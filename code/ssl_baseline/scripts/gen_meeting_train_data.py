@@ -41,7 +41,8 @@ N = int((PRE_S + POST_S) * FS)
 ON = int(PRE_S * FS)
 SAMPLES_PER_ROOM = 10
 ARRAYS = {"lin6_17.5cm": np.stack([np.zeros(6), (np.arange(6) - 2.5) * 0.175 / 5], 0),   # 6 麦线阵 17.5 cm，沿 y 轴（平行于前墙）
-          "lin5_4cm": np.stack([np.zeros(5), np.array([-0.08, -0.04, 0.0, 0.04, 0.08])], 0)}  # LOCATA DICIT 中间 5 麦
+          "lin5_4cm": np.stack([np.zeros(5), np.array([-0.08, -0.04, 0.0, 0.04, 0.08])], 0),  # LOCATA DICIT 中间 5 麦
+          "lin6_3cm": np.stack([np.zeros(6), np.array([-0.06, -0.03, 0.0, 0.03, 0.06, 0.09])], 0)}  # RealMAN 阵列 x 轴上 6 麦
 MIC_XY = ARRAYS["lin6_17.5cm"]
 CFG = {"scene": "meeting", "array": "lin6_17.5cm"}
 CONDS = ["C1 换人", "C2 抢话", "C3 远端扬声器", "C4 空调噪声"]

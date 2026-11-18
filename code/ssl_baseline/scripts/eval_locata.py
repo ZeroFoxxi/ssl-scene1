@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""在 LOCATA 真实录音测试集（build_locata_test.py 生成）上比较：SRP-PHAT、GEVD-MUSIC（固定背景段）、小网络（仿真训练）。
+"""在真实录音测试集上比较：SRP-PHAT、GEVD-MUSIC（固定背景段）、小网络（仿真训练）。
+默认 LOCATA（build_locata_test.py 生成，5 麦）；--data/--array 可换成 RealMAN（build_realman_test.py 生成，6 麦 3 cm）。
 判决：开口后 0.5 s；指标：误差 ≤10°、≤20° 的比例与平均误差，按样本类型统计。
 运行：python scripts/eval_locata.py --ckpt work/models/crnn_general_lin5.pt
 输出：out/locata_eval.json
@@ -23,9 +24,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", default=None)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--data", default="work/locata_test/locata_test.npz")
+    ap.add_argument("--array", default="lin5_4cm")
+    ap.add_argument("--out", default="locata_eval")
     a = ap.parse_args()
-    d = dict(np.load(os.path.join(ROOT, "work", "locata_test", "locata_test.npz")))
-    xy = ARRAYS["lin5_4cm"]; on = int(d["onset"]); names = list(d["cond_names"])
+    d = dict(np.load(os.path.join(ROOT, a.data)))
+    xy = ARRAYS[a.array]; on = int(d["onset"]); names = list(d["cond_names"])
     srp_cfg = SRPConfig(fmax=min(4000.0, 0.95 * aliasing_frequency(xy)))
     srp = WakeDOA(xy, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, pad_post=0.0, exclude=FRONT, srp=srp_cfg))
     gev = {}
@@ -57,7 +61,7 @@ def main():
                 r[names[c] if c != "全部" else "全部"] = {"acc10": round(float((err[sel] <= 10).mean()), 3), "acc20": round(float((err[sel] <= 20).mean()), 3),
                                                         "mae": round(float(err[sel].mean()), 1)}
         res["methods"][m] = r
-    json.dump(res, open(os.path.join(ROOT, "out", f"locata_eval{a.tag}.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    json.dump(res, open(os.path.join(ROOT, "out", f"{a.out}{a.tag}.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("样本数", res["n"])
     for m, r in res["methods"].items():
         print(f"{m:<14}", "  ".join(f"{k}: ≤10° {v['acc10']*100:.0f}% / ≤20° {v['acc20']*100:.0f}% / 平均 {v['mae']}°" for k, v in r.items()))
