@@ -92,3 +92,34 @@ if torch is not None:
         macs += 2 * 3 * (g.input_size * g.hidden_size + g.hidden_size * g.hidden_size) * T
         macs += model.att.in_features * T + model.out.in_features * model.out.out_features
         return int(macs)
+
+
+class _Res:
+    def __init__(self, az):
+        self.az = az
+
+
+class NNDOA:
+    """把训练好的小网络包装成与 WakeDOA 相同的接口：localize(x, start, end).az（0–360°，0° 为阵列正前方）。
+
+    网络只训练了"开口后 0.5 s 判决"：输入固定取 [start - 1.0 s, start + 0.5 s]，end 参数不改变输入
+    （所以闭环里 1.0 s 的"微调"与 0.5 s 粗转结果相同，等同于不做微调）。
+    """
+
+    def __init__(self, ckpt_path: str, in_ch: int = 11, n_threads: int = 1):
+        if torch is None:
+            raise ImportError("需要安装 torch")
+        torch.set_num_threads(n_threads)
+        self.model = CRNN(in_ch=in_ch)
+        self.model.load_state_dict(torch.load(ckpt_path, map_location="cpu"))
+        self.model.eval()
+
+    def localize(self, x: np.ndarray, start: int, end: int) -> "_Res":
+        s0 = start - FS
+        seg = np.zeros((x.shape[0], FS + FS // 2))
+        a, b = max(0, s0), min(x.shape[1], start + FS // 2)
+        if b > a:
+            seg[:, a - s0: b - s0] = x[:, a:b]
+        with torch.no_grad():
+            logit = self.model(torch.from_numpy(features(seg))[None]).numpy()
+        return _Res(float(decode(logit)[0] % 360.0))
