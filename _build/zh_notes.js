@@ -9,6 +9,7 @@ module.exports = async function writeZh(p, out) {
     const xml = await z.file(name).async("string");
     if (xml.includes('lang="en-US"')) z.file(name, xml.replace(/lang="en-US"/g, 'lang="zh-CN"'));
   }
+  dropDirs(z);
   fs.writeFileSync(out, await z.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
   console.log("written", out);
 };
@@ -21,5 +22,12 @@ module.exports.fixFile = async function fixFile(file) {
     const xml = await z.file(name).async("string");
     if (xml.includes('lang="en-US"')) z.file(name, xml.replace(/lang="en-US"/g, 'lang="zh-CN"'));
   }
+  dropDirs(z);
   fs.writeFileSync(file, await z.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
 };
+
+// 去掉 ZIP 里的文件夹条目（部分云盘 / 协同编辑打不开带文件夹条目的 PPT）。
+function dropDirs(z) {
+  // 只删文件夹条目本身；z.remove() 会连文件夹里的文件一起删掉，不能用
+  for (const name of Object.keys(z.files).filter((n) => z.files[n].dir)) delete z.files[name];
+}
