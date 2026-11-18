@@ -26,6 +26,7 @@ CONDS = {  # 名称: (RT60, 目标 DRR dB, SNR dB, 干扰人数, 每个干扰的
     "S4 混响 + 2 个干扰（SIR 0 dB）": (0.5, 0.0, 10.0, 2, 0.0),
 }
 VIS = {"fov": 70.0, "az_sigma": 2.0, "p_detect": 0.95, "lip_err": 0.10}
+ONSET_JIT = 0.1  # 唇动给出的开口时刻误差（± 秒，均匀分布）
 ACOUSTIC = ["SRP-PHAT", "SRP-PHAT 5° 网格", "SRP-PHAT + 起始段加权", "MUSIC", "GEVD-MUSIC + 起始段加权", "GEVD-MUSIC 5° 网格"]
 FUSED = ["仅视觉（唇动最高的人脸）", "SRP-PHAT + 视觉", "GEVD-MUSIC + 视觉（硬规则）", "GEVD-MUSIC 5° + 视觉（软融合）"]
 SOFT = {"lam": 0.1, "mu": 0.05}  # 在开发种子 7 上调得（scripts/tune_fusion.py），评测种子为 1
@@ -77,7 +78,7 @@ def run_trial(rng, cond, ctx):
             faces.append((a + rng.normal(0, VIS["az_sigma"]), lip_score(rng, speaking)))
 
     # 开口时刻（唇动给出，±0.1 s 误差）→ 判决窗与背景段
-    k_on = int(round((0.5 + rng.uniform(-0.1, 0.1)) * FS / HOP))
+    k_on = int(round((0.5 + rng.uniform(-ONSET_JIT, ONSET_JIT)) * FS / HOP))
     n_win = 1 + (int(0.5 * FS) - NFFT) // HOP
     Yd = y[:, :, k_on : k_on + n_win]
     Yb = y[:, :, : max(4, k_on - int(0.15 * FS / HOP))]

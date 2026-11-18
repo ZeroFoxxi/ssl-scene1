@@ -98,3 +98,19 @@ def diffuse_noise(H_diff, T, rng, psd):
         n = (rng.standard_normal((F, T)) + 1j * rng.standard_normal((F, T))) * np.sqrt(psd)[:, None]
         noise += H_diff[k][:, :, None] * n[None]
     return noise
+
+
+def diffuse_tail(src_stft, H_diff, rng, rt60, min_lag=2):
+    """只含后期部分（≥ min_lag 帧）的扩散混响尾，未定标。"""
+    F, T = src_stft.shape
+    K, M, _ = H_diff.shape
+    L = int(np.ceil(rt60 * 16000 / HOP))
+    amp = 10 ** (-3 * np.arange(L) * HOP / (rt60 * 16000))
+    tail = np.zeros((M, F, T), complex)
+    for k in range(K):
+        c = (rng.standard_normal((L, F)) + 1j * rng.standard_normal((L, F))) * amp[:, None]
+        r = np.zeros((F, T), complex)
+        for l in range(min_lag, L):
+            r[:, l:] += c[l][:, None] * src_stft[:, : T - l]
+        tail += H_diff[k][:, :, None] * r[None]
+    return tail

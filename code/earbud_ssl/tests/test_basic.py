@@ -96,6 +96,23 @@ def test_rotate_background():
     assert err_rot < 0.5 * err_stale, (err_rot, err_stale)
 
 
+def test_room_early_ir():
+    """镜像声源法：直达声在约 4 ms 处；加墙面反射后早期能量增加；Sabine 反射系数在 (0,1)。"""
+    from earbud_ssl.room import early_ir, sabine_beta, image_sources
+    mics = earbud_mics()
+    f = np.fft.rfftfreq(2048, 1 / 16000)
+    H = sphere_tf(azimuth_points(np.arange(-180, 180, 5.0), 2.0, 0.0), mics, f)  # 只含仰角 0 的小表（测试用）
+    table = (None, None, np.repeat(H[:, None], 13, axis=1))
+    room = np.array([6.0, 5.0, 3.0]); head = np.array([3.0, 2.5, 1.2]); src = np.array([4.5, 2.5, 1.2])
+    beta = sabine_beta(room, 0.5)
+    assert 0 < beta < 1
+    ir0, e0, _ = early_ir(room, src, head, 0.0, mics, table, beta, max_order=0)
+    ir2, _, ee = early_ir(room, src, head, 0.0, mics, table, beta, max_order=2)
+    assert abs(np.argmax(np.abs(ir0[0])) - 64) <= 3
+    assert np.sum(ir2 ** 2) > 1.2 * np.sum(ir0 ** 2) and ee > 0
+    assert len(image_sources(room, src, 2, beta)) == 1 + 6 + 18
+
+
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for t in tests:
