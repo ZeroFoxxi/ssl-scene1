@@ -17,7 +17,7 @@ import torch.nn.functional as F
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT); sys.path.insert(0, os.path.join(ROOT, "scripts"))
-from ssl_baseline.nn_doa import features, CRNN, count_macs, soft_label, decode
+from ssl_baseline.nn_doa import features, CRNN, count_macs, soft_label, decode, SIZES
 from ssl_baseline import metrics
 
 WORK = os.path.join(ROOT, "work")
@@ -57,9 +57,10 @@ def build_features(split, data="train_data"):
 
 def predict(model, feat, bs=128):
     model.eval(); outs = []
+    dev = next(model.parameters()).device
     with torch.no_grad():
         for i in range(0, len(feat), bs):
-            outs.append(model(torch.from_numpy(feat[i:i + bs].astype(np.float32))).numpy())
+            outs.append(model(torch.from_numpy(feat[i:i + bs].astype(np.float32)).to(dev)).cpu().numpy())
     return decode(np.concatenate(outs))
 
 
@@ -75,17 +76,22 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--name", default="crnn_v0")
     ap.add_argument("--data", default="train_data", help="work/ 下的数据目录；非默认数据只训练与验证，不评测会议室仿真测试集")
+    ap.add_argument("--size", choices=list(SIZES), default="s", help="网络大小：s 约 0.28 M、m 约 1.07 M、l 约 2.13 M 参数")
+    ap.add_argument("--device", default="auto", help="auto（有 GPU 就用）/ cpu / cuda")
+    ap.add_argument("--threads", type=int, default=4, help="CPU 线程数")
     a = ap.parse_args()
-    torch.manual_seed(a.seed); np.random.seed(a.seed); torch.set_num_threads(4)
+    torch.manual_seed(a.seed); np.random.seed(a.seed); torch.set_num_threads(a.threads)
+    dev = torch.device("cuda" if (a.device == "auto" and torch.cuda.is_available()) else ("cpu" if a.device == "auto" else a.device))
+    print("设备：", dev, flush=True)
     tr, va = build_features("train", a.data), build_features("val", a.data)
     te = build_features("test") if a.data == "train_data" else None
-    model = CRNN(in_ch=tr["feat"].shape[1])
+    model = CRNN(in_ch=tr["feat"].shape[1], **SIZES[a.size]).to(dev)
     n_params = sum(p.numel() for p in model.parameters()); macs = count_macs(model, tr["feat"].shape[1], tr["feat"].shape[3])
     print(f"参数量 {n_params}，每次判决乘加 {macs / 1e6:.0f} M", flush=True)
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=1e-3)
     steps = a.epochs * int(np.ceil(len(tr["az"]) / a.bs))
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=a.lr, total_steps=steps, pct_start=0.1)
-    ylab = torch.from_numpy(soft_label(tr["az"]))
+    ylab = torch.from_numpy(soft_label(tr["az"])).to(dev)
     best, log = -1.0, []
     os.makedirs(os.path.join(WORK, "models"), exist_ok=True)
     ck = os.path.join(WORK, "models", f"{a.name}.pt")
@@ -93,7 +99,7 @@ def main():
         model.train(); t0 = time.time(); perm = np.random.permutation(len(tr["az"])); tot = 0.0
         for i in range(0, len(perm), a.bs):
             idx = perm[i:i + a.bs]
-            xb = torch.from_numpy(tr["feat"][idx].astype(np.float32))
+            xb = torch.from_numpy(tr["feat"][idx].astype(np.float32)).to(dev)
             loss = -(ylab[idx] * F.log_softmax(model(xb), dim=1)).sum(1).mean()
             opt.zero_grad(); loss.backward(); opt.step(); sched.step(); tot += loss.item() * len(idx)
         va_est = predict(model, va["feat"]); va_acc = acc10(va_est, va["az"])
@@ -102,13 +108,15 @@ def main():
                     "sec": round(time.time() - t0, 1)})
         print(log[-1], flush=True)
         if va_acc > best:
-            best = va_acc; torch.save(model.state_dict(), ck)
+            best = va_acc; torch.save({k: v.cpu() for k, v in model.state_dict().items()}, ck)
+            json.dump({"size": a.size, "in_ch": int(tr["feat"].shape[1]), "data": a.data, "epoch": ep + 1, "val_acc10": round(best, 4),
+                       "params": n_params, "macs_per_decision": macs}, open(ck[:-3] + ".json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump(log, open(os.path.join(ROOT, "out", f"nn_train_log_{a.name}.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     if te is None:
         print(f"完成：验证集最好 {best:.4f}，模型 {ck}")
         return
     # 测试：只评测一次（验证集最好的模型）
-    model.load_state_dict(torch.load(ck))
+    model.load_state_dict(torch.load(ck, map_location=dev))
     t0 = time.time(); est = predict(model, te["feat"]); t_inf = (time.time() - t0) / len(est)
     res = {}
     for r in sorted(set(te["rt60"].tolist())) + ["平均"]:
@@ -118,7 +126,7 @@ def main():
             res[f"{r}|{CONDS[c]}"] = round(acc10(est[m], te["az"][m]), 3)
         res[f"{r}|四种条件平均"] = round(float(np.mean([res[f"{r}|{CONDS[c]}"] for c in range(4)])), 3)
     base = json.load(open(os.path.join(ROOT, "out", "test_baselines.json"), encoding="utf-8"))
-    out = {"model": a.name, "params": n_params, "macs_per_decision": macs, "cpu_ms_per_decision_batched": round(1000 * t_inf, 2),
+    out = {"model": a.name, "size": a.size, "device": str(dev), "params": n_params, "macs_per_decision": macs, "cpu_ms_per_decision_batched": round(1000 * t_inf, 2),
            "best_val_acc10": round(best, 4), "test_acc10": res,
            "baselines_0.5s": {k.split(" | ")[0]: v for k, v in base.items() if k.endswith("0.5s")}}
     json.dump(log, open(os.path.join(ROOT, "out", f"nn_train_log_{a.name}.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)

@@ -25,7 +25,7 @@
 输出到 work/train_data_<scene>_<array>/<split>/。默认（meeting + lin6_17.5cm）仍输出到 work/train_data/<split>/。
 """
 import argparse, glob, json, os, sys, time
-from multiprocessing import Pool
+from multiprocessing import get_context
 import numpy as np
 import scipy.signal as sps
 import soundfile as sf
@@ -170,7 +170,9 @@ def main():
     sub = "train_data" if (a.scene, a.array) == ("meeting", "lin6_17.5cm") else f"train_data_{a.scene}_{a.array}"
     outdir = os.path.join(WORK, sub, a.split); os.makedirs(outdir, exist_ok=True)
     t0 = time.time()
-    with Pool(a.workers, initializer=_init, initargs=(a.split, a.scene, a.array)) as pool:
+    # 语音在主进程读一次，子进程以 fork 方式共享（不重复占内存；服务器核数多时尤其重要）
+    _init(a.split, a.scene, a.array)
+    with get_context("fork").Pool(a.workers) as pool:
         for s0 in range(0, a.rooms, a.shard_rooms):
             fn = os.path.join(outdir, f"shard_{s0 // a.shard_rooms:03d}.npz")
             if os.path.exists(fn):

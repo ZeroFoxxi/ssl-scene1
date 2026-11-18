@@ -1,0 +1,9 @@
+# 训练服务器用的依赖（torch 不在这里：GPU 版要按服务器的 CUDA 版本安装，见 README 第 2 步）
+numpy>=1.23
+scipy>=1.9
+matplotlib>=3.6
+soundfile>=0.12
+# numpy 2.x：用最新版 pyroomacoustics；numpy 1.x（如 1.26）：改成 pyroomacoustics==0.7.4
+pyroomacoustics
+# 仅"真实录音验证"（LOCATA）需要：按需读取 Zenodo 上的大压缩包
+remotezip

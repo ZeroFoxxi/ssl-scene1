@@ -5,7 +5,8 @@
   - 相位差：各麦克风相对参考麦（第 0 路）的 cos、sin，共 2 × (M-1) 个通道；
   - 参考麦对数能量（每个样本减去均值），1 个通道；帮助网络看出开口时刻。
 输出：前方 [-90°, 90°] 每 2° 一类（91 类）；训练用高斯平滑标签（σ = 4°），推断取峰值并做抛物线插值。
-结构（CRNN，约 27 万参数）：3 个卷积块（频率方向逐级池化）→ 每帧线性映射 → 双向 GRU → 注意力时间池化 → 全连接。
+结构（CRNN）：3 个卷积块（频率方向逐级池化）→ 每帧线性映射 → 双向 GRU → 注意力时间池化 → 全连接。
+三档大小（SIZES）：s 约 0.28 M 参数（目标规格）、m 约 1.07 M、l 约 2.13 M（"先放大约 10 倍开发，再压缩"用）。
 """
 import numpy as np
 
@@ -20,6 +21,9 @@ FS = 16000
 NFFT, HOP = 512, 256
 F_LO, F_HI = 1, 129                     # 频点 1–128（31–4000 Hz）
 AZ_GRID = np.arange(-90.0, 90.0 + 1e-9, 2.0)
+SIZES = {"s": dict(ch=(32, 64, 64), d_frame=128, d_rnn=64),
+         "m": dict(ch=(64, 128, 128), d_frame=256, d_rnn=128),
+         "l": dict(ch=(64, 128, 128), d_frame=512, d_rnn=192)}
 
 
 def features(x: np.ndarray) -> np.ndarray:
@@ -106,11 +110,11 @@ class NNDOA:
     （所以闭环里 1.0 s 的"微调"与 0.5 s 粗转结果相同，等同于不做微调）。
     """
 
-    def __init__(self, ckpt_path: str, in_ch: int = 11, n_threads: int = 1):
+    def __init__(self, ckpt_path: str, in_ch: int = 11, n_threads: int = 1, size: str = "s"):
         if torch is None:
             raise ImportError("需要安装 torch")
         torch.set_num_threads(n_threads)
-        self.model = CRNN(in_ch=in_ch)
+        self.model = CRNN(in_ch=in_ch, **SIZES[size])
         self.model.load_state_dict(torch.load(ckpt_path, map_location="cpu"))
         self.model.eval()
 
