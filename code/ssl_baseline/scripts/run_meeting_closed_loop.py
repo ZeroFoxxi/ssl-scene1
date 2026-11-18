@@ -242,7 +242,7 @@ def main():
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
     json.dump({"config": {"trials_per_rt60": a.trials, "rt60": a.rt60, "duration_s": DUR, "pan_speed_deg_s": PAN_SPEED,
                           "aim_deg": AIM_DEG, "arrays": {n: np.round(ARRAYS[n], 4).tolist() for n in names}},
-               "summary": summary}, open(os.path.join(out, "closed_loop_meeting_summary.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+               "summary": summary, "example": example}, open(os.path.join(out, "closed_loop_meeting_summary.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"\n{'RT60':>4} {'阵列':<14} {'方法':<22} {'时延中位数':>8} {'2s内对准':>8} {'误转/分':>7} {'对准时间':>8}")
     for s in summary:
         print(f"{str(s['rt60']):>4} {s['array']:<14} {s['method']:<22} {str(s['latency_median_s']):>8} {s['aim_within_2s']*100:>7.0f}% {s['wrong_per_min']:>7.2f} {s['framed_ratio']*100:>7.0f}%")
@@ -271,7 +271,8 @@ def plot(summary, ex, names, path):
                 ax.plot(tb, w180(ex["pans"][m]), color=c, lw=1.6, label=f"摄像头朝向：{lb}")
         ax.plot([], [], color=GRAY, lw=5, alpha=0.35, label="本地发言人方位")
         ax.fill_between([], [], color="#F4D6D6", label="远端发言（应保持不动）")
-        ax.set_xlim(0, DUR); ax.set_ylim(-90, 90); ax.set_xlabel("时间（s）"); ax.set_ylabel("方位（°，0° 为正前方）")
+        lim = max(30.0, float(np.max(np.abs([w180(ex["azs"][w]) for w, _, _ in ex["turns"] if w != "far"]))) + 15.0)
+        ax.set_xlim(0, DUR); ax.set_ylim(-lim, lim); ax.set_xlabel("时间（s）"); ax.set_ylabel("方位（°，0° 为正前方）")
         ax.set_title(f"示例：60 s 会议（{names[0]}，RT60 0.6 s，仿真）", fontsize=10, fontweight="bold", color=NAVY)
         ax.legend(fontsize=7, frameon=False, loc="upper right", ncol=2); ax.grid(color="#E3E8EF", lw=0.7)
         ax.spines[["top", "right"]].set_visible(False)
