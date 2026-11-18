@@ -88,7 +88,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
   const R = (t, o) => cell(t, Object.assign({ fontSize: 12.5 }, o)), H = (t, o) => bold(t, Object.assign({ fontSize: 12.5 }, o));
   table(s, [
     [head("项目", { fontSize: 12.5 }), head("结论", { fontSize: 12.5 })],
-    [H("场景价值"), R("在多人中自动锁定正在和我说话的人；已有产品只能增强正前方")],
+    [H("场景价值"), R("在多人中自动锁定正在和我说话的那一个人；已有产品只增强正前方，或增强整组说话人")],
     [H("定位方案"), R("每耳 2 麦，副耳转发 1 路，主耳 DSP 测向并与人脸融合；约 12 MFLOPS，全部端侧")],
     [H("耳机与摄像头"), R("同时运行；对话中唇动给出开口时刻，开口后 0.5 s 锁定（仿真 89–95%）")],
     [H("摄像头"), R("两耳各 1 个，720p 级；平时低分辨率找人脸，对话中只读嘴部区域")],
@@ -102,8 +102,8 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 {
   const s = newSlide("应用场景与已有产品",
     "麦克风数量：Apple 规格页、HearingTracker / Techlicious、Phonak 白皮书；“能 / 不能”为根据公开描述的判断",
-    "AirPods Pro 2：规格页列出双波束成形麦克风 + 朝内麦克风，每只 3 个为按列表推得（https://www.apple.com/sg/airpods-pro/specs/）。Ray-Ban Meta 二代：5 个麦克风（https://www.hearingtracker.com/hearing-glasses/meta-ray-ban-glasses-in-hearadvisor-testing-how-do-they-perform-as-hearing-aids）。Phonak StereoZoom：两只助听器各 2 个麦克风，经无线链路组成 4 麦双耳波束（https://www.phonak.com/content/dam/phonak/en/evidence-library/white-paper/technical-paper/Phonak_Insight_StereoZoom.pdf）。Look Once to Hear（CHI 2024，https://arxiv.org/html/2405.06289v2）与 VueBuds（CHI 2026，https://arxiv.org/abs/2603.29095）为研究原型，未列入麦克风数量图。");
-  key(s, "已有产品只能增强正前方，或要先注册；本方案用摄像头 + 两耳定位，自动锁定正在和你说话的人");
+    "AirPods Pro 2：规格页列出双波束成形麦克风 + 朝内麦克风，每只 3 个为按列表推得（https://www.apple.com/sg/airpods-pro/specs/）。Ray-Ban Meta 二代：5 个麦克风（https://www.hearingtracker.com/hearing-glasses/meta-ray-ban-glasses-in-hearadvisor-testing-how-do-they-perform-as-hearing-aids）。Phonak StereoZoom：两只助听器各 2 个麦克风，经无线链路组成 4 麦双耳波束（https://www.phonak.com/content/dam/phonak/en/evidence-library/white-paper/technical-paper/Phonak_Insight_StereoZoom.pdf）。Look Once to Hear（CHI 2024，https://arxiv.org/html/2405.06289v2）与 VueBuds（CHI 2026，https://arxiv.org/abs/2603.29095）为研究原型，未列入麦克风数量图。助听器：Phonak SpeechSensor 判断主要说话人在前、侧或后方并切换指向模式（https://www.phonak.com/content/dam/phonak/en/evidence-library/field-studies/PH_FieldStudyNews_LumityDirectionalBeamforming_210x297_EN_028-2475-02_V1-00.pdf）；Signia IX 厂商称可同时跟踪并增强多个说话人（https://hearingreview.com/hearing-products/hearing-aids/signias-integrated-xperience-hearing-aid-platform-pinpoints-multiple-speakers-in-real-time），证据多为厂商资料。");
+  key(s, "已有产品增强正前方或整组说话人，分不出哪一个在和你说话；本方案用摄像头 + 两耳定位锁定那一个人");
   // 麦克风数量柱状图（手绘，按类别着色）
   const cat = { "耳机": C.navyLt, "眼镜": "A6A6A6", "助听器": "5B7FA6", "本方案": C.navy };
   const rows = [["AirPods Pro 2", "耳机", 6, "（每只 3）"], ["Ray-Ban Meta 二代", "眼镜", 5, ""], ["Phonak 双耳助听器", "助听器", 4, "（每只 2）"], ["本方案", "本方案", 4, "（每只 2）"]];
@@ -122,10 +122,10 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
     [head("类别"), head("代表"), head("能做到"), head("做不到")],
     [bold("耳机"), cell("AirPods Pro 2"), cell("增强正前方"), cell("多人中只听一个人")],
     [bold("眼镜"), cell("Ray-Ban Meta 二代"), cell("增强正前方"), cell("多人中只听一个人")],
-    [bold("助听器"), cell("Phonak 等"), cell("双耳波束，朝向正前方"), cell("自动选人")],
+    [bold("助听器"), cell("Phonak、Signia IX"), cell("判断说话人方向；同时增强多个说话人（厂商称）"), cell("锁定和你说话的那一个人")],
     [bold("研究原型"), cell("Look Once to Hear"), cell("只放大注册过的人"), cell("免注册")],
     [bold("本方案", { color: C.navy }), cell("耳机 + 摄像头"), cell("自动锁定、转头跟住、免注册"), cell("分开相邻的人【有前提，第 10 页】", { color: C.red })],
-  ], 6.55, 1.6, [1.05, 1.75, 1.9, 1.48], [0.4, 0.5, 0.5, 0.5, 0.5, 0.62]);
+  ], 6.55, 1.6, [1.05, 1.75, 1.9, 1.48], [0.4, 0.5, 0.5, 0.75, 0.5, 0.62]);
 }
 
 // ================= 4 整体架构 =================
@@ -178,7 +178,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
     T(s, "实时听：增强 → 扬声器，不经过定位（第 10 页）", { x: 5.35, y: y + 0.95, w: 3.3, h: 0.28, fontSize: 9.5, color: C.light });
     box(s, fwd, 7.75, y, 1.95, 0.9, { line: fwd.startsWith("主耳") ? C.navy : C.box, color: fwd.startsWith("主耳") ? C.navy : C.ink, bold: fwd.startsWith("主耳") });
   };
-  key(s, "每只耳机 2 个数字麦；副耳转发 1 路，主耳 DSP 按采样计数对齐 3 路（两耳同步误差 ≤ 50 µs）");
+  key(s, "每只耳机 2 个数字麦；副耳转发 1 路，主耳 DSP 按采样计数对齐 3 路（两耳同步误差需 ≤ 50 µs）");
   ear("副耳", 1.95, "16 kHz\n16 bit", "取 1 路\n加采样计数");
   ear("主耳", 3.7, "16 kHz\n16 bit", "主耳音频 DSP\n3 路按采样计数对齐");
   line(s, 8.72, 2.85, 8.72, 3.7, { color: C.navy });
@@ -201,7 +201,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
   const s = newSlide("信号怎么处理：主耳 DSP 上的每一步",
     "计算量为估算（3 路、218 个频点、72 个方向、每 0.25 s 扫描一次）；扫描间隔为设计值，其余参数为仿真中使用的值；需在目标芯片上实测",
     "第 5 步的白化：用背景协方差的 Cholesky 分解把干扰和噪声变成白噪声，此时目标方向在特征分解中最突出（GEVD-MUSIC）。有人脸时可只扫描人脸附近 ±10°，第 6 步约降到 1.7 MFLOPS。仿真中，2 个干扰说话人时，唇动门控背景白化使方位误差 ≤ 10° 的比例从 58% 升到 96%。说话人移动（后续）：第 8 步的说话人地图从固定方位改为方位 + 角速度跟踪。");
-  key(s, "9 步经典信号处理，全部在主耳 DSP 上：约 12 MFLOPS，其中约八成花在第 5、6 步（白化与方向扫描）");
+  key(s, "9 步经典信号处理，全部在主耳 DSP 上：约 12 MFLOPS（估算），其中约八成花在第 5、6 步（白化与方向扫描）");
   const S = (t) => cell(t, { fontSize: 10 }), B = (t) => bold(t, { fontSize: 10 }), N = (t) => ctr(t, { fontSize: 10 });
   table(s, [
     [head("步骤"), head("做什么"), head("输入 → 输出"), head("参数"), head("每秒计算量", { align: "center" })],
@@ -223,7 +223,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
   const s = newSlide("耳机与摄像头的协同时序",
     "准确率为仿真（2 个干扰说话人，干扰低 6 dB / 一样响，加视觉），见附录 A2；3 s、切换时间为设计值；唇动档常开影响续航，见第 11 页",
     "为什么对话中摄像头要保持唇动档：开口时刻决定哪些帧算背景、从哪一帧开始测向，误差需在 ±0.1 s 内（附录 A2）；摄像头若等声学发现有人说话再切到唇动档，就看不到开口那一刻，而只靠声学检测开口，检出率和误报率无法兼顾（附录 A2）。对话中轮换时的停顿通常只有约 0.2 s（Stivers 等 2009，PNAS，跨 10 种语言的统计），也来不及在停顿里再切换。对话中有人插话，只要在正前方 ±30° 内，唇动档同样能看到他开口。");
-  key(s, "同时运行：对话中摄像头保持唇动档，给出对方开口的时刻；声学据此测向，开口后 0.5 s 锁定");
+  key(s, "同时运行：对话中摄像头保持唇动档，给出对方开口的时刻；声学据此测向，开口后 0.5 s 锁定（仿真）");
   const X0 = 2.0, X1 = 12.6, tx = (t) => X0 + (t + 1) / 2 * (X1 - X0);
   const lane = (label, y) => T(s, label, { x: 0.6, y, w: 1.3, h: 0.5, fontSize: 12.5, bold: true, valign: "middle" });
   const bar = (t0, t1, y, text, fill, color) => { s.addShape(p.shapes.RECTANGLE, { x: tx(t0), y, w: tx(t1) - tx(t0), h: 0.5, fill: { color: fill }, line: { color: "FFFFFF", width: 1 } });
@@ -257,15 +257,15 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 {
   const s = newSlide("麦克风数量（4 / 6 / 8 麦）",
     SIM + "；同一批 100 个场景，混响 + 2 个干扰说话人；统计误差约 ±4 个百分点",
-    "设置：混响 RT60 0.5 s、2 个干扰说话人、SNR 10 dB；GEVD-MUSIC，开口后 0.5 s 判决。加视觉后各配置为 95–97%（干扰低 6 dB）、79–84%（干扰同样响）。带宽按 16 kHz / 16 bit PCM。");
-  key(s, "每耳 2 个即可：6 / 8 麦的提升在统计误差以内，耳间带宽却多 2–4 倍");
+    "设置：混响 RT60 0.5 s、2 个干扰说话人、SNR 10 dB；GEVD-MUSIC，开口后 0.5 s 判决。图中为加视觉的结果。纯声学时：干扰低 6 dB 为 90 / 91 / 91 / 92 / 94%，干扰同样响为 64 / 66 / 64 / 72 / 72%，6 / 8 麦在干扰同样响时多约 8 个百分点。带宽按 16 kHz / 16 bit PCM。");
+  key(s, "每耳 2 个即可：加视觉后 6 / 8 麦最多只多 4 个百分点，耳间带宽却要 3–4 倍");
   const labels = ["主耳 2 + 副耳 1", "每耳 2", "主耳 3 + 副耳 1", "每耳 3", "每耳 4"];
   s.addChart(p.charts.BAR, [
-    { name: "干扰比目标低 6 dB", labels, values: [90, 91, 91, 92, 94] },
-    { name: "干扰与目标一样响", labels, values: [64, 66, 64, 72, 72] },
+    { name: "干扰比目标低 6 dB", labels, values: [96, 95, 97, 95, 95] },
+    { name: "干扰与目标一样响", labels, values: [80, 79, 81, 82, 84] },
   ], Object.assign({ x: 0.6, y: 1.5, w: 6.7, h: 4.7, barDir: "col", barGrouping: "clustered", chartColors: [C.navy, C.navyLt],
     showValue: true, dataLabelPosition: "outEnd", valAxisMinVal: 0, valAxisMaxVal: 100, showLegend: true, legendPos: "t",
-    showTitle: true, title: "方位误差 ≤10° 的比例（%，纯声学）" }, chartBase));
+    showTitle: true, title: "方位误差 ≤10° 的比例（%，加视觉）" }, chartBase));
   s.addChart(p.charts.BAR, [{ name: "耳间带宽", labels, values: [256, 512, 256, 768, 1024] }],
     Object.assign({ x: 7.55, y: 1.5, w: 5.2, h: 4.7, barDir: "col", chartColors: ["9A9A9A"], showValue: true, dataLabelPosition: "outEnd",
       valAxisMinVal: 0, valAxisMaxVal: 1200, showLegend: false, showTitle: true, title: "副耳传到主耳的带宽（kbps）" }, chartBase));
@@ -309,7 +309,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
   const s = newSlide("关键风险：增强能否分开相邻说话人",
     "信干比为理论计算（已知干扰方位置零，混响下）；时延：蓝牙 / 星闪为第三方评测，专用链路与 C 为专利与研究报告；容忍度：Stone & Moore 2008",
     "信干比：刚性球头部模型，MVDR 置零，设计方位误差 2–3°，白噪声增益 ≥ −10 dB，直达混响比 0 dB，0.5–4 kHz 平均。\n时延：星闪约 20 ms、蓝牙 15–40 ms 为手机到耳机的第三方评测（https://ngxptech.com/huawei-freebuds-pro-5-review-is-nearlink-better/），助听器专用耳间链路（如近场磁感应，约 10 MHz）用于双耳波束成形，专利与文献中耳间交换音频的时延为 0.5–5 ms 量级（检索摘要，原文未核实；https://hearingreview.com/practice-building/practice-management/continuing-education/it-s-sync-or-stream-the-differences-between-wireless-hearing-aid-features ，https://arxiv.org/pdf/2307.08858）；本耳机能否有这样的链路待确认。C 的 17.5 ms 来自 Wireless Hearables With Programmable Speech AI Accelerators（https://arxiv.org/pdf/2503.18698），Look Once to Hear 目标 < 20 ms。定位侧的输出对三种做法通用。");
-  key(s, "单只耳机分不开相邻的人；能分开的两种做法都受时延限制，要看耳间链路和芯片的实际数字");
+  key(s, "单只耳机分不开相邻的人；两耳组阵要几毫秒级的耳间音频链路，目标说话人提取时延约 20 ms 在边缘");
   s.addChart(p.charts.BAR, [{ name: "信干比提升", labels: ["A 本地 2 麦", "B 两耳组阵"], values: [2.4, 8.3] }],
     Object.assign({ x: 0.6, y: 1.5, w: 5.4, h: 2.75, barDir: "bar", chartColors: [C.red, C.navy], showValue: true, dataLabelPosition: "outEnd", dataLabelFormatCode: "0.0",
       valAxisMinVal: 0, valAxisMaxVal: 10, showLegend: false, showTitle: true, title: "对相隔 25° 的干扰，信干比提升（dB）" }, chartBase));
@@ -343,7 +343,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
   const s = newSlide("功耗估算（以 FreeClip 2 S 为基准）",
     "基准：FreeClip 2 S 每只 60 mAh、通话 6 h（华为官网），按 3.7 V 约 37 mW；器件功耗取公开资料；NPU 未计入；唇动档按传感器全幅、60 fps 的工作功耗计，是上限；分项见附录 A7",
     "华为官网规格页：https://consumer.huawei.com/hk/headphones/freeclip2-s/specs/。每多 1 mW，续航约少 10 分钟。按主耳估算（摄像头 + 定位计算 + 耳间接收）；副耳为摄像头 + 耳间发送，没有定位计算，略低。");
-  key(s, "对话少时续航约 4.5–5.2 h；对话多时，续航取决于摄像头读嘴部区域的功耗");
+  key(s, "对话少时续航约 4.5–5.2 h；对话多时，续航取决于摄像头读嘴部区域的功耗（均未计 NPU）");
   const X0 = 3.2, X1 = 8.6, h2x = (v) => X0 + (X1 - X0) * v / 6.5;
   T(s, "续航（每只耳机；唇动档时间 = 对话时间占比；浅色段为估算区间）", { x: 0.6, y: 1.55, w: 8, h: 0.32, fontSize: 11.5, color: "404040", valign: "middle" });
   [["基准（通话）", 6.0, 6.0, "9A9A9A"], ["对话占 10%", 4.5, 5.2, C.navy], ["对话占 50%", 2.7, 4.6, C.navy], ["两耳组阵增强（B）", 4.1, 4.9, C.navy], ["目标说话人提取（C）", null, null]].forEach(([n, lo, hi, c], i) => {
