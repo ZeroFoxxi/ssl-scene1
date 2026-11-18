@@ -275,7 +275,7 @@ def plot(summary, ex, names, path):
                 ax.axvspan(a, b, color="#F4D6D6", lw=0)
             else:
                 ax.plot([a, b], [w180(ex["azs"][w])] * 2, color=GRAY, lw=5, alpha=0.35, solid_capstyle="butt")
-        for m, c, lb in [(METHODS[0], LIGHT, "SRP-PHAT"), (METHODS[2], NAVY, "GEVD-MUSIC + 远端冻结")]:
+        for m, c, lb in [(METHODS[0], LIGHT, "SRP-PHAT"), (METHODS[2], TEAL, "GEVD-MUSIC + 远端冻结"), (NN_METHODS[0], NAVY, "小网络 + 远端冻结")]:
             if m in ex["pans"]:
                 ax.plot(tb, w180(ex["pans"][m]), color=c, lw=1.6, label=f"摄像头朝向：{lb}")
         ax.plot([], [], color=GRAY, lw=5, alpha=0.35, label="本地发言人方位")
@@ -287,14 +287,17 @@ def plot(summary, ex, names, path):
         ax.spines[["top", "right"]].set_visible(False)
     ax = axs[1]
     get = lambda **kw: next(s for s in summary if all(s[k] == v for k, v in kw.items()))
-    xs = np.arange(len(METHODS)); bw = 0.36
+    has_nn = any(s["method"] in NN_METHODS for s in summary)
+    ms = METHODS + (NN_METHODS if has_nn else [])
+    xs = np.arange(len(ms)); bw = 0.36
     for i, (n, c) in enumerate(zip(names, [NAVY, TEAL])):
-        v = [get(rt60="平均", array=n, method=m)["framed_ratio"] * 100 for m in METHODS]
-        bars = ax.bar(xs + (i - 0.5) * bw, v, bw * 0.92, color=c, label=n)
-        for bb, vv, m in zip(bars, v, METHODS):
+        sel = [(k, m) for k, m in enumerate(ms) if any(s["array"] == n and s["method"] == m and s["rt60"] == "平均" for s in summary)]
+        v = [get(rt60="平均", array=n, method=m)["framed_ratio"] * 100 for _, m in sel]
+        bars = ax.bar(np.array([k for k, _ in sel]) + (i - 0.5) * bw, v, bw * 0.92, color=c, label=n)
+        for bb, vv, (_, m) in zip(bars, v, sel):
             wpm = get(rt60="平均", array=n, method=m)["wrong_per_min"]
             ax.text(bb.get_x() + bb.get_width() / 2, vv + 1, f"{vv:.0f}%\n误转{wpm:.1f}", ha="center", fontsize=6.5, color="#333")
-    ax.set_xticks(xs); ax.set_xticklabels(["SRP-PHAT", "GEVD-MUSIC", "GEVD-MUSIC\n+远端冻结"]); ax.set_ylim(0, 115)
+    ax.set_xticks(xs); ax.set_xticklabels(["SRP-PHAT", "GEVD-MUSIC", "GEVD-MUSIC\n+远端冻结", "小网络\n+远端冻结"][:len(ms)]); ax.set_ylim(0, 115)
     ax.set_ylabel("本地发言时间中对准的比例（%）")
     ax.set_title("对准时间比例与每分钟误转次数", fontsize=10, fontweight="bold", color=NAVY)
     ax.legend(fontsize=7.5, frameon=False, loc="upper left"); ax.grid(axis="y", color="#E3E8EF", lw=0.7)
