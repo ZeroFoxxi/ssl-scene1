@@ -57,6 +57,9 @@ f2 = lambda r: f"{100 * r['acc10']:.0f}% / {100 * r['acc20']:.0f}%"
 for m in rm["methods"]:
     rows4.append([m, f2(rm["methods"][m]["叠加换人"]), f2(rm["methods"][m]["叠加抢话"]), f2(rm["methods"][m]["全部"]),
                   f"{rm['methods'][m]['全部']['mae']:.1f}°", f2(lo["methods"][m]["全部"])])
+if os.path.exists(os.path.join(OUT, "realman_eval_ft.json")):
+    rf = load("realman_eval_ft.json")["methods"]["小网络（仿真训练）"]
+    rows4.append(["小网络（+实录微调）", f2(rf["叠加换人"]), f2(rf["叠加抢话"]), f2(rf["全部"]), f"{rf['全部']['mae']:.1f}°", "—"])
 
 json.dump({"rows1": rows1, "rows2": rows2, "rows3": rows3, "rows4": rows4, "n4": n4,
            "nn_params": nn["params"], "nn_macs": nn["macs_per_decision"]},

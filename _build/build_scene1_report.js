@@ -43,12 +43,13 @@ const SETUP = "仿真设置：会议室 5–10 m × 4–7 m，RT60 0.3 / 0.6 s�
 
 // 2 一页结论
 {
-  const s = page("这一阶段的结论", [SETUP, "数字依次来自：仿真固定测试集（800 个样本）、60 段 60 s 会议闭环仿真、RealMAN 真实录音（5 个室内场景、600 个样本）。"]);
+  const s = page("这一阶段的结论", [SETUP, "数字依次来自：仿真固定测试集（800 个样本）、60 段 60 s 会议闭环仿真、RealMAN 真实录音（5 个室内场景、600 个样本）。",
+    `闭环误转的传统方法：GEVD-MUSIC（远端播放时冻结）${D.closed_loop.gevd.wrong.toFixed(1)} 次 / 分钟，SRP-PHAT（未冻结）${D.closed_loop.srp.wrong.toFixed(1)} 次 / 分钟。`]);
   const cards = [
-    ["95%", "仿真：换人后 0.5 s 判决准确率", "传统方法最好 84%"],
-    [D.closed_loop.nn.wrong.toFixed(1), "闭环：每分钟误转次数", `传统方法 ${D.closed_loop.gevd.wrong.toFixed(1)} 次`],
-    [ft ? `${ft.acc10}%` : `${RM["小网络（仿真训练）"].acc10}%`, ft ? "真实录音：实录微调后" : "真实录音：只用仿真训练", `传统方法最好 ${RM["GEVD-MUSIC"].acc10}%`],
-    [`${(D.nn_params / 1e6).toFixed(2)} M`, "网络参数量", "处于端侧几百 K 量级"],
+    [`${D.methods.avg["小网络"]}%`, "仿真准确率\n（四种情况平均）", `传统方法最好 ${D.methods.avg["GEVD-MUSIC"]}%`],
+    [D.closed_loop.nn.wrong.toFixed(1), "闭环误转\n（次 / 分钟）", "传统方法约 3 次"],
+    [ft ? `${ft.acc10}%` : `${RM["小网络（仿真训练）"].acc10}%`, ft ? "真实录音准确率\n（实录微调后）" : "真实录音准确率\n（只用仿真训练）", `传统方法最好 ${RM["GEVD-MUSIC"].acc10}%`],
+    [`${(D.nn_params / 1e6).toFixed(2)} M`, "网络参数量\n（端侧几百 K 量级）", `每次判决约 ${(D.nn_macs / 1e8).toFixed(1)} 亿次乘加`],
   ];
   cards.forEach((c, i) => {
     const x = 0.6 + i * 3.1, y = 1.8;
@@ -63,9 +64,10 @@ const SETUP = "仿真设置：会议室 5–10 m × 4–7 m，RT60 0.3 / 0.6 s�
 
 // 3 做了什么
 {
-  const s = page("做了什么", [SETUP]);
-  const steps = [["场景", "会议室换人：谁开口就转向谁"], ["阵列", "比较 11 种阵列，暂定 6 麦线阵、孔径 17.5 cm"], ["传统基线", "SRP-PHAT\nGEVD-MUSIC"],
-                 ["小网络", "相位差特征 + 卷积循环网络，约 0.28 M 参数"], ["验证", "60 段会议闭环；LOCATA、RealMAN 真实录音"]];
+  const s = page("做了什么", [SETUP, "阵列：第一轮 8 种（2–8 麦，线阵与圆阵）、第二轮 11 种线阵（麦克风数 × 孔径），去掉重复共 16 种。",
+    "小网络：输入各麦克风相对参考麦的相位差与参考麦能量（4 kHz 以下），卷积 + 双向 GRU + 注意力池化。训练数据：LibriSpeech 人声（CC BY 4.0）+ 房间声学仿真；实录微调：RealMAN 验证集 3 个场景。"]);
+  const steps = [["场景", "会议室换人：谁开口就转向谁"], ["阵列", "比较 16 种阵列，暂定 6 麦线阵、孔径 17.5 cm"], ["传统基线", "SRP-PHAT\nGEVD-MUSIC"],
+                 ["小网络", "约 0.28 M 参数；仿真数据训练 + 实录微调"], ["验证", "60 段会议闭环；LOCATA、RealMAN 真实录音"]];
   steps.forEach((st, i) => {
     const x = 0.6 + i * 2.5, cy = 2.6;
     s.addShape(p.shapes.OVAL, { x: x + 0.7, y: cy, w: 0.9, h: 0.9, fill: { color: i === 3 ? K.ours : K.dark }, line: { type: "none" } });
@@ -79,7 +81,7 @@ const SETUP = "仿真设置：会议室 5–10 m × 4–7 m，RT60 0.3 / 0.6 s�
 
 // 4 阵列选型
 {
-  const s = page("阵列：贴墙装线阵，孔径比麦克风数更重要", [SETUP,
+  const s = page("阵列（仿真）：贴墙装线阵，孔径比麦克风数更重要", [SETUP,
     "方法：GEVD-MUSIC，B 开口后 0.5 s 判决，四种情况、两档 RT60 平均；每档 RT60 100 个房间。",
     `同样贴墙安装的 4 麦圆阵（孔径 6 cm）为 ${D.circle45}%：圆阵受前墙强反射影响明显，移离墙面后恢复；线阵平行于墙时不受此影响。`,
     "线阵离墙 4–50 cm 结果变化在 ±3 个百分点以内。"]);
@@ -87,7 +89,7 @@ const SETUP = "仿真设置：会议室 5–10 m × 4–7 m，RT60 0.3 / 0.6 s�
   s.addChart(p.charts.BAR, [{ name: "孔径 10.5 cm", labels: A.labels, values: A["10.5 cm"] }, { name: "孔径 17.5 cm", labels: A.labels, values: A["17.5 cm"] }],
     axis({ x: 0.6, y: 1.5, w: 7.4, h: 5.2, barDir: "col", chartColors: [K.base1, K.ours], showLegend: true, legendPos: "t",
            showTitle: true, title: "误差 ≤10° 的比例（%）", titleFontFace: F, titleFontSize: 13, titleColor: K.sub }));
-  const pts = [["孔径从 10.5 cm 加到 17.5 cm", "准确率提高 8–18 个百分点"], ["6 麦与 8 麦效果相同", "计算量少约 30%"], ["暂定：6 麦线阵，孔径 17.5 cm", "4 麦线阵作低成本备选"]];
+  const pts = [["孔径从 10.5 cm 加到 17.5 cm", "准确率提高 8–18 个百分点"], ["6 麦与 8 麦效果相同", "计算耗时少约 30%"], ["暂定：6 麦线阵，孔径 17.5 cm", "4 麦线阵作低成本备选"]];
   pts.forEach((t, i) => {
     T(s, t[0], { x: 8.6, y: 1.9 + i * 1.5, w: 4.2, h: 0.5, fontSize: 17, bold: true, color: i === 2 ? K.ours : K.ink });
     T(s, t[1], { x: 8.6, y: 2.45 + i * 1.5, w: 4.2, h: 0.5, fontSize: 14, color: K.sub });
@@ -97,7 +99,7 @@ const SETUP = "仿真设置：会议室 5–10 m × 4–7 m，RT60 0.3 / 0.6 s�
 // 5 方法对比（仿真）
 {
   const M = D.methods;
-  const s = page("仿真：小网络在四种情况下都最好", [SETUP,
+  const s = page(`仿真：小网络四种情况平均 ${D.methods.avg["小网络"]}%，传统方法最好 ${D.methods.avg["GEVD-MUSIC"]}%`, [SETUP,
     "固定测试集 800 个样本（200 个房间 × 四种情况），6 麦线阵 17.5 cm，B 开口后 0.5 s 判决；小网络只用验证集挑模型，测试集只评测一次。",
     `小网络 ${D.nn_params} 个参数，每次判决约 ${(D.nn_macs / 1e8).toFixed(1)} 亿次乘加（GEVD-MUSIC 约 0.2 亿次，估算）。`]);
   s.addChart(p.charts.BAR, [{ name: "SRP-PHAT", labels: M.labels, values: M["SRP-PHAT"] }, { name: "GEVD-MUSIC", labels: M.labels, values: M["GEVD-MUSIC"] },
@@ -113,10 +115,11 @@ const SETUP = "仿真设置：会议室 5–10 m × 4–7 m，RT60 0.3 / 0.6 s�
 // 6 闭环
 {
   const C = D.closed_loop;
-  const s = page(`闭环：误转从每分钟 ${C.gevd.wrong.toFixed(1)} 次降到 ${C.nn.wrong.toFixed(1)} 次`, [
+  const s = page(`闭环：误转从每分钟约 3 次降到 ${C.nn.wrong.toFixed(1)} 次`, [
     "闭环仿真：60 段 60 s 会议（6 人轮流发言，30% 抢话，约 20% 轮次为远端参会人），空调噪声一直存在；云台 120°/s；RT60 0.3 / 0.6 s 各 30 段。",
     "系统每 0.1 s 处理一次：判断有人开口或方向变化 → 开口后 0.5 s 转向 → 1.0 s 微调；远端喇叭播放时不转。两种方法用同一批会议、同一套转向逻辑，只换测向方法。",
-    "对准：方向误差 ≤10°；误转：转向的目标偏离当时发言人 >15°。"]);
+    "对准：方向误差 ≤10°；误转：转向的目标偏离当时发言人 >15°。",
+    `SRP-PHAT（未加远端冻结）：误转 ${C.srp.wrong.toFixed(1)} 次 / 分钟，对准 ${C.srp.framed}%。`]);
   const rows = [["换人后对准用时", `${C.gevd.latency.toFixed(2)} s`, `${C.nn.latency.toFixed(2)} s`], ["2 秒内对准的比例", `${C.gevd.aim2s}%`, `${C.nn.aim2s}%`],
                 ["每分钟误转次数", C.gevd.wrong.toFixed(1), C.nn.wrong.toFixed(1)], ["发言时间里画面对准的比例", `${C.gevd.framed}%`, `${C.nn.framed}%`]];
   const cx = [0.6, 6.1, 9.5], cw = [5.3, 3.2, 3.2];
@@ -130,7 +133,7 @@ const SETUP = "仿真设置：会议室 5–10 m × 4–7 m，RT60 0.3 / 0.6 s�
     T(s, r[1], { x: cx[1], y, w: cw[1], h: 0.85, fontSize: 22, bold: true, color: K.base2, align: "center", valign: "middle" });
     T(s, r[2], { x: cx[2], y, w: cw[2], h: 0.85, fontSize: 22, bold: true, color: K.ours, align: "center", valign: "middle" });
   });
-  T(s, "转向一样快；小网络在有人说到一半时不会被误触发带偏，误转大幅减少。", { x: 0.6, y: 6.6, w: 12.1, h: 0.5, fontSize: 14, color: K.sub });
+  T(s, "转向速度相同。传统方法的误转多出现在一个人说到一半、被误判为换人的时候；小网络在这些时候仍给出原发言人的方向。", { x: 0.6, y: 6.6, w: 12.1, h: 0.5, fontSize: 14, color: K.sub });
 }
 
 // 7 真实录音
@@ -139,15 +142,17 @@ const SETUP = "仿真设置：会议室 5–10 m × 4–7 m，RT60 0.3 / 0.6 s�
   const s = page(ft ? "真实录音：小网络领先，加入实录微调后进一步提升" : "真实录音：只用仿真训练的小网络仍然领先", [
     `RealMAN：真实录音数据集（CC BY 4.0），测试集 5 个室内场景（办公室 2 个、教室、客厅、办公大厅），${D.realman_n} 个样本；取阵列中一条直线上的 6 个麦克风（3 cm 间距，孔径 15 cm）。`,
     "样本由同一场景、不同位置的两句真实录音相加得到（换人与抢话各半），空出的时段用该场景的真实背景噪声填补；真值为官方方位。",
-    "小网络（仿真训练）：只用仿真数据训练，未见过任何真实录音。" + (ft ? "小网络（+实录微调）：再用 RealMAN 另外 3 个场景（与测试场景不重叠）的录音微调，用第 4 个场景挑选模型。" : ""),
+    "小网络（仿真训练）：结构与会议室版本相同，按该 6 麦阵列几何重新训练，只用仿真数据，未见过任何真实录音。" + (ft ? "小网络（+实录微调）：再用 RealMAN 另外 3 个场景（与测试场景不重叠）的录音微调，用第 4 个场景挑选模型。" : ""),
     `另一组真实数据 LOCATA（5 麦，${D.locata_n} 个样本）上，只用仿真训练的小网络与传统方法相当（${D.locata["小网络（仿真训练）"]}% vs ${D.locata["GEVD-MUSIC"]}%），说明仿真训练的优势在真实录音上不稳定，需要实录数据。`,
     "来源：RealMAN https://huggingface.co/datasets/AISHELL/RealMAN ；LOCATA https://zenodo.org/records/3630471"]);
   s.addChart(p.charts.BAR, [{ name: "误差 ≤10° 的比例", labels: names.map((n) => n.replace("（", "\n（")), values: vals }],
-    axis({ x: 0.6, y: 1.5, w: 8.2, h: 5.2, barDir: "col", chartColors: names.map((n) => (n.startsWith("小网络") ? (n.includes("微调") ? K.ours2 : K.ours) : K.base1)),
+    axis({ x: 0.6, y: 1.4, w: 8.2, h: 5.2, barDir: "col", chartColors: names.map((n) => (n.startsWith("小网络") ? (n.includes("微调") ? K.ours2 : K.ours) : K.base1)),
            showLegend: false, catAxisLabelFontSize: 12, dataLabelFontSize: 14 }));
   const pts = [[`${RM["小网络（仿真训练）"].acc10}% vs ${RM["GEVD-MUSIC"].acc10}%`, "只用仿真训练，已领先传统方法"]];
   if (ft) pts.push([`${ft.acc10}%`, "加入 3 个实录场景微调后"]);
   pts.push(["实录数据是关键", "下一步扩大实录训练数据"]);
+  T(s, `RealMAN 5 个室内场景、${D.realman_n} 个样本（两句真实录音相加成换人 / 抢话）。另一组真实数据 LOCATA 上，只用仿真训练的小网络与传统方法相当（${D.locata["小网络（仿真训练）"]}% vs ${D.locata["GEVD-MUSIC"]}%）。`,
+    { x: 0.6, y: 6.75, w: 12.1, h: 0.45, fontSize: 11, color: K.sub });
   pts.forEach((t, i) => {
     T(s, t[0], { x: 9.3, y: 1.9 + i * 1.5, w: 3.6, h: 0.6, fontSize: 22, bold: true, color: i === 0 || (ft && i === 1) ? K.ours : K.ink });
     T(s, t[1], { x: 9.3, y: 2.5 + i * 1.5, w: 3.6, h: 0.5, fontSize: 13, color: K.sub });
@@ -160,9 +165,10 @@ const SETUP = "仿真设置：会议室 5–10 m × 4–7 m，RT60 0.3 / 0.6 s�
   T(s, "下一步", { x: 0.6, y: 0.45, w: 12.1, h: 0.7, fontSize: 26, bold: true, color: K.white, valign: "middle" });
   const items = [["放大训练再压缩", "在 GPU 服务器上先训约 2 M 参数的版本，再压缩到几百 K 并做 8 比特量化；训练包已准备好，服务器网络访问待开通"],
                  ["扩大实录数据", "更多 RealMAN 场景参与训练；规划会议室实采（6 麦线阵、贴墙安装）"],
+                 ["竞品对比", "竞品转向时延与误转未公开：购买样机（如思必驰 C60），在同一会议室场景实测；目标芯片【待确认】"],
                  ["完善闭环", "网络支持 1 s 微调；接入远端回声消除参考信号；准备实时 demo"]];
   items.forEach((it, i) => {
-    const y = 1.7 + i * 1.6;
+    const y = 1.45 + i * 1.35;
     s.addShape(p.shapes.OVAL, { x: 0.8, y, w: 0.75, h: 0.75, fill: { color: K.ours }, line: { type: "none" } });
     T(s, String(i + 1), { x: 0.8, y, w: 0.75, h: 0.75, fontSize: 20, bold: true, color: K.white, align: "center", valign: "middle" });
     T(s, it[0], { x: 1.9, y: y - 0.05, w: 10.5, h: 0.5, fontSize: 20, bold: true, color: K.white });
