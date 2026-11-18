@@ -118,7 +118,7 @@ def band_energy_blocks(x):
     return 10 * np.log10(np.mean(yb[..., : nb * int(DT * FS)].reshape(-1, nb, int(DT * FS)) ** 2, axis=(0, 2)) + 1e-12)
 
 
-def closed_loop(x, e_db, far_db, srp_raw, est, freeze):
+def closed_loop(x, e_db, far_db, srp_raw, est, freeze, conf_th=0.0):
     nb = len(e_db)
     pan, target = 0.0, 0.0
     floor = np.array([e_db[max(0, b - 50): b + 1].min() for b in range(nb)])
@@ -149,7 +149,9 @@ def closed_loop(x, e_db, far_db, srp_raw, est, freeze):
             te = pending.pop(0); t0 = run[-1]
             if freeze and far_on[max(0, int(t0 / DT)): b + 1].any():
                 continue
-            az = est.localize(x, int(t0 * FS), int(te * FS)).az
+            res = est.localize(x, int(t0 * FS), int(te * FS)); az = res.az
+            if getattr(res, "conf", 1.0) < conf_th:
+                continue                                          # 置信度门限（小网络）：低于门限不转
             if hint is not None and metrics.angdiff(az, hint) > 20:
                 continue                                          # 一致性检查：方向变化触发时，判决方位须与触发方向一致
             if not pending:                                       # 微调：只在粗转方位 ±20° 内修正
@@ -195,11 +197,23 @@ def main():
     ap.add_argument("--rt60", type=float, nargs="+", default=[0.3, 0.6])
     ap.add_argument("--nn-ckpt", default=None, help="小网络模型路径（work/models/*.pt）；给出则加评小网络")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--nn-variants", nargs="+", default=["0.5:0"],
+                    help="小网络配置，每项“开口后最长输入 s:置信度门限”，如 0.5:0 1.0:0.6；第一项为基准")
+    ap.add_argument("--only-nn", action="store_true", help="只评测小网络（6 麦线阵），不跑传统方法与 4 麦线阵")
     a = ap.parse_args()
-    nn_est = None
+    global NN_METHODS
+    nn_est, nn_cfg = None, {}
     if a.nn_ckpt:
         from ssl_baseline.nn_doa import NNDOA
-        nn_est = NNDOA(a.nn_ckpt)
+        nn_est = True
+        NN_METHODS = []
+        for k, v in enumerate(a.nn_variants):
+            post, th = (float(z) for z in v.split(":"))
+            m = "小网络+远端冻结" if k == 0 and v == "0.5:0" else f"小网络+远端冻结|{post:g}s|置信≥{th:g}"
+            NN_METHODS.append(m); nn_cfg[m] = (NNDOA(a.nn_ckpt, post_max=post), th)
+    if a.only_nn:
+        global METHODS
+        METHODS = []
     sp, en = R.load("speech_zh.wav"), R.load("tv_en.wav")
     names = list(ARRAYS); xys = [ARRAYS[n] for n in names]
     idx = np.cumsum([0] + [x.shape[1] for x in xys]); allxy = np.hstack(xys)
@@ -220,14 +234,16 @@ def main():
             if example is None and rt == a.rt60[-1]:
                 example = {"turns": turns, "azs": azs, "pans": {}}
             for i, n in enumerate(names):
+                if a.only_nn and i > 0:
+                    continue
                 x = y[idx[i]:idx[i + 1]]
                 e_db = band_energy_blocks(x)
                 nb = len(e_db)
                 srp_raw = np.array([raws[n].localize(x, max(0, int(((b + 1) * DT - 0.3) * FS)), int((b + 1) * DT * FS)).az
                                     if (b + 1) * DT >= 0.35 else 0.0 for b in range(nb)])
                 for m in METHODS + (NN_METHODS if (nn_est is not None and n == names[0]) else []):
-                    est = nn_est if m in NN_METHODS else ests[n]["SRP-PHAT" if m == "SRP-PHAT" else "GEVD-MUSIC"]
-                    pans, cmds = closed_loop(x, e_db, far_db, srp_raw, est, freeze=m.endswith("冻结"))
+                    est, th = nn_cfg[m] if m in NN_METHODS else (ests[n]["SRP-PHAT" if m == "SRP-PHAT" else "GEVD-MUSIC"], 0.0)
+                    pans, cmds = closed_loop(x, e_db, far_db, srp_raw, est, freeze="冻结" in m, conf_th=th)
                     r = evaluate(pans, cmds, turns, azs)
                     rows.append({"rt60": rt, "trial": k, "array": n, "method": m, **{kk: round(v, 4) if isinstance(v, float) else v for kk, v in r.items()}})
                     if rt == a.rt60[-1] and k == 0 and i == 0:
@@ -275,7 +291,7 @@ def plot(summary, ex, names, path):
                 ax.axvspan(a, b, color="#F4D6D6", lw=0)
             else:
                 ax.plot([a, b], [w180(ex["azs"][w])] * 2, color=GRAY, lw=5, alpha=0.35, solid_capstyle="butt")
-        for m, c, lb in [(METHODS[0], LIGHT, "SRP-PHAT"), (METHODS[2], TEAL, "GEVD-MUSIC + 远端冻结"), (NN_METHODS[0], NAVY, "小网络 + 远端冻结")]:
+        for m, c, lb in [("SRP-PHAT", LIGHT, "SRP-PHAT"), ("GEVD-MUSIC+远端冻结", TEAL, "GEVD-MUSIC + 远端冻结")] + [(m, NAVY if k == 0 else RED, m.replace("+", " + ").replace("|", "，")) for k, m in enumerate(NN_METHODS[:2])]:
             if m in ex["pans"]:
                 ax.plot(tb, w180(ex["pans"][m]), color=c, lw=1.6, label=f"摄像头朝向：{lb}")
         ax.plot([], [], color=GRAY, lw=5, alpha=0.35, label="本地发言人方位")
@@ -297,7 +313,7 @@ def plot(summary, ex, names, path):
         for bb, vv, (_, m) in zip(bars, v, sel):
             wpm = get(rt60="平均", array=n, method=m)["wrong_per_min"]
             ax.text(bb.get_x() + bb.get_width() / 2, vv + 1, f"{vv:.0f}%\n误转{wpm:.1f}", ha="center", fontsize=6.5, color="#333")
-    ax.set_xticks(xs); ax.set_xticklabels(["SRP-PHAT", "GEVD-MUSIC", "GEVD-MUSIC\n+远端冻结", "小网络\n+远端冻结"][:len(ms)]); ax.set_ylim(0, 115)
+    ax.set_xticks(xs); ax.set_xticklabels([m.replace("+", "\n+").replace("|", "\n") for m in ms], fontsize=6.5); ax.set_ylim(0, 115)
     ax.set_ylabel("本地发言时间中对准的比例（%）")
     ax.set_title("对准时间比例与每分钟误转次数", fontsize=10, fontweight="bold", color=NAVY)
     ax.legend(fontsize=7.5, frameon=False, loc="upper left"); ax.grid(axis="y", color="#E3E8EF", lw=0.7)

@@ -98,32 +98,44 @@ if torch is not None:
         return int(macs)
 
 
+def confidence(logits: np.ndarray, half: int = 3) -> np.ndarray:
+    """logits: B x 91 → 置信度（0–1）：softmax 后峰值附近 ±half 类（默认 ±3 类 = ±6°）的概率之和。"""
+    z = logits - logits.max(1, keepdims=True)
+    p = np.exp(z); p /= p.sum(1, keepdims=True)
+    k = p.argmax(1)
+    return np.array([p[i, max(0, kk - half): kk + half + 1].sum() for i, kk in enumerate(k)])
+
+
 class _Res:
-    def __init__(self, az):
+    def __init__(self, az, conf=1.0):
         self.az = az
+        self.conf = conf
 
 
 class NNDOA:
     """把训练好的小网络包装成与 WakeDOA 相同的接口：localize(x, start, end).az（0–360°，0° 为阵列正前方）。
 
-    网络只训练了"开口后 0.5 s 判决"：输入固定取 [start - 1.0 s, start + 0.5 s]，end 参数不改变输入
-    （所以闭环里 1.0 s 的"微调"与 0.5 s 粗转结果相同，等同于不做微调）。
+    输入取 [start - 1.0 s, start + min(end - start, post_max)]；post_max 默认 0.5 s（训练时的窗长），
+    此时 end 不改变输入，闭环里 1.0 s 的"微调"与 0.5 s 粗转结果相同。post_max=1.0 时 1.0 s 判决用开口后 1.0 s。
+    返回 .az（方位）与 .conf（置信度，见 confidence）。
     """
 
-    def __init__(self, ckpt_path: str, in_ch: int = 11, n_threads: int = 1, size: str = "s"):
+    def __init__(self, ckpt_path: str, in_ch: int = 11, n_threads: int = 1, size: str = "s", post_max: float = 0.5):
         if torch is None:
             raise ImportError("需要安装 torch")
         torch.set_num_threads(n_threads)
         self.model = CRNN(in_ch=in_ch, **SIZES[size])
         self.model.load_state_dict(torch.load(ckpt_path, map_location="cpu"))
         self.model.eval()
+        self.post_max = post_max
 
     def localize(self, x: np.ndarray, start: int, end: int) -> "_Res":
         s0 = start - FS
-        seg = np.zeros((x.shape[0], FS + FS // 2))
-        a, b = max(0, s0), min(x.shape[1], start + FS // 2)
+        post = int(round(FS * min(max((end - start) / FS, 0.5), self.post_max)))
+        seg = np.zeros((x.shape[0], FS + post))
+        a, b = max(0, s0), min(x.shape[1], start + post)
         if b > a:
             seg[:, a - s0: b - s0] = x[:, a:b]
         with torch.no_grad():
             logit = self.model(torch.from_numpy(features(seg))[None]).numpy()
-        return _Res(float(decode(logit)[0] % 360.0))
+        return _Res(float(decode(logit)[0] % 360.0), float(confidence(logit)[0]))
