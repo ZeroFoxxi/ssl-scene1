@@ -2,13 +2,14 @@
 """场景一进展汇报页的数据：全部从 code/ssl_baseline/out/ 的结果文件读取，生成 _build/scene1_progress_data.json。
 运行：python _build/scene1_progress_data.py && node _build/build_scene1_progress.js
 """
-import json, os
+import json, math, os
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "..", "code", "ssl_baseline", "out")
 load = lambda f: json.load(open(os.path.join(OUT, f), encoding="utf-8"))
-pct = lambda v: f"{100 * v:.0f}%"
+R = lambda x: int(math.floor(x + 0.5 + 1e-9))          # 常规四舍五入（Python 的 round 对 .5 取偶）
+pct = lambda v: f"{R(100 * v)}%"
 CONDS = ["C1 换人", "C2 抢话", "C3 远端扬声器", "C4 空调噪声"]
 
 
@@ -53,7 +54,7 @@ for arr, m, label in [("6麦线阵 17.5cm", "SRP-PHAT", "SRP-PHAT"), ("6麦线�
 rows4, n4 = [], {}
 rm = load("realman_eval.json"); lo = load("locata_eval_ep12.json")
 n4 = {"realman": sum(rm["n"].values()), "locata": sum(lo["n"].values())}
-f2 = lambda r: f"{100 * r['acc10']:.0f}% / {100 * r['acc20']:.0f}%"
+f2 = lambda r: f"{R(100 * r['acc10'])}% / {R(100 * r['acc20'])}%"
 for m in rm["methods"]:
     rows4.append([m, f2(rm["methods"][m]["叠加换人"]), f2(rm["methods"][m]["叠加抢话"]), f2(rm["methods"][m]["全部"]),
                   f"{rm['methods'][m]['全部']['mae']:.1f}°", f2(lo["methods"][m]["全部"])])
@@ -70,7 +71,7 @@ for r in rows1 + rows2 + rows3: print(r)
 
 # ---------------- 汇报版（build_scene1_report.js）用的图表数据 ----------------
 def series_acc(S, arr, m="G GEVD-MUSIC", w=0.5):
-    return round(100 * avg(S, array=arr, method=m, win=w))
+    return R(100 * avg(S, array=arr, method=m, win=w))
 
 
 charts = {
@@ -79,26 +80,27 @@ charts = {
                  "17.5 cm": [series_acc(s2, f"{n}麦线阵 17.5cm") for n in (4, 6, 8)]},
     "circle45": series_acc(s1, "4麦圆阵 r3 45°"),
     "methods": {"labels": ["换人", "抢话", "远端扬声器", "空调噪声"],
-                "SRP-PHAT": [round(100 * tb["SRP-PHAT | 0.5s"][f"平均|{c}"]) for c in CONDS],
-                "GEVD-MUSIC": [round(100 * tb["GEVD-MUSIC | 0.5s"][f"平均|{c}"]) for c in CONDS],
-                "小网络": [round(100 * nn["test_acc10"][f"平均|{c}"]) for c in CONDS],
-                "avg": {"SRP-PHAT": round(100 * tb["SRP-PHAT | 0.5s"]["平均|四种条件平均"]),
-                        "GEVD-MUSIC": round(100 * tb["GEVD-MUSIC | 0.5s"]["平均|四种条件平均"]),
-                        "小网络": round(100 * nn["test_acc10"]["平均|四种条件平均"])}},
+                "SRP-PHAT": [R(100 * tb["SRP-PHAT | 0.5s"][f"平均|{c}"]) for c in CONDS],
+                "GEVD-MUSIC": [R(100 * tb["GEVD-MUSIC | 0.5s"][f"平均|{c}"]) for c in CONDS],
+                "小网络": [R(100 * nn["test_acc10"][f"平均|{c}"]) for c in CONDS],
+                "avg": {"SRP-PHAT": R(100 * tb["SRP-PHAT | 0.5s"]["平均|四种条件平均"]),
+                        "GEVD-MUSIC": R(100 * tb["GEVD-MUSIC | 0.5s"]["平均|四种条件平均"]),
+                        "小网络": R(100 * nn["test_acc10"]["平均|四种条件平均"])}},
 }
 g = lambda arr, m: next(x for x in cl if x["rt60"] == "平均" and x["array"] == arr and x["method"] == m)
-charts["closed_loop"] = {k: {"latency": g("6麦线阵 17.5cm", m)["latency_median_s"], "aim2s": round(100 * g("6麦线阵 17.5cm", m)["aim_within_2s"]),
-                             "wrong": g("6麦线阵 17.5cm", m)["wrong_per_min"], "framed": round(100 * g("6麦线阵 17.5cm", m)["framed_ratio"])}
+charts["closed_loop"] = {k: {"latency": g("6麦线阵 17.5cm", m)["latency_median_s"], "aim2s": R(100 * g("6麦线阵 17.5cm", m)["aim_within_2s"]),
+                             "wrong": g("6麦线阵 17.5cm", m)["wrong_per_min"], "framed": R(100 * g("6麦线阵 17.5cm", m)["framed_ratio"])}
                          for k, m in [("gevd", "GEVD-MUSIC+远端冻结"), ("nn", "小网络+远端冻结"), ("srp", "SRP-PHAT")]}
 real = {"SRP-PHAT": rm["methods"]["SRP-PHAT"]["全部"], "GEVD-MUSIC": rm["methods"]["GEVD-MUSIC"]["全部"],
         "小网络（仿真训练）": rm["methods"]["小网络（仿真训练）"]["全部"]}
 pft = os.path.join(OUT, "realman_eval_ft.json")
 if os.path.exists(pft):
     real["小网络（+实录微调）"] = json.load(open(pft, encoding="utf-8"))["methods"]["小网络（仿真训练）"]["全部"]
-charts["realman"] = {k: {"acc10": round(100 * v["acc10"]), "acc20": round(100 * v["acc20"]), "mae": v["mae"]} for k, v in real.items()}
+charts["realman"] = {k: {"acc10": R(100 * v["acc10"]), "acc20": R(100 * v["acc20"]), "mae": v["mae"]} for k, v in real.items()}
 charts["realman_n"] = sum(rm["n"].values())
-charts["locata"] = {k: round(100 * v["全部"]["acc10"]) for k, v in lo["methods"].items()}
+charts["locata"] = {k: R(100 * v["全部"]["acc10"]) for k, v in lo["methods"].items()}
 charts["locata_n"] = sum(lo["n"].values())
+charts["locata20"] = {k: R(100 * v["全部"]["acc20"]) for k, v in lo["methods"].items()}
 charts["nn_params"] = nn["params"]; charts["nn_macs"] = nn["macs_per_decision"]
 json.dump(charts, open(os.path.join(HERE, "scene1_report_data.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("charts", json.dumps(charts, ensure_ascii=False)[:600])

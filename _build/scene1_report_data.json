@@ -31,10 +31,10 @@
    42
   ],
   "GEVD-MUSIC": [
-   96,
+   97,
    90,
    62,
-   88
+   89
   ],
   "小网络": [
    100,
@@ -92,11 +92,16 @@
  },
  "realman_n": 600,
  "locata": {
-  "SRP-PHAT": 62,
+  "SRP-PHAT": 63,
   "GEVD-MUSIC": 65,
   "小网络（仿真训练）": 62
  },
  "locata_n": 451,
+ "locata20": {
+  "SRP-PHAT": 79,
+  "GEVD-MUSIC": 81,
+  "小网络（仿真训练）": 87
+ },
  "nn_params": 276508,
  "nn_macs": 273226624
 }
