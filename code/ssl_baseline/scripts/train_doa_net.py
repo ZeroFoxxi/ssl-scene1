@@ -30,8 +30,8 @@ def _feat_one(args):
     return features(x.astype(np.float64) * scale).astype(np.float16)
 
 
-def build_features(split):
-    out = os.path.join(WORK, "feat", f"{split}.npz")
+def build_features(split, data="train_data"):
+    out = os.path.join(WORK, "feat", f"{split}.npz" if data == "train_data" else f"{data}_{split}.npz")
     if os.path.exists(out):
         d = np.load(out); return {k: d[k] for k in d.files}
     os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -41,7 +41,7 @@ def build_features(split):
         meta = {k: d[k] for k in ["az", "az_prev", "cond", "rt60", "room"]}; sc = d["scale"]
     else:
         xs, sc, meta = [], [], {k: [] for k in ["az", "az_prev", "cond", "rt60", "room"]}
-        for f in sorted(glob.glob(os.path.join(WORK, "train_data", split, "shard_*.npz"))):
+        for f in sorted(glob.glob(os.path.join(WORK, data, split, "shard_*.npz"))):
             d = np.load(f); xs.append(d["x"]); sc.append(d["scale"])
             for k in meta:
                 meta[k].append(d[k])
@@ -74,9 +74,11 @@ def main():
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--name", default="crnn_v0")
+    ap.add_argument("--data", default="train_data", help="work/ 下的数据目录；非默认数据只训练与验证，不评测会议室仿真测试集")
     a = ap.parse_args()
     torch.manual_seed(a.seed); np.random.seed(a.seed); torch.set_num_threads(4)
-    tr, va, te = build_features("train"), build_features("val"), build_features("test")
+    tr, va = build_features("train", a.data), build_features("val", a.data)
+    te = build_features("test") if a.data == "train_data" else None
     model = CRNN(in_ch=tr["feat"].shape[1])
     n_params = sum(p.numel() for p in model.parameters()); macs = count_macs(model, tr["feat"].shape[1], tr["feat"].shape[3])
     print(f"参数量 {n_params}，每次判决乘加 {macs / 1e6:.0f} M", flush=True)
@@ -101,6 +103,10 @@ def main():
         print(log[-1], flush=True)
         if va_acc > best:
             best = va_acc; torch.save(model.state_dict(), ck)
+    json.dump(log, open(os.path.join(ROOT, "out", f"nn_train_log_{a.name}.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    if te is None:
+        print(f"完成：验证集最好 {best:.4f}，模型 {ck}")
+        return
     # 测试：只评测一次（验证集最好的模型）
     model.load_state_dict(torch.load(ck))
     t0 = time.time(); est = predict(model, te["feat"]); t_inf = (time.time() - t0) / len(est)

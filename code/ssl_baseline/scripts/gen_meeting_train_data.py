@@ -19,6 +19,10 @@
 输出：work/train_data/<split>/shard_XXX.npz（x: int16 [N, 6, 24000]，scale: 每个样本的缩放，az / az_prev / cond / rt60 / wall）
 运行：python scripts/gen_meeting_train_data.py --split train --rooms 1200 --workers 4
       python scripts/gen_meeting_train_data.py --split val --rooms 100 --workers 4
+
+另有"通用房间"场景（--scene general）与 5 麦线阵（--array lin5_4cm，即 LOCATA DICIT 阵列中间 5 麦：-8/-4/0/4/8 cm），
+用于在 LOCATA 真实录音上验证"仿真训练 → 真实录音"的差距：阵列放在房间内（不贴墙），声源在前方 ±80°、距离 1–4 m。
+输出到 work/train_data_<scene>_<array>/<split>/。默认（meeting + lin6_17.5cm）仍输出到 work/train_data/<split>/。
 """
 import argparse, glob, json, os, sys, time
 from multiprocessing import Pool
@@ -36,7 +40,10 @@ PRE_S, POST_S = 1.0, 0.5
 N = int((PRE_S + POST_S) * FS)
 ON = int(PRE_S * FS)
 SAMPLES_PER_ROOM = 10
-MIC_XY = np.stack([np.zeros(6), (np.arange(6) - 2.5) * 0.175 / 5], 0)     # 6 麦线阵 17.5 cm，沿 y 轴（平行于前墙）
+ARRAYS = {"lin6_17.5cm": np.stack([np.zeros(6), (np.arange(6) - 2.5) * 0.175 / 5], 0),   # 6 麦线阵 17.5 cm，沿 y 轴（平行于前墙）
+          "lin5_4cm": np.stack([np.zeros(5), np.array([-0.08, -0.04, 0.0, 0.04, 0.08])], 0)}  # LOCATA DICIT 中间 5 麦
+MIC_XY = ARRAYS["lin6_17.5cm"]
+CFG = {"scene": "meeting", "array": "lin6_17.5cm"}
 CONDS = ["C1 换人", "C2 抢话", "C3 远端扬声器", "C4 空调噪声"]
 COND_P = [0.35, 0.25, 0.20, 0.20]
 SEED_BASE = {"train": 1_000_000, "val": 2_000_000}
@@ -67,9 +74,33 @@ def load_speech(split):
     return out
 
 
-def _init(split):
-    global _SPEECH
+def _init(split, scene="meeting", array="lin6_17.5cm"):
+    global _SPEECH, MIC_XY
     _SPEECH = load_speech(split)
+    CFG.update(scene=scene, array=array); MIC_XY = ARRAYS[array]
+
+
+def make_general_scene(rng):
+    """通用房间：阵列在房间内（离墙 ≥1 m，正前方留出空间），6 个声源位置与 1 个干扰喇叭在前方 ±80°、1–4 m，出风口在吊顶。"""
+    while True:
+        L, W, H = rng.uniform(4.0, 10.0), rng.uniform(4.0, 10.0), rng.uniform(2.5, 3.5)
+        c = np.array([rng.uniform(1.0, max(1.01, L - 2.5)), rng.uniform(1.0, W - 1.0), rng.uniform(1.0, 1.6)])
+
+        def place(zlo, zhi):
+            for _ in range(200):
+                az, d = rng.uniform(-80, 80), rng.uniform(1.0, 4.0)
+                p = np.array([c[0] + d * np.cos(np.deg2rad(az)), c[1] + d * np.sin(np.deg2rad(az)), rng.uniform(zlo, zhi)])
+                if 0.4 < p[0] < L - 0.4 and 0.4 < p[1] < W - 0.4:
+                    return p
+            return None
+        people = [place(1.0, 1.9) for _ in range(6)]
+        spk = place(0.8, 1.6)
+        if any(p is None for p in people) or spk is None:
+            continue
+        azs = [R.az_of(p, c) for p in people]
+        ia, ib = rng.choice(6, 2, replace=False)
+        vent = np.array([rng.uniform(0.5, L - 0.5), rng.uniform(0.5, W - 0.5), H - 0.05])
+        return [L, W, H], c, people, azs, ia, ib, spk, vent
 
 
 def pick(rng, exclude_spk):
@@ -84,12 +115,18 @@ def make_room(args):
     rng = np.random.default_rng(SEED_BASE[split] + room_idx)
     R.WALL_D = float(rng.uniform(0.04, 0.15))
     rt60 = float(rng.uniform(0.2, 0.8))
-    dims, c, people, azs, _, _, spk_pos, vent = R.make_scene(rng)
-    mics = np.vstack([MIC_XY + c[:2, None], np.full((1, 6), c[2])])
+    if CFG["scene"] == "general":
+        dims, c, people, azs, _, _, spk_pos, vent = make_general_scene(rng)
+    else:
+        dims, c, people, azs, _, _, spk_pos, vent = R.make_scene(rng)
+    M = MIC_XY.shape[1]
+    mics = np.vstack([MIC_XY + c[:2, None], np.full((1, M), c[2])])
     H = [R.rirs(dims, rt60, p, mics) for p in list(people) + [spk_pos, vent]]   # 0–5 参会人，6 喇叭，7 出风口
     xs, meta = [], []
     for _ in range(SAMPLES_PER_ROOM):
         ia, ib = rng.choice(6, 2, replace=False)
+        while CFG["scene"] == "general" and abs(((azs[ia] - azs[ib] + 180) % 360) - 180) < 10:
+            ia, ib = rng.choice(6, 2, replace=False)                              # 通用场景：两人方位至少差 10°
         cond = CONDS[rng.choice(4, p=COND_P)]
         spk_b, xb, onb = pick(rng, set())
         spk_a, xa, _ = pick(rng, {spk_b})
@@ -127,10 +164,13 @@ def main():
     ap.add_argument("--rooms", type=int, required=True)
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--shard-rooms", type=int, default=50)
+    ap.add_argument("--scene", choices=["meeting", "general"], default="meeting")
+    ap.add_argument("--array", choices=list(ARRAYS), default="lin6_17.5cm")
     a = ap.parse_args()
-    outdir = os.path.join(WORK, "train_data", a.split); os.makedirs(outdir, exist_ok=True)
+    sub = "train_data" if (a.scene, a.array) == ("meeting", "lin6_17.5cm") else f"train_data_{a.scene}_{a.array}"
+    outdir = os.path.join(WORK, sub, a.split); os.makedirs(outdir, exist_ok=True)
     t0 = time.time()
-    with Pool(a.workers, initializer=_init, initargs=(a.split,)) as pool:
+    with Pool(a.workers, initializer=_init, initargs=(a.split, a.scene, a.array)) as pool:
         for s0 in range(0, a.rooms, a.shard_rooms):
             fn = os.path.join(outdir, f"shard_{s0 // a.shard_rooms:03d}.npz")
             if os.path.exists(fn):
@@ -140,7 +180,7 @@ def main():
             np.savez(fn, x=np.stack(xs), **{k: np.array([m[k] for m in meta]) for k in meta[0]})
             print(f"[{a.split}] {min(a.rooms, s0 + a.shard_rooms)}/{a.rooms} 个房间  {len(xs)} 个样本 → {os.path.basename(fn)}  {time.time() - t0:.0f}s", flush=True)
     json.dump({"split": a.split, "rooms": a.rooms, "samples_per_room": SAMPLES_PER_ROOM, "fs": FS, "pre_s": PRE_S, "post_s": POST_S,
-               "mic_xy_m": MIC_XY.round(4).tolist(), "speech": f"LibriSpeech {LIBRI[a.split]}（CC BY 4.0）", "seed_base": SEED_BASE[a.split],
+               "scene": a.scene, "array": a.array, "mic_xy_m": ARRAYS[a.array].round(4).tolist(), "speech": f"LibriSpeech {LIBRI[a.split]}（CC BY 4.0）", "seed_base": SEED_BASE[a.split],
                "conds": CONDS, "cond_p": COND_P}, open(os.path.join(outdir, "info.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 
