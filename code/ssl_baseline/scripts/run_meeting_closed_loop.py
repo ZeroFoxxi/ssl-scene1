@@ -199,6 +199,7 @@ def main():
     ap.add_argument("--tag", default="")
     ap.add_argument("--nn-variants", nargs="+", default=["0.5:0"],
                     help="小网络配置，每项“开口后最长输入 s:置信度门限”，如 0.5:0 1.0:0.6；第一项为基准")
+    ap.add_argument("--seed", type=int, default=2026, help="会议生成的随机种子；2026 为报告用的那批会议，换种子做独立验证")
     ap.add_argument("--only-nn", action="store_true", help="只评测小网络（6 麦线阵），不跑传统方法与 4 麦线阵")
     a = ap.parse_args()
     global NN_METHODS
@@ -224,7 +225,7 @@ def main():
         ests[n] = {"SRP-PHAT": WakeDOA(xy, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, **base)),
                    "GEVD-MUSIC": WakeDOA(xy, FS, WakeDOAConfig(**base))}
         raws[n] = WakeDOA(xy, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, onset=False, **base))
-    rng = np.random.default_rng(2026)
+    rng = np.random.default_rng(a.seed)
     rows, example = [], None
     for rt in a.rt60:
         t_start = time.time()
