@@ -1,0 +1,151 @@
+{
+ "setup": {
+  "duration_s": 20.0,
+  "talkers": "3 个对话者在正前方 ±60°，轮流说话（每段 2–5 s，间隔 0.1–0.5 s）；1 个旁桌说话人全程说话",
+  "array": "2+1",
+  "grid_deg": 5,
+  "output_every_s": 0.25,
+  "cam_delay_s": 0.2,
+  "cam_on_after_trigger_s": 1.5,
+  "monitor_fps": 1.5,
+  "acoustic_onset_threshold_db": 3.0,
+  "trials": 40,
+  "seed": 61,
+  "vision": {
+   "fov": 70.0,
+   "az_sigma": 2.0,
+   "p_detect": 0.95,
+   "lip_err": 0.1
+  },
+  "note": "B 的唇动档在整段对话中常开，开机占比记 100%（相对于对话时间）"
+ },
+ "results": {
+  "S2 旁桌低 6 dB": {
+   "policies": {
+    "A0 纯声学（不白化）": {
+     "acc10_all": 52.52860834256183,
+     "acc10_first_0p5s": 30.319148936170215,
+     "acc10_steady": 56.10801543077583,
+     "mae_steady": 38.62515387686652,
+     "first_correct_median_s": 0.500358725305972,
+     "turns_never_correct_pct": 0.9615384615384616
+    },
+    "A 纯声学（声学检测开口）": {
+     "acc10_all": 79.99261720191953,
+     "acc10_first_0p5s": 36.17021276595745,
+     "acc10_steady": 87.05529361337334,
+     "mae_steady": 13.359590827756731,
+     "first_correct_median_s": 0.4912217111339441,
+     "turns_never_correct_pct": 0.4807692307692308
+    },
+    "E 只开监测档": {
+     "acc10_all": 83.97932816537468,
+     "acc10_first_0p5s": 40.159574468085104,
+     "acc10_steady": 91.04157736819546,
+     "mae_steady": 9.794621320286566,
+     "first_correct_median_s": 0.4308812678256717,
+     "turns_never_correct_pct": 0.0
+    },
+    "C 声学触发后开摄像头": {
+     "acc10_all": 84.5330380214101,
+     "acc10_first_0p5s": 39.8936170212766,
+     "acc10_steady": 91.72738962708958,
+     "mae_steady": 8.069199605377596,
+     "first_correct_median_s": 0.4396387203255223,
+     "turns_never_correct_pct": 0.0
+    },
+    "D 监测档常开 + 声学触发唇动档": {
+     "acc10_all": 86.82170542635659,
+     "acc10_first_0p5s": 42.5531914893617,
+     "acc10_steady": 93.9562794684955,
+     "mae_steady": 6.420887484347589,
+     "first_correct_median_s": 0.407478613818145,
+     "turns_never_correct_pct": 0.0
+    },
+    "B 唇动档常开": {
+     "acc10_all": 92.9125138427464,
+     "acc10_first_0p5s": 72.6063829787234,
+     "acc10_steady": 96.18516930990143,
+     "mae_steady": 4.653070234285178,
+     "first_correct_median_s": 0.25,
+     "turns_never_correct_pct": 0.0
+    }
+   },
+   "camera_lip_duty_pct": {
+    "A0": 0.0,
+    "A": 0.0,
+    "E": 0.0,
+    "C": 34.07534246575342,
+    "D": 34.07534246575342,
+    "B": 100.0
+   },
+   "turns_per_min": 16.864864864864867,
+   "acoustic_events_per_min": 14.625,
+   "acoustic_false_events_per_min": 7.2749999999999995
+  },
+  "S4 旁桌一样响": {
+   "policies": {
+    "A0 纯声学（不白化）": {
+     "acc10_all": 35.36857781087118,
+     "acc10_first_0p5s": 15.0,
+     "acc10_steady": 38.9326334208224,
+     "mae_steady": 57.374923448791414,
+     "first_correct_median_s": 0.7552007631152629,
+     "turns_never_correct_pct": 5.454545454545454
+    },
+    "A 纯声学（声学检测开口）": {
+     "acc10_all": 64.03574087862994,
+     "acc10_first_0p5s": 26.75,
+     "acc10_steady": 70.5599300087489,
+     "mae_steady": 28.64708300885951,
+     "first_correct_median_s": 0.5445913107115707,
+     "turns_never_correct_pct": 3.1818181818181817
+    },
+    "E 只开监测档": {
+     "acc10_all": 71.51898734177216,
+     "acc10_first_0p5s": 35.0,
+     "acc10_steady": 77.90901137357831,
+     "mae_steady": 21.941176833303025,
+     "first_correct_median_s": 0.46692274194444305,
+     "turns_never_correct_pct": 2.727272727272727
+    },
+    "C 声学触发后开摄像头": {
+     "acc10_all": 74.38570364854803,
+     "acc10_first_0p5s": 36.5,
+     "acc10_steady": 81.01487314085739,
+     "mae_steady": 18.78268882597767,
+     "first_correct_median_s": 0.4525182336848541,
+     "turns_never_correct_pct": 2.272727272727273
+    },
+    "D 监测档常开 + 声学触发唇动档": {
+     "acc10_all": 78.40655249441548,
+     "acc10_first_0p5s": 41.0,
+     "acc10_steady": 84.95188101487314,
+     "mae_steady": 14.782256327664168,
+     "first_correct_median_s": 0.41008043896916035,
+     "turns_never_correct_pct": 2.272727272727273
+    },
+    "B 唇动档常开": {
+     "acc10_all": 87.15562174236783,
+     "acc10_first_0p5s": 68.75,
+     "acc10_steady": 90.37620297462817,
+     "mae_steady": 9.617325378127827,
+     "first_correct_median_s": 0.25,
+     "turns_never_correct_pct": 0.0
+    }
+   },
+   "camera_lip_duty_pct": {
+    "A0": 0.0,
+    "A": 0.0,
+    "E": 0.0,
+    "C": 28.184931506849313,
+    "D": 28.184931506849313,
+    "B": 100.0
+   },
+   "turns_per_min": 17.83783783783784,
+   "acoustic_events_per_min": 11.475,
+   "acoustic_false_events_per_min": 7.425
+  }
+ },
+ "elapsed_s": 838.9912276268005
+}

@@ -35,13 +35,14 @@ def main():
     for fn in sorted(glob.glob(os.path.join(ROOT, "out", "camera_policy_th*_delay*.json"))):
         d = json.load(open(fn, encoding="utf-8"))
         th, dl = d["setup"]["acoustic_onset_threshold_db"], d["setup"]["cam_delay_s"]
+        ov = "_overlap" if d["setup"].get("overlap") else ""
         for cname, r in d["results"].items():
             for pname, v in r["policies"].items():
                 tag = pname.split()[0]
                 duty = r["camera_lip_duty_pct"][tag] / 100
                 lo = cam_power(tag, duty, a.conv, P_LIP[0], P_MON[0]); hi = cam_power(tag, duty, a.conv, P_LIP[1], P_MON[1])
                 rt_hi = E_BAT / (P_BASE + OTHER[0] + lo); rt_lo = E_BAT / (P_BASE + OTHER[1] + hi)
-                rows.setdefault(cname, {}).setdefault(f"th{th:g}_delay{dl:g}", {})[pname] = {
+                rows.setdefault(cname, {}).setdefault(f"th{th:g}_delay{dl:g}{ov}", {})[pname] = {
                     "acc10_all": round(v["acc10_all"], 1), "acc10_first_0p5s": round(v["acc10_first_0p5s"], 1), "acc10_steady": round(v["acc10_steady"], 1),
                     "first_correct_median_s": v["first_correct_median_s"], "lip_duty_in_conversation_pct": round(duty * 100, 1),
                     "camera_mw": [round(lo, 2), round(hi, 2)], "runtime_h": [round(rt_lo, 2), round(rt_hi, 2)]}

@@ -49,15 +49,27 @@ def time_frame(t):
     return int(np.ceil((t * FS - NFFT) / HOP)) + 1
 
 
+OVERLAP = False   # --overlap：一半的换人带 0.2–1.0 s 重叠（下一个人在上一个人说完前开口）
+
+
 def schedule(rng):
     """3 个对话者轮流说话：返回 [(说话人, 开始, 结束)]。"""
     turns, t, who = [], T_FIRST, int(rng.integers(3))
     while t < T_TOT - 0.5:
         d = rng.uniform(2.0, 5.0); e = min(t + d, T_TOT)
         turns.append((who, t, e))
-        t = e + rng.uniform(0.1, 0.5)
+        if OVERLAP and rng.random() < 0.5:
+            t = max(t + 1.0, e - rng.uniform(0.2, 1.0))
+        else:
+            t = e + rng.uniform(0.1, 0.5)
         who = int((who + rng.integers(1, 3)) % 3)
     return turns
+
+
+def current_turn(turns, t):
+    """t 时刻"轮到谁说"：正在说的人里最晚开口的那个。返回 (说话人, 开始) 或 None。"""
+    cur = [(w, s) for w, s, e in turns if s <= t < e]
+    return max(cur, key=lambda x: x[1]) if cur else None
 
 
 def scene(rng, cond, ctx):
@@ -176,9 +188,9 @@ def run_trial(rng, cond, ctx, cam_delay, thresh):
     ev_i = {p: 0 for p in POLICIES}
     for oi, t in enumerate(t_out):
         k = min(time_frame(t), T)
-        cur = [(w, s) for w, s, e in turns if s <= t < e]
-        truth = az_p[cur[0][0]] if cur else None
-        since = (t - cur[0][1]) if cur else None
+        cur = current_turn(turns, t)
+        truth = az_p[cur[0]] if cur else None
+        since = (t - cur[1]) if cur else None
         # ---------- A0 ----------
         z = M.peak(music_plain(y, k, ctx), grid, 5.0)
         res[POLICIES[0]].append((truth, since, z))
@@ -263,7 +275,10 @@ def main():
     ap.add_argument("--seed", type=int, default=61)
     ap.add_argument("--cam-delay", type=float, default=0.2)
     ap.add_argument("--thresh", type=float, default=2.5)
+    ap.add_argument("--overlap", action="store_true")
     a = ap.parse_args()
+    global OVERLAP
+    OVERLAP = a.overlap
     mics = earbud_mic_set("2+1"); freqs = np.fft.rfftfreq(NFFT, 1 / FS); grid = np.arange(-180, 180, 5.0)
     speech = RA.load_speech()
     ctx = {"freqs": freqs, "mics": mics, "fmask": (freqs >= 200) & (freqs <= 7000), "grid": grid,
@@ -305,9 +320,9 @@ def main():
         print(json.dumps(out[cname], ensure_ascii=False, indent=1), flush=True)
     setup = {"duration_s": T_TOT, "talkers": "3 个对话者在正前方 ±60°，轮流说话（每段 2–5 s，间隔 0.1–0.5 s）；1 个旁桌说话人全程说话",
              "array": "2+1", "grid_deg": 5, "output_every_s": DT_OUT, "cam_delay_s": a.cam_delay, "cam_on_after_trigger_s": CAM_ON_S,
-             "monitor_fps": MON_FPS, "acoustic_onset_threshold_db": a.thresh, "trials": a.trials, "seed": a.seed, "vision": RA.VIS,
+             "monitor_fps": MON_FPS, "acoustic_onset_threshold_db": a.thresh, "overlap": a.overlap, "trials": a.trials, "seed": a.seed, "vision": RA.VIS,
              "note": "B 的唇动档在整段对话中常开，开机占比记 100%（相对于对话时间）"}
-    with open(os.path.join(ROOT, "out", f"camera_policy_th{a.thresh:g}_delay{a.cam_delay:g}.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(ROOT, "out", f"camera_policy_th{a.thresh:g}_delay{a.cam_delay:g}{'_overlap' if a.overlap else ''}.json"), "w", encoding="utf-8") as f:
         json.dump({"setup": setup, "results": out, "elapsed_s": time.time() - t0}, f, ensure_ascii=False, indent=1)
 
 
