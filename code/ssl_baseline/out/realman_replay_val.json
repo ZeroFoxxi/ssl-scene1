@@ -1,0 +1,111 @@
+{
+ "config": {
+  "split": "val",
+  "scenes": [
+   "Auditorium"
+  ],
+  "meetings_per_scene": 6,
+  "duration_s": 60.0,
+  "seed": 7,
+  "conf": [
+   0.7
+  ],
+  "models": {
+   "小网络（仿真训练）": "crnn_general_lin6_3cm.pt",
+   "小网络（+实录微调）": "crnn_lin6_3cm_ft.pt"
+  }
+ },
+ "summary": {
+  "SRP-PHAT": {
+   "latency_median_s": 1.213,
+   "aim_within_2s": 0.846,
+   "wrong_per_min": 5.667,
+   "cmds_per_min": 21.167,
+   "framed": 0.726,
+   "framed_static": 0.8,
+   "framed_moving": 0.252,
+   "framed20": 0.819,
+   "framed20_moving": 0.476,
+   "mae_moving": 44.261,
+   "n_meetings": 6,
+   "n_switch": 34,
+   "moving_sec": 47.0
+  },
+  "GEVD-MUSIC": {
+   "latency_median_s": 1.228,
+   "aim_within_2s": 0.879,
+   "wrong_per_min": 9.0,
+   "cmds_per_min": 24.0,
+   "framed": 0.611,
+   "framed_static": 0.679,
+   "framed_moving": 0.19,
+   "framed20": 0.665,
+   "framed20_moving": 0.406,
+   "mae_moving": 49.87,
+   "n_meetings": 6,
+   "n_switch": 34,
+   "moving_sec": 47.0
+  },
+  "小网络（仿真训练）": {
+   "latency_median_s": 1.296,
+   "aim_within_2s": 0.9,
+   "wrong_per_min": 4.0,
+   "cmds_per_min": 15.333,
+   "framed": 0.77,
+   "framed_static": 0.849,
+   "framed_moving": 0.278,
+   "framed20": 0.83,
+   "framed20_moving": 0.506,
+   "mae_moving": 43.93,
+   "n_meetings": 6,
+   "n_switch": 34,
+   "moving_sec": 47.0
+  },
+  "小网络（仿真训练）|置信≥0.7": {
+   "latency_median_s": 1.32,
+   "aim_within_2s": 0.896,
+   "wrong_per_min": 2.333,
+   "cmds_per_min": 11.333,
+   "framed": 0.796,
+   "framed_static": 0.885,
+   "framed_moving": 0.256,
+   "framed20": 0.841,
+   "framed20_moving": 0.484,
+   "mae_moving": 45.716,
+   "n_meetings": 6,
+   "n_switch": 34,
+   "moving_sec": 47.0
+  },
+  "小网络（+实录微调）": {
+   "latency_median_s": 1.221,
+   "aim_within_2s": 0.9,
+   "wrong_per_min": 3.167,
+   "cmds_per_min": 15.667,
+   "framed": 0.734,
+   "framed_static": 0.804,
+   "framed_moving": 0.28,
+   "framed20": 0.84,
+   "framed20_moving": 0.517,
+   "mae_moving": 43.263,
+   "n_meetings": 6,
+   "n_switch": 34,
+   "moving_sec": 47.0
+  },
+  "小网络（+实录微调）|置信≥0.7": {
+   "latency_median_s": 1.221,
+   "aim_within_2s": 0.9,
+   "wrong_per_min": 1.667,
+   "cmds_per_min": 11.5,
+   "framed": 0.787,
+   "framed_static": 0.866,
+   "framed_moving": 0.284,
+   "framed20": 0.857,
+   "framed20_moving": 0.512,
+   "mae_moving": 43.445,
+   "n_meetings": 6,
+   "n_switch": 34,
+   "moving_sec": 47.0
+  }
+ },
+ "examples": []
+}
