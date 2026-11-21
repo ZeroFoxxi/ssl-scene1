@@ -8,6 +8,7 @@
 结构（CRNN）：3 个卷积块（频率方向逐级池化）→ 每帧线性映射 → 双向 GRU → 注意力时间池化 → 全连接。
 三档大小（SIZES）：s 约 0.28 M 参数（目标规格）、m 约 1.07 M、l 约 2.13 M（"先放大约 10 倍开发，再压缩"用）。
 """
+import json, os
 import numpy as np
 
 try:
@@ -63,7 +64,8 @@ def decode(logits: np.ndarray) -> np.ndarray:
 
 if torch is not None:
     class CRNN(nn.Module):
-        def __init__(self, in_ch: int = 11, n_out: int = len(AZ_GRID), ch=(32, 64, 64), d_frame: int = 128, d_rnn: int = 64):
+        def __init__(self, in_ch: int = 11, n_out: int = len(AZ_GRID), ch=(32, 64, 64), d_frame: int = 128, d_rnn: int = 64,
+                     vad: bool = False):
             super().__init__()
             layers, c0 = [], in_ch
             for c in ch:
@@ -74,14 +76,23 @@ if torch is not None:
             self.rnn = nn.GRU(d_frame, d_rnn, batch_first=True, bidirectional=True)
             self.att = nn.Linear(2 * d_rnn, 1)
             self.out = nn.Linear(2 * d_rnn, n_out)
+            self.vad = nn.Linear(2 * d_rnn, 1) if vad else None          # 可选："有没有人在说话"输出（logit）
 
-        def forward(self, x):                                   # x: B x C x 128 x T
+        def pooled(self, x):                                    # x: B x C x 128 x T
             h = self.conv(x)                                    # B x c x 16 x T
             B, c, f, T = h.shape
             h = F.relu(self.proj(h.permute(0, 3, 1, 2).reshape(B, T, c * f)))
             h, _ = self.rnn(h)                                  # B x T x 2d
             w = torch.softmax(self.att(h), dim=1)
-            return self.out((w * h).sum(1))                     # B x 91
+            return (w * h).sum(1)                               # B x 2d
+
+        def forward(self, x):
+            return self.out(self.pooled(x))                     # B x 91
+
+        def forward_both(self, x):
+            """返回（方向 logits B x 91，"有人说话" logit B）；没有 vad 头时后者为 None。"""
+            z = self.pooled(x)
+            return self.out(z), (self.vad(z)[:, 0] if self.vad is not None else None)
 
     def count_macs(model, in_ch=11, T=94):
         """前向一次的乘加次数（卷积、线性层、GRU），用于和端侧算力对比。"""
@@ -120,14 +131,19 @@ class NNDOA:
     返回 .az（方位）与 .conf（置信度，见 confidence）。
     """
 
-    def __init__(self, ckpt_path: str, in_ch: int = 11, n_threads: int = 1, size: str = "s", post_max: float = 0.5):
+    def __init__(self, ckpt_path: str, in_ch: int = 11, n_threads: int = 1, size: str = "s", post_max: float = 0.5,
+                 presence_th: float = None):
         if torch is None:
             raise ImportError("需要安装 torch")
         torch.set_num_threads(n_threads)
-        self.model = CRNN(in_ch=in_ch, **SIZES[size])
+        side = ckpt_path[:-3] + ".json"
+        meta = json.load(open(side, encoding="utf-8")) if os.path.exists(side) else {}
+        self.model = CRNN(in_ch=in_ch, vad=bool(meta.get("vad", False)), **SIZES[size])
         self.model.load_state_dict(torch.load(ckpt_path, map_location="cpu"))
         self.model.eval()
         self.post_max = post_max
+        # "有人说话"门限：有 vad 头时默认取训练脚本在验证集上定的值；低于门限时置信度记为 0（不转）
+        self.presence_th = presence_th if presence_th is not None else meta.get("presence_th", 0.0)
 
     def localize(self, x: np.ndarray, start: int, end: int) -> "_Res":
         s0 = start - FS
@@ -137,5 +153,10 @@ class NNDOA:
         if b > a:
             seg[:, a - s0: b - s0] = x[:, a:b]
         with torch.no_grad():
-            logit = self.model(torch.from_numpy(features(seg))[None]).numpy()
-        return _Res(float(decode(logit)[0] % 360.0), float(confidence(logit)[0]))
+            lg, v = self.model.forward_both(torch.from_numpy(features(seg))[None])
+        logit = lg.numpy()
+        conf = float(confidence(logit)[0])
+        presence = float(torch.sigmoid(v)[0]) if v is not None else 1.0
+        r = _Res(float(decode(logit)[0] % 360.0), conf if presence >= self.presence_th else 0.0)
+        r.presence = presence
+        return r

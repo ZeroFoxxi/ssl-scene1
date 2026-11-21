@@ -43,7 +43,8 @@ XY = ARRAYS["lin6_3cm"]
 SPLITS = {"val": ("realman_val", "val", ["Auditorium"]), "test": ("realman", "test", None),
           "val3": ("realman_val", "val", ["LivingRoom6", "LivingRoom8", "OfficeRoom1"])}   # val3 参与了微调：只用于诊断仿真训练的小网络与传统方法
 MODELS = {"小网络（仿真训练）": "crnn_general_lin6_3cm.pt", "小网络（+实录微调）": "crnn_lin6_3cm_ft.pt",
-          "小网络（+实录微调+纯噪声）": "crnn_lin6_3cm_ft_noise.pt"}                    # 第三个见 finetune_doa_net_noise.py（11-21）
+          "小网络（+实录微调+纯噪声）": "crnn_lin6_3cm_ft_noise.pt",                    # 见 finetune_doa_net_noise.py（11-21）
+          "小网络（+实录微调+有人判断）": "crnn_lin6_3cm_ft_vad.pt"}                     # 见 finetune_doa_net_vad.py（11-21），有人门限取自其 .json
 
 
 # ---------------- 数据 ----------------

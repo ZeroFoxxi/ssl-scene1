@@ -1,53 +1,53 @@
-Classroom2 会议 1/10：9 轮（走动 5）  10s
-Classroom2 会议 2/10：10 轮（走动 3）  21s
-Classroom2 会议 3/10：9 轮（走动 1）  29s
-Classroom2 会议 4/10：10 轮（走动 3）  40s
-Classroom2 会议 5/10：8 轮（走动 1）  51s
-Classroom2 会议 6/10：9 轮（走动 5）  62s
-Classroom2 会议 7/10：8 轮（走动 0）  73s
-Classroom2 会议 8/10：9 轮（走动 2）  79s
-Classroom2 会议 9/10：9 轮（走动 2）  93s
-Classroom2 会议 10/10：9 轮（走动 1）  104s
-LivingRoom2 会议 1/10：9 轮（走动 3）  9s
-LivingRoom2 会议 2/10：8 轮（走动 2）  23s
-LivingRoom2 会议 3/10：7 轮（走动 1）  36s
-LivingRoom2 会议 4/10：7 轮（走动 1）  45s
-LivingRoom2 会议 5/10：8 轮（走动 2）  56s
-LivingRoom2 会议 6/10：9 轮（走动 2）  65s
-LivingRoom2 会议 7/10：8 轮（走动 2）  74s
-LivingRoom2 会议 8/10：8 轮（走动 4）  85s
-LivingRoom2 会议 9/10：7 轮（走动 1）  95s
-LivingRoom2 会议 10/10：8 轮（走动 2）  105s
-OfficeLobby 会议 1/10：10 轮（走动 4）  10s
-OfficeLobby 会议 2/10：10 轮（走动 2）  22s
-OfficeLobby 会议 3/10：9 轮（走动 1）  33s
-OfficeLobby 会议 4/10：9 轮（走动 1）  43s
-OfficeLobby 会议 5/10：9 轮（走动 3）  55s
-OfficeLobby 会议 6/10：9 轮（走动 2）  66s
-OfficeLobby 会议 7/10：11 轮（走动 5）  77s
-OfficeLobby 会议 8/10：9 轮（走动 3）  90s
-OfficeLobby 会议 9/10：9 轮（走动 2）  100s
-OfficeLobby 会议 10/10：11 轮（走动 3）  112s
-OfficeRoom3 会议 1/10：9 轮（走动 2）  7s
-OfficeRoom3 会议 2/10：10 轮（走动 1）  16s
-OfficeRoom3 会议 3/10：11 轮（走动 4）  24s
-OfficeRoom3 会议 4/10：9 轮（走动 0）  32s
-OfficeRoom3 会议 5/10：10 轮（走动 4）  40s
-OfficeRoom3 会议 6/10：10 轮（走动 2）  48s
-OfficeRoom3 会议 7/10：11 轮（走动 4）  56s
-OfficeRoom3 会议 8/10：8 轮（走动 0）  65s
-OfficeRoom3 会议 9/10：12 轮（走动 5）  74s
-OfficeRoom3 会议 10/10：13 轮（走动 9）  84s
-OfficeRoom4 会议 1/10：8 轮（走动 2）  7s
-OfficeRoom4 会议 2/10：9 轮（走动 5）  14s
-OfficeRoom4 会议 3/10：8 轮（走动 0）  21s
-OfficeRoom4 会议 4/10：9 轮（走动 3）  30s
-OfficeRoom4 会议 5/10：8 轮（走动 1）  38s
-OfficeRoom4 会议 6/10：8 轮（走动 1）  47s
-OfficeRoom4 会议 7/10：7 轮（走动 2）  54s
-OfficeRoom4 会议 8/10：9 轮（走动 6）  61s
-OfficeRoom4 会议 9/10：7 轮（走动 2）  67s
-OfficeRoom4 会议 10/10：8 轮（走动 2）  74s
+Classroom2 会议 1/10：9 轮（走动 5）  11s
+Classroom2 会议 2/10：10 轮（走动 3）  26s
+Classroom2 会议 3/10：9 轮（走动 1）  35s
+Classroom2 会议 4/10：10 轮（走动 3）  49s
+Classroom2 会议 5/10：8 轮（走动 1）  62s
+Classroom2 会议 6/10：9 轮（走动 5）  77s
+Classroom2 会议 7/10：8 轮（走动 0）  90s
+Classroom2 会议 8/10：9 轮（走动 2）  99s
+Classroom2 会议 9/10：9 轮（走动 2）  117s
+Classroom2 会议 10/10：9 轮（走动 1）  130s
+LivingRoom2 会议 1/10：9 轮（走动 3）  12s
+LivingRoom2 会议 2/10：8 轮（走动 2）  29s
+LivingRoom2 会议 3/10：7 轮（走动 1）  45s
+LivingRoom2 会议 4/10：7 轮（走动 1）  55s
+LivingRoom2 会议 5/10：8 轮（走动 2）  70s
+LivingRoom2 会议 6/10：9 轮（走动 2）  81s
+LivingRoom2 会议 7/10：8 轮（走动 2）  92s
+LivingRoom2 会议 8/10：8 轮（走动 4）  105s
+LivingRoom2 会议 9/10：7 轮（走动 1）  119s
+LivingRoom2 会议 10/10：8 轮（走动 2）  132s
+OfficeLobby 会议 1/10：10 轮（走动 4）  12s
+OfficeLobby 会议 2/10：10 轮（走动 2）  26s
+OfficeLobby 会议 3/10：9 轮（走动 1）  40s
+OfficeLobby 会议 4/10：9 轮（走动 1）  52s
+OfficeLobby 会议 5/10：9 轮（走动 3）  68s
+OfficeLobby 会议 6/10：9 轮（走动 2）  81s
+OfficeLobby 会议 7/10：11 轮（走动 5）  97s
+OfficeLobby 会议 8/10：9 轮（走动 3）  113s
+OfficeLobby 会议 9/10：9 轮（走动 2）  126s
+OfficeLobby 会议 10/10：11 轮（走动 3）  141s
+OfficeRoom3 会议 1/10：9 轮（走动 2）  9s
+OfficeRoom3 会议 2/10：10 轮（走动 1）  20s
+OfficeRoom3 会议 3/10：11 轮（走动 4）  30s
+OfficeRoom3 会议 4/10：9 轮（走动 0）  41s
+OfficeRoom3 会议 5/10：10 轮（走动 4）  51s
+OfficeRoom3 会议 6/10：10 轮（走动 2）  62s
+OfficeRoom3 会议 7/10：11 轮（走动 4）  72s
+OfficeRoom3 会议 8/10：8 轮（走动 0）  84s
+OfficeRoom3 会议 9/10：12 轮（走动 5）  96s
+OfficeRoom3 会议 10/10：13 轮（走动 9）  110s
+OfficeRoom4 会议 1/10：8 轮（走动 2）  9s
+OfficeRoom4 会议 2/10：9 轮（走动 5）  18s
+OfficeRoom4 会议 3/10：8 轮（走动 0）  27s
+OfficeRoom4 会议 4/10：9 轮（走动 3）  36s
+OfficeRoom4 会议 5/10：8 轮（走动 1）  47s
+OfficeRoom4 会议 6/10：8 轮（走动 1）  58s
+OfficeRoom4 会议 7/10：7 轮（走动 2）  68s
+OfficeRoom4 会议 8/10：9 轮（走动 6）  78s
+OfficeRoom4 会议 9/10：7 轮（走动 2）  86s
+OfficeRoom4 会议 10/10：8 轮（走动 2）  96s
 
 方法                              对准用时    2s内对准    误转/分    转动/分    对准(全)     静止     走动   走动≤20°     走动误差
 SRP-PHAT                        0.85      77%    4.70   15.00      63%    66%    49%      70%    21.22
@@ -61,3 +61,6 @@ GEVD-MUSIC                      0.88      82%    6.12   17.60      62%    64%   
 小网络（+实录微调+纯噪声）                  0.90      84%    3.24   14.56      70%    73%    51%      70%    21.23
 小网络（+实录微调+纯噪声）|置信≥0.7           1.02      70%    0.72    9.06      64%    67%    48%      64%    22.44
 小网络（+实录微调+纯噪声）|置信≥0.53          0.97      80%    1.38   11.36      68%    70%    51%      68%    21.77
+小网络（+实录微调+有人判断）                 0.93      84%    3.38   14.32      69%    73%    51%      70%    20.90
+小网络（+实录微调+有人判断）|置信≥0.7          1.01      72%    1.10    9.60      62%    66%    44%      63%    23.56
+小网络（+实录微调+有人判断）|置信≥0.53         1.00      72%    1.52   10.52      62%    65%    47%      65%    22.72
