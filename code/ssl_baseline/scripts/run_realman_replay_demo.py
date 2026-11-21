@@ -40,7 +40,8 @@ DUR = 60.0
 FRONT = ((85.0, 275.0),)
 AIM_DEG = 10.0
 XY = ARRAYS["lin6_3cm"]
-SPLITS = {"val": ("realman_val", "val", ["Auditorium"]), "test": ("realman", "test", None)}
+SPLITS = {"val": ("realman_val", "val", ["Auditorium"]), "test": ("realman", "test", None),
+          "val3": ("realman_val", "val", ["LivingRoom6", "LivingRoom8", "OfficeRoom1"])}   # val3 参与了微调：只用于诊断仿真训练的小网络与传统方法
 MODELS = {"小网络（仿真训练）": "crnn_general_lin6_3cm.pt", "小网络（+实录微调）": "crnn_lin6_3cm_ft.pt"}
 
 
@@ -96,23 +97,23 @@ def build_meeting(rng, utts, bank, load, max_turn=8.0):
         if use_mov:
             xa = load(u["f"]); L = min(xa.shape[1], cap)
             x[:, i0:i0 + L] += xa[:, :L]; cov[i0:i0 + L] = True
-            traj = u["traj"][: int(np.ceil(L / FS / 0.1)) + 1]; names = [u["name"]]
+            traj = u["traj"][: int(np.ceil(L / FS / 0.1)) + 1]; names = [u["name"]]; segs = [(t, t + L / FS)]
         else:
             target = int(rng.uniform(3.0, 7.0) * FS)
             same = [v for v in static if abs(v["traj"][0] - u["traj"][0]) < 3]
             order = [same[j] for j in rng.permutation(len(same))]
-            pos, names = 0, []
+            pos, names, segs = 0, [], []
             for v in order[:3]:
                 xa = load(v["f"]); L = min(xa.shape[1], cap - pos)
                 if L <= 0:
                     break
                 x[:, i0 + pos: i0 + pos + L] += xa[:, :L]; cov[i0 + pos: i0 + pos + L] = True
-                pos += L; names.append(v["name"])
+                segs.append((t + pos / FS, t + (pos + L) / FS)); pos += L; names.append(v["name"])
                 if pos >= target:
                     break
                 pos += int(rng.uniform(0.2, 0.6) * FS)                       # 句间停顿
             L = min(pos, cap); traj = np.array([u["traj"][0]])
-        turn = {"name": "+".join(names), "kind": "moving" if use_mov else "static", "start": t, "end": t + L / FS, "traj": traj}
+        turn = {"name": "+".join(names), "kind": "moving" if use_mov else "static", "start": t, "end": t + L / FS, "traj": traj, "segs": segs}
         turns.append(turn); prev = turn
         t = turn["end"] - 0.5 if (rng.random() < 0.3 and L / FS > 1.5) else turn["end"] + rng.uniform(0.2, 0.8)
     d = np.diff(np.r_[0, (~cov).astype(int), 0]); st, en = np.where(d == 1)[0], np.where(d == -1)[0]
@@ -183,9 +184,10 @@ class Logged:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--split", choices=["val", "test"], default="val")
+    ap.add_argument("--split", choices=list(SPLITS), default="val")
     ap.add_argument("--meetings", type=int, default=6, help="每个场景的会议段数")
     ap.add_argument("--conf", type=float, nargs="+", default=[0.7], help="小网络置信度门限（另含不加门限）；0.7 为仿真验证会议上选定的值，实录上不再调")
+    ap.add_argument("--snr", type=float, nargs="*", default=[], help="另加信噪比门限（dB）的配置，与每个置信度门限组合")
     ap.add_argument("--examples", type=int, default=0, help="每个场景存前 N 段会议的曲线数据与参考通道音频")
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--tag", default="")
@@ -198,13 +200,15 @@ def main():
     srp_cfg = SRPConfig(fmax=min(4000.0, 0.95 * aliasing_frequency(XY)))
     base = dict(pad_pre=0.0, pad_post=0.0, exclude=FRONT, srp=srp_cfg)
     raw = WakeDOA(XY, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, onset=False, **base))
-    ests = {"SRP-PHAT": (WakeDOA(XY, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, **base)), 0.0),
-            "GEVD-MUSIC": (WakeDOA(XY, FS, WakeDOAConfig(**base)), 0.0)}
+    ests = {"SRP-PHAT": (WakeDOA(XY, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, **base)), 0.0, None),
+            "GEVD-MUSIC": (WakeDOA(XY, FS, WakeDOAConfig(**base)), 0.0, None)}
     for m, ck in MODELS.items():
         nn = NNDOA(os.path.join(ROOT, "work", "models", ck), in_ch=2 * (XY.shape[1] - 1) + 1)
-        ests[m] = (nn, 0.0)
+        ests[m] = (nn, 0.0, None)
         for th in a.conf:
-            ests[f"{m}|置信≥{th:g}"] = (nn, th)
+            ests[f"{m}|置信≥{th:g}"] = (nn, th, None)
+            for sn in a.snr:
+                ests[f"{m}|置信≥{th:g}|SNR≥{sn:g}"] = (nn, th, sn)
     rows, examples = [], []
     os.makedirs(os.path.join(ROOT, "out", "demo"), exist_ok=True)
     for si, sc in enumerate(scenes):
@@ -220,9 +224,9 @@ def main():
                                 if (b + 1) * DT >= 0.35 else 0.0 for b in range(nb)])
             ex = {"scene": sc, "k": k, "turns": [{kk: (v.tolist() if isinstance(v, np.ndarray) else v) for kk, v in t.items()} for t in turns],
                   "pans": {}, "decisions": {}} if k < a.examples else None
-            for m, (est, th) in ests.items():
+            for m, (est, th, sn) in ests.items():
                 le = Logged(est)
-                pans, cmds = closed_loop(x, e_db, far_db, srp_raw, le, freeze=False, conf_th=th)
+                pans, cmds = closed_loop(x, e_db, far_db, srp_raw, le, freeze=False, conf_th=th, snr_th=sn)
                 r = evaluate(pans, cmds, turns)
                 rows.append({"split": a.split, "scene": sc, "meeting": k, "method": m, **{kk: (round(v, 4) if isinstance(v, float) else v) for kk, v in r.items()}})
                 if ex is not None:

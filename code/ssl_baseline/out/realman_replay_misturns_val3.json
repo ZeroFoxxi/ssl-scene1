@@ -1,0 +1,10068 @@
+{
+ "split": "val3",
+ "minutes": 30.0,
+ "methods": {
+  "GEVD-MUSIC": {
+   "misturns": 126,
+   "per_min": 4.2,
+   "near_prev": 27,
+   "triggers": {
+    "静音后起始": 515,
+    "方向变化": 262
+   },
+   "by_cause": {
+    "静音后起始|同一人说话中": 53,
+    "静音后起始|同一人句间停顿后": 24,
+    "静音后起始|换人后测错": 17,
+    "静音后起始|走动中": 12,
+    "方向变化|同一人说话中": 10,
+    "方向变化|换人后测错": 6,
+    "方向变化|走动中": 2,
+    "静音后起始|无人说话": 2
+   }
+  },
+  "小网络（仿真训练）|置信≥0.7": {
+   "misturns": 19,
+   "per_min": 0.63,
+   "near_prev": 12,
+   "triggers": {
+    "静音后起始": 516,
+    "方向变化": 206
+   },
+   "by_cause": {
+    "静音后起始|换人后测错": 4,
+    "方向变化|同一人说话中": 4,
+    "静音后起始|同一人说话中": 3,
+    "静音后起始|同一人句间停顿后": 2,
+    "方向变化|换人后测错": 2,
+    "方向变化|走动中": 2,
+    "静音后起始|走动中": 1,
+    "静音后起始|无人说话": 1
+   }
+  }
+ },
+ "records": [
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 0,
+   "t": 14.8,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 15.7,
+   "conf": 0.761,
+   "speaker_az": -15.0,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 0,
+   "t": 24.7,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 299.7,
+   "conf": 0.738,
+   "speaker_az": 27.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 0,
+   "t": 25.2,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 307.9,
+   "conf": 0.712,
+   "speaker_az": 27.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 0,
+   "t": 38.9,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 10.8,
+   "conf": 0.692,
+   "speaker_az": -41.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 1,
+   "t": 23.8,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 350.7,
+   "conf": 0.731,
+   "speaker_az": 17.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 1,
+   "t": 37.2,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 355.6,
+   "conf": 0.768,
+   "speaker_az": -66.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 1,
+   "t": 47.0,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 49.1,
+   "conf": 0.659,
+   "speaker_az": 25.3,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 2,
+   "t": 16.2,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 6.5,
+   "conf": 0.758,
+   "speaker_az": -66.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 2,
+   "t": 19.5,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 59.1,
+   "conf": 0.706,
+   "speaker_az": -8.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 2,
+   "t": 25.7,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 29.3,
+   "conf": 0.751,
+   "speaker_az": -40.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 2,
+   "t": 57.0,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 288.6,
+   "conf": 0.743,
+   "speaker_az": 1.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 3,
+   "t": 5.6,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 296.5,
+   "conf": 0.711,
+   "speaker_az": -20.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 3,
+   "t": 15.9,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 298.8,
+   "conf": 0.738,
+   "speaker_az": 26.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 3,
+   "t": 34.2,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 40.7,
+   "conf": 0.714,
+   "speaker_az": -11.3,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 3,
+   "t": 34.8,
+   "kind": "方向变化",
+   "cause": "换人后测错",
+   "az": 350.0,
+   "conf": 0.759,
+   "speaker_az": -66.2,
+   "hint": 349.90564371507327
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 3,
+   "t": 39.8,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 1.1,
+   "conf": 0.796,
+   "speaker_az": -66.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 3,
+   "t": 52.7,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 34.8,
+   "conf": 0.678,
+   "speaker_az": -28.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 3,
+   "t": 55.2,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 18.7,
+   "conf": 0.837,
+   "speaker_az": -28.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 4,
+   "t": 4.0,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 294.4,
+   "conf": 0.763,
+   "speaker_az": -17.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 4,
+   "t": 11.6,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 3.1,
+   "conf": 0.798,
+   "speaker_az": -66.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 4,
+   "t": 32.0,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 58.9,
+   "conf": 0.759,
+   "speaker_az": -66.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 4,
+   "t": 38.9,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 277.6,
+   "conf": 0.737,
+   "speaker_az": 11.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 4,
+   "t": 50.1,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 300.7,
+   "conf": 0.715,
+   "speaker_az": 12.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 4,
+   "t": 57.4,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 53.8,
+   "conf": 0.711,
+   "speaker_az": -17.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 5,
+   "t": 3.5,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 12.9,
+   "conf": 0.766,
+   "speaker_az": -17.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 5,
+   "t": 12.4,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 8.1,
+   "conf": 0.85,
+   "speaker_az": -40.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 5,
+   "t": 26.1,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 340.5,
+   "conf": 0.588,
+   "speaker_az": -66.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 6,
+   "t": 9.8,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 61.3,
+   "conf": 0.731,
+   "speaker_az": -24.9,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 6,
+   "t": 11.0,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 52.4,
+   "conf": 0.806,
+   "speaker_az": -24.9,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 6,
+   "t": 14.7,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 57.1,
+   "conf": 0.619,
+   "speaker_az": 2.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 6,
+   "t": 17.2,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 294.4,
+   "conf": 0.751,
+   "speaker_az": 2.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 6,
+   "t": 19.5,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 20.3,
+   "conf": 0.73,
+   "speaker_az": 2.8,
+   "hint": 5.050777767889885
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 6,
+   "t": 37.2,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 56.7,
+   "conf": 0.711,
+   "speaker_az": -17.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 6,
+   "t": 41.0,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 44.2,
+   "conf": 0.738,
+   "speaker_az": 2.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 6,
+   "t": 45.4,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 44.8,
+   "conf": 0.775,
+   "speaker_az": 2.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 6,
+   "t": 57.1,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 51.1,
+   "conf": 0.636,
+   "speaker_az": -8.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 7,
+   "t": 3.1,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 43.1,
+   "conf": 0.806,
+   "speaker_az": -24.9,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 7,
+   "t": 14.0,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 308.5,
+   "conf": 0.76,
+   "speaker_az": 2.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 7,
+   "t": 19.1,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 314.0,
+   "conf": 0.713,
+   "speaker_az": 22.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 7,
+   "t": 20.4,
+   "kind": "方向变化",
+   "cause": "走动中",
+   "az": 9.2,
+   "conf": 0.728,
+   "speaker_az": 24.8,
+   "hint": 25.90130706367063
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 7,
+   "t": 29.1,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 64.9,
+   "conf": 0.74,
+   "speaker_az": -10.3,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 7,
+   "t": 48.7,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 33.3,
+   "conf": 0.74,
+   "speaker_az": -40.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 7,
+   "t": 52.1,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 64.3,
+   "conf": 0.719,
+   "speaker_az": -17.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 8,
+   "t": 17.1,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 310.8,
+   "conf": 0.795,
+   "speaker_az": 2.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 8,
+   "t": 34.8,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 339.2,
+   "conf": 0.651,
+   "speaker_az": 27.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 8,
+   "t": 35.3,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 358.9,
+   "conf": 0.668,
+   "speaker_az": 27.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 8,
+   "t": 52.5,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 307.7,
+   "conf": 0.718,
+   "speaker_az": 5.0,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "meeting": 8,
+   "t": 56.5,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 12.8,
+   "conf": 0.784,
+   "speaker_az": -6.4,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 9,
+   "t": 8.8,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 7.6,
+   "conf": 0.7,
+   "speaker_az": -15.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 9,
+   "t": 25.6,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 284.3,
+   "conf": 0.791,
+   "speaker_az": -16.9,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 9,
+   "t": 26.5,
+   "kind": "方向变化",
+   "cause": "换人后测错",
+   "az": 343.7,
+   "conf": 0.821,
+   "speaker_az": 2.8,
+   "hint": 344.6521729891316
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 9,
+   "t": 32.6,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 55.2,
+   "conf": 0.759,
+   "speaker_az": 2.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 9,
+   "t": 47.7,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 43.7,
+   "conf": 0.649,
+   "speaker_az": 2.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 9,
+   "t": 49.9,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 291.1,
+   "conf": 0.655,
+   "speaker_az": -17.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "meeting": 9,
+   "t": 51.2,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 82.5,
+   "conf": 0.754,
+   "speaker_az": -17.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 0,
+   "t": 6.7,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 36.3,
+   "conf": 0.742,
+   "speaker_az": -58.4,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 0,
+   "t": 8.6,
+   "kind": "方向变化",
+   "cause": "换人后测错",
+   "az": 299.3,
+   "conf": 0.844,
+   "speaker_az": -23.3,
+   "hint": 308.6683126758962
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 0,
+   "t": 15.5,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 357.1,
+   "conf": 0.731,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 0,
+   "t": 23.8,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 50.0,
+   "conf": 0.714,
+   "speaker_az": -23.3,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 0,
+   "t": 24.3,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 41.0,
+   "conf": 0.714,
+   "speaker_az": -23.3,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 0,
+   "t": 32.6,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 3.5,
+   "conf": 0.783,
+   "speaker_az": -58.4,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 0,
+   "t": 36.2,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 32.7,
+   "conf": 0.692,
+   "speaker_az": -58.4,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 0,
+   "t": 57.2,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 305.4,
+   "conf": 0.734,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 1,
+   "t": 28.3,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 293.3,
+   "conf": 0.754,
+   "speaker_az": 24.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 1,
+   "t": 32.9,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 6.3,
+   "conf": 0.649,
+   "speaker_az": 67.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 1,
+   "t": 34.5,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 348.0,
+   "conf": 0.742,
+   "speaker_az": 67.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 1,
+   "t": 53.8,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 310.0,
+   "conf": 0.688,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 2,
+   "t": 6.5,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 319.2,
+   "conf": 0.768,
+   "speaker_az": -23.3,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 2,
+   "t": 8.4,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 54.0,
+   "conf": 0.804,
+   "speaker_az": -23.3,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 2,
+   "t": 10.3,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 322.9,
+   "conf": 0.755,
+   "speaker_az": 1.0,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 2,
+   "t": 14.7,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 288.8,
+   "conf": 0.798,
+   "speaker_az": 29.9,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 2,
+   "t": 29.8,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 359.0,
+   "conf": 0.732,
+   "speaker_az": 67.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 2,
+   "t": 45.9,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 308.7,
+   "conf": 0.675,
+   "speaker_az": 24.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 2,
+   "t": 57.6,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 354.3,
+   "conf": 0.553,
+   "speaker_az": 67.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 3,
+   "t": 14.7,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 50.8,
+   "conf": 0.745,
+   "speaker_az": 67.2,
+   "hint": 49.28615635686542
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 3,
+   "t": 18.0,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 1.8,
+   "conf": 0.746,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 3,
+   "t": 28.2,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 304.1,
+   "conf": 0.771,
+   "speaker_az": 24.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 3,
+   "t": 28.8,
+   "kind": "方向变化",
+   "cause": "换人后测错",
+   "az": 17.5,
+   "conf": 0.762,
+   "speaker_az": 67.2,
+   "hint": 18.320060336103776
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "meeting": 3,
+   "t": 28.2,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 312.7,
+   "conf": 0.809,
+   "speaker_az": 24.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 4,
+   "t": 4.8,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 286.4,
+   "conf": 0.831,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 4,
+   "t": 6.0,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 66.6,
+   "conf": 0.822,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 4,
+   "t": 26.6,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 286.0,
+   "conf": 0.762,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 4,
+   "t": 28.5,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 294.5,
+   "conf": 0.776,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 4,
+   "t": 51.0,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 311.1,
+   "conf": 0.687,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 5,
+   "t": 16.2,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 9.0,
+   "conf": 0.769,
+   "speaker_az": 24.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 5,
+   "t": 24.9,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 294.2,
+   "conf": 0.788,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 5,
+   "t": 59.9,
+   "kind": "静音后起始",
+   "cause": "无人说话",
+   "az": 45.6,
+   "conf": 0.879,
+   "speaker_az": null,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "meeting": 5,
+   "t": 59.9,
+   "kind": "静音后起始",
+   "cause": "无人说话",
+   "az": 360.0,
+   "conf": 0.759,
+   "speaker_az": null,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 6,
+   "t": 26.4,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 65.4,
+   "conf": 0.707,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 6,
+   "t": 46.6,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 283.7,
+   "conf": 0.771,
+   "speaker_az": -40.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 6,
+   "t": 59.6,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 281.4,
+   "conf": 0.693,
+   "speaker_az": 67.2,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "meeting": 6,
+   "t": 25.9,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 332.8,
+   "conf": 0.82,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 7,
+   "t": 17.4,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 50.7,
+   "conf": 0.707,
+   "speaker_az": -23.3,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 7,
+   "t": 19.4,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 4.9,
+   "conf": 0.733,
+   "speaker_az": -23.3,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "meeting": 7,
+   "t": 55.2,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 25.5,
+   "conf": 0.796,
+   "speaker_az": -23.3,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 8,
+   "t": 24.5,
+   "kind": "静音后起始",
+   "cause": "走动中",
+   "az": 15.5,
+   "conf": 0.781,
+   "speaker_az": 34.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 8,
+   "t": 31.5,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 45.3,
+   "conf": 0.788,
+   "speaker_az": -58.4,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 8,
+   "t": 44.5,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 303.3,
+   "conf": 0.753,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 8,
+   "t": 52.2,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 58.4,
+   "conf": 0.716,
+   "speaker_az": -23.3,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 9,
+   "t": 25.6,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 16.2,
+   "conf": 0.751,
+   "speaker_az": 42.7,
+   "hint": 32.88431569848825
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 9,
+   "t": 26.7,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 292.9,
+   "conf": 0.805,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 9,
+   "t": 48.4,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 37.3,
+   "conf": 0.703,
+   "speaker_az": 67.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "meeting": 9,
+   "t": 53.8,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 1.2,
+   "conf": 0.724,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "meeting": 9,
+   "t": 55.2,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 350.4,
+   "conf": 0.808,
+   "speaker_az": 42.7,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 0,
+   "t": 1.1,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 290.2,
+   "conf": 0.658,
+   "speaker_az": 28.1,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 0,
+   "t": 59.5,
+   "kind": "静音后起始",
+   "cause": "无人说话",
+   "az": 327.3,
+   "conf": 0.807,
+   "speaker_az": null,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 1,
+   "t": 16.8,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 330.2,
+   "conf": 0.755,
+   "speaker_az": -56.6,
+   "hint": 327.501338146792
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 1,
+   "t": 29.0,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 326.7,
+   "conf": 0.784,
+   "speaker_az": 7.9,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 1,
+   "t": 50.3,
+   "kind": "方向变化",
+   "cause": "换人后测错",
+   "az": 326.9,
+   "conf": 0.738,
+   "speaker_az": -14.0,
+   "hint": 325.0878362197977
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 2,
+   "t": 11.6,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 2.9,
+   "conf": 0.826,
+   "speaker_az": -31.8,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 2,
+   "t": 30.5,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 357.9,
+   "conf": 0.806,
+   "speaker_az": -26.4,
+   "hint": 353.27607556808647
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 2,
+   "t": 59.4,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 4.9,
+   "conf": 0.83,
+   "speaker_az": -56.6,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 2,
+   "t": 11.6,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 358.8,
+   "conf": 0.851,
+   "speaker_az": -31.8,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 2,
+   "t": 30.5,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 356.7,
+   "conf": 0.844,
+   "speaker_az": -26.4,
+   "hint": 353.27607556808647
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 3,
+   "t": 18.5,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 355.3,
+   "conf": 0.832,
+   "speaker_az": -56.6,
+   "hint": 352.697611503935
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 3,
+   "t": 37.5,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 305.5,
+   "conf": 0.751,
+   "speaker_az": -36.0,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 3,
+   "t": 42.4,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 64.5,
+   "conf": 0.805,
+   "speaker_az": -6.4,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 3,
+   "t": 59.7,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 354.9,
+   "conf": 0.796,
+   "speaker_az": -56.6,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 3,
+   "t": 18.5,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 358.7,
+   "conf": 0.909,
+   "speaker_az": -56.6,
+   "hint": 352.697611503935
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 3,
+   "t": 53.9,
+   "kind": "方向变化",
+   "cause": "换人后测错",
+   "az": 353.9,
+   "conf": 0.867,
+   "speaker_az": -56.6,
+   "hint": 355.5092633860465
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 3,
+   "t": 59.7,
+   "kind": "静音后起始",
+   "cause": "同一人说话中",
+   "az": 357.1,
+   "conf": 0.913,
+   "speaker_az": -56.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 4,
+   "t": 13.2,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 307.1,
+   "conf": 0.759,
+   "speaker_az": -26.4,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 4,
+   "t": 41.6,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 306.9,
+   "conf": 0.758,
+   "speaker_az": 7.9,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 4,
+   "t": 47.4,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 327.8,
+   "conf": 0.803,
+   "speaker_az": -56.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 4,
+   "t": 52.7,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 359.2,
+   "conf": 0.755,
+   "speaker_az": -56.6,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 4,
+   "t": 55.4,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 358.2,
+   "conf": 0.839,
+   "speaker_az": -56.6,
+   "hint": 352.86349020697907
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 4,
+   "t": 47.4,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 1.9,
+   "conf": 0.843,
+   "speaker_az": -56.6,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 4,
+   "t": 52.7,
+   "kind": "静音后起始",
+   "cause": "同一人句间停顿后",
+   "az": 1.0,
+   "conf": 0.882,
+   "speaker_az": -56.6,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 4,
+   "t": 55.4,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 1.1,
+   "conf": 0.823,
+   "speaker_az": -56.6,
+   "hint": 352.86349020697907
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 5,
+   "t": 1.3,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 308.5,
+   "conf": 0.763,
+   "speaker_az": -36.0,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 5,
+   "t": 38.6,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 347.4,
+   "conf": 0.698,
+   "speaker_az": -36.0,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 5,
+   "t": 52.4,
+   "kind": "方向变化",
+   "cause": "走动中",
+   "az": 352.1,
+   "conf": 0.887,
+   "speaker_az": 24.2,
+   "hint": 356.9206845636708
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 5,
+   "t": 52.4,
+   "kind": "方向变化",
+   "cause": "走动中",
+   "az": 357.0,
+   "conf": 0.893,
+   "speaker_az": 24.2,
+   "hint": 356.9206845636708
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 6,
+   "t": 7.6,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 303.0,
+   "conf": 0.732,
+   "speaker_az": 7.9,
+   "hint": 312.59693899453293
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 6,
+   "t": 15.7,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 305.9,
+   "conf": 0.744,
+   "speaker_az": -14.0,
+   "hint": 314.851879350367
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 6,
+   "t": 28.3,
+   "kind": "方向变化",
+   "cause": "换人后测错",
+   "az": 47.1,
+   "conf": 0.7,
+   "speaker_az": 30.8,
+   "hint": 29.961586119702737
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 6,
+   "t": 35.5,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 352.1,
+   "conf": 0.851,
+   "speaker_az": -25.5,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 6,
+   "t": 15.7,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 304.6,
+   "conf": 0.745,
+   "speaker_az": -14.0,
+   "hint": 314.851879350367
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 7,
+   "t": 37.2,
+   "kind": "方向变化",
+   "cause": "同一人说话中",
+   "az": 300.8,
+   "conf": 0.704,
+   "speaker_az": 7.9,
+   "hint": 316.78602373928965
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 8,
+   "t": 55.4,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 314.6,
+   "conf": 0.686,
+   "speaker_az": 7.9,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 8,
+   "t": 16.1,
+   "kind": "方向变化",
+   "cause": "走动中",
+   "az": 310.4,
+   "conf": 0.719,
+   "speaker_az": 30.1,
+   "hint": 316.13677255471043
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 9,
+   "t": 16.5,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 359.7,
+   "conf": 0.686,
+   "speaker_az": 34.2,
+   "hint": null
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "meeting": 9,
+   "t": 27.4,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 302.8,
+   "conf": 0.694,
+   "speaker_az": -33.0,
+   "hint": null
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 9,
+   "t": 8.7,
+   "kind": "方向变化",
+   "cause": "换人后测错",
+   "az": 359.6,
+   "conf": 0.855,
+   "speaker_az": -56.6,
+   "hint": 358.3607925288126
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "meeting": 9,
+   "t": 27.4,
+   "kind": "静音后起始",
+   "cause": "换人后测错",
+   "az": 1.8,
+   "conf": 0.881,
+   "speaker_az": -33.0,
+   "hint": null
+  }
+ ],
+ "turned": [
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.75,
+   "conf": 0.9202486424153303,
+   "az": 326.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.75,
+   "conf": 0.9073526053587381,
+   "az": 291.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.51,
+   "conf": 0.6953915692899779,
+   "az": 350.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 15.87,
+   "conf": 0.7606541911798147,
+   "az": 15.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.59,
+   "conf": 0.7424949944005825,
+   "az": 343.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.35,
+   "conf": 0.8868582737331084,
+   "az": 325.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.11,
+   "conf": 0.8036814500363768,
+   "az": 29.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 18.5,
+   "conf": 0.7381797173640926,
+   "az": 299.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 10.54,
+   "conf": 0.7117252687843085,
+   "az": 307.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.22,
+   "conf": 0.7804193377683407,
+   "az": 34.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.03,
+   "conf": 0.7802222510201811,
+   "az": 26.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.98,
+   "conf": 0.7565935664073781,
+   "az": 347.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.98,
+   "conf": 0.8658646359638908,
+   "az": 319.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 15.95,
+   "conf": 0.6921779073108144,
+   "az": 10.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 28.65,
+   "conf": 0.8969571902473816,
+   "az": 319.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.72,
+   "conf": 0.6824561509076923,
+   "az": 7.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.07,
+   "conf": 0.733049209418397,
+   "az": 350.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.27,
+   "conf": 0.8066077965014233,
+   "az": 4.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.65,
+   "conf": 0.7095035334842926,
+   "az": 33.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.55,
+   "conf": 0.9141485498675118,
+   "az": 319.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.75,
+   "conf": 0.8690120577812195,
+   "az": 328.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.75,
+   "conf": 0.721159815788269,
+   "az": 291.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.51,
+   "conf": 0.9036794304847717,
+   "az": 340.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.11,
+   "conf": 0.9200810790061951,
+   "az": 32.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.98,
+   "conf": 0.8867712616920471,
+   "az": 338.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.98,
+   "conf": 0.9102300405502319,
+   "az": 320.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.35,
+   "conf": 0.7284311652183533,
+   "az": 1.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.29,
+   "conf": 0.7759989500045776,
+   "az": 31.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.55,
+   "conf": 0.9059640765190125,
+   "az": 319.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.48,
+   "conf": 0.8050145437612787,
+   "az": 335.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.07,
+   "conf": 0.654125787153502,
+   "az": 355.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.81,
+   "conf": 0.8026662705446382,
+   "az": 344.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 7.74,
+   "conf": 0.7467181198952993,
+   "az": 352.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.9,
+   "conf": 0.8235593629729169,
+   "az": 41.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.56,
+   "conf": 0.7652071693490515,
+   "az": 30.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 13.63,
+   "conf": 0.7307127044319636,
+   "az": 350.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.52,
+   "conf": 0.7619593487767505,
+   "az": 15.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.1,
+   "conf": 0.9055173250328443,
+   "az": 317.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.25,
+   "conf": 0.9067341104913409,
+   "az": 291.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 20.21,
+   "conf": 0.767793211731312,
+   "az": 355.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 11.89,
+   "conf": 0.7134360396583833,
+   "az": 4.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 5.98,
+   "conf": 0.6591428351293176,
+   "az": 49.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.47,
+   "conf": 0.803323821164372,
+   "az": 35.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.79,
+   "conf": 0.9194509061249061,
+   "az": 293.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.75,
+   "conf": 0.8275993463533464,
+   "az": 336.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.48,
+   "conf": 0.7810436487197876,
+   "az": 330.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.07,
+   "conf": 0.7607154250144958,
+   "az": 347.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.9,
+   "conf": 0.891551673412323,
+   "az": 37.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.1,
+   "conf": 0.8201778531074524,
+   "az": 320.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.25,
+   "conf": 0.775489866733551,
+   "az": 291.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.95,
+   "conf": 0.8465995788574219,
+   "az": 1.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.47,
+   "conf": 0.7868959307670593,
+   "az": 36.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.79,
+   "conf": 0.7875298261642456,
+   "az": 288.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.75,
+   "conf": 0.8482450246810913,
+   "az": 331.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.77,
+   "conf": 0.9169910886790028,
+   "az": 327.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.35,
+   "conf": 0.8590498844190413,
+   "az": 290.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 20.05,
+   "conf": 0.7575782779948032,
+   "az": 6.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.9,
+   "conf": 0.7506642284167718,
+   "az": 355.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 14.46,
+   "conf": 0.7056177341050913,
+   "az": 59.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.4,
+   "conf": 0.8170275597912456,
+   "az": 356.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 26.66,
+   "conf": 0.8584965250281442,
+   "az": 318.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 22.53,
+   "conf": 0.7513600442779707,
+   "az": 29.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.83,
+   "conf": 0.740565152654237,
+   "az": 317.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.48,
+   "conf": 0.6417042225947318,
+   "az": 337.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.73,
+   "conf": 0.7283845347059098,
+   "az": 30.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.18,
+   "conf": 0.9425594521309961,
+   "az": 316.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.24,
+   "conf": 0.7413918591175441,
+   "az": 349.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.41,
+   "conf": 0.8835969181140942,
+   "az": 291.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 12.0,
+   "conf": 0.7930172392676892,
+   "az": 7.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 13.79,
+   "conf": 0.7429520409257995,
+   "az": 288.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 8.9,
+   "conf": 0.66515339627621,
+   "az": 0.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.77,
+   "conf": 0.8543103337287903,
+   "az": 327.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.35,
+   "conf": 0.8048563003540039,
+   "az": 287.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.4,
+   "conf": 0.8583080768585205,
+   "az": 341.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 26.66,
+   "conf": 0.9003240466117859,
+   "az": 318.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.48,
+   "conf": 0.8854897618293762,
+   "az": 336.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.73,
+   "conf": 0.8975839614868164,
+   "az": 31.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.18,
+   "conf": 0.8598999977111816,
+   "az": 315.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.24,
+   "conf": 0.8040034174919128,
+   "az": 341.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.41,
+   "conf": 0.7774187922477722,
+   "az": 291.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 12.0,
+   "conf": 0.9217091202735901,
+   "az": 12.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.12,
+   "conf": 0.7980713248252869,
+   "az": 352.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.16,
+   "conf": 0.7285213727380652,
+   "az": 344.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 18.47,
+   "conf": 0.7110535726639851,
+   "az": 296.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.33,
+   "conf": 0.7087641112371161,
+   "az": 329.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.65,
+   "conf": 0.8020440442455479,
+   "az": 319.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.16,
+   "conf": 0.8166538422541338,
+   "az": 18.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 16.41,
+   "conf": 0.7382268888898218,
+   "az": 298.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 12.6,
+   "conf": 0.781321774791129,
+   "az": 350.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.52,
+   "conf": 0.7202685582853109,
+   "az": 35.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.22,
+   "conf": 0.7859305239053668,
+   "az": 348.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 14.45,
+   "conf": 0.7135344356480896,
+   "az": 40.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 15.46,
+   "conf": 0.7587773429369862,
+   "az": 350.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.63,
+   "conf": 0.9268121487713246,
+   "az": 292.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 23.58,
+   "conf": 0.7963804960801901,
+   "az": 1.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.79,
+   "conf": 0.6592340028831528,
+   "az": 295.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.4,
+   "conf": 0.8207611704374072,
+   "az": 351.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.65,
+   "conf": 0.8388938614151891,
+   "az": 325.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 11.33,
+   "conf": 0.6777361487883553,
+   "az": 34.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.81,
+   "conf": 0.824117361678808,
+   "az": 327.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 4.49,
+   "conf": 0.837232583873887,
+   "az": 18.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.14,
+   "conf": 0.8533781455299342,
+   "az": 330.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.6,
+   "conf": 0.7135758887836371,
+   "az": 1.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.14,
+   "conf": 0.8916121125221252,
+   "az": 339.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.65,
+   "conf": 0.8877847194671631,
+   "az": 324.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.16,
+   "conf": 0.8664686679840088,
+   "az": 21.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.41,
+   "conf": 0.8707447052001953,
+   "az": 31.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.23,
+   "conf": 0.8092580437660217,
+   "az": 345.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.52,
+   "conf": 0.8199148178100586,
+   "az": 36.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.22,
+   "conf": 0.9099174737930298,
+   "az": 343.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.39,
+   "conf": 0.8003433346748352,
+   "az": 289.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.32,
+   "conf": 0.7962513566017151,
+   "az": 346.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 4.49,
+   "conf": 0.7147983312606812,
+   "az": 322.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.14,
+   "conf": 0.8858922719955444,
+   "az": 330.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.6,
+   "conf": 0.8621432781219482,
+   "az": 347.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.95,
+   "conf": 0.8232927517372912,
+   "az": 342.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 12.47,
+   "conf": 0.7631848833307862,
+   "az": 294.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 8.97,
+   "conf": 0.7537979444280454,
+   "az": 340.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.47,
+   "conf": 0.8809012425530318,
+   "az": 292.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 23.35,
+   "conf": 0.7977280117273974,
+   "az": 3.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.8,
+   "conf": 0.8819058115966358,
+   "az": 293.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.55,
+   "conf": 0.815580412261628,
+   "az": 333.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.23,
+   "conf": 0.7927539162250937,
+   "az": 341.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.1,
+   "conf": 0.7411955269234943,
+   "az": 30.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.51,
+   "conf": 0.9073715444687863,
+   "az": 292.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 19.95,
+   "conf": 0.7592657932788998,
+   "az": 58.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.44,
+   "conf": 0.7703187210058864,
+   "az": 27.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 14.92,
+   "conf": 0.7368703362815423,
+   "az": 277.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.96,
+   "conf": 0.7663951568465006,
+   "az": 11.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.11,
+   "conf": 0.6981300903220996,
+   "az": 356.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.61,
+   "conf": 0.7577937238734626,
+   "az": 17.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 17.66,
+   "conf": 0.7145297611334005,
+   "az": 300.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.31,
+   "conf": 0.7151351862866556,
+   "az": 13.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.82,
+   "conf": 0.7829115962119719,
+   "az": 340.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 13.25,
+   "conf": 0.7105517541379073,
+   "az": 53.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.19,
+   "conf": 0.705438679020196,
+   "az": 340.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.95,
+   "conf": 0.8632779717445374,
+   "az": 335.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.47,
+   "conf": 0.7816925048828125,
+   "az": 290.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.55,
+   "conf": 0.9025737047195435,
+   "az": 337.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.1,
+   "conf": 0.8110260367393494,
+   "az": 37.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.51,
+   "conf": 0.7580374479293823,
+   "az": 291.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.85,
+   "conf": 0.7667285799980164,
+   "az": 31.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.96,
+   "conf": 0.851301372051239,
+   "az": 1.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.61,
+   "conf": 0.8974066376686096,
+   "az": 17.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.82,
+   "conf": 0.8681736588478088,
+   "az": 338.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.53,
+   "conf": 0.763297402977822,
+   "az": 339.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 14.47,
+   "conf": 0.7655292100279378,
+   "az": 12.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.26,
+   "conf": 0.749245654791581,
+   "az": 338.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.55,
+   "conf": 0.9105629242112363,
+   "az": 319.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 20.22,
+   "conf": 0.8495171094385503,
+   "az": 8.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.91,
+   "conf": 0.9218722745159728,
+   "az": 320.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 14.12,
+   "conf": 0.8666615267623147,
+   "az": 282.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.31,
+   "conf": 0.8451763213943969,
+   "az": 298.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 5.97,
+   "conf": 0.5876383622133171,
+   "az": 340.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 10.8,
+   "conf": 0.7829118361514831,
+   "az": 26.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.77,
+   "conf": 0.8287902950112443,
+   "az": 345.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.57,
+   "conf": 0.7794684561882302,
+   "az": 354.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.68,
+   "conf": 0.7809092434190454,
+   "az": 26.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.24,
+   "conf": 0.7684523575815302,
+   "az": 350.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.26,
+   "conf": 0.7550495144373456,
+   "az": 33.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.42,
+   "conf": 0.7924703152767341,
+   "az": 342.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.53,
+   "conf": 0.8772611021995544,
+   "az": 337.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.55,
+   "conf": 0.8594456315040588,
+   "az": 320.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.56,
+   "conf": 0.7374119758605957,
+   "az": 289.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 10.8,
+   "conf": 0.8667968511581421,
+   "az": 28.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.77,
+   "conf": 0.8880853652954102,
+   "az": 340.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.68,
+   "conf": 0.8878495097160339,
+   "az": 32.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.4,
+   "conf": 0.7382398843765259,
+   "az": 17.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.78,
+   "conf": 0.9030554890632629,
+   "az": 32.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.42,
+   "conf": 0.8789137601852417,
+   "az": 337.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.45,
+   "conf": 0.8119557741803464,
+   "az": 25.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.91,
+   "conf": 0.6902481571646452,
+   "az": 342.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.88,
+   "conf": 0.7807924824852188,
+   "az": 334.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 17.88,
+   "conf": 0.7308988385508338,
+   "az": 61.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 14.41,
+   "conf": 0.8058786831400497,
+   "az": 52.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.61,
+   "conf": 0.7565127856447638,
+   "az": 335.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 11.56,
+   "conf": 0.6190518071307061,
+   "az": 57.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 15.51,
+   "conf": 0.7512487888854147,
+   "az": 294.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 12.76,
+   "conf": 0.7303610454196712,
+   "az": 20.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.61,
+   "conf": 0.892442781571652,
+   "az": 319.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.74,
+   "conf": 0.7437593463095121,
+   "az": 26.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.59,
+   "conf": 0.8493055149147668,
+   "az": 343.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 12.07,
+   "conf": 0.7107834061184289,
+   "az": 56.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.42,
+   "conf": 0.709321800384118,
+   "az": 340.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.97,
+   "conf": 0.6541380551094282,
+   "az": 8.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 9.85,
+   "conf": 0.738332903361836,
+   "az": 44.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.79,
+   "conf": 0.7866388344956703,
+   "az": 359.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 10.83,
+   "conf": 0.7747499480818593,
+   "az": 44.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.07,
+   "conf": 0.7474091687186497,
+   "az": 5.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.14,
+   "conf": 0.7750055982372923,
+   "az": 332.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.3,
+   "conf": 0.9036784546891549,
+   "az": 351.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 19.86,
+   "conf": 0.6359603849960634,
+   "az": 51.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.25,
+   "conf": 0.720900633166551,
+   "az": 352.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.45,
+   "conf": 0.8980147242546082,
+   "az": 28.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.91,
+   "conf": 0.8475586175918579,
+   "az": 334.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 11.56,
+   "conf": 0.8293877840042114,
+   "az": 5.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.61,
+   "conf": 0.8931049704551697,
+   "az": 320.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.74,
+   "conf": 0.7934660911560059,
+   "az": 31.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.59,
+   "conf": 0.9046477675437927,
+   "az": 337.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.97,
+   "conf": 0.9030324220657349,
+   "az": 4.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.14,
+   "conf": 0.8613640666007996,
+   "az": 329.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.3,
+   "conf": 0.816291093826294,
+   "az": 348.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.7,
+   "conf": 0.8319742214156202,
+   "az": 334.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 17.16,
+   "conf": 0.805886592885804,
+   "az": 43.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.17,
+   "conf": 0.8403499820225452,
+   "az": 335.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.0,
+   "conf": 0.7063988888084378,
+   "az": 6.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 14.57,
+   "conf": 0.7601929102304071,
+   "az": 308.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.92,
+   "conf": 0.7360514542385864,
+   "az": 14.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 21.85,
+   "conf": 0.7129252685120233,
+   "az": 314.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 11.2,
+   "conf": 0.7277657024797188,
+   "az": 9.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.27,
+   "conf": 0.7783045069119856,
+   "az": 348.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 13.75,
+   "conf": 0.8271876917599505,
+   "az": 359.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 19.09,
+   "conf": 0.7398894771135414,
+   "az": 64.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.08,
+   "conf": 0.7196830657146908,
+   "az": 29.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 11.71,
+   "conf": 0.7755319396036354,
+   "az": 19.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.93,
+   "conf": 0.8106083346410469,
+   "az": 317.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.73,
+   "conf": 0.805103454254531,
+   "az": 356.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.34,
+   "conf": 0.8680510132075179,
+   "az": 319.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 15.47,
+   "conf": 0.7400048254810512,
+   "az": 33.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.65,
+   "conf": 0.8150773559606871,
+   "az": 340.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 18.24,
+   "conf": 0.7188213667770765,
+   "az": 64.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.7,
+   "conf": 0.7776934015119137,
+   "az": 339.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.11,
+   "conf": 0.7635916449046805,
+   "az": 31.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.7,
+   "conf": 0.7376308441162109,
+   "az": 331.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.0,
+   "conf": 0.8872935771942139,
+   "az": 7.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.59,
+   "conf": 0.719448983669281,
+   "az": 24.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.27,
+   "conf": 0.8570606708526611,
+   "az": 344.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.08,
+   "conf": 0.8452075719833374,
+   "az": 25.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.41,
+   "conf": 0.8944133520126343,
+   "az": 320.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.73,
+   "conf": 0.8688607811927795,
+   "az": 344.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.34,
+   "conf": 0.8799892663955688,
+   "az": 320.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.65,
+   "conf": 0.887678861618042,
+   "az": 339.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.86,
+   "conf": 0.8913429379463196,
+   "az": 28.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.86,
+   "conf": 0.8916656552614175,
+   "az": 311.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.26,
+   "conf": 0.8440985414022452,
+   "az": 325.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.55,
+   "conf": 0.8633696476732903,
+   "az": 316.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.06,
+   "conf": 0.6615427745795123,
+   "az": 345.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 10.43,
+   "conf": 0.7951800513485275,
+   "az": 310.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.02,
+   "conf": 0.7336230514187706,
+   "az": 356.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 10.13,
+   "conf": 0.9068785578208498,
+   "az": 319.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.57,
+   "conf": 0.7967701937380093,
+   "az": 30.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 5.14,
+   "conf": 0.6512095660499098,
+   "az": 339.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 5.98,
+   "conf": 0.6675645954503907,
+   "az": 358.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.16,
+   "conf": 0.7592545787640096,
+   "az": 23.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.38,
+   "conf": 0.9109291685473264,
+   "az": 319.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.61,
+   "conf": 0.8293700188081583,
+   "az": 10.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 15.69,
+   "conf": 0.7183120337354946,
+   "az": 307.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.9,
+   "conf": 0.7366915576971766,
+   "az": 355.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.19,
+   "conf": 0.7277930456321672,
+   "az": 25.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.86,
+   "conf": 0.8712907433509827,
+   "az": 312.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.36,
+   "conf": 0.9009005427360535,
+   "az": 326.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 14.32,
+   "conf": 0.8056527376174927,
+   "az": 338.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.85,
+   "conf": 0.7575017809867859,
+   "az": 5.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 10.13,
+   "conf": 0.9002017974853516,
+   "az": 320.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.57,
+   "conf": 0.8613060116767883,
+   "az": 32.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.38,
+   "conf": 0.8543240427970886,
+   "az": 320.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.9,
+   "conf": 0.72203528881073,
+   "az": 355.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 21.67,
+   "conf": 0.7838189005851746,
+   "az": 12.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.44,
+   "conf": 0.8159076050843845,
+   "az": 22.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.02,
+   "conf": 0.8167379876148575,
+   "az": 346.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 11.11,
+   "conf": 0.6998125263750239,
+   "az": 7.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 12.12,
+   "conf": 0.7278134066924268,
+   "az": 348.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.37,
+   "conf": 0.7221159640113879,
+   "az": 7.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.37,
+   "conf": 0.7312051130165997,
+   "az": 353.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.54,
+   "conf": 0.7847056894944836,
+   "az": 4.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.1,
+   "conf": 0.8949411919158599,
+   "az": 327.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.78,
+   "conf": 0.904630306711211,
+   "az": 342.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 16.12,
+   "conf": 0.7905186839894434,
+   "az": 284.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 13.89,
+   "conf": 0.8209593569294392,
+   "az": 343.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.97,
+   "conf": 0.7367503755385751,
+   "az": 9.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 14.7,
+   "conf": 0.7587930774466664,
+   "az": 55.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.51,
+   "conf": 0.7247131579585964,
+   "az": 4.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.59,
+   "conf": 0.7867086766139959,
+   "az": 343.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.8,
+   "conf": 0.8477372951709732,
+   "az": 335.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.17,
+   "conf": 0.6900896923935692,
+   "az": 4.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 11.07,
+   "conf": 0.6490507845075989,
+   "az": 43.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 18.67,
+   "conf": 0.6552543215027677,
+   "az": 291.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 17.26,
+   "conf": 0.7541716473177179,
+   "az": 82.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.11,
+   "conf": 0.741025282961592,
+   "az": 339.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.8,
+   "conf": 0.9184411485561813,
+   "az": 319.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.44,
+   "conf": 0.808268129825592,
+   "az": 17.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.59,
+   "conf": 0.7982427477836609,
+   "az": 342.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 11.11,
+   "conf": 0.7161537408828735,
+   "az": 334.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.37,
+   "conf": 0.7368981838226318,
+   "az": 3.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.1,
+   "conf": 0.8983368873596191,
+   "az": 328.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.78,
+   "conf": 0.879980206489563,
+   "az": 339.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.49,
+   "conf": 0.8008301854133606,
+   "az": 8.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.34,
+   "conf": 0.9082977771759033,
+   "az": 339.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.17,
+   "conf": 0.8581987619400024,
+   "az": 4.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.67,
+   "conf": 0.7965660095214844,
+   "az": 336.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom6",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.8,
+   "conf": 0.9185631275177002,
+   "az": 320.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.32,
+   "conf": 0.883932785822118,
+   "az": 304.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.24,
+   "conf": 0.7938255960301361,
+   "az": 293.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 18.69,
+   "conf": 0.7418504633853246,
+   "az": 36.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 24.34,
+   "conf": 0.8435906855746876,
+   "az": 299.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.78,
+   "conf": 0.8588450995915671,
+   "az": 344.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.61,
+   "conf": 0.847026257055507,
+   "az": 41.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 11.38,
+   "conf": 0.7306840525013347,
+   "az": 357.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.73,
+   "conf": 0.8342506757750611,
+   "az": 41.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.74,
+   "conf": 0.930563206679295,
+   "az": 334.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 19.45,
+   "conf": 0.7138144337037918,
+   "az": 50.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 12.71,
+   "conf": 0.7136544779550996,
+   "az": 41.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.61,
+   "conf": 0.8248023171580166,
+   "az": 328.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.73,
+   "conf": 0.8262162375634474,
+   "az": 346.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.1,
+   "conf": 0.8049491623779237,
+   "az": 19.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 22.54,
+   "conf": 0.7832137207692617,
+   "az": 3.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.74,
+   "conf": 0.7238343724729746,
+   "az": 301.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 23.04,
+   "conf": 0.6915857118317204,
+   "az": 32.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 27.08,
+   "conf": 0.802957753902908,
+   "az": 297.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.1,
+   "conf": 0.8641141055728733,
+   "az": 18.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.23,
+   "conf": 0.8112360278247911,
+   "az": 27.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.64,
+   "conf": 0.8756329257397347,
+   "az": 340.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.64,
+   "conf": 0.795266380361454,
+   "az": 43.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 20.64,
+   "conf": 0.733880712461622,
+   "az": 305.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.81,
+   "conf": 0.7908854392700239,
+   "az": 38.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.32,
+   "conf": 0.8400766253471375,
+   "az": 308.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.78,
+   "conf": 0.8488855957984924,
+   "az": 338.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.61,
+   "conf": 0.8742308020591736,
+   "az": 40.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.74,
+   "conf": 0.932651698589325,
+   "az": 333.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.1,
+   "conf": 0.832227885723114,
+   "az": 24.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.74,
+   "conf": 0.8097487688064575,
+   "az": 304.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.1,
+   "conf": 0.9010563492774963,
+   "az": 22.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.64,
+   "conf": 0.9135897159576416,
+   "az": 336.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.64,
+   "conf": 0.8280941247940063,
+   "az": 40.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.28,
+   "conf": 0.8357549728126158,
+   "az": 20.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.76,
+   "conf": 0.7653734029273269,
+   "az": 337.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.87,
+   "conf": 0.8081669952343536,
+   "az": 325.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.74,
+   "conf": 0.8912251146171988,
+   "az": 302.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.11,
+   "conf": 0.8259032211733229,
+   "az": 19.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 25.15,
+   "conf": 0.7539510250411725,
+   "az": 293.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.94,
+   "conf": 0.8942568533946982,
+   "az": 66.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 17.48,
+   "conf": 0.6491971019667132,
+   "az": 6.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 24.05,
+   "conf": 0.741838343992116,
+   "az": 348.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.12,
+   "conf": 0.73546744337187,
+   "az": 63.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.36,
+   "conf": 0.7384425181466534,
+   "az": 40.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.23,
+   "conf": 0.88091159687377,
+   "az": 70.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.12,
+   "conf": 0.7387123226540397,
+   "az": 53.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.63,
+   "conf": 0.7721237519963594,
+   "az": 37.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 15.67,
+   "conf": 0.6875401359404947,
+   "az": 310.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.74,
+   "conf": 0.7930540157570879,
+   "az": 47.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.5,
+   "conf": 0.8643895801921267,
+   "az": 340.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.28,
+   "conf": 0.796278715133667,
+   "az": 24.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.76,
+   "conf": 0.8927850723266602,
+   "az": 333.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.74,
+   "conf": 0.825867772102356,
+   "az": 304.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.11,
+   "conf": 0.8564661741256714,
+   "az": 23.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.94,
+   "conf": 0.8465874195098877,
+   "az": 60.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.36,
+   "conf": 0.854631245136261,
+   "az": 41.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.23,
+   "conf": 0.754555881023407,
+   "az": 66.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.2,
+   "conf": 0.9100861549377441,
+   "az": 38.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.5,
+   "conf": 0.9217280149459839,
+   "az": 331.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.98,
+   "conf": 0.885543704032898,
+   "az": 350.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.91,
+   "conf": 0.9251981706304983,
+   "az": 342.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.41,
+   "conf": 0.8046397854298943,
+   "az": 332.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 25.93,
+   "conf": 0.7682533072049046,
+   "az": 319.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.41,
+   "conf": 0.8633748736217733,
+   "az": 327.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 25.23,
+   "conf": 0.8037376301299284,
+   "az": 54.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.42,
+   "conf": 0.8189602131691952,
+   "az": 345.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 23.5,
+   "conf": 0.75547643224591,
+   "az": 322.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.03,
+   "conf": 0.8422105877567498,
+   "az": 10.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 20.55,
+   "conf": 0.7982079710023333,
+   "az": 288.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.07,
+   "conf": 0.8251588709147848,
+   "az": 30.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.41,
+   "conf": 0.7705924333047607,
+   "az": 302.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.0,
+   "conf": 0.8775690080890934,
+   "az": 64.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 15.87,
+   "conf": 0.7323012061285729,
+   "az": 359.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 14.26,
+   "conf": 0.7311179980573712,
+   "az": 64.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.95,
+   "conf": 0.8593659346728527,
+   "az": 18.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.85,
+   "conf": 0.956894412997739,
+   "az": 346.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.04,
+   "conf": 0.813804673758391,
+   "az": 316.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.12,
+   "conf": 0.7521726627987464,
+   "az": 335.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.52,
+   "conf": 0.8554821702834295,
+   "az": 19.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 20.47,
+   "conf": 0.6752519671603625,
+   "az": 308.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.37,
+   "conf": 0.799370117368407,
+   "az": 22.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.72,
+   "conf": 0.8720216050435848,
+   "az": 319.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.36,
+   "conf": 0.8421841458922853,
+   "az": 38.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.07,
+   "conf": 0.8226808845151073,
+   "az": 71.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.81,
+   "conf": 0.7446771509376156,
+   "az": 62.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 11.05,
+   "conf": 0.5527617648784328,
+   "az": 354.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 9.23,
+   "conf": 0.7851598643777087,
+   "az": 76.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 12.96,
+   "conf": 0.7329043838937125,
+   "az": 61.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.91,
+   "conf": 0.907163143157959,
+   "az": 335.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.5,
+   "conf": 0.8832336664199829,
+   "az": 354.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.03,
+   "conf": 0.8336860537528992,
+   "az": 13.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.55,
+   "conf": 0.8821662664413452,
+   "az": 30.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.41,
+   "conf": 0.7079654335975647,
+   "az": 300.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.0,
+   "conf": 0.8226457834243774,
+   "az": 60.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.95,
+   "conf": 0.7865415811538696,
+   "az": 26.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.85,
+   "conf": 0.9008467793464661,
+   "az": 345.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.95,
+   "conf": 0.8597067594528198,
+   "az": 322.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.52,
+   "conf": 0.9172084331512451,
+   "az": 22.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.72,
+   "conf": 0.868087112903595,
+   "az": 315.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.36,
+   "conf": 0.8087106943130493,
+   "az": 43.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.81,
+   "conf": 0.8388378620147705,
+   "az": 60.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.04,
+   "conf": 0.8244136740136271,
+   "az": 42.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.15,
+   "conf": 0.8593105205491561,
+   "az": 71.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 17.48,
+   "conf": 0.7450722528638837,
+   "az": 50.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.61,
+   "conf": 0.6643988794861664,
+   "az": 33.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 10.9,
+   "conf": 0.7463183543096953,
+   "az": 1.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.4,
+   "conf": 0.8256359089333971,
+   "az": 41.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.37,
+   "conf": 0.8273949415937324,
+   "az": 17.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 22.47,
+   "conf": 0.7711838795192951,
+   "az": 304.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 18.47,
+   "conf": 0.7618407035810036,
+   "az": 17.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.2,
+   "conf": 0.8144476259325063,
+   "az": 63.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.69,
+   "conf": 0.6818110720061017,
+   "az": 33.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.23,
+   "conf": 0.892959831907544,
+   "az": 15.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.94,
+   "conf": 0.799492718003351,
+   "az": 27.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.1,
+   "conf": 0.5782057170591061,
+   "az": 52.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.87,
+   "conf": 0.8288735418940477,
+   "az": 41.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.64,
+   "conf": 0.8048967541660513,
+   "az": 346.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.04,
+   "conf": 0.901971161365509,
+   "az": 40.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.15,
+   "conf": 0.8206868171691895,
+   "az": 62.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.11,
+   "conf": 0.815401554107666,
+   "az": 40.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.37,
+   "conf": 0.8489593863487244,
+   "az": 26.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 22.47,
+   "conf": 0.8087049126625061,
+   "az": 312.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.2,
+   "conf": 0.8395150303840637,
+   "az": 61.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.69,
+   "conf": 0.8867791295051575,
+   "az": 38.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.23,
+   "conf": 0.9107078909873962,
+   "az": 20.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.87,
+   "conf": 0.9031744003295898,
+   "az": 42.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.64,
+   "conf": 0.8352101445198059,
+   "az": 336.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.17,
+   "conf": 0.8157446471241923,
+   "az": 44.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 20.45,
+   "conf": 0.8308870149565257,
+   "az": 286.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 17.54,
+   "conf": 0.8215410804545674,
+   "az": 66.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.83,
+   "conf": 0.7904791408853428,
+   "az": 38.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.37,
+   "conf": 0.8731987680963372,
+   "az": 73.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.38,
+   "conf": 0.8768648057958428,
+   "az": 336.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.05,
+   "conf": 0.8144437280887373,
+   "az": 344.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 8.62,
+   "conf": 0.8423856791088616,
+   "az": 65.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.94,
+   "conf": 0.8454908177972931,
+   "az": 80.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.43,
+   "conf": 0.6864017745513092,
+   "az": 39.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 20.37,
+   "conf": 0.7620333190551211,
+   "az": 286.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 16.03,
+   "conf": 0.776207114428877,
+   "az": 294.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.07,
+   "conf": 0.9299997757531328,
+   "az": 333.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 26.45,
+   "conf": 0.842916281461015,
+   "az": 341.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 26.0,
+   "conf": 0.9318217034505747,
+   "az": 323.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.69,
+   "conf": 0.8510101204487404,
+   "az": 63.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.39,
+   "conf": 0.825863495305875,
+   "az": 78.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.51,
+   "conf": 0.7592347417695794,
+   "az": 65.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.51,
+   "conf": 0.8333699551607813,
+   "az": 39.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 15.66,
+   "conf": 0.6869078606621748,
+   "az": 311.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.57,
+   "conf": 0.8011588311506492,
+   "az": 47.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.92,
+   "conf": 0.8053306062020218,
+   "az": 11.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.17,
+   "conf": 0.8983907103538513,
+   "az": 44.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.38,
+   "conf": 0.898533284664154,
+   "az": 334.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 8.62,
+   "conf": 0.765841007232666,
+   "az": 54.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.94,
+   "conf": 0.7258406281471252,
+   "az": 75.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.43,
+   "conf": 0.8975865244865417,
+   "az": 41.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.07,
+   "conf": 0.9327108860015869,
+   "az": 334.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 26.0,
+   "conf": 0.7706562280654907,
+   "az": 319.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.69,
+   "conf": 0.7895801067352295,
+   "az": 62.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.51,
+   "conf": 0.8839712738990784,
+   "az": 43.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.92,
+   "conf": 0.8778373599052429,
+   "az": 21.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.02,
+   "conf": 0.8947579031643315,
+   "az": 333.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.93,
+   "conf": 0.8389802760479617,
+   "az": 65.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.81,
+   "conf": 0.8771128982032999,
+   "az": 22.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 24.02,
+   "conf": 0.7694175502142709,
+   "az": 9.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.19,
+   "conf": 0.7269932878981051,
+   "az": 48.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 15.43,
+   "conf": 0.787722560000687,
+   "az": 294.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 8.41,
+   "conf": 0.7853197772258695,
+   "az": 38.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.87,
+   "conf": 0.8831166741915565,
+   "az": 338.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.67,
+   "conf": 0.8614748982217649,
+   "az": 328.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.0,
+   "conf": 0.8150999288277223,
+   "az": 340.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.72,
+   "conf": 0.804258599048292,
+   "az": 43.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.56,
+   "conf": 0.787686175474002,
+   "az": 56.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.05,
+   "conf": 0.8574263712614526,
+   "az": 43.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.9,
+   "conf": 0.8755181096834125,
+   "az": 16.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.4,
+   "conf": 0.8631570717278253,
+   "az": 343.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.48,
+   "conf": 0.8524602365296737,
+   "az": 334.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 7.15,
+   "conf": 0.8787376543166995,
+   "az": 45.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.02,
+   "conf": 0.9210163354873657,
+   "az": 334.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.39,
+   "conf": 0.7194973230361938,
+   "az": 59.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.81,
+   "conf": 0.8944830298423767,
+   "az": 25.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.5,
+   "conf": 0.796395480632782,
+   "az": 47.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.43,
+   "conf": 0.835742175579071,
+   "az": 38.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.87,
+   "conf": 0.9268937706947327,
+   "az": 334.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.05,
+   "conf": 0.8147941827774048,
+   "az": 47.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.9,
+   "conf": 0.9164632558822632,
+   "az": 22.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.4,
+   "conf": 0.8582155704498291,
+   "az": 336.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 7.15,
+   "conf": 0.7586794495582581,
+   "az": 360.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.27,
+   "conf": 0.8965379064516686,
+   "az": 337.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.69,
+   "conf": 0.8242223419946519,
+   "az": 349.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.49,
+   "conf": 0.8030044631404689,
+   "az": 327.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.55,
+   "conf": 0.8647466112008269,
+   "az": 337.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.87,
+   "conf": 0.8352634962662612,
+   "az": 40.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.35,
+   "conf": 0.7472170193308288,
+   "az": 54.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 10.12,
+   "conf": 0.7068071679391875,
+   "az": 65.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.95,
+   "conf": 0.6980615998677498,
+   "az": 340.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 24.28,
+   "conf": 0.7250827754193039,
+   "az": 16.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.29,
+   "conf": 0.915955606464817,
+   "az": 337.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.17,
+   "conf": 0.8588802313556119,
+   "az": 42.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 16.87,
+   "conf": 0.7713508307943024,
+   "az": 283.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.73,
+   "conf": 0.85796751266126,
+   "az": 317.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.06,
+   "conf": 0.8166666222001259,
+   "az": 335.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.01,
+   "conf": 0.897517339217887,
+   "az": 347.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.0,
+   "conf": 0.8016946816842395,
+   "az": 6.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.05,
+   "conf": 0.8964938861528148,
+   "az": 336.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.28,
+   "conf": 0.81052847293982,
+   "az": 42.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.47,
+   "conf": 0.8929310972129763,
+   "az": 73.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.99,
+   "conf": 0.7371336947080586,
+   "az": 61.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 17.73,
+   "conf": 0.6931512922769808,
+   "az": 281.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.27,
+   "conf": 0.9133346676826477,
+   "az": 334.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 24.11,
+   "conf": 0.8930975198745728,
+   "az": 311.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.55,
+   "conf": 0.9346604943275452,
+   "az": 333.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.87,
+   "conf": 0.8913409113883972,
+   "az": 43.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 16.35,
+   "conf": 0.8203591704368591,
+   "az": 332.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 24.28,
+   "conf": 0.8620937466621399,
+   "az": 18.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.29,
+   "conf": 0.9028198719024658,
+   "az": 336.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.17,
+   "conf": 0.891206681728363,
+   "az": 43.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.73,
+   "conf": 0.8937563300132751,
+   "az": 317.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.06,
+   "conf": 0.8720070123672485,
+   "az": 332.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.01,
+   "conf": 0.8544121384620667,
+   "az": 344.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.0,
+   "conf": 0.7856741547584534,
+   "az": 13.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.05,
+   "conf": 0.8929802179336548,
+   "az": 338.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.28,
+   "conf": 0.8634006977081299,
+   "az": 48.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.47,
+   "conf": 0.7725287079811096,
+   "az": 65.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.15,
+   "conf": 0.8624899303615694,
+   "az": 79.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.94,
+   "conf": 0.7536100788895663,
+   "az": 64.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.93,
+   "conf": 0.8743272792526195,
+   "az": 25.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.62,
+   "conf": 0.9260048950174301,
+   "az": 342.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 9.83,
+   "conf": 0.7069433670363053,
+   "az": 50.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.5,
+   "conf": 0.935005559797407,
+   "az": 333.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 16.92,
+   "conf": 0.7330321024859779,
+   "az": 4.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.29,
+   "conf": 0.8455269115664104,
+   "az": 349.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.72,
+   "conf": 0.7388922533295881,
+   "az": 327.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.66,
+   "conf": 0.815550029238194,
+   "az": 19.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.24,
+   "conf": 0.8354456953378927,
+   "az": 41.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.56,
+   "conf": 0.9158765288664118,
+   "az": 334.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.2,
+   "conf": 0.8400929819907563,
+   "az": 18.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.68,
+   "conf": 0.7628116844817927,
+   "az": 352.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.99,
+   "conf": 0.7058152988733147,
+   "az": 331.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.26,
+   "conf": 0.7518790310691266,
+   "az": 339.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.65,
+   "conf": 0.8909204859531531,
+   "az": 2.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.45,
+   "conf": 0.8979372424432798,
+   "az": 281.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.5,
+   "conf": 0.7929117129850486,
+   "az": 63.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.15,
+   "conf": 0.8773115543692638,
+   "az": 73.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.87,
+   "conf": 0.7283454492804727,
+   "az": 61.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.93,
+   "conf": 0.7921400635133429,
+   "az": 341.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.49,
+   "conf": 0.8500344709829175,
+   "az": 349.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.15,
+   "conf": 0.7063477635383606,
+   "az": 67.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.28,
+   "conf": 0.7346610426902771,
+   "az": 55.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.93,
+   "conf": 0.8865683674812317,
+   "az": 25.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.62,
+   "conf": 0.8958759307861328,
+   "az": 336.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.66,
+   "conf": 0.8916434049606323,
+   "az": 14.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.24,
+   "conf": 0.8296613693237305,
+   "az": 40.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.56,
+   "conf": 0.920157253742218,
+   "az": 333.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.2,
+   "conf": 0.8941713571548462,
+   "az": 22.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.29,
+   "conf": 0.7617711424827576,
+   "az": 12.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.43,
+   "conf": 0.8021588325500488,
+   "az": 348.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.89,
+   "conf": 0.9056442379951477,
+   "az": 330.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.65,
+   "conf": 0.9154261350631714,
+   "az": 356.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.45,
+   "conf": 0.7532491683959961,
+   "az": 286.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.22,
+   "conf": 0.7992221117019653,
+   "az": 59.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 24.93,
+   "conf": 0.7956384420394897,
+   "az": 25.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.08,
+   "conf": 0.8583197593688965,
+   "az": 334.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.91,
+   "conf": 0.8700622176427958,
+   "az": 40.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 14.68,
+   "conf": 0.8180818128383212,
+   "az": 15.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.37,
+   "conf": 0.7859958583942973,
+   "az": 25.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.8,
+   "conf": 0.7473501248536389,
+   "az": 10.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.91,
+   "conf": 0.9006222858533116,
+   "az": 346.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.87,
+   "conf": 0.8526964935283214,
+   "az": 32.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.08,
+   "conf": 0.7896118996288098,
+   "az": 50.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 16.17,
+   "conf": 0.7807967759313983,
+   "az": 15.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.97,
+   "conf": 0.8873231872644303,
+   "az": 303.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 20.11,
+   "conf": 0.7880199284225651,
+   "az": 45.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.55,
+   "conf": 0.8758679321286937,
+   "az": 298.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.59,
+   "conf": 0.8035036544008723,
+   "az": 341.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.83,
+   "conf": 0.8903631352733372,
+   "az": 3.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.45,
+   "conf": 0.6606471797414182,
+   "az": 53.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.37,
+   "conf": 0.8260191478209288,
+   "az": 42.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 6.91,
+   "conf": 0.752718670276617,
+   "az": 303.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.62,
+   "conf": 0.7437245110113678,
+   "az": 46.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.35,
+   "conf": 0.879330175291572,
+   "az": 342.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 23.04,
+   "conf": 0.7164145324684393,
+   "az": 58.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.64,
+   "conf": 0.8230820089990177,
+   "az": 17.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.22,
+   "conf": 0.8435486553053682,
+   "az": 25.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.91,
+   "conf": 0.9232400059700012,
+   "az": 40.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 14.68,
+   "conf": 0.8803480863571167,
+   "az": 19.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.91,
+   "conf": 0.8743938207626343,
+   "az": 343.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.87,
+   "conf": 0.8582054972648621,
+   "az": 36.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.08,
+   "conf": 0.83430016040802,
+   "az": 46.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.55,
+   "conf": 0.8188484311103821,
+   "az": 33.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.97,
+   "conf": 0.7343698740005493,
+   "az": 309.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.59,
+   "conf": 0.8995227217674255,
+   "az": 331.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.85,
+   "conf": 0.8501319885253906,
+   "az": 349.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.83,
+   "conf": 0.897386908531189,
+   "az": 0.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.45,
+   "conf": 0.8092645406723022,
+   "az": 40.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.35,
+   "conf": 0.8981171250343323,
+   "az": 336.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.64,
+   "conf": 0.8145882487297058,
+   "az": 27.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.2,
+   "conf": 0.9105219521606214,
+   "az": 340.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.81,
+   "conf": 0.8381702937510904,
+   "az": 64.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.14,
+   "conf": 0.9114267776228562,
+   "az": 318.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.64,
+   "conf": 0.8202758862355435,
+   "az": 335.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.19,
+   "conf": 0.9019931922491352,
+   "az": 348.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.26,
+   "conf": 0.8748304548750468,
+   "az": 16.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.9,
+   "conf": 0.8161909505355853,
+   "az": 49.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 16.73,
+   "conf": 0.7512837540392664,
+   "az": 16.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 15.03,
+   "conf": 0.8054683245815369,
+   "az": 292.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.35,
+   "conf": 0.8980300647186956,
+   "az": 69.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 24.69,
+   "conf": 0.8399945835331363,
+   "az": 336.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.42,
+   "conf": 0.8251388980453138,
+   "az": 349.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.99,
+   "conf": 0.8290125175443029,
+   "az": 340.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.65,
+   "conf": 0.8172968061956359,
+   "az": 68.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.27,
+   "conf": 0.7486053704612741,
+   "az": 53.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 11.43,
+   "conf": 0.7031161641952033,
+   "az": 37.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 16.09,
+   "conf": 0.7244235671745278,
+   "az": 1.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.13,
+   "conf": 0.8017879963652196,
+   "az": 41.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.19,
+   "conf": 0.9139204179145936,
+   "az": 73.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.2,
+   "conf": 0.9051393866539001,
+   "az": 336.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.14,
+   "conf": 0.8904464840888977,
+   "az": 316.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 19.64,
+   "conf": 0.8561715483665466,
+   "az": 332.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.19,
+   "conf": 0.8380357027053833,
+   "az": 346.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.26,
+   "conf": 0.8903619647026062,
+   "az": 20.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.9,
+   "conf": 0.8317434787750244,
+   "az": 47.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.35,
+   "conf": 0.7974771857261658,
+   "az": 59.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 24.69,
+   "conf": 0.9193791151046753,
+   "az": 334.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.65,
+   "conf": 0.7861546277999878,
+   "az": 62.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 11.43,
+   "conf": 0.7043728232383728,
+   "az": 75.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.03,
+   "conf": 0.7695422768592834,
+   "az": 66.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.96,
+   "conf": 0.8643798828125,
+   "az": 43.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 7.83,
+   "conf": 0.8081544637680054,
+   "az": 350.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.76,
+   "conf": 0.9118761420249939,
+   "az": 37.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "LivingRoom8",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.19,
+   "conf": 0.7793387770652771,
+   "az": 75.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 8.06,
+   "conf": 0.6583029066969656,
+   "az": 290.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.6,
+   "conf": 0.7613734319771455,
+   "az": 31.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.99,
+   "conf": 0.7240145661065105,
+   "az": 6.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.81,
+   "conf": 0.879070398400524,
+   "az": 324.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.61,
+   "conf": 0.8670004819012427,
+   "az": 333.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 28.38,
+   "conf": 0.9376398056090868,
+   "az": 7.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.4,
+   "conf": 0.8530010433792211,
+   "az": 300.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 10.23,
+   "conf": 0.7707508516958771,
+   "az": 5.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.38,
+   "conf": 0.8904730460776054,
+   "az": 298.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.45,
+   "conf": 0.8656741360306,
+   "az": 355.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 29.11,
+   "conf": 0.859218543698038,
+   "az": 300.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.56,
+   "conf": 0.7849135960467235,
+   "az": 334.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.45,
+   "conf": 0.7791048306078657,
+   "az": 313.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 7.18,
+   "conf": 0.8066603422948585,
+   "az": 327.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.6,
+   "conf": 0.8801647424697876,
+   "az": 31.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.81,
+   "conf": 0.886006772518158,
+   "az": 324.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 28.38,
+   "conf": 0.9236531853675842,
+   "az": 8.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.4,
+   "conf": 0.7731907367706299,
+   "az": 297.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 10.23,
+   "conf": 0.9024081826210022,
+   "az": 3.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.38,
+   "conf": 0.7905628085136414,
+   "az": 293.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.14,
+   "conf": 0.8630090951919556,
+   "az": 307.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.97,
+   "conf": 0.7531951069831848,
+   "az": 298.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.45,
+   "conf": 0.9276784658432007,
+   "az": 355.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 29.11,
+   "conf": 0.7739251255989075,
+   "az": 296.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.56,
+   "conf": 0.8720391988754272,
+   "az": 322.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.81,
+   "conf": 0.8410676313256543,
+   "az": 33.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.73,
+   "conf": 0.8812587597709818,
+   "az": 0.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 26.54,
+   "conf": 0.8420503664043097,
+   "az": 9.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.24,
+   "conf": 0.9027314362389008,
+   "az": 297.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 11.23,
+   "conf": 0.7552822613982084,
+   "az": 330.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.41,
+   "conf": 0.794246857986273,
+   "az": 346.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 31.89,
+   "conf": 0.8753577397007898,
+   "az": 7.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 16.97,
+   "conf": 0.7836052202267825,
+   "az": 326.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 28.95,
+   "conf": 0.7653866388738997,
+   "az": 10.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.44,
+   "conf": 0.817032055522944,
+   "az": 318.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 6.86,
+   "conf": 0.7345228670636408,
+   "az": 340.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.03,
+   "conf": 0.7822407960656432,
+   "az": 1.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 28.48,
+   "conf": 0.8894423800482144,
+   "az": 300.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 9.67,
+   "conf": 0.7382859477741489,
+   "az": 326.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 14.41,
+   "conf": 0.8787768943422251,
+   "az": 349.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.38,
+   "conf": 0.9343183004584971,
+   "az": 8.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.81,
+   "conf": 0.9103082418441772,
+   "az": 34.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.73,
+   "conf": 0.9049236178398132,
+   "az": 6.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.24,
+   "conf": 0.7497535943984985,
+   "az": 292.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.62,
+   "conf": 0.7805099487304688,
+   "az": 340.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 31.89,
+   "conf": 0.8748643398284912,
+   "az": 7.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.44,
+   "conf": 0.8948675394058228,
+   "az": 320.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.84,
+   "conf": 0.7843899726867676,
+   "az": 293.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.72,
+   "conf": 0.9208956956863403,
+   "az": 342.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.75,
+   "conf": 0.9062888622283936,
+   "az": 6.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 28.48,
+   "conf": 0.7669951915740967,
+   "az": 304.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 28.67,
+   "conf": 0.7810612320899963,
+   "az": 294.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 14.41,
+   "conf": 0.9060941934585571,
+   "az": 348.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.38,
+   "conf": 0.9085885286331177,
+   "az": 11.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.34,
+   "conf": 0.9086507351915037,
+   "az": 298.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 6.47,
+   "conf": 0.7172655158496525,
+   "az": 338.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 9.47,
+   "conf": 0.8264369594143504,
+   "az": 2.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.91,
+   "conf": 0.8871060170547038,
+   "az": 322.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 33.7,
+   "conf": 0.8941650436399834,
+   "az": 6.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.27,
+   "conf": 0.8363549270504337,
+   "az": 331.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 9.21,
+   "conf": 0.806297008510981,
+   "az": 357.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.59,
+   "conf": 0.8238132838081167,
+   "az": 330.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.69,
+   "conf": 0.8546019204039033,
+   "az": 18.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.66,
+   "conf": 0.8775391602508111,
+   "az": 344.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.46,
+   "conf": 0.8949145173230348,
+   "az": 300.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.75,
+   "conf": 0.8802730053393195,
+   "az": 336.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 17.01,
+   "conf": 0.8051722336299322,
+   "az": 358.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 30.11,
+   "conf": 0.8913682475755343,
+   "az": 302.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 28.8,
+   "conf": 0.829752580720261,
+   "az": 4.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.18,
+   "conf": 0.778509768697783,
+   "az": 299.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.34,
+   "conf": 0.7708737254142761,
+   "az": 295.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.41,
+   "conf": 0.7761754989624023,
+   "az": 304.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 26.92,
+   "conf": 0.7833275198936462,
+   "az": 293.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 30.29,
+   "conf": 0.9138463735580444,
+   "az": 330.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 9.47,
+   "conf": 0.8505429029464722,
+   "az": 358.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.91,
+   "conf": 0.900331437587738,
+   "az": 323.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 33.7,
+   "conf": 0.9233293533325195,
+   "az": 6.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.27,
+   "conf": 0.8884102702140808,
+   "az": 328.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 9.21,
+   "conf": 0.8441030383110046,
+   "az": 356.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.59,
+   "conf": 0.9123893976211548,
+   "az": 329.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.69,
+   "conf": 0.8759351372718811,
+   "az": 26.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.66,
+   "conf": 0.8977727293968201,
+   "az": 340.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.46,
+   "conf": 0.7475872039794922,
+   "az": 304.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.75,
+   "conf": 0.9088063836097717,
+   "az": 335.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 14.19,
+   "conf": 0.9242532849311829,
+   "az": 348.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.82,
+   "conf": 0.8678189516067505,
+   "az": 11.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 30.11,
+   "conf": 0.7636234760284424,
+   "az": 301.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.98,
+   "conf": 0.8236278844965653,
+   "az": 331.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.79,
+   "conf": 0.7196755661553416,
+   "az": 31.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.58,
+   "conf": 0.7126857725807407,
+   "az": 11.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 4.61,
+   "conf": 0.822987936420648,
+   "az": 302.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 9.04,
+   "conf": 0.832280125470518,
+   "az": 355.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.65,
+   "conf": 0.7859443348733206,
+   "az": 302.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.27,
+   "conf": 0.8152344434379308,
+   "az": 6.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.29,
+   "conf": 0.750716889313906,
+   "az": 318.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 16.11,
+   "conf": 0.7512158594298731,
+   "az": 305.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.55,
+   "conf": 0.8173559444907901,
+   "az": 314.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.16,
+   "conf": 0.9014001917768253,
+   "az": 349.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 19.54,
+   "conf": 0.804744186660032,
+   "az": 64.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.64,
+   "conf": 0.7280724443378028,
+   "az": 4.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.16,
+   "conf": 0.9241917158846809,
+   "az": 353.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 14.05,
+   "conf": 0.8527980897403381,
+   "az": 318.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.41,
+   "conf": 0.7853574260515795,
+   "az": 344.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.76,
+   "conf": 0.751324203691126,
+   "az": 331.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.73,
+   "conf": 0.7104868759422073,
+   "az": 353.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.96,
+   "conf": 0.8657964206800531,
+   "az": 298.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 9.96,
+   "conf": 0.795928520022009,
+   "az": 354.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.98,
+   "conf": 0.9164933562278748,
+   "az": 331.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.79,
+   "conf": 0.9275861978530884,
+   "az": 32.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.58,
+   "conf": 0.8704365491867065,
+   "az": 21.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 12.63,
+   "conf": 0.9212435483932495,
+   "az": 5.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 29.66,
+   "conf": 0.8034129738807678,
+   "az": 292.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.85,
+   "conf": 0.7505042552947998,
+   "az": 305.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 9.04,
+   "conf": 0.9094104170799255,
+   "az": 358.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 28.53,
+   "conf": 0.7855620980262756,
+   "az": 294.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.27,
+   "conf": 0.905337393283844,
+   "az": 8.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.29,
+   "conf": 0.8561803698539734,
+   "az": 322.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.16,
+   "conf": 0.9299125671386719,
+   "az": 354.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 14.05,
+   "conf": 0.9202024340629578,
+   "az": 320.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 15.41,
+   "conf": 0.9389838576316833,
+   "az": 335.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 22.52,
+   "conf": 0.8672625422477722,
+   "az": 353.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.96,
+   "conf": 0.7866988778114319,
+   "az": 294.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 9.96,
+   "conf": 0.9130573272705078,
+   "az": 357.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.36,
+   "conf": 0.831045741591686,
+   "az": 336.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 28.09,
+   "conf": 0.8605030183963528,
+   "az": 306.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 30.96,
+   "conf": 0.8236921907772242,
+   "az": 24.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.18,
+   "conf": 0.796163615931423,
+   "az": 3.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.74,
+   "conf": 0.856020947432198,
+   "az": 328.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 20.35,
+   "conf": 0.7590867526594507,
+   "az": 307.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.47,
+   "conf": 0.8986573688998376,
+   "az": 331.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.18,
+   "conf": 0.879019834592124,
+   "az": 302.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.72,
+   "conf": 0.8113333923671526,
+   "az": 34.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.91,
+   "conf": 0.901106155099905,
+   "az": 315.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.89,
+   "conf": 0.7667588486381175,
+   "az": 334.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 29.84,
+   "conf": 0.9178751386402179,
+   "az": 7.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 28.36,
+   "conf": 0.7580308907213481,
+   "az": 306.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.34,
+   "conf": 0.7469720883429526,
+   "az": 2.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 28.26,
+   "conf": 0.7769782984973556,
+   "az": 32.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.56,
+   "conf": 0.7420005344338544,
+   "az": 6.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 11.32,
+   "conf": 0.8034127057327927,
+   "az": 327.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.53,
+   "conf": 0.8854889434940166,
+   "az": 294.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 6.78,
+   "conf": 0.7552001530414288,
+   "az": 359.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.46,
+   "conf": 0.8729657950091869,
+   "az": 296.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 7.39,
+   "conf": 0.8390661084688824,
+   "az": 358.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.36,
+   "conf": 0.8880861401557922,
+   "az": 333.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.67,
+   "conf": 0.8092380166053772,
+   "az": 311.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 30.96,
+   "conf": 0.9199681878089905,
+   "az": 27.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.74,
+   "conf": 0.8790028691291809,
+   "az": 329.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 24.18,
+   "conf": 0.8080794215202332,
+   "az": 293.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.72,
+   "conf": 0.9219987988471985,
+   "az": 35.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.91,
+   "conf": 0.8907579779624939,
+   "az": 312.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.89,
+   "conf": 0.9125543832778931,
+   "az": 330.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 29.84,
+   "conf": 0.9339388608932495,
+   "az": 12.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 28.26,
+   "conf": 0.8844700455665588,
+   "az": 33.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.56,
+   "conf": 0.7775783538818359,
+   "az": 19.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 11.32,
+   "conf": 0.8432396054267883,
+   "az": 1.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.53,
+   "conf": 0.7460147738456726,
+   "az": 295.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 6.78,
+   "conf": 0.8822308778762817,
+   "az": 1.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.46,
+   "conf": 0.7586396336555481,
+   "az": 304.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 7.39,
+   "conf": 0.8232811689376831,
+   "az": 1.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 7.1,
+   "conf": 0.7629152833279623,
+   "az": 308.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.39,
+   "conf": 0.8753118567147289,
+   "az": 321.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.45,
+   "conf": 0.7132077935463392,
+   "az": 12.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.87,
+   "conf": 0.8232723110021047,
+   "az": 347.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.5,
+   "conf": 0.7696827364112236,
+   "az": 326.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.95,
+   "conf": 0.7781432192139845,
+   "az": 17.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 12.11,
+   "conf": 0.8785471887698867,
+   "az": 290.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.42,
+   "conf": 0.7302098218578951,
+   "az": 318.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.62,
+   "conf": 0.7786145574754937,
+   "az": 26.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.16,
+   "conf": 0.695216566937893,
+   "az": 359.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 4.94,
+   "conf": 0.6983026176915528,
+   "az": 347.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.62,
+   "conf": 0.8655028437069284,
+   "az": 318.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.61,
+   "conf": 0.8252674716723688,
+   "az": 326.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.06,
+   "conf": 0.8399590273719316,
+   "az": 14.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 8.26,
+   "conf": 0.8871140072554262,
+   "az": 352.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 9.87,
+   "conf": 0.8511639341183033,
+   "az": 338.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 7.1,
+   "conf": 0.7799699902534485,
+   "az": 315.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.45,
+   "conf": 0.7209568619728088,
+   "az": 26.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.87,
+   "conf": 0.8993013501167297,
+   "az": 348.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.96,
+   "conf": 0.9078313112258911,
+   "az": 328.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.95,
+   "conf": 0.8184703588485718,
+   "az": 28.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 13.11,
+   "conf": 0.9139634370803833,
+   "az": 17.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.25,
+   "conf": 0.7829240560531616,
+   "az": 291.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.62,
+   "conf": 0.920198380947113,
+   "az": 29.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.82,
+   "conf": 0.8178986310958862,
+   "az": 20.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 15.96,
+   "conf": 0.7411337494850159,
+   "az": 4.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 4.94,
+   "conf": 0.8874324560165405,
+   "az": 320.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.06,
+   "conf": 0.9183171987533569,
+   "az": 16.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 8.26,
+   "conf": 0.8930352926254272,
+   "az": 357.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.33,
+   "conf": 0.9192448258399963,
+   "az": 332.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.96,
+   "conf": 0.810826190576323,
+   "az": 332.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.0,
+   "conf": 0.8406299462272009,
+   "az": 10.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 19.89,
+   "conf": 0.7319821380337326,
+   "az": 303.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.18,
+   "conf": 0.7700773229108449,
+   "az": 7.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.75,
+   "conf": 0.8946646073436209,
+   "az": 344.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 11.45,
+   "conf": 0.7440381541648738,
+   "az": 305.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.62,
+   "conf": 0.8577248322253401,
+   "az": 349.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 14.62,
+   "conf": 0.8636847247610036,
+   "az": 338.4
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.42,
+   "conf": 0.9207554122433814,
+   "az": 7.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 20.21,
+   "conf": 0.7003642854544204,
+   "az": 47.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 11.99,
+   "conf": 0.7084610079168361,
+   "az": 18.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.65,
+   "conf": 0.8494922038010762,
+   "az": 28.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 5.82,
+   "conf": 0.8510443709658899,
+   "az": 352.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 8.64,
+   "conf": 0.838535049029714,
+   "az": 332.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.36,
+   "conf": 0.9080389042446793,
+   "az": 7.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.4,
+   "conf": 0.8243950622431399,
+   "az": 322.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.75,
+   "conf": 0.818357870908746,
+   "az": 352.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.54,
+   "conf": 0.8017356042235341,
+   "az": 328.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.96,
+   "conf": 0.8981555104255676,
+   "az": 331.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.0,
+   "conf": 0.9233783483505249,
+   "az": 8.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 17.75,
+   "conf": 0.8770639896392822,
+   "az": 346.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 11.45,
+   "conf": 0.7445334792137146,
+   "az": 304.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.62,
+   "conf": 0.8775217533111572,
+   "az": 338.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.42,
+   "conf": 0.9271729588508606,
+   "az": 12.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 16.65,
+   "conf": 0.9169346690177917,
+   "az": 31.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 8.64,
+   "conf": 0.8934824466705322,
+   "az": 331.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.36,
+   "conf": 0.9188520908355713,
+   "az": 6.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.4,
+   "conf": 0.8913721442222595,
+   "az": 326.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.22,
+   "conf": 0.7187151312828064,
+   "az": 337.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.57,
+   "conf": 0.7731681736971592,
+   "az": 324.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 12.74,
+   "conf": 0.8718969685823104,
+   "az": 357.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.15,
+   "conf": 0.8943264313911794,
+   "az": 328.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.81,
+   "conf": 0.8198119346568188,
+   "az": 305.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 20.04,
+   "conf": 0.7735872130507996,
+   "az": 337.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 10.05,
+   "conf": 0.7193245545319611,
+   "az": 1.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 6.43,
+   "conf": 0.7044851100437655,
+   "az": 300.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 24.13,
+   "conf": 0.8871880648734135,
+   "az": 14.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.53,
+   "conf": 0.8116671739515401,
+   "az": 339.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 24.38,
+   "conf": 0.8892485422550516,
+   "az": 304.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.8,
+   "conf": 0.7528941909642501,
+   "az": 329.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.47,
+   "conf": 0.7884207789270319,
+   "az": 353.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 6.29,
+   "conf": 0.8461941576519851,
+   "az": 340.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.34,
+   "conf": 0.7703321887553436,
+   "az": 1.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 9.57,
+   "conf": 0.8937138915061951,
+   "az": 324.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.61,
+   "conf": 0.715854823589325,
+   "az": 333.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 28.12,
+   "conf": 0.9150392413139343,
+   "az": 348.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 19.15,
+   "conf": 0.8922604322433472,
+   "az": 326.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.81,
+   "conf": 0.8239861726760864,
+   "az": 306.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.05,
+   "conf": 0.8560149073600769,
+   "az": 330.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 30.65,
+   "conf": 0.8719186186790466,
+   "az": 6.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 18.53,
+   "conf": 0.8361569046974182,
+   "az": 336.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 24.38,
+   "conf": 0.7648069858551025,
+   "az": 304.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.8,
+   "conf": 0.8833606243133545,
+   "az": 321.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.87,
+   "conf": 0.847795307636261,
+   "az": 339.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.35,
+   "conf": 0.9131659269332886,
+   "az": 5.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 6.29,
+   "conf": 0.7630558013916016,
+   "az": 339.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.55,
+   "conf": 0.8940252065658569,
+   "az": 2.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.39,
+   "conf": 0.8381823195780098,
+   "az": 321.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.33,
+   "conf": 0.8546449735027182,
+   "az": 21.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.98,
+   "conf": 0.8878903172863343,
+   "az": 333.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.87,
+   "conf": 0.7795979668966561,
+   "az": 23.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 26.33,
+   "conf": 0.8535757630936215,
+   "az": 340.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.8,
+   "conf": 0.8455266853010103,
+   "az": 300.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.36,
+   "conf": 0.7544540739755161,
+   "az": 320.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.1,
+   "conf": 0.7458182276256553,
+   "az": 337.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.76,
+   "conf": 0.8532672752979714,
+   "az": 306.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.38,
+   "conf": 0.7791897532669164,
+   "az": 348.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 9.21,
+   "conf": 0.6859029795181706,
+   "az": 314.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 29.14,
+   "conf": 0.9375441468180822,
+   "az": 10.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.39,
+   "conf": 0.8791134357452393,
+   "az": 321.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.33,
+   "conf": 0.9265202879905701,
+   "az": 26.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 14.98,
+   "conf": 0.7188906669616699,
+   "az": 310.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 16.98,
+   "conf": 0.8958526849746704,
+   "az": 328.7
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 18.87,
+   "conf": 0.8751609921455383,
+   "az": 37.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 26.33,
+   "conf": 0.8962643146514893,
+   "az": 339.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.8,
+   "conf": 0.7862568497657776,
+   "az": 296.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 21.36,
+   "conf": 0.8943052887916565,
+   "az": 322.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.89,
+   "conf": 0.7611625790596008,
+   "az": 300.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 26.38,
+   "conf": 0.8098028898239136,
+   "az": 343.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 29.14,
+   "conf": 0.9183009266853333,
+   "az": 11.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.37,
+   "conf": 0.861271496323225,
+   "az": 325.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.39,
+   "conf": 0.841450715670133,
+   "az": 12.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.88,
+   "conf": 0.8592890496373028,
+   "az": 302.1
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 6.24,
+   "conf": 0.6858789709138086,
+   "az": 359.7
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.08,
+   "conf": 0.8169593867830042,
+   "az": 31.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.86,
+   "conf": 0.8404939831116081,
+   "az": 6.6
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.88,
+   "conf": 0.8864421367264363,
+   "az": 326.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 3.97,
+   "conf": 0.6939737453344238,
+   "az": 302.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 29.97,
+   "conf": 0.8540104590471101,
+   "az": 330.9
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.97,
+   "conf": 0.8404041403987998,
+   "az": 9.3
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.36,
+   "conf": 0.9032781724258077,
+   "az": 300.5
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.95,
+   "conf": 0.8363820725227753,
+   "az": 291.0
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.52,
+   "conf": 0.8410036629373211,
+   "az": 302.2
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.52,
+   "conf": 0.7808616354804384,
+   "az": 324.8
+  },
+  {
+   "method": "GEVD-MUSIC",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.4,
+   "conf": 0.7976991492500497,
+   "az": 36.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 25.37,
+   "conf": 0.8951004147529602,
+   "az": 328.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 22.39,
+   "conf": 0.87201988697052,
+   "az": 16.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": true,
+   "snr_db": 16.74,
+   "conf": 0.8548092842102051,
+   "az": 359.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 23.88,
+   "conf": 0.7684019207954407,
+   "az": 296.2
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.08,
+   "conf": 0.9223809242248535,
+   "az": 33.6
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 27.86,
+   "conf": 0.9017386436462402,
+   "az": 12.5
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 21.88,
+   "conf": 0.9038770794868469,
+   "az": 325.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": true,
+   "snr_db": 3.97,
+   "conf": 0.8806225657463074,
+   "az": 1.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 29.97,
+   "conf": 0.9314078092575073,
+   "az": 330.1
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 25.97,
+   "conf": 0.9199296236038208,
+   "az": 7.4
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "方向变化",
+   "wrong": false,
+   "snr_db": 22.36,
+   "conf": 0.7833489775657654,
+   "az": 295.0
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 23.95,
+   "conf": 0.8551073670387268,
+   "az": 306.9
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 26.27,
+   "conf": 0.7771334648132324,
+   "az": 296.3
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.52,
+   "conf": 0.8966174721717834,
+   "az": 318.8
+  },
+  {
+   "method": "小网络（仿真训练）|置信≥0.7",
+   "scene": "OfficeRoom1",
+   "kind": "静音后起始",
+   "wrong": false,
+   "snr_db": 20.4,
+   "conf": 0.8928423523902893,
+   "az": 35.1
+  }
+ ]
+}

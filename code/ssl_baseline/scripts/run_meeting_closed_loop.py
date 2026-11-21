@@ -118,7 +118,9 @@ def band_energy_blocks(x):
     return 10 * np.log10(np.mean(yb[..., : nb * int(DT * FS)].reshape(-1, nb, int(DT * FS)) ** 2, axis=(0, 2)) + 1e-12)
 
 
-def closed_loop(x, e_db, far_db, srp_raw, est, freeze, conf_th=0.0):
+def closed_loop(x, e_db, far_db, srp_raw, est, freeze, conf_th=0.0, trace=None, snr_th=None):
+    """trace：给一个 list 时，记录每次触发（时刻、类型）与其后每次判决的结果，供诊断用。
+    snr_th：信噪比门限（dB）；判决所用时段 [触发时刻, 判决时刻] 的带内能量比噪声底高不到 snr_th 时不转。"""
     nb = len(e_db)
     pan, target = 0.0, 0.0
     floor = np.array([e_db[max(0, b - 50): b + 1].min() for b in range(nb)])
@@ -144,23 +146,34 @@ def closed_loop(x, e_db, far_db, srp_raw, est, freeze, conf_th=0.0):
                     busy_until = t + 0.3
                 else:
                     pending = [t0 + 0.5, t0 + 1.0]; busy_until = t0 + 1.0; run.append(t0); hint = z; coarse = None
+                    if trace is not None:
+                        trace.append({"t0": t0, "kind": "方向变化" if z is not None else "静音后起始", "hint": z, "dec": []})
         # 判决（粗转、微调）
         while pending and t >= pending[0] - 1e-9:
             te = pending.pop(0); t0 = run[-1]
             if freeze and far_on[max(0, int(t0 / DT)): b + 1].any():
                 continue
             res = est.localize(x, int(t0 * FS), int(te * FS)); az = res.az
+            rec = {"t": t, "az": float(az), "conf": float(getattr(res, "conf", np.nan))}
+            if trace is not None and trace:
+                trace[-1]["dec"].append(rec)
             if getattr(res, "conf", 1.0) < conf_th:
-                continue                                          # 置信度门限（小网络）：低于门限不转
+                rec["out"] = "置信度低"; continue                  # 置信度门限（小网络）：低于门限不转
+            if snr_th is not None:
+                b0, b1 = int(round(t0 / DT)), int(round(t / DT))
+                if b1 > b0 and np.mean(e_db[b0:b1]) - floor[min(b1, nb - 1)] < snr_th:
+                    rec["out"] = "信噪比低"; continue              # 信噪比门限：话音太弱时不转
             if hint is not None and metrics.angdiff(az, hint) > 20:
-                continue                                          # 一致性检查：方向变化触发时，判决方位须与触发方向一致
+                rec["out"] = "与触发方向不一致"; continue           # 一致性检查：方向变化触发时，判决方位须与触发方向一致
             if not pending:                                       # 微调：只在粗转方位 ±20° 内修正
                 if coarse is not None and metrics.angdiff(az, coarse) > 20:
-                    continue
+                    rec["out"] = "微调超出范围"; continue
             else:
                 coarse = az
             if metrics.angdiff(az, target) > 8:
-                target = az; cmds.append((t, az))
+                target = az; cmds.append((t, az)); rec["out"] = "转动"
+            else:
+                rec["out"] = "已对准"
         # 云台运动
         err = (target - pan + 180) % 360 - 180
         pan = (pan + np.clip(err, -PAN_SPEED * DT, PAN_SPEED * DT)) % 360
@@ -198,7 +211,7 @@ def main():
     ap.add_argument("--nn-ckpt", default=None, help="小网络模型路径（work/models/*.pt）；给出则加评小网络")
     ap.add_argument("--tag", default="")
     ap.add_argument("--nn-variants", nargs="+", default=["0.5:0"],
-                    help="小网络配置，每项“开口后最长输入 s:置信度门限”，如 0.5:0 1.0:0.6；第一项为基准")
+                    help="小网络配置，每项“开口后最长输入 s:置信度门限[:信噪比门限 dB]”，如 0.5:0 0.5:0.7 0.5:0.7:10；第一项为基准")
     ap.add_argument("--seed", type=int, default=2026, help="会议生成的随机种子；2026 为报告用的那批会议，换种子做独立验证")
     ap.add_argument("--only-nn", action="store_true", help="只评测小网络（6 麦线阵），不跑传统方法与 4 麦线阵")
     a = ap.parse_args()
@@ -209,9 +222,9 @@ def main():
         nn_est = True
         NN_METHODS = []
         for k, v in enumerate(a.nn_variants):
-            post, th = (float(z) for z in v.split(":"))
-            m = "小网络+远端冻结" if k == 0 and v == "0.5:0" else f"小网络+远端冻结|{post:g}s|置信≥{th:g}"
-            NN_METHODS.append(m); nn_cfg[m] = (NNDOA(a.nn_ckpt, post_max=post), th)
+            z = [float(q) for q in v.split(":")]; post, th = z[0], z[1]; snr = z[2] if len(z) > 2 else None
+            m = "小网络+远端冻结" if k == 0 and v == "0.5:0" else f"小网络+远端冻结|{post:g}s|置信≥{th:g}" + (f"|SNR≥{snr:g}" if snr is not None else "")
+            NN_METHODS.append(m); nn_cfg[m] = (NNDOA(a.nn_ckpt, post_max=post), th, snr)
     if a.only_nn:
         global METHODS
         METHODS = []
@@ -243,8 +256,8 @@ def main():
                 srp_raw = np.array([raws[n].localize(x, max(0, int(((b + 1) * DT - 0.3) * FS)), int((b + 1) * DT * FS)).az
                                     if (b + 1) * DT >= 0.35 else 0.0 for b in range(nb)])
                 for m in METHODS + (NN_METHODS if (nn_est is not None and n == names[0]) else []):
-                    est, th = nn_cfg[m] if m in NN_METHODS else (ests[n]["SRP-PHAT" if m == "SRP-PHAT" else "GEVD-MUSIC"], 0.0)
-                    pans, cmds = closed_loop(x, e_db, far_db, srp_raw, est, freeze="冻结" in m, conf_th=th)
+                    est, th, snr = nn_cfg[m] if m in NN_METHODS else (ests[n]["SRP-PHAT" if m == "SRP-PHAT" else "GEVD-MUSIC"], 0.0, None)
+                    pans, cmds = closed_loop(x, e_db, far_db, srp_raw, est, freeze="冻结" in m, conf_th=th, snr_th=snr)
                     r = evaluate(pans, cmds, turns, azs)
                     rows.append({"rt60": rt, "trial": k, "array": n, "method": m, **{kk: round(v, 4) if isinstance(v, float) else v for kk, v in r.items()}})
                     if rt == a.rt60[-1] and k == 0 and i == 0:
