@@ -2,7 +2,8 @@
 
 功耗参数（与方案功耗页一致）：
   基准：FreeClip 2 S 每只 60 mAh、通话 6 h，按 3.7 V → 电池约 222 mWh，通话约 37 mW。
-  定位侧其他新增：耳间定位音频 0.7（ADPCM）–2.6 mW（PCM）+ 定位计算 ≤ 3 mW → 3.7–5.6 mW。
+  定位侧其他新增：耳间定位音频 0.7（ADPCM）–2.6 mW（PCM）+ 定位计算：唇动常开（B）约 12 MFLOPS、≤ 3 mW；
+  其余策略多一步声学开口检测（每 32 ms 一次，约 +6.6 MFLOPS），约 19 MFLOPS、≤ 4.6 mW。
   摄像头监测档（低分辨率 1–2 fps）：0.4–0.8 mW。
   摄像头唇动档：按传感器全幅工作功耗 VGA 60 fps 约 14.5 mW、2 MP 约 82 mW 作上限；只读嘴部区域、10–15 fps 时会低得多，降多少待传感器同事确认。
   NPU 未计入。
@@ -14,7 +15,9 @@ import argparse, glob, json, os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 E_BAT, P_BASE = 222.0, 37.0
-OTHER = (3.7, 5.6)
+LINK = (0.7, 2.6)
+COMPUTE = {"B": 3.0, "A0": 3.0}   # 不需要声学开口检测：定位计算约 12 MFLOPS，≤ 3 mW
+COMPUTE_DEFAULT = 4.6         # 其余策略多一步声学开口检测（每 32 ms 一次，约 +6.6 MFLOPS，合计约 19 MFLOPS），按比例约 4.6 mW
 P_MON = (0.4, 0.8)
 P_LIP = (14.5, 82.0)
 USES_MON = {"A0": False, "A": False, "E": True, "C": False, "D": True, "B": True}
@@ -41,12 +44,13 @@ def main():
                 tag = pname.split()[0]
                 duty = r["camera_lip_duty_pct"][tag] / 100
                 lo = cam_power(tag, duty, a.conv, P_LIP[0], P_MON[0]); hi = cam_power(tag, duty, a.conv, P_LIP[1], P_MON[1])
-                rt_hi = E_BAT / (P_BASE + OTHER[0] + lo); rt_lo = E_BAT / (P_BASE + OTHER[1] + hi)
+                comp = COMPUTE.get(tag, COMPUTE_DEFAULT)
+                rt_hi = E_BAT / (P_BASE + LINK[0] + comp + lo); rt_lo = E_BAT / (P_BASE + LINK[1] + comp + hi)
                 rows.setdefault(cname, {}).setdefault(f"th{th:g}_delay{dl:g}{ov}", {})[pname] = {
                     "acc10_all": round(v["acc10_all"], 1), "acc10_first_0p5s": round(v["acc10_first_0p5s"], 1), "acc10_steady": round(v["acc10_steady"], 1),
                     "first_correct_median_s": v["first_correct_median_s"], "lip_duty_in_conversation_pct": round(duty * 100, 1),
-                    "camera_mw": [round(lo, 2), round(hi, 2)], "runtime_h": [round(rt_lo, 2), round(rt_hi, 2)]}
-    out = {"assumptions": {"conversation_fraction": a.conv, "battery_mwh": E_BAT, "base_mw": P_BASE, "other_new_mw": OTHER,
+                    "camera_mw": [round(lo, 2), round(hi, 2)], "compute_mw": comp, "runtime_h": [round(rt_lo, 2), round(rt_hi, 2)]}
+    out = {"assumptions": {"conversation_fraction": a.conv, "battery_mwh": E_BAT, "base_mw": P_BASE, "link_mw": LINK, "compute_mw": {"B": 3.0, "其余": COMPUTE_DEFAULT},
                            "monitor_mw": P_MON, "lip_full_frame_upper_mw": P_LIP, "npu": "未计入"}, "results": rows}
     with open(os.path.join(ROOT, "out", f"camera_power_conv{a.conv:g}.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
