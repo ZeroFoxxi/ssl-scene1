@@ -42,7 +42,8 @@ AIM_DEG = 10.0
 XY = ARRAYS["lin6_3cm"]
 SPLITS = {"val": ("realman_val", "val", ["Auditorium"]), "test": ("realman", "test", None),
           "val3": ("realman_val", "val", ["LivingRoom6", "LivingRoom8", "OfficeRoom1"])}   # val3 参与了微调：只用于诊断仿真训练的小网络与传统方法
-MODELS = {"小网络（仿真训练）": "crnn_general_lin6_3cm.pt", "小网络（+实录微调）": "crnn_lin6_3cm_ft.pt"}
+MODELS = {"小网络（仿真训练）": "crnn_general_lin6_3cm.pt", "小网络（+实录微调）": "crnn_lin6_3cm_ft.pt",
+          "小网络（+实录微调+纯噪声）": "crnn_lin6_3cm_ft_noise.pt"}                    # 第三个见 finetune_doa_net_noise.py（11-21）
 
 
 # ---------------- 数据 ----------------
@@ -203,6 +204,8 @@ def main():
     ests = {"SRP-PHAT": (WakeDOA(XY, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, **base)), 0.0, None),
             "GEVD-MUSIC": (WakeDOA(XY, FS, WakeDOAConfig(**base)), 0.0, None)}
     for m, ck in MODELS.items():
+        if not os.path.exists(os.path.join(ROOT, "work", "models", ck)):
+            continue
         nn = NNDOA(os.path.join(ROOT, "work", "models", ck), in_ch=2 * (XY.shape[1] - 1) + 1)
         ests[m] = (nn, 0.0, None)
         for th in a.conf:
