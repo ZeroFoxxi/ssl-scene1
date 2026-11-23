@@ -45,7 +45,7 @@ def istft(X, n, nfft=NFFT, hop=HOP):
     for t in range(T):
         out[..., t * hop:t * hop + nfft] += fr[..., t, :]
         ws[t * hop:t * hop + nfft] += w
-    return out / np.maximum(ws, 1e-3)
+    return np.where(ws >= 0.5, out / np.maximum(ws, 1e-3), out)   # 首尾不足一帧的地方窗和接近 0，不做除法，避免放大成尖峰
 
 
 def codec_roundtrip(x16, spec):
@@ -135,7 +135,7 @@ def main():
             az, Y, k_on, faces = make_scene(rng, RA.CONDS[c], ctx)
             n = HOP * (Y.shape[2] - 1) + NFFT
             x = istft(Y, n)
-            g = 10 ** (LEVEL_DBFS / 20) / np.sqrt(np.mean(x[FWD] ** 2))
+            g = 10 ** (LEVEL_DBFS / 20) / np.sqrt(np.mean(x[FWD, NFFT:-NFFT] ** 2))   # 电平按中间段计
             x = x * g
             for name, spec in CODECS.items():
                 xc = np.stack([apply_codec(x[m], None, 0) if m != FWD else apply_codec(x[m], spec, delays[name]) for m in range(x.shape[0])])
