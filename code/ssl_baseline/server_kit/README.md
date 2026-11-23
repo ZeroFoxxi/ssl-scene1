@@ -21,6 +21,14 @@ python3 server_kit/summary.py             # 3. 随时查看进度 / 结果，输
 
 看实时进度：`tail -f work/logs/start.log`（Ctrl+C 只退出查看，不停止任务）；单个实验的日志在 `work/logs/train_*.log`。
 
+**RealMAN 阵列（6 麦 3 cm）的放大版**（用于实录验证，先只用仿真数据训练）：
+
+```bash
+SCENE=general ARRAY=lin6_3cm SIZES="s l" bash server_kit/start.sh
+```
+
+生成"通用房间"仿真数据（声源在前方 ±80°、1–4 m）到 `work/train_data_general_lin6_3cm/`，训练 s、l 两档 × 两个种子。没有会议室固定测试集，汇总里只列验证集结果；实录微调与评测需要 RealMAN 数据，另见说明。
+
 ## 0. 需要什么
 
 | 项 | 要求 |

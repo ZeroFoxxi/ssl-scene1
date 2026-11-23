@@ -44,8 +44,10 @@ if os.path.exists(base):
             p(f"  {k.split(' | ')[0]:<22}" + " ".join(f"{c[3:]} {pc(v['平均|' + c])}" for c in CONDS) + f" | 平均 {v['平均|四种条件平均'] * 100:.1f}%")
 
 res = {}
-p("小网络（固定测试集，误差 ≤10°；验证集最好轮次的模型，只评测一次）：")
-for f in sorted(glob.glob(os.path.join(OUT, "nn_test_results_crnn_meeting_*.json"))):
+mfiles = sorted(glob.glob(os.path.join(OUT, "nn_test_results_crnn_meeting_*.json")))
+if mfiles:
+    p("小网络（固定测试集，误差 ≤10°；验证集最好轮次的模型，只评测一次）：")
+for f in mfiles:
     d = json.load(open(f, encoding="utf-8")); t = d["test_acc10"]
     name = d["model"].replace("crnn_meeting_", "")
     lg = os.path.join(OUT, f"nn_train_log_{d['model']}.json")
@@ -61,12 +63,24 @@ if res:
         v = [res[k] * 100 for k in res if k.split("_seed")[0] == z]
         p(f"  {z}：" + " / ".join(f"{x:.1f}%" for x in v) + (f"（差 {max(v) - min(v):.1f} 个百分点）" if len(v) > 1 else ""))
 
-# 还在训练的实验：最近一轮的验证结果
-for f in sorted(glob.glob(os.path.join(LOGS, "train_crnn_meeting_*.log"))):
-    name = os.path.basename(f)[len("train_crnn_meeting_"):-4]
-    if name in res:
+# 非会议室默认配置（如 RealMAN 阵列的通用房间仿真）：没有固定测试集，列出验证集结果
+vo = {}
+for f in sorted(glob.glob(os.path.join(ROOT, "work", "models", "crnn_*_seed*.json"))):
+    d = json.load(open(f, encoding="utf-8"))
+    if d.get("data", "train_data") == "train_data":
         continue
+    vo[os.path.basename(f)[:-5]] = d
+if vo:
+    p("其他数据配置（只有验证集，误差 ≤10°；验证集最好轮次）：")
+    for k, d in vo.items():
+        p(f"  {k:<34} 数据 {d['data']}  参数 {d['params'] / 1e6:.2f} M  乘加 {d['macs_per_decision'] / 1e8:.2f} 亿  验证 {d['val_acc10'] * 100:.1f}%（第 {d['epoch']} 轮）")
+
+# 还在训练或出错的实验
+for f in sorted(glob.glob(os.path.join(LOGS, "train_crnn_*.log"))):
+    name = os.path.basename(f)[len("train_"):-4]
     txt = open(f, encoding="utf-8", errors="replace").read()
+    if "完成" in txt or "固定测试集" in txt:
+        continue                                                             # 已完成，结果在上面
     eps = re.findall(r"'epoch': (\d+).*?'val_acc10': ([0-9.]+)", txt)
     last = txt.strip().splitlines()[-1] if txt.strip() else ""
     if "Traceback" in txt or "Error" in last:
