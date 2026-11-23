@@ -47,7 +47,7 @@ def build_features(split, data="train_data"):
                 meta[k].append(d[k])
         xs = np.concatenate(xs); sc = np.concatenate(sc); meta = {k: np.concatenate(v) for k, v in meta.items()}
     t0 = time.time()
-    with Pool(4) as p:
+    with Pool(int(os.environ.get("FEAT_WORKERS", min(32, os.cpu_count() or 4)))) as p:      # 云端 4 核即 4 个进程；服务器上最多 32 个
         feats = p.map(_feat_one, list(zip(xs, sc)), chunksize=64)
     feat = np.stack(feats)
     np.savez(out, feat=feat, **meta)
