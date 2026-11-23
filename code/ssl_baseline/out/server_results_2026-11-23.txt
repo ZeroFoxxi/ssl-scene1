@@ -22,3 +22,10 @@ RealMAN 阵列（6 麦 3 cm）通用房间仿真，只训练与验证（11-23 �
   crnn_general_lin6_3cm_l_seed0  参数 2.13 M  乘加 11.14 亿  验证 93.8%（第 11 轮）
   crnn_general_lin6_3cm_l_seed1  参数 2.13 M  乘加 11.14 亿  验证 94.6%（第 15 轮）
 （云端 CPU 训练的同配置 s 档验证 92.1%）
+
+RealMAN 阵列通用房间仿真，训练数据放大到 60,000（11-23 第三轮；ROOMS_TRAIN=6000 DATA_TAG=_60k，验证集与 12,000 时相同的 1,000 个样本，30 轮）：
+  crnn_general_lin6_3cm_60k_s_seed0  参数 0.28 M  乘加 2.73 亿   验证 96.3%（第 19 轮）
+  crnn_general_lin6_3cm_60k_s_seed1  参数 0.28 M  乘加 2.73 亿   验证 96.8%（第 13 轮）
+  crnn_general_lin6_3cm_60k_l_seed0  参数 2.13 M  乘加 11.14 亿  验证 96.4%（第 14 轮）
+  crnn_general_lin6_3cm_60k_l_seed1  参数 2.13 M  乘加 11.14 亿  验证 96.9%（第 12 轮）
+（生成时 pyroomacoustics 0.7.4 两次出现冲激响应数值错误，房间 1663、3844，已用降一阶反射修复）
