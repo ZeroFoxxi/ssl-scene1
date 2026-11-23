@@ -11,6 +11,23 @@
   "seed": 51
  },
  "results": {
+  "0.5 m": {
+   "3.5 dB": {
+    "acc10_pct": 100.0,
+    "detect_within_0p3s_pct": 98.66666666666667,
+    "false_per_s": 0.0
+   },
+   "2 dB": {
+    "acc10_pct": 100.0,
+    "detect_within_0p3s_pct": 99.33333333333333,
+    "false_per_s": 0.0
+   },
+   "1 dB": {
+    "acc10_pct": 100.0,
+    "detect_within_0p3s_pct": 100.0,
+    "false_per_s": 0.0
+   }
+  },
   "1 m": {
    "3.5 dB": {
     "acc10_pct": 99.33333333333333,

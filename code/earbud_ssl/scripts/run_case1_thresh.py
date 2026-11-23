@@ -19,7 +19,7 @@ from earbud_ssl.sphere import sphere_tf, earbud_mic_set, azimuth_points, fibonac
 from earbud_ssl.sim import ltas, NFFT
 
 THRESHS = [3.5, 2.0, 1.0]
-DISTS = [1.0, 2.0, 3.0, 4.0]
+DISTS = [0.5, 1.0, 2.0, 3.0, 4.0]
 
 
 def main():
