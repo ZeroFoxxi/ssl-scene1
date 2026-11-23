@@ -138,7 +138,7 @@ class NNDOA:
         torch.set_num_threads(n_threads)
         side = ckpt_path[:-3] + ".json"
         meta = json.load(open(side, encoding="utf-8")) if os.path.exists(side) else {}
-        self.model = CRNN(in_ch=in_ch, vad=bool(meta.get("vad", False)), **SIZES[size])
+        self.model = CRNN(in_ch=in_ch, vad=bool(meta.get("vad", False)), **SIZES[meta.get("size", size)])   # 网络大小以模型旁的 .json 为准
         self.model.load_state_dict(torch.load(ckpt_path, map_location="cpu"))
         self.model.eval()
         self.post_max = post_max

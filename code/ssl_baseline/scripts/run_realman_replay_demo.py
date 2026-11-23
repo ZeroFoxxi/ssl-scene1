@@ -192,6 +192,8 @@ def main():
     ap.add_argument("--snr", type=float, nargs="*", default=[], help="另加信噪比门限（dB）的配置，与每个置信度门限组合")
     ap.add_argument("--examples", type=int, default=0, help="每个场景存前 N 段会议的曲线数据与参考通道音频")
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--models", nargs="*", default=None,
+                    help="只评测这些小网络，每项“名称=模型路径”（相对 code/ssl_baseline）；不给则用脚本里的 MODELS")
     ap.add_argument("--tag", default="")
     a = ap.parse_args()
     from ssl_baseline.nn_doa import NNDOA
@@ -204,10 +206,11 @@ def main():
     raw = WakeDOA(XY, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, onset=False, **base))
     ests = {"SRP-PHAT": (WakeDOA(XY, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, **base)), 0.0, None),
             "GEVD-MUSIC": (WakeDOA(XY, FS, WakeDOAConfig(**base)), 0.0, None)}
-    for m, ck in MODELS.items():
-        if not os.path.exists(os.path.join(ROOT, "work", "models", ck)):
-            continue
-        nn = NNDOA(os.path.join(ROOT, "work", "models", ck), in_ch=2 * (XY.shape[1] - 1) + 1)
+    models = dict(x.split("=", 1) for x in a.models) if a.models is not None else {k: os.path.join("work", "models", v) for k, v in MODELS.items()}
+    for m, ck in models.items():
+        if not os.path.exists(os.path.join(ROOT, ck)):
+            print("找不到模型，跳过：", ck); continue
+        nn = NNDOA(os.path.join(ROOT, ck), in_ch=2 * (XY.shape[1] - 1) + 1)
         ests[m] = (nn, 0.0, None)
         for th in a.conf:
             ests[f"{m}|置信≥{th:g}"] = (nn, th, None)
@@ -258,7 +261,7 @@ def main():
         summ[m] = s
     out = os.path.join(ROOT, "out", f"realman_replay_{a.split}{a.tag}")
     json.dump({"config": {"split": a.split, "scenes": scenes, "meetings_per_scene": a.meetings, "duration_s": DUR, "seed": a.seed,
-                          "conf": a.conf, "models": MODELS},
+                          "conf": a.conf, "models": models},
                "summary": summ, "examples": examples}, open(out + ".json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     with open(out + ".csv", "w", newline="", encoding="utf-8-sig") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys())); w.writeheader(); w.writerows(rows)
