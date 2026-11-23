@@ -100,8 +100,18 @@ def make_scene(rng):
 
 
 def rirs(dims, rt60, src, mics):
-    room = make_room(dims, FS, rt60)
-    room.add_source(list(src)); room.add_microphone_array(pra.MicrophoneArray(mics, FS)); room.compute_rir()
+    # pyroomacoustics 0.7.x 偶发 "the rir array is too small for the maximum time recorded"（浮点边界问题，如 general 场景训练房间 1663）：
+    # 出错时把声源挪 1 mm 重算（1–4 m 外方位变化 <0.03°，可忽略），最多 3 次；不出错时结果与原来完全相同
+    for k in range(3):
+        try:
+            room = make_room(dims, FS, rt60)
+            room.add_source(list(np.asarray(src, float) + [0.001 * k, 0.0, 0.0]))
+            room.add_microphone_array(pra.MicrophoneArray(mics, FS)); room.compute_rir()
+            break
+        except RuntimeError:
+            if k == 2:
+                raise
+            print(f"[rirs] 冲激响应计算出错，声源挪 {k + 1} mm 重算", file=sys.stderr, flush=True)
     n = max(len(room.rir[m][0]) for m in range(mics.shape[1]))
     h = np.zeros((mics.shape[1], n))
     for m in range(mics.shape[1]):
