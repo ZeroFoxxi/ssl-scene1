@@ -1,0 +1,148 @@
+{
+ "setup": {
+  "what": "理想上限：已知每段话结束时刻；扫描说完 → 唇动档可用的总时延",
+  "lats_s": [
+   0.0,
+   0.1,
+   0.2,
+   0.35
+  ],
+  "overlap": false,
+  "cam_delay_for_trigger_s": 0.2,
+  "cam_on_after_trigger_s": 1.5,
+  "acoustic_threshold_db": 3.5,
+  "trials": 40,
+  "seed": 71
+ },
+ "results": {
+  "S2 旁桌低 6 dB": {
+   "policies": {
+    "E 只开监测档": {
+     "acc10_all": 84.23772609819122,
+     "acc10_first_0p5s": 39.48717948717949,
+     "acc10_steady": 91.76369124622681,
+     "mae_steady": 8.954681508934184,
+     "first_correct_median_s": 0.4069488263002139,
+     "lip_duty_pct": 0.0
+    },
+    "D 监测档 + 声学触发唇动档": {
+     "acc10_all": 85.71428571428571,
+     "acc10_first_0p5s": 39.743589743589745,
+     "acc10_steady": 93.44545062526952,
+     "mae_steady": 8.07713134124243,
+     "first_correct_median_s": 0.3938346559824035,
+     "lip_duty_pct": 15.132432432432436
+    },
+    "F 预测式（时延 0 s）": {
+     "acc10_all": 90.58693244739756,
+     "acc10_first_0p5s": 67.94871794871796,
+     "acc10_steady": 94.39413540319103,
+     "mae_steady": 6.821064932683341,
+     "first_correct_median_s": 0.25,
+     "lip_duty_pct": 32.79834926072428
+    },
+    "F 预测式（时延 0.1 s）": {
+     "acc10_all": 90.99298634182355,
+     "acc10_first_0p5s": 65.8974358974359,
+     "acc10_steady": 95.21345407503235,
+     "mae_steady": 6.183522040424387,
+     "first_correct_median_s": 0.25,
+     "lip_duty_pct": 30.595499132933142
+    },
+    "F 预测式（时延 0.2 s）": {
+     "acc10_all": 88.96271686969361,
+     "acc10_first_0p5s": 61.02564102564103,
+     "acc10_steady": 93.66106080206987,
+     "mae_steady": 8.46624775838375,
+     "first_correct_median_s": 0.26361779253863205,
+     "lip_duty_pct": 28.74124265004026
+    },
+    "F 预测式（时延 0.35 s）": {
+     "acc10_all": 86.52639350313768,
+     "acc10_first_0p5s": 50.76923076923077,
+     "acc10_steady": 92.53988788270806,
+     "mae_steady": 8.464210061461731,
+     "first_correct_median_s": 0.29686447115818826,
+     "lip_duty_pct": 26.805944485647725
+    },
+    "B 唇动档常开": {
+     "acc10_all": 92.87559985234404,
+     "acc10_first_0p5s": 69.23076923076923,
+     "acc10_steady": 96.85209141871496,
+     "mae_steady": 4.821681484735051,
+     "first_correct_median_s": 0.25,
+     "lip_duty_pct": 100.0
+    }
+   },
+   "turn_gap_s": {
+    "median": 0.27823632214341565,
+    "overlap_pct": 0.0
+   }
+  },
+  "S4 旁桌一样响": {
+   "policies": {
+    "E 只开监测档": {
+     "acc10_all": 76.22739018087856,
+     "acc10_first_0p5s": 35.128205128205124,
+     "acc10_steady": 83.13928417421302,
+     "mae_steady": 17.86495424679489,
+     "first_correct_median_s": 0.4683893986576768,
+     "lip_duty_pct": 0.0
+    },
+    "D 监测档 + 声学触发唇动档": {
+     "acc10_all": 81.32152085640458,
+     "acc10_first_0p5s": 36.92307692307693,
+     "acc10_steady": 88.78827080638206,
+     "mae_steady": 11.854113319024103,
+     "first_correct_median_s": 0.43677540335857223,
+     "lip_duty_pct": 11.76864864864865
+    },
+    "F 预测式（时延 0 s）": {
+     "acc10_all": 85.97268364710226,
+     "acc10_first_0p5s": 66.92307692307692,
+     "acc10_steady": 89.17636912462268,
+     "mae_steady": 11.960893866410053,
+     "first_correct_median_s": 0.25,
+     "lip_duty_pct": 29.483863645244273
+    },
+    "F 预测式（时延 0.1 s）": {
+     "acc10_all": 86.1203396087117,
+     "acc10_first_0p5s": 66.66666666666666,
+     "acc10_steady": 89.39197930142304,
+     "mae_steady": 12.312802391734785,
+     "first_correct_median_s": 0.25,
+     "lip_duty_pct": 27.28227142602252
+    },
+    "F 预测式（时延 0.2 s）": {
+     "acc10_all": 83.90550018456995,
+     "acc10_first_0p5s": 59.743589743589745,
+     "acc10_steady": 87.96895213454074,
+     "mae_steady": 13.94891318846533,
+     "first_correct_median_s": 0.26950090317328446,
+     "lip_duty_pct": 25.440687313245792
+    },
+    "F 预测式（时延 0.35 s）": {
+     "acc10_all": 81.61683277962348,
+     "acc10_first_0p5s": 50.76923076923077,
+     "acc10_steady": 86.80465717981889,
+     "mae_steady": 14.26028646866713,
+     "first_correct_median_s": 0.2922930940395414,
+     "lip_duty_pct": 23.578670878563262
+    },
+    "B 唇动档常开": {
+     "acc10_all": 89.29494278331488,
+     "acc10_first_0p5s": 65.64102564102564,
+     "acc10_steady": 93.27296248382923,
+     "mae_steady": 7.9746594316213795,
+     "first_correct_median_s": 0.25,
+     "lip_duty_pct": 100.0
+    }
+   },
+   "turn_gap_s": {
+    "median": 0.27823632214341565,
+    "overlap_pct": 0.0
+   }
+  }
+ },
+ "elapsed_s": 731.7395839691162
+}
