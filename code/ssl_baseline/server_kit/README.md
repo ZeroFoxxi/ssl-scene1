@@ -4,6 +4,23 @@
 
 > 代码只用公开数据集（LibriSpeech，CC BY 4.0）和自己写的仿真；拷到公司服务器前，按公司规定确认。
 
+## 最简用法（三条命令）
+
+在 `code/ssl_baseline` 目录下：
+
+```bash
+python3 server_kit/check_env.py          # 1. 检查环境：缺什么会打印对应的安装命令
+bash server_kit/start.sh                  # 2. 一键启动（自动转到后台；断开连接、关电脑都不影响）
+python3 server_kit/summary.py             # 3. 随时查看进度 / 结果，输出一段文字，复制发回即可
+```
+
+`start.sh` 默认做的事：解压人声 → 生成仿真数据（112 核用 32 个进程）→ 传统基线 → 计算特征（只算一次）→
+在**空闲的 GPU**（显存占用 <1 GB 且利用率 <10%）上并行训练 s / m / l 三档 × 种子 0、1，共 6 个实验，每个实验一块卡 → 汇总。
+一个实验只用一块卡：网络只有 0.28–2.1 M 参数，一块 V100 远用不满，拆到多卡反而有同步开销；多卡用来同时跑不同实验。
+同一档两个种子，用来看结果本身的波动。可调：`SIZES="s l" SEEDS="0" EPOCHS=30 bash server_kit/start.sh`。
+
+看实时进度：`tail -f work/logs/start.log`（Ctrl+C 只退出查看，不停止任务）；单个实验的日志在 `work/logs/train_*.log`。
+
 ## 0. 需要什么
 
 | 项 | 要求 |
