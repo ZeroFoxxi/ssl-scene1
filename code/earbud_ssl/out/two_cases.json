@@ -1,0 +1,146 @@
+{
+ "setup": {
+  "what": "mentor 11-23 两种情况",
+  "array": "2+1",
+  "t_total_s": 3.0,
+  "target_onset_s": 2.0,
+  "decide_after_s": 0.5,
+  "rt60": 0.5,
+  "snr_db": 10.0,
+  "acoustic_threshold_db": 3.5,
+  "trials": 200,
+  "seed": 41
+ },
+ "results": {
+  "情况 1：另外 2 人不说话": {
+   "methods": {
+    "不开摄像头（纯声学）": {
+     "acc10": 0.905,
+     "acc5": 0.905,
+     "gross30": 0.09,
+     "mae": 7.275198260413517,
+     "n": 200,
+     "wrong_person_pct": 0.0,
+     "front_back_pct": 0.0
+    },
+    "只开低帧率档": {
+     "acc10": 0.96,
+     "acc5": 0.95,
+     "gross30": 0.04,
+     "mae": 4.072322517591915,
+     "n": 200,
+     "wrong_person_pct": 0.0,
+     "front_back_pct": 0.0
+    },
+    "高帧率档（唇动 + 声学）": {
+     "acc10": 1.0,
+     "acc5": 0.99,
+     "gross30": 0.0,
+     "mae": 1.6515946778996453,
+     "n": 200,
+     "wrong_person_pct": 0.0,
+     "front_back_pct": 0.0
+    },
+    "仅视觉（唇动最高）": {
+     "acc10": 0.815,
+     "acc5": 0.805,
+     "gross30": 0.125,
+     "mae": 8.904985719695501,
+     "n": 200,
+     "wrong_person_pct": 18.5,
+     "front_back_pct": 0.0
+    }
+   },
+   "onset_detect_within_0p3s_pct": 65.5,
+   "false_onsets_per_trial_before": 0.0,
+   "false_window_s": 1.0
+  },
+  "情况 2：另外 2 人互相说，低 6 dB": {
+   "methods": {
+    "不开摄像头（纯声学）": {
+     "acc10": 0.785,
+     "acc5": 0.785,
+     "gross30": 0.135,
+     "mae": 11.406671045972969,
+     "n": 200,
+     "wrong_person_pct": 14.000000000000002,
+     "front_back_pct": 0.0
+    },
+    "只开低帧率档": {
+     "acc10": 0.82,
+     "acc5": 0.8,
+     "gross30": 0.095,
+     "mae": 8.689972428246275,
+     "n": 200,
+     "wrong_person_pct": 15.5,
+     "front_back_pct": 0.0
+    },
+    "高帧率档（唇动 + 声学）": {
+     "acc10": 0.91,
+     "acc5": 0.9,
+     "gross30": 0.05,
+     "mae": 4.7086682336877645,
+     "n": 200,
+     "wrong_person_pct": 9.0,
+     "front_back_pct": 0.0
+    },
+    "仅视觉（唇动最高）": {
+     "acc10": 0.485,
+     "acc5": 0.48,
+     "gross30": 0.215,
+     "mae": 17.936215327926394,
+     "n": 200,
+     "wrong_person_pct": 51.5,
+     "front_back_pct": 0.0
+    }
+   },
+   "onset_detect_within_0p3s_pct": 41.0,
+   "false_onsets_per_trial_before": 0.055,
+   "false_window_s": 1.0
+  },
+  "情况 2：另外 2 人互相说，一样响": {
+   "methods": {
+    "不开摄像头（纯声学）": {
+     "acc10": 0.6,
+     "acc5": 0.6,
+     "gross30": 0.19,
+     "mae": 16.49370018235412,
+     "n": 200,
+     "wrong_person_pct": 34.5,
+     "front_back_pct": 0.0
+    },
+    "只开低帧率档": {
+     "acc10": 0.63,
+     "acc5": 0.61,
+     "gross30": 0.17,
+     "mae": 14.310500362686412,
+     "n": 200,
+     "wrong_person_pct": 36.0,
+     "front_back_pct": 0.0
+    },
+    "高帧率档（唇动 + 声学）": {
+     "acc10": 0.88,
+     "acc5": 0.85,
+     "gross30": 0.055,
+     "mae": 5.725562823973815,
+     "n": 200,
+     "wrong_person_pct": 11.5,
+     "front_back_pct": 0.0
+    },
+    "仅视觉（唇动最高）": {
+     "acc10": 0.51,
+     "acc5": 0.495,
+     "gross30": 0.195,
+     "mae": 17.689456167260325,
+     "n": 200,
+     "wrong_person_pct": 49.0,
+     "front_back_pct": 0.0
+    }
+   },
+   "onset_detect_within_0p3s_pct": 26.0,
+   "false_onsets_per_trial_before": 0.08,
+   "false_window_s": 1.0
+  }
+ },
+ "elapsed_s": 567.3308401107788
+}
