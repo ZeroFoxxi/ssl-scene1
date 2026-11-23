@@ -27,13 +27,14 @@ def srp_phat(Y, Hgrid, fmask, w):
     """逐帧 PHAT 互谱按帧权重平均后，用模板扫描。返回 (G,) 谱。"""
     ws = w / max(w.sum(), 1e-12)
     out = 0.0
-    for i, j in PAIRS:
+    pairs = list(combinations(range(Y.shape[0]), 2))   # 按实际通道数取全部麦克风对（4 麦时与原 PAIRS 相同）
+    for i, j in pairs:
         c = Y[i][fmask] * np.conj(Y[j][fmask])
         r = (c / (np.abs(c) + 1e-12)) @ ws
         st = Hgrid[:, i, fmask] * np.conj(Hgrid[:, j, fmask])
         st = st / (np.abs(st) + 1e-12)
         out = out + np.real(st.conj() @ r)
-    return out / (len(PAIRS) * fmask.sum())
+    return out / (len(pairs) * fmask.sum())
 
 
 def covariance(Y, fmask, w):
