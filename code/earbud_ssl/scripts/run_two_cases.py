@@ -42,7 +42,8 @@ def chat_schedule(rng):
     turns, t, who = [], rng.uniform(-1.0, 0.0), int(rng.integers(2))
     while t < T_TOT:
         e = t + rng.uniform(1.5, 4.0)
-        turns.append((who, max(t, 0.0), min(e, T_TOT)))
+        if min(e, T_TOT) - max(t, 0.0) >= 0.3:              # 太短的片段不计（避免能量为 0 的段）
+            turns.append((who, max(t, 0.0), min(e, T_TOT)))
         t = e + rng.uniform(0.1, 0.5); who = 1 - who
     return turns
 
@@ -69,6 +70,8 @@ def scene(rng, sir, ctx):
                 continue
             S = stft(x); H = sphere_tf(azimuth_points([others[k]], d3[oi[k]]), ctx["mics"], ctx["freqs"])[0]
             a2 = np.abs(S).sum(0) > 1e-9
+            if not a2.any():
+                continue
             p = np.mean(np.abs(H[:, :, None] * S[None][:, :, a2]) ** 2)
             y = y + render_source(S * np.sqrt(p_t / p * 10 ** (-sir / 10)), H, ctx["H_diff"], rng, RT60, DRR)
     noise = diffuse_noise(ctx["H_diff"], y.shape[2], rng, ctx["psd"])
