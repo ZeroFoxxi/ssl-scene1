@@ -28,6 +28,14 @@ if "torch" not in missing:
     else:
         print("× torch 看不到 GPU（可能装成了 CPU 版，或 CUDA 版本与驱动不匹配）"); ok = False
 
+try:
+    import bz2  # noqa: F401
+except ImportError:
+    print("× 这个 Python 编译时缺少 bz2 库（No module named '_bz2'），pyroomacoustics 导入会失败。放一个占位模块到自己的用户目录即可（不影响别人）：")
+    print('  cp server_kit/compat/_bz2.py "$(python3 -m site --user-site)/"')
+    ok = False
+    missing = [m for m in missing if m != "pyroomacoustics"]
+
 if missing:
     ok = False
     print("\n缺少的包，安装命令（--user 装到自己目录，不影响别人）：")
