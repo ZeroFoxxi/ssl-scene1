@@ -132,7 +132,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 {
   const s = newSlide("整体架构",
     "图中增强按本地方案（A）画出，B、C 见第 11 页；时延容忍度：入耳式约 10–20 ms，开放式约 5–6 ms（Stone & Moore 2008）",
-    "为什么分主副耳：测向要用左右耳麦克风之间的相位关系，必须把几路音频放在同一颗芯片上一起算，不能两边各算一半。让一只耳机（主耳）汇集并计算，耳间只需单向传 1 路音频（256 kbps）、只有一颗 DSP 跑约 12 MFLOPS，结果只回传 8 字节；若两耳各算一遍，链路流量和计算量都翻倍，得到的方位却相同。主耳多耗约 3 mW，可按电量定期交换主副角色；一只耳机摘下时，另一只自动变为主耳，退化为本地 2 麦定位。定位与融合运行在主耳，图中居中画出是为了表示它汇集两耳的数据。Stone & Moore 2008：https://www.researchgate.net/publication/5266175_Tolerable_Hearing_Aid_Delays_V_Estimation_of_Limits_for_Open_Canal_Fittings");
+    "为什么分主副耳：测向要用左右耳麦克风之间的相位关系，必须把几路音频放在同一颗芯片上一起算，不能两边各算一半。让一只耳机（主耳）汇集并计算，耳间只需单向传 1 路音频（ADPCM 64 kbps）、只有一颗 DSP 跑约 12 MFLOPS，结果只回传 8 字节；若两耳各算一遍，链路流量和计算量都翻倍，得到的方位却相同。主耳多耗约 3 mW，可按电量定期交换主副角色；一只耳机摘下时，另一只自动变为主耳，退化为本地 2 麦定位。定位与融合运行在主耳，图中居中画出是为了表示它汇集两耳的数据。Stone & Moore 2008：https://www.researchgate.net/publication/5266175_Tolerable_Hearing_Aid_Delays_V_Estimation_of_Limits_for_Open_Canal_Fittings");
   key(s, "定位走旁路：两耳之间只为定位传 1 路音频，结果是控制量，不进入你听到的声音");
   T(s, "副耳", { x: 0.6, y: 1.55, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
   T(s, "主耳", { x: 8.33, y: 1.55, w: 4.4, h: 0.3, fontSize: 12.5, bold: true, color: C.gray, align: "center" });
@@ -164,7 +164,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 {
   const s = newSlide("一个声音进来：耳机怎么接收",
     "PDM 时钟、抽取滤波为数字麦常规做法；时钟漂移补偿、缓存、摄像头时间基准见附录 A10；格式与速率见附录 A5",
-    "副耳只取 1 路麦克风音频转发，另一路只用于副耳本地增强。实时听通路的采样率与时延由增强模块决定，不经过定位。主耳音频 DSP 按两耳的采样计数把 3 路音频对齐到同一时刻，再进入第 6 页的处理。");
+    "副耳只取 1 路麦克风音频，经 ADPCM 4 bit 压缩后转发（仿真中加视觉时与 PCM 无差别，附录 A3），另一路只用于副耳本地增强。实时听通路的采样率与时延由增强模块决定，不经过定位。主耳音频 DSP 按两耳的采样计数把 3 路音频对齐到同一时刻，再进入第 6 页的处理。");
   const ear = (label, y, n, fwd) => {
     T(s, label, { x: 0.6, y, w: 0.8, h: 0.9, fontSize: 13, bold: true, valign: "middle" });
     box(s, "声波", 1.45, y + 0.2, 0.75, 0.5, { line: C.rule, color: C.gray });
@@ -179,10 +179,10 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
     box(s, fwd, 7.75, y, 1.95, 0.9, { line: fwd.startsWith("主耳") ? C.navy : C.box, color: fwd.startsWith("主耳") ? C.navy : C.ink, bold: fwd.startsWith("主耳") });
   };
   key(s, "每只耳机 2 个数字麦；副耳转发 1 路，主耳 DSP 按采样计数对齐 3 路（两耳同步误差需 ≤ 50 µs）");
-  ear("副耳", 1.95, "16 kHz\n16 bit", "取 1 路\n加采样计数");
+  ear("副耳", 1.95, "16 kHz\n16 bit", "取 1 路，ADPCM 压缩\n加采样计数");
   ear("主耳", 3.7, "16 kHz\n16 bit", "主耳音频 DSP\n3 路按采样计数对齐");
   line(s, 8.72, 2.85, 8.72, 3.7, { color: C.navy });
-  T(s, "耳间链路：1 路 PCM，256 kbps\n两耳采样同步 ≤ 50 µs", { x: 8.85, y: 2.95, w: 3.9, h: 0.6, fontSize: 10.5, color: C.navy, valign: "middle" });
+  T(s, "耳间链路：1 路 ADPCM 4 bit，64 kbps\n两耳采样同步 ≤ 50 µs", { x: 8.85, y: 2.95, w: 3.9, h: 0.6, fontSize: 10.5, color: C.navy, valign: "middle" });
   // 其他输入
   T(s, "同时进入主耳 DSP 的其他输入", { x: 0.6, y: 5.0, w: 6, h: 0.3, fontSize: 12, bold: true, color: C.navy });
   table(s, [
@@ -371,7 +371,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 {
   const s = newSlide("功耗估算（以 FreeClip 2 S 为基准）",
     "基准：FreeClip 2 S 每只 60 mAh、通话 6 h（华为官网），约 37 mW；摄像头传感器与 NPU 按公开器件估算；对话占使用时间一半；分项见附录 A7",
-    "华为官网规格页：https://consumer.huawei.com/hk/headphones/freeclip2-s/specs/。每多 1 mW，续航约少 10 分钟。按主耳估算（摄像头 + 定位计算 + 耳间接收）；副耳为摄像头 + 耳间发送，没有定位计算，略低。高帧率档：传感器按 HM0360 低分辨率 10–15 fps 约 1.2–1.7 mW；NPU 按 Light-ASD 每张脸每帧约 0.2 GFLOPs、正前方 1–3 张脸、能效 1–6 TOPS/W 约 0.3–9 mW，只看嘴部的轻量模型（假设为其十分之一）约 0.03–0.9 mW。按图一 25 fps、3 张脸全量说话人检测时高帧率档一直开约 4.3–5.1 h；按传感器全幅 60 fps 的上限为 2.6–4.6 h。只开低帧率档时换人靠声学开口检测，定位计算约 19 MFLOPS（≤ 4.6 mW）；高帧率档一直开约 12 MFLOPS（≤ 3 mW）。低帧率档的人脸检测 NPU 功耗很小，未计入。");
+    "华为官网规格页：https://consumer.huawei.com/hk/headphones/freeclip2-s/specs/。每多 1 mW，续航约少 10 分钟。耳间定位音频按 ADPCM 0.7 mW 到 PCM 2.6 mW 取区间；定位转发默认用 ADPCM 时，各续航下限约高 0.2 h。按主耳估算（摄像头 + 定位计算 + 耳间接收）；副耳为摄像头 + 耳间发送，没有定位计算，略低。高帧率档：传感器按 HM0360 低分辨率 10–15 fps 约 1.2–1.7 mW；NPU 按 Light-ASD 每张脸每帧约 0.2 GFLOPs、正前方 1–3 张脸、能效 1–6 TOPS/W 约 0.3–9 mW，只看嘴部的轻量模型（假设为其十分之一）约 0.03–0.9 mW。按图一 25 fps、3 张脸全量说话人检测时高帧率档一直开约 4.3–5.1 h；按传感器全幅 60 fps 的上限为 2.6–4.6 h。只开低帧率档时换人靠声学开口检测，定位计算约 19 MFLOPS（≤ 4.6 mW）；高帧率档一直开约 12 MFLOPS（≤ 3 mW）。低帧率档的人脸检测 NPU 功耗很小，未计入。");
   key(s, "对话中高帧率档一直开，续航约 4.6–5.3 h，与只开低帧率档（4.9–5.2 h）相当（按传感器 + NPU 估算）");
   const X0 = 3.2, X1 = 8.6, h2x = (v) => X0 + (X1 - X0) * v / 6.5;
   T(s, "续航（每只耳机；对话占使用时间一半；浅色段为估算区间）", { x: 0.6, y: 1.55, w: 8, h: 0.32, fontSize: 11.5, color: "404040", valign: "middle" });
@@ -468,18 +468,18 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 {
   const s = newSlide("附录 A3　两耳传输、编码与同步",
     SIM + "；同步先例：ClearBuds（MobiSys 2022）< 64 µs；完整规格见附录 A5",
-    "同步实验：混响 RT60 0.5 s、2 个干扰说话人，开口后 0.5 s 判决，每档 72 次。ClearBuds：https://arxiv.org/abs/2206.13611；TWS 播放侧左右同步通常 < 25 µs（audioXpress LE Audio 测试指南）。LC3 码率与时延：https://www.forasoft.com/learn/audio-for-video/articles-audio/lc3-lc3plus-bluetooth-le-audio");
+    "同步实验：混响 RT60 0.5 s、2 个干扰说话人，开口后 0.5 s 判决，每档 72 次。ClearBuds：https://arxiv.org/abs/2206.13611；TWS 播放侧左右同步通常 < 25 µs（audioXpress LE Audio 测试指南）。LC3 码率与时延：https://www.forasoft.com/learn/audio-for-video/articles-audio/lc3-lc3plus-bluetooth-le-audio。编码仿真：S2、S4 场景各 200 段，只编码副耳转发的那一路；干扰一样响、加视觉时 PCM 79.0%、ADPCM 79.5%、G.722 76.5%、Opus 71.5%；LC3 在仿真环境中无法安装，用同为感知编码的 Opus 代替。");
   table(s, [
     [head("数据"), head("从 → 到"), head("格式"), head("速率", { align: "center" })],
-    [bold("定位音频"), cell("副耳 → 主耳"), cell("1 路 PCM 16 kHz / 16 bit，带时间戳"), ctr("256 kbps")],
+    [bold("定位音频"), cell("副耳 → 主耳"), cell("1 路 16 kHz，ADPCM 4 bit（PCM 可选），带时间戳"), ctr("64 kbps")],
     [bold("人脸元数据"), cell("两耳 NPU → 主耳"), cell("每张脸 16 字节（方位、唇动分数等）"), ctr("≤ 1.2 kB/s")],
     [bold("定位结果"), cell("主耳 → 两耳增强"), cell("每 16 ms 8 字节"), ctr("0.5 kB/s")],
     [bold("图像"), cell("传感器 → NPU"), cell("不出模组，只输出检测结果"), ctr("—")],
   ], 0.6, 1.6, [1.4, 1.75, 3.55, 1.2], [0.42, 0.48, 0.48, 0.48, 0.48]);
   sub(s, "耳间编码", 0.6, 4.25, 3);
-  para(s, ["PCM 16 bit（首选）：相位完整；链路每侧约 2.6 mW（估算）",
-    "ADPCM 4 bit（64 kbps）：功耗约 1/4，对测向的影响待确认",
-    "LC3（32 kbps）：感知编码可能破坏相位，不用于定位"], 0.6, 4.65, 7.3, 1.6, { fontSize: 12.5 });
+  para(s, ["ADPCM 4 bit（64 kbps，默认）：加视觉时与 PCM 无差别（仿真，各 200 段）；每侧约 0.7 mW",
+    "PCM 16 bit（256 kbps）：每侧约 2.6 mW；纯声学时 ADPCM 最多低 3 个百分点，不显著",
+    "感知编码（LC3 类，用 Opus 32 kbps 测试）：加视觉时低 3–7.5 个百分点，不用于定位"], 0.6, 4.65, 7.3, 1.6, { fontSize: 12.5 });
   s.addChart(p.charts.LINE, [{ name: "≤10° 的比例", labels: ["0", "10", "25", "50", "100", "200"], values: [63, 61, 61, 60, 8, 7] }],
     Object.assign({ x: 8.3, y: 1.5, w: 4.45, h: 4.6, chartColors: [C.navy], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 7,
       showValue: true, dataLabelPosition: "t", valAxisMinVal: 0, valAxisMaxVal: 80, showLegend: false,
@@ -516,11 +516,11 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 }
 
 {
-  const s = newSlide("附录 A5　数据流规格", "", "同步要求见附录 A3；编码取舍：PCM 首选，ADPCM 待验证，LC3 不用于定位。");
+  const s = newSlide("附录 A5　数据流规格", "", "同步要求见附录 A3；编码取舍：ADPCM 4 bit 默认（仿真中加视觉时与 PCM 无差别），PCM 可选，感知编码不用于定位。");
   table(s, [
     [head("数据流"), head("从 → 到"), head("内容与格式"), head("速率"), head("时延要求")],
     [bold("麦克风采集"), cell("麦克风 → 本耳芯片"), cell("数字麦 PDM → PCM 16 kHz / 16 bit；32 ms 帧、16 ms 帧移"), cell("每路 256 kbps（片内）"), cell("—")],
-    [bold("定位音频"), cell("副耳 → 主耳"), cell("1 路 PCM 16 kHz（首选 16 bit 无压缩）；带采样计数与时间戳；两耳采样同步 ≤ 50 µs"), cell("256 kbps"), cell("≤ 100 ms（旁路）")],
+    [bold("定位音频"), cell("副耳 → 主耳"), cell("1 路 16 kHz，ADPCM 4 bit（PCM 可选）；带采样计数与时间戳；两耳采样同步 ≤ 50 µs"), cell("64 kbps"), cell("≤ 100 ms（旁路）")],
     [bold("图像"), cell("传感器 → NPU"), cell("平时低分辨率整幅；需要时嘴部区域（约 64 × 64 像素）原分辨率"), cell("不出模组"), cell("—")],
     [bold("人脸元数据"), cell("两耳 NPU → 主耳"), cell("每张脸 16 字节：曝光时间戳 4 B、编号 1 B、方位角 2 B、仰角 2 B、人脸宽度 2 B（用于估距离）、唇动分数 1 B、置信度 1 B、保留 3 B"), cell("≤ 1.2 kB/s"), cell("≤ 100 ms")],
     [bold("摄像头控制"), cell("主耳 → 两耳摄像头"), cell("开 / 关、档位（低帧率 / 高帧率）、嘴部区域坐标"), cell("事件触发"), cell("≤ 50 ms")],
