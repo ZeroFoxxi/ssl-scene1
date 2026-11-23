@@ -1,6 +1,6 @@
 """情况 1 补充：只用声音时，降低开口检测阈值能否改善远距离（嘈杂环境）。
 情况 1 没有其他人说话，误检只来自噪声，阈值可以比多人场景（3.5 dB）低。场景与 run_case1.py 相同（2+1，嘈杂，1.5 m 处 SNR 10 dB）。
-统计：只用声音的定位准确率（≤ 10°）、开口后 0.3 s 内检出率、开口前 1.0–2.0 s 内的误检次数。
+统计：只用声音、加低帧率档人脸位置（软融合，唇动无信息）的定位准确率（≤ 10°）、开口后 0.3 s 内检出率、开口前 1.0–2.0 s 内的误检次数。
 
 用法：python scripts/run_case1_thresh.py [--trials 150] [--seed 51]
 """
@@ -34,10 +34,10 @@ def main():
     k_dec = RC.time_frame(C.T_ON + C.T_DEC); t0 = time.time(); res = {}
     for d in DISTS:
         rng = np.random.default_rng([a.seed, 10, int(d * 10)])       # 与 run_case1.py 嘈杂环境同一批场景
-        acc = {t: [] for t in THRESHS}; det = {t: [] for t in THRESHS}; fa = {t: [] for t in THRESHS}
+        acc = {t: [] for t in THRESHS}; acc_lo = {t: [] for t in THRESHS}; det = {t: [] for t in THRESHS}; fa = {t: [] for t in THRESHS}
         for i in range(a.trials):
             y, az3, ti = C.scene(rng, d, 10.0, ctx)
-            rng.uniform(-RA.ONSET_JIT, RA.ONSET_JIT); C.faces(rng, az3, ti, d, False); C.faces(rng, az3, ti, d, True)   # 保持随机数序列一致
+            rng.uniform(-RA.ONSET_JIT, RA.ONSET_JIT); f_lo = C.faces(rng, az3, ti, d, False); C.faces(rng, az3, ti, d, True)   # 保持随机数序列一致（同一批人脸检测结果）
             nov = RC.novelty_raw(y, ctx)
             for t in THRESHS:
                 ev = RC.acoustic_onsets(nov, t, int(1.0 * C.FPS))
@@ -48,7 +48,9 @@ def main():
                 if spec is None:
                     spec = RC.music_plain(y, k_dec, ctx)
                 acc[t].append(angdiff(M.peak(spec, grid, 5.0), az3[ti]) <= 10)
-        res[f"{d:g} m"] = {f"{t:g} dB": {"acc10_pct": float(np.mean(acc[t]) * 100), "detect_within_0p3s_pct": float(np.mean(det[t]) * 100),
+                z_lo = M.fuse_soft(spec, grid, f_lo, **RA.SOFT) if f_lo else M.peak(spec, grid, 5.0)
+                acc_lo[t].append(angdiff(z_lo, az3[ti]) <= 10)
+        res[f"{d:g} m"] = {f"{t:g} dB": {"acc10_pct": float(np.mean(acc[t]) * 100), "acc10_low_frame_pct": float(np.mean(acc_lo[t]) * 100), "detect_within_0p3s_pct": float(np.mean(det[t]) * 100),
                                          "false_per_s": float(np.mean(fa[t]) / (C.T_ON - 1.0))} for t in THRESHS}
         print(d, json.dumps(res[f"{d:g} m"], ensure_ascii=False), f"{time.time() - t0:.0f} s", flush=True)
     with open(os.path.join(ROOT, "out", "case1_thresh.json"), "w", encoding="utf-8") as f:
