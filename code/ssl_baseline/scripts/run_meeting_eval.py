@@ -100,18 +100,24 @@ def make_scene(rng):
 
 
 def rirs(dims, rt60, src, mics):
-    # pyroomacoustics 0.7.x 偶发 "the rir array is too small for the maximum time recorded"（浮点边界问题，如 general 场景训练房间 1663）：
-    # 出错时把声源挪 1 mm 重算（1–4 m 外方位变化 <0.03°，可忽略），最多 3 次；不出错时结果与原来完全相同
-    for k in range(3):
+    # pyroomacoustics 0.7.x 偶发 "the rir array is too small for the maximum time recorded"：与几何相关的数值边界问题，
+    # 只在个别声源 / 麦克风组合出现（general 场景训练房间 1663、3844 实测；沿某一方向挪 1–2 mm 不一定能躲开）。
+    # 出错时依次重试：反射阶数减 1、减 2（几何与方位真值不变，只少最弱的最高阶反射）→ 声源沿 y 挪 5 mm、沿 z 挪 5 mm（1 m 外方位变化 <0.3°）。
+    # 不出错时结果与原来完全相同。全部失败时抛出，由调用方换种子重生成该房间。
+    mo = min(pra.inverse_sabine(rt60, dims)[1], 40) if rt60 > 0 else 0
+    tries = [(None, 0.0, 0.0), (mo - 1, 0.0, 0.0), (mo - 2, 0.0, 0.0), (None, 0.005, 0.0), (None, 0.0, -0.005)]
+    for k, (cap, dy, dz) in enumerate(tries):
         try:
-            room = make_room(dims, FS, rt60)
-            room.add_source(list(np.asarray(src, float) + [0.001 * k, 0.0, 0.0]))
+            room = make_room(dims, FS, rt60) if cap is None else make_room(dims, FS, rt60, max_order_cap=max(cap, 1))
+            room.add_source(list(np.asarray(src, float) + [0.0, dy, dz]))
             room.add_microphone_array(pra.MicrophoneArray(mics, FS)); room.compute_rir()
             break
         except RuntimeError:
-            if k == 2:
+            if k == len(tries) - 1:
                 raise
-            print(f"[rirs] 冲激响应计算出错，声源挪 {k + 1} mm 重算", file=sys.stderr, flush=True)
+            nxt = tries[k + 1]
+            how = f"反射阶数 {nxt[0]}" if nxt[0] is not None else f"声源挪 y{nxt[1] * 1000:+.0f} mm z{nxt[2] * 1000:+.0f} mm"
+            print(f"[rirs] 冲激响应计算出错，改为 {how} 重算", file=sys.stderr, flush=True)
     n = max(len(room.rir[m][0]) for m in range(mics.shape[1]))
     h = np.zeros((mics.shape[1], n))
     for m in range(mics.shape[1]):

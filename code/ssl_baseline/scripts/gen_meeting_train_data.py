@@ -114,16 +114,23 @@ def pick(rng, exclude_spk):
 
 def make_room(args):
     split, room_idx = args
-    rng = np.random.default_rng(SEED_BASE[split] + room_idx)
-    R.WALL_D = float(rng.uniform(0.04, 0.15))
-    rt60 = float(rng.uniform(0.2, 0.8))
-    if CFG["scene"] == "general":
-        dims, c, people, azs, _, _, spk_pos, vent = make_general_scene(rng)
-    else:
-        dims, c, people, azs, _, _, spk_pos, vent = R.make_scene(rng)
-    M = MIC_XY.shape[1]
-    mics = np.vstack([MIC_XY + c[:2, None], np.full((1, M), c[2])])
-    H = [R.rirs(dims, rt60, p, mics) for p in list(people) + [spk_pos, vent]]   # 0–5 参会人，6 喇叭，7 出风口
+    for attempt in range(3):                     # 第 0 次与原来完全相同；冲激响应重试仍失败时（极少）换种子重生成这个房间，保证不中断
+        rng = np.random.default_rng(SEED_BASE[split] + room_idx + attempt * 50_000_000)
+        R.WALL_D = float(rng.uniform(0.04, 0.15))
+        rt60 = float(rng.uniform(0.2, 0.8))
+        if CFG["scene"] == "general":
+            dims, c, people, azs, _, _, spk_pos, vent = make_general_scene(rng)
+        else:
+            dims, c, people, azs, _, _, spk_pos, vent = R.make_scene(rng)
+        M = MIC_XY.shape[1]
+        mics = np.vstack([MIC_XY + c[:2, None], np.full((1, M), c[2])])
+        try:
+            H = [R.rirs(dims, rt60, p, mics) for p in list(people) + [spk_pos, vent]]   # 0–5 参会人，6 喇叭，7 出风口
+            break
+        except RuntimeError:
+            if attempt == 2:
+                raise
+            print(f"[房间 {room_idx}] 冲激响应多次出错，换种子重生成", file=sys.stderr, flush=True)
     xs, meta = [], []
     for _ in range(SAMPLES_PER_ROOM):
         ia, ib = rng.choice(6, 2, replace=False)
