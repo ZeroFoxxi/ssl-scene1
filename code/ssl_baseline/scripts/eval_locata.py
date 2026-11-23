@@ -39,7 +39,7 @@ def main():
         side = a.ckpt[:-3] + ".json"                                       # 训练时保存的网络大小
         size = json.load(open(side, encoding="utf-8"))["size"] if os.path.exists(side) else "s"
         nn = NNDOA(a.ckpt, in_ch=2 * (xy.shape[1] - 1) + 1, n_threads=4, size=size)
-    est = {"SRP-PHAT": [], "GEVD-MUSIC": []} | ({"小网络（仿真训练）": []} if nn else {})
+    est = {"SRP-PHAT": [], "GEVD-MUSIC": [], **({"小网络（仿真训练）": []} if nn else {})}     # 不用 dict |，兼容 Python 3.8
     for i in range(len(d["az"])):
         x = d["x"][i].astype(float); e = on + FS // 2
         est["SRP-PHAT"].append(srp.localize(x, on, e).az)

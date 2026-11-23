@@ -3,7 +3,8 @@ numpy>=1.23
 scipy>=1.9
 matplotlib>=3.6
 soundfile>=0.12
-# numpy 2.x：用最新版 pyroomacoustics；numpy 1.x（如 1.26）：改成 pyroomacoustics==0.7.4
-pyroomacoustics
+# Python 3.8（numpy 只能到 1.24）用 pyroomacoustics 0.7.4；Python 3.9 及以上用最新版（11-23 已在 Python 3.8 + numpy 1.24.4 + pyroomacoustics 0.7.4 下跑通测试与数据生成）
+pyroomacoustics==0.7.4 ; python_version < "3.9"
+pyroomacoustics ; python_version >= "3.9"
 # 仅"真实录音验证"（LOCATA）需要：按需读取 Zenodo 上的大压缩包
 remotezip

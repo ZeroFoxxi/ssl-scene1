@@ -87,6 +87,8 @@ def _templates(n_azi=360):
     return np.rad2deg(azi), t.reshape(n_azi, -1).astype(np.float32)
 
 
+_no_grad = torch.no_grad() if torch is not None else (lambda f: f)        # Python 3.8 不支持装饰器里写表达式
+
 class IPDnet2Localizer:
     """用法：
         loc = IPDnet2Localizer(ipdnet2_dir)
@@ -119,7 +121,7 @@ class IPDnet2Localizer:
         self.azi, self.tmpl = _templates()
         self.tmpl_t = torch.from_numpy(self.tmpl)
 
-    @torch.no_grad() if torch is not None else (lambda f: f)
+    @_no_grad
     def tracks(self, x: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """x: 5 x N。返回 (az[T, 2], mse[T, 2])，T 为 0.1 s 帧数，方位为本仓库约定（[0, 360)，0° 为阵列 x 轴、逆时针）。"""
         sig = torch.from_numpy(np.asarray(x, np.float32).T)[None]             # 1 x N x 5
