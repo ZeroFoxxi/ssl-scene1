@@ -3,7 +3,7 @@
   情况 2：另外 2 个人在互相说话（两人轮流，各说 1.5–4 s，换人间隔 0.1–0.5 s），与目标一样响或低 6 dB。
 
 场景：3 人都在正前方，中间那人在 ±30° 内，相邻两人隔 20–30°，距离 1–2 m；目标是 3 人中随机一个。
-3 s 片段，目标第 2.0 s 开口，开口后 0.5 s 判决；混响 RT60 0.5 s、扩散噪声 SNR 10 dB；刚性球头部，阵列 2+1。
+3 s 片段，目标第 2.0 s 开口（目标语音的第一个有声帧对齐开口时刻），开口后 0.5 s 判决；混响 RT60 0.5 s、扩散噪声 SNR 10 dB；刚性球头部，阵列 2+1。
 视觉按假设模拟（同算法选型）：3 张脸都在视野内，检出 95%、方位误差 2°、唇动判反 10%；在说话的人唇动分数高。
 
 比较（摄像头两档的叫法见 摄像头使用策略.md）：
@@ -48,13 +48,23 @@ def chat_schedule(rng):
     return turns
 
 
+def voiced_start(x, n, rng):
+    """取一段目标语音，让第一个有声帧（32 ms 帧能量高于片段最大值 −20 dB）对齐片段开头，即对齐开口时刻。"""
+    while True:
+        seg = pick_segment(x, n + FS, rng)
+        e = 10 * np.log10(np.mean(seg[: len(seg) // 512 * 512].reshape(-1, 512) ** 2, 1) + 1e-12)
+        i0 = int(np.argmax(e > e.max() - 20)) * 512
+        if i0 + n <= len(seg):
+            return seg[i0:i0 + n]
+
+
 def scene(rng, sir, ctx):
     n = int(T_TOT * FS)
     c = rng.uniform(-30, 30)
     az3 = [c - rng.uniform(20, 30), c, c + rng.uniform(20, 30)]
     ti = int(rng.integers(3)); others = [a for i, a in enumerate(az3) if i != ti]
     d3 = rng.uniform(1.0, 2.0, 3)
-    x_t = np.zeros(n); x_t[int(T_ON * FS):] = pick_segment(ctx["speech"], n - int(T_ON * FS), rng)
+    x_t = np.zeros(n); x_t[int(T_ON * FS):] = voiced_start(ctx["speech"], n - int(T_ON * FS), rng)
     S_t = stft(x_t); H_t = sphere_tf(azimuth_points([az3[ti]], d3[ti]), ctx["mics"], ctx["freqs"])[0]
     act = np.abs(S_t).sum(0) > 1e-9
     p_t = np.mean(np.abs(H_t[:, :, None] * S_t[None][:, :, act]) ** 2)
