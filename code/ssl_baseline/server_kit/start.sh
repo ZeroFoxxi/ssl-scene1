@@ -5,6 +5,7 @@
 #   bash server_kit/start.sh                 默认：s / m / l 三档 × 种子 0、1，共 6 个实验，每个占一块空闲卡
 #   SIZES="s l" SEEDS="0" bash server_kit/start.sh
 #   SCENE=general ARRAY=lin6_3cm bash server_kit/start.sh     RealMAN 阵列（6 麦 3 cm）的通用房间仿真数据：只训练与验证（没有会议室固定测试集）
+#   SCENE=general ARRAY=lin6_3cm ROOMS_TRAIN=6000 DATA_TAG=_60k bash server_kit/start.sh    训练数据放大到 60,000（单独目录）
 # 看进度：tail -f work/logs/start.log        跑完后看结果：python3 server_kit/summary.py
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -31,10 +32,12 @@ ROOMS_TRAIN=${ROOMS_TRAIN:-1200}   # 训练 12,000 个样本（每个房间 10 �
 ROOMS_VAL=${ROOMS_VAL:-100}
 SCENE=${SCENE:-meeting}
 ARRAY=${ARRAY:-lin6_17.5cm}
-if [ "$SCENE" = "meeting" ] && [ "$ARRAY" = "lin6_17.5cm" ]; then
+DATA_TAG=${DATA_TAG:-}             # 如 _60k：数据量放大时存到单独目录，特征缓存也分开
+if [ "$SCENE" = "meeting" ] && [ "$ARRAY" = "lin6_17.5cm" ] && [ -z "$DATA_TAG" ]; then
   DATA=train_data; PREFIX=crnn_meeting; MEETING=1                    # 会议室默认配置：有固定测试集与传统基线
 else
-  DATA=train_data_${SCENE}_${ARRAY}; PREFIX=crnn_${SCENE}_${ARRAY}; MEETING=0
+  DATA=train_data_${SCENE}_${ARRAY}${DATA_TAG}; PREFIX=crnn_${SCENE}_${ARRAY}${DATA_TAG}; MEETING=0
+  if [ "$SCENE" = "meeting" ] && [ "$ARRAY" = "lin6_17.5cm" ]; then DATA=train_data${DATA_TAG}; fi
 fi
 log() { echo "[$(date '+%m-%d %H:%M:%S')] $*"; }
 
@@ -49,8 +52,8 @@ for s in dev-clean test-clean; do
 done
 
 log "2/6 仿真数据：场景 $SCENE，阵列 $ARRAY → work/$DATA（训练 $((ROOMS_TRAIN * 10)) / 验证 $((ROOMS_VAL * 10))；已有分片自动跳过）"
-$PY scripts/gen_meeting_train_data.py --split val --rooms "$ROOMS_VAL" --workers "$WORKERS" --scene "$SCENE" --array "$ARRAY"
-$PY scripts/gen_meeting_train_data.py --split train --rooms "$ROOMS_TRAIN" --workers "$WORKERS" --scene "$SCENE" --array "$ARRAY"
+$PY scripts/gen_meeting_train_data.py --split val --rooms "$ROOMS_VAL" --workers "$WORKERS" --scene "$SCENE" --array "$ARRAY" --tag "$DATA_TAG"
+$PY scripts/gen_meeting_train_data.py --split train --rooms "$ROOMS_TRAIN" --workers "$WORKERS" --scene "$SCENE" --array "$ARRAY" --tag "$DATA_TAG"
 if [ "$MEETING" = 1 ]; then
   [ -f work/train_data/test/test.npz ] || $PY scripts/gen_meeting_test_data.py
   log "3/6 固定测试集上的传统基线"

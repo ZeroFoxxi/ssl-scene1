@@ -22,7 +22,8 @@
 
 另有"通用房间"场景（--scene general）与 5 麦线阵（--array lin5_4cm，即 LOCATA DICIT 阵列中间 5 麦：-8/-4/0/4/8 cm），
 用于在 LOCATA 真实录音上验证"仿真训练 → 真实录音"的差距：阵列放在房间内（不贴墙），声源在前方 ±80°、距离 1–4 m。
-输出到 work/train_data_<scene>_<array>/<split>/。默认（meeting + lin6_17.5cm）仍输出到 work/train_data/<split>/。
+输出到 work/train_data_<scene>_<array><tag>/<split>/。默认（meeting + lin6_17.5cm）仍输出到 work/train_data<tag>/<split>/。
+房间按序号用固定种子生成，--rooms 更大时前面的房间与小数据量时相同（验证集相同房间数时完全相同，可直接比较）。
 """
 import argparse, glob, json, os, sys, time
 from multiprocessing import get_context
@@ -167,8 +168,9 @@ def main():
     ap.add_argument("--shard-rooms", type=int, default=50)
     ap.add_argument("--scene", choices=["meeting", "general"], default="meeting")
     ap.add_argument("--array", choices=list(ARRAYS), default="lin6_17.5cm")
+    ap.add_argument("--tag", default="", help="输出目录后缀，如 _60k（放大数据量时与原数据分开存放）")
     a = ap.parse_args()
-    sub = "train_data" if (a.scene, a.array) == ("meeting", "lin6_17.5cm") else f"train_data_{a.scene}_{a.array}"
+    sub = ("train_data" if (a.scene, a.array) == ("meeting", "lin6_17.5cm") else f"train_data_{a.scene}_{a.array}") + a.tag
     outdir = os.path.join(WORK, sub, a.split); os.makedirs(outdir, exist_ok=True)
     t0 = time.time()
     # 语音在主进程读一次，子进程以 fork 方式共享（不重复占内存；服务器核数多时尤其重要）
