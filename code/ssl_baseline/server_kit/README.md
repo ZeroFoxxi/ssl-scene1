@@ -36,11 +36,11 @@ python3 server_kit/summary.py             # 3. 随时查看进度 / 结果，输
 
 | 项 | 情况 | 怎么做 |
 |---|---|---|
-| GPU | 8 × Tesla V100 32 GB，驱动 465、CUDA 11.3 | 装 PyTorch 1.12.1 的 CUDA 11.3 版（`torch==1.12.1+cu113`）；用空闲的卡，运行前加 `CUDA_VISIBLE_DEVICES=卡号`，按组里规矩选卡 |
+| GPU | 8 × Tesla V100 32 GB，驱动 465、CUDA 11.3 | 装 PyTorch 1.12.1：从 PyPI（公司镜像源）装 `torch==1.12.1` 即可（默认版本自带 CUDA 10.2，驱动 465 与 V100 都支持）；能访问 pytorch.org 时也可装 `torch==1.12.1+cu113`；用空闲的卡，运行前加 `CUDA_VISIBLE_DEVICES=卡号`，按组里规矩选卡 |
 | CPU / 内存 | 112 核 / 1.4 TB | `WORKERS=32` 即可，不必占满 |
 | Python | 3.8.10，无 conda | 可以直接用（依赖会自动选适配 3.8 的版本） |
 | 磁盘 | /home 共用盘剩约 300 GB、已用 100% | 我们需要约 15 GB；数据放哪个目录先问同事 |
-| 外网 | 走公司代理且需要认证（`407 Proxy Authentication Required`） | pip 用公司镜像源（问同事地址）；LibriSpeech 在自己电脑上下载后上传到 `work/librispeech/`，脚本会跳过下载 |
+| 外网 | 走公司代理且需要认证（`407 Proxy Authentication Required`） | pip 用公司镜像源：`pip3 config --user set global.index-url <镜像地址>` 与 `global.trusted-host <镜像主机名>`，之后 `pip3 install --user -r server_kit/requirements_train.txt torch==1.12.1`；LibriSpeech 在自己电脑上下载后上传到 `work/librispeech/`，脚本会跳过下载 |
 
 ## 1. 拿到代码
 

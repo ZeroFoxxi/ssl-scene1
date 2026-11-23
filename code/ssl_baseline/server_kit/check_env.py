@@ -35,8 +35,10 @@ if missing:
     if rest:
         print(f"  pip3 install --user -r server_kit/requirements_train.txt")
     if "torch" in missing:
-        print("  pip3 install --user torch==1.12.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113")
-    print("  （服务器上网要经过需要认证的代理；pip 报 407 / 连接失败时，需配置公司 pip 镜像源或代理后再装）")
+        print("  pip3 install --user torch==1.12.1          # PyPI 默认版本自带 CUDA 10.2，驱动 465 + V100 可用；能访问 pytorch.org 时也可装 torch==1.12.1+cu113")
+    print("  （服务器上网要经过需要认证的代理：先配置公司 pip 镜像源，例如")
+    print("     pip3 config --user set global.index-url <镜像地址>; pip3 config --user set global.trusted-host <镜像主机名>")
+    print("   再运行上面的安装命令）")
 
 lib = os.path.join(ROOT, "work", "librispeech", "LibriSpeech")
 for s in ["dev-clean", "test-clean"]:
