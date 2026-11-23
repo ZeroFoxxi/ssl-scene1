@@ -79,6 +79,9 @@ def main():
     ap.add_argument("--size", choices=list(SIZES), default="s", help="网络大小：s 约 0.28 M、m 约 1.07 M、l 约 2.13 M 参数")
     ap.add_argument("--device", default="auto", help="auto（有 GPU 就用）/ cpu / cuda")
     ap.add_argument("--threads", type=int, default=4, help="CPU 线程数")
+    ap.add_argument("--teacher", default=None, help="知识蒸馏：老师模型路径（work/models/*.pt，大小读同名 .json）；不给则正常训练")
+    ap.add_argument("--kd-alpha", type=float, default=0.5, help="蒸馏损失的权重（其余为原来的软标签损失）")
+    ap.add_argument("--kd-t", type=float, default=2.0, help="蒸馏温度")
     a = ap.parse_args()
     torch.manual_seed(a.seed); np.random.seed(a.seed); torch.set_num_threads(a.threads)
     dev = torch.device("cuda" if (a.device == "auto" and torch.cuda.is_available()) else ("cpu" if a.device == "auto" else a.device))
@@ -92,6 +95,21 @@ def main():
     steps = a.epochs * int(np.ceil(len(tr["az"]) / a.bs))
     sched = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=a.lr, total_steps=steps, pct_start=0.1)
     ylab = torch.from_numpy(soft_label(tr["az"])).to(dev)
+    teacher = None
+    if a.teacher:                                                            # 知识蒸馏：学生同时学老师输出的方向分布（温度 kd_t 下的 KL 散度）
+        sd = torch.load(a.teacher, map_location=dev); side = a.teacher[:-3] + ".json"
+        tsize = json.load(open(side, encoding="utf-8"))["size"] if os.path.exists(side) else None
+        for z in ([tsize] if tsize else list(SIZES)):                        # 没有 .json 时按权重形状找对应的大小
+            try:
+                teacher = CRNN(in_ch=tr["feat"].shape[1], **SIZES[z]).to(dev); teacher.load_state_dict(sd); tsize = z; break
+            except RuntimeError:
+                teacher = None
+        if teacher is None:
+            raise ValueError(f"老师模型与 {list(SIZES)} 都对不上：{a.teacher}")
+        teacher.eval(); tmeta = {"size": tsize}
+        for q in teacher.parameters():
+            q.requires_grad_(False)
+        print(f"蒸馏：老师 {os.path.basename(a.teacher)}（{tmeta['size']} 档），alpha {a.kd_alpha}，温度 {a.kd_t}", flush=True)
     best, log = -1.0, []
     os.makedirs(os.path.join(WORK, "models"), exist_ok=True)
     ck = os.path.join(WORK, "models", f"{a.name}.pt")
@@ -100,7 +118,13 @@ def main():
         for i in range(0, len(perm), a.bs):
             idx = perm[i:i + a.bs]
             xb = torch.from_numpy(tr["feat"][idx].astype(np.float32)).to(dev)
-            loss = -(ylab[idx] * F.log_softmax(model(xb), dim=1)).sum(1).mean()
+            out = model(xb)
+            loss = -(ylab[idx] * F.log_softmax(out, dim=1)).sum(1).mean()
+            if teacher is not None:
+                with torch.no_grad():
+                    pt = F.softmax(teacher(xb) / a.kd_t, dim=1)
+                kd = F.kl_div(F.log_softmax(out / a.kd_t, dim=1), pt, reduction="batchmean") * a.kd_t ** 2
+                loss = (1 - a.kd_alpha) * loss + a.kd_alpha * kd
             opt.zero_grad(); loss.backward(); opt.step(); sched.step(); tot += loss.item() * len(idx)
         va_est = predict(model, va["feat"]); va_acc = acc10(va_est, va["az"])
         va_cond = {CONDS[c]: round(acc10(va_est[va["cond"] == c], va["az"][va["cond"] == c]), 3) for c in range(4)}
@@ -110,7 +134,7 @@ def main():
         if va_acc > best:
             best = va_acc; torch.save({k: v.cpu() for k, v in model.state_dict().items()}, ck)
             json.dump({"size": a.size, "in_ch": int(tr["feat"].shape[1]), "data": a.data, "epoch": ep + 1, "val_acc10": round(best, 4),
-                       "params": n_params, "macs_per_decision": macs}, open(ck[:-3] + ".json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+                       "params": n_params, "macs_per_decision": macs, "teacher": os.path.basename(a.teacher) if a.teacher else None}, open(ck[:-3] + ".json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump(log, open(os.path.join(ROOT, "out", f"nn_train_log_{a.name}.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     if te is None:
         print(f"完成：验证集最好 {best:.4f}，模型 {ck}")
@@ -126,7 +150,7 @@ def main():
             res[f"{r}|{CONDS[c]}"] = round(acc10(est[m], te["az"][m]), 3)
         res[f"{r}|四种条件平均"] = round(float(np.mean([res[f"{r}|{CONDS[c]}"] for c in range(4)])), 3)
     base = json.load(open(os.path.join(ROOT, "out", "test_baselines.json"), encoding="utf-8"))
-    out = {"model": a.name, "size": a.size, "device": str(dev), "params": n_params, "macs_per_decision": macs, "cpu_ms_per_decision_batched": round(1000 * t_inf, 2),
+    out = {"model": a.name, "size": a.size, "teacher": os.path.basename(a.teacher) if a.teacher else None, "device": str(dev), "params": n_params, "macs_per_decision": macs, "cpu_ms_per_decision_batched": round(1000 * t_inf, 2),
            "best_val_acc10": round(best, 4), "test_acc10": res,
            "baselines_0.5s": {k.split(" | ")[0]: v for k, v in base.items() if k.endswith("0.5s")}}
     json.dump(log, open(os.path.join(ROOT, "out", f"nn_train_log_{a.name}.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
@@ -135,7 +159,7 @@ def main():
     print(f"{'方法':<26}" + "".join(f"{c[3:]:>10}" for c in CONDS) + f"{'平均':>8}")
     rows = [("小网络 " + a.name, res)] + [(k, v) for k, v in out["baselines_0.5s"].items()]
     for nm, v in rows:
-        print(f"{nm:<26}" + "".join(f"{v['平均|' + c] * 100:>9.0f}%" for c in CONDS) + f"{v['平均|四种条件平均'] * 100:>7.0f}%")
+        print(f"{nm:<26}" + "".join(f"{int(v['平均|' + c] * 100 + 0.5 + 1e-9):>9d}%" for c in CONDS) + f"{int(v['平均|四种条件平均'] * 100 + 0.5 + 1e-9):>7d}%")
 
 
 if __name__ == "__main__":

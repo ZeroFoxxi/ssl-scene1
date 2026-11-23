@@ -14,9 +14,9 @@ bash server_kit/start.sh                  # 2. 一键启动（自动转到后台
 python3 server_kit/summary.py             # 3. 随时查看进度 / 结果，输出一段文字，复制发回即可
 ```
 
-`start.sh` 默认做的事：解压人声 → 生成仿真数据（112 核用 32 个进程）→ 传统基线 → 计算特征（只算一次）→
+`start.sh` 默认做的事：解压人声 → 生成仿真数据（默认 32 个进程，`WORKERS=` 可改）→ 传统基线 → 计算特征（只算一次）→
 在**空闲的 GPU**（显存占用 <1 GB 且利用率 <10%）上并行训练 s / m / l 三档 × 种子 0、1，共 6 个实验，每个实验一块卡 → 汇总。
-一个实验只用一块卡：网络只有 0.28–2.1 M 参数，一块 V100 远用不满，拆到多卡反而有同步开销；多卡用来同时跑不同实验。
+一个实验只用一块卡：网络只有 0.28–2.1 M 参数，一块训练卡远用不满，拆到多卡反而有同步开销；多卡用来同时跑不同实验。
 同一档两个种子，用来看结果本身的波动。可调：`SIZES="s l" SEEDS="0" EPOCHS=30 bash server_kit/start.sh`。
 
 看实时进度：`tail -f work/logs/start.log`（Ctrl+C 只退出查看，不停止任务）；单个实验的日志在 `work/logs/train_*.log`。
@@ -32,15 +32,15 @@ python3 server_kit/summary.py             # 3. 随时查看进度 / 结果，输
 | Python | 3.8 及以上（3.8 已实测） |
 | 外网 | 需要访问 openslr.org（下载人声）和 pip 源；不能直接上外网时见下面"本组服务器"一节和第 6 节 |
 
-## 本组 V100 服务器的实测情况（11-23）
+## 常见环境情况与处理
 
-| 项 | 情况 | 怎么做 |
-|---|---|---|
-| GPU | 8 × Tesla V100 32 GB，驱动 465、CUDA 11.3 | 装 PyTorch 1.12.1：从 PyPI（公司镜像源）装 `torch==1.12.1` 即可（默认版本自带 CUDA 10.2，驱动 465 与 V100 都支持）；能访问 pytorch.org 时也可装 `torch==1.12.1+cu113`；用空闲的卡，运行前加 `CUDA_VISIBLE_DEVICES=卡号`，按组里规矩选卡 |
-| CPU / 内存 | 112 核 / 1.4 TB | `WORKERS=32` 即可，不必占满 |
-| Python | 3.8.10，无 conda；编译时缺 bz2 库（`No module named '_bz2'`） | 可以直接用（依赖会自动选适配 3.8 的版本）；缺 bz2：`cp server_kit/compat/_bz2.py "$(python3 -m site --user-site)/"`（占位模块，只影响自己的账号；pyroomacoustics 只在下载 .bz2 数据集时才用 bz2，本项目不用） |
-| 磁盘 | /home 共用盘剩约 300 GB、已用 100% | 我们需要约 15 GB；数据放哪个目录先问同事 |
-| 外网 | 走公司代理且需要认证（`407 Proxy Authentication Required`） | pip 用公司镜像源：`pip3 config --user set global.index-url <镜像地址>` 与 `global.trusted-host <镜像主机名>`，之后 `pip3 install --user -r server_kit/requirements_train.txt torch==1.12.1`；LibriSpeech 在自己电脑上下载后上传到 `work/librispeech/`，脚本会跳过下载 |
+| 情况 | 处理 |
+|---|---|
+| 服务器只有 Python 3.8 | 可以直接用（已在 3.8 下实测；依赖文件会自动选适配 3.8 的版本） |
+| 驱动较旧（CUDA 11.x） | 装 PyPI 上的 `torch==1.12.1`（自带 CUDA 10.2，驱动 ≥ 440 即可） |
+| 不能直接上外网 | pip 配置单位内部的镜像源（`pip3 config --user set global.index-url <镜像地址>`、`global.trusted-host <镜像主机名>`）；LibriSpeech 在能上网的电脑下载后上传到 `work/librispeech/` |
+| `No module named '_bz2'`（Python 编译时缺 bz2 库） | `cp server_kit/compat/_bz2.py "$(python3 -m site --user-site)/"`（占位模块，只影响自己的账号；本项目不用 bz2） |
+| 多人共用 GPU | `start.sh` 只用空闲的卡（显存 <1 GB 且利用率 <10%） |
 
 ## 1. 拿到代码
 
