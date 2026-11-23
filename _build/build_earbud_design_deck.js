@@ -164,7 +164,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 {
   const s = newSlide("一个声音进来：耳机怎么接收",
     "PDM 时钟、抽取滤波为数字麦常规做法；时钟漂移补偿、缓存、摄像头时间基准见附录 A10；格式与速率见附录 A5",
-    "副耳只取 1 路麦克风音频，经 ADPCM 4 bit 压缩后转发（仿真中加视觉时与 PCM 无差别，附录 A3），另一路只用于副耳本地增强。实时听通路的采样率与时延由增强模块决定，不经过定位。主耳音频 DSP 按两耳的采样计数把 3 路音频对齐到同一时刻，再进入第 6 页的处理。");
+    "副耳只取 1 路麦克风音频，经 ADPCM 4 bit 压缩后转发（仿真中与 PCM 相差不显著，附录 A3），另一路只用于副耳本地增强。实时听通路的采样率与时延由增强模块决定，不经过定位。主耳音频 DSP 按两耳的采样计数把 3 路音频对齐到同一时刻，再进入第 6 页的处理。");
   const ear = (label, y, n, fwd) => {
     T(s, label, { x: 0.6, y, w: 0.8, h: 0.9, fontSize: 13, bold: true, valign: "middle" });
     box(s, "声波", 1.45, y + 0.2, 0.75, 0.5, { line: C.rule, color: C.gray });
@@ -468,7 +468,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 {
   const s = newSlide("附录 A3　两耳传输、编码与同步",
     SIM + "；同步先例：ClearBuds（MobiSys 2022）< 64 µs；完整规格见附录 A5",
-    "同步实验：混响 RT60 0.5 s、2 个干扰说话人，开口后 0.5 s 判决，每档 72 次。ClearBuds：https://arxiv.org/abs/2206.13611；TWS 播放侧左右同步通常 < 25 µs（audioXpress LE Audio 测试指南）。LC3 码率与时延：https://www.forasoft.com/learn/audio-for-video/articles-audio/lc3-lc3plus-bluetooth-le-audio。编码仿真：S2、S4 场景各 200 段，只编码副耳转发的那一路；干扰一样响、加视觉时 PCM 79.0%、ADPCM 79.5%、G.722 76.5%、Opus 71.5%；LC3 在仿真环境中无法安装，用同为感知编码的 Opus 代替。");
+    "同步实验：混响 RT60 0.5 s、2 个干扰说话人，开口后 0.5 s 判决，每档 72 次。ClearBuds：https://arxiv.org/abs/2206.13611；TWS 播放侧左右同步通常 < 25 µs（audioXpress LE Audio 测试指南）。LC3 码率与时延：https://www.forasoft.com/learn/audio-for-video/articles-audio/lc3-lc3plus-bluetooth-le-audio。编码仿真：S2、S4 场景各 200 段，只编码副耳转发的那一路；干扰一样响、加视觉时 PCM 79.0%、ADPCM 77.0%、G.722 78.5%、Opus 76.5%，与 PCM 逐段配对均不显著（p ≥ 0.22）；LC3 在仿真环境中无法安装，用同为感知编码的 Opus 代替。");
   table(s, [
     [head("数据"), head("从 → 到"), head("格式"), head("速率", { align: "center" })],
     [bold("定位音频"), cell("副耳 → 主耳"), cell("1 路 16 kHz，ADPCM 4 bit（PCM 可选），带时间戳"), ctr("64 kbps")],
@@ -477,9 +477,9 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
     [bold("图像"), cell("传感器 → NPU"), cell("不出模组，只输出检测结果"), ctr("—")],
   ], 0.6, 1.6, [1.4, 1.75, 3.55, 1.2], [0.42, 0.48, 0.48, 0.48, 0.48]);
   sub(s, "耳间编码", 0.6, 4.25, 3);
-  para(s, ["ADPCM 4 bit（64 kbps，默认）：加视觉时与 PCM 无差别（仿真，各 200 段）；每侧约 0.7 mW",
-    "PCM 16 bit（256 kbps）：每侧约 2.6 mW；纯声学时 ADPCM 最多低 3 个百分点，不显著",
-    "感知编码（LC3 类，用 Opus 32 kbps 测试）：加视觉时低 3–7.5 个百分点，不用于定位"], 0.6, 4.65, 7.3, 1.6, { fontSize: 12.5 });
+  para(s, ["ADPCM 4 bit（64 kbps，默认）：与 PCM 相差 ≤ 2 个百分点，不显著（仿真，各 200 段）；每侧约 0.7 mW",
+    "PCM 16 bit（256 kbps）：每侧约 2.6 mW",
+    "感知编码（LC3 类，用 Opus 32 kbps 测试）：准确率差别不显著，方位抖动略大，帧时延约 10 ms；只能用 LC3 时需复核"], 0.6, 4.65, 7.3, 1.6, { fontSize: 12.5 });
   s.addChart(p.charts.LINE, [{ name: "≤10° 的比例", labels: ["0", "10", "25", "50", "100", "200"], values: [63, 61, 61, 60, 8, 7] }],
     Object.assign({ x: 8.3, y: 1.5, w: 4.45, h: 4.6, chartColors: [C.navy], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 7,
       showValue: true, dataLabelPosition: "t", valAxisMinVal: 0, valAxisMaxVal: 80, showLegend: false,
@@ -516,7 +516,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响为近似";
 }
 
 {
-  const s = newSlide("附录 A5　数据流规格", "", "同步要求见附录 A3；编码取舍：ADPCM 4 bit 默认（仿真中加视觉时与 PCM 无差别），PCM 可选，感知编码不用于定位。");
+  const s = newSlide("附录 A5　数据流规格", "", "同步要求见附录 A3；编码取舍：ADPCM 4 bit 默认（仿真中与 PCM 相差不显著），PCM 可选；感知编码准确率差别也不显著，只能用 LC3 时需复核。");
   table(s, [
     [head("数据流"), head("从 → 到"), head("内容与格式"), head("速率"), head("时延要求")],
     [bold("麦克风采集"), cell("麦克风 → 本耳芯片"), cell("数字麦 PDM → PCM 16 kHz / 16 bit；32 ms 帧、16 ms 帧移"), cell("每路 256 kbps（片内）"), cell("—")],
