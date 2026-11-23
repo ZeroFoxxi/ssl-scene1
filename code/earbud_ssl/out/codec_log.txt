@@ -10,3 +10,5 @@ S2 混响 + 2 个干扰（SIR 6 dB） 160/200 140 s
 S2 混响 + 2 个干扰（SIR 6 dB） 180/200 158 s
 S2 混响 + 2 个干扰（SIR 6 dB） 200/200 176 s
 {"PCM 16 bit": {"GEVD-MUSIC": 87.0, "GEVD-MUSIC + 视觉": 93.5}, "IMA ADPCM 4 bit（64 kbps）": {"GEVD-MUSIC": 86.0, "GEVD-MUSIC + 视觉": 94.0}, "G.722（64 kbps）": {"GEVD-MUSIC": 87.0, "GEVD-MUSIC + 视觉": 93.5}, "Opus 32 kbps（感知编码）": {"GEVD-MUSIC": 85.5, "GEVD-MUSIC + 视觉": 93.0}}
+S4 混响 + 2 个干扰（SIR 0 dB） 20/200 193 s
+S4 混响 + 2 个干扰（SIR 0 dB） 40/200 211 s
