@@ -75,6 +75,7 @@ const BIN = "2+1（两耳）", MONO = "单耳 2 麦";
 const v = {
   soundNoisy1dB: thr("1 dB"), soundNoisy35: acc(NOISY, BIN, "不开摄像头"), lipNoisy: acc(NOISY, BIN, "高帧率档"), lowNoisy: acc(NOISY, BIN, "低帧率档"),
   soundQuiet: acc(QUIET, BIN, "不开摄像头"), visNoisy: acc(NOISY, BIN, "仅视觉"),
+  faceNoisy1dB: DK.map((d) => +(TH[d]["1 dB"].acc10_low_frame_pct).toFixed(1)),
   srp: acc(NOISY, BIN, "SRP-PHAT"), music: acc(NOISY, BIN, "MUSIC"), gevd: acc(NOISY, BIN, "GEVD-MUSIC"),
   monoGevd: acc(NOISY, MONO, "GEVD-MUSIC"), monoLip: acc(NOISY, MONO, "高帧率档"),
 };
@@ -97,15 +98,15 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响 0.5 s，面�
 {
   const s = newSlide("结论", "精度为仿真（刚性球头部模型）；计算量与功耗为估算；AI 参数量来自公开论文",
     "情况 1 的分析依据：距离 × 算法 × 单耳 / 两耳仿真（每点 150 次）、开口检测阈值仿真、计算量估算、公开论文与芯片资料。各页详细数字见后。");
-  key(s, "情况 1 靠两只耳机的声音就能找准人：嘈杂环境 3 m 以内 97% 以上，摄像头只需低帧率档");
+  key(s, "情况 1 靠两只耳机的声音就能找准人：嘈杂环境 3 m 以内 97% 以上，摄像头平时可以不开");
   const R = (t, o) => cell(t, Object.assign({ fontSize: 12.5 }, o)), H = (t) => bold(t, { fontSize: 12.5 });
   table(s, [
     [head("项目", { fontSize: 12.5 }), head("结论", { fontSize: 12.5 })],
     [H("阵列"), R(`两只耳机一起测向（主耳 2 麦 + 副耳转发 1 路）；单只耳机 2 m 处只有 ${pct(v.monoGevd[2])}，不可用`)],
     [H("算法"), R("传统信号处理 GEVD-MUSIC（子空间 + 背景白化），没有用 AI；2 m 以外明显好于 SRP-PHAT、MUSIC")],
     [H("拾音距离"), R(`嘈杂环境只用声音：1–2 m ${pct(v.soundNoisy1dB[2])}，3 m ${pct(v.soundNoisy1dB[3])}，4 m ${pct(v.soundNoisy1dB[4])}；安静环境 4 m ${pct(v.soundQuiet[4])}`)],
-    [H("摄像头"), R("只开低帧率档（1–2 fps），确认是哪张脸；情况 1 不需要高帧率看唇动")],
-    [H("计算量与功耗"), R("约 19 MFLOPS、内存约 215 KB；新增约 6 mW，续航约 5.2 h（基准 6 h，估算）")],
+    [H("摄像头"), R(`平时不开，确认是哪张脸或校正方位偏差时短暂打开；加人脸位置最多多 ${(Math.max(...v.faceNoisy1dB.map((x, i) => x - v.soundNoisy1dB[i]))).toFixed(1)} 个百分点，不需要看唇动`)],
+    [H("计算量与功耗"), R("约 19 MFLOPS、内存约 215 KB；新增约 5.3 mW，续航约 5.25 h（基准 6 h，估算）")],
     [H("AI"), R("适合耳机的定位网络约 3.5 万–31 万参数（8 比特约 40–300 KB）；情况 1 暂不需要，12 月在实测数据上对比")],
   ], 0.6, 1.75, [2.1, 10.03], [0.48, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66]);
 }
@@ -138,9 +139,9 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响 0.5 s，面�
   line(s, 12.06, 3.0, 12.06, 2.45, { color: C.navy });
   box(s, "输出：目标方位 + 置信度\n8 字节，每 16 ms → 增强", 9.9, 1.75, 2.85, 0.7, { fs: 10.5, line: C.navy, color: C.navy, bold: true });
   // 摄像头、IMU
-  box(s, "摄像头低帧率档（两耳各一）\n1–2 fps，人脸检测 → 人脸方位", 0.6, 5.0, 3.3, 0.75, { fs: 10.5 });
-  line(s, 3.9, 5.37, 11.25, 5.37, { arrow: false });
-  line(s, 11.25, 5.37, 11.25, 3.85);
+  box(s, "摄像头（按需短暂打开，两耳各一）\n1–2 fps，人脸检测 → 人脸方位", 0.6, 5.0, 3.3, 0.75, { fs: 10.5, color: C.gray });
+  line(s, 3.9, 5.37, 11.25, 5.37, { arrow: false, dash: "dash" });
+  line(s, 11.25, 5.37, 11.25, 3.85, { dash: "dash" });
   box(s, "IMU：头部转动\n换算到世界坐标", 4.4, 5.85, 2.2, 0.65, { fs: 10.5 });
   line(s, 6.6, 6.17, 11.4, 6.17, { arrow: false });
   line(s, 11.4, 6.17, 11.4, 3.85);
@@ -149,14 +150,15 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响 0.5 s，面�
 // ================= 4 拾音距离 =================
 {
   const s = newSlide("拾音距离", SIM + "；视觉随距离变差为假设（2 m 内检出 95%、唇动判反 10%；3 m 90% / 20%；4 m 85% / 30%）",
-    `距离的物理设定：噪声声级固定，目标声级与距离成反比；直达混响比 1.5 m 处 0 dB，每翻一倍降 6 dB。只用声音时开口检测阈值：情况 1 用 1 dB（只有噪声，没有误检：每段开口前 1 s，共 750 s 纯噪声段 0 次）；若沿用多人场景的 3.5 dB，嘈杂环境 2 / 3 / 4 m 只有 ${pct(v.soundNoisy35[2])} / ${pct(v.soundNoisy35[3])} / ${pct(v.soundNoisy35[4])}（开口检不到），开口时刻已知时 GEVD-MUSIC 为 ${pct(v.gevd[2])} / ${pct(v.gevd[3])} / ${pct(v.gevd[4])}。安静环境 4 m 处加唇动反而略低（${pct(acc(QUIET, BIN, "高帧率档")[4])}），因唇动给的开口时刻有 ±0.1 s 误差、远处唇动更易判错。嘴宽像素按 5 cm、720p、视场 80° 估算。`);
+    `距离的物理设定：噪声声级固定，目标声级与距离成反比；直达混响比 1.5 m 处 0 dB，每翻一倍降 6 dB。只用声音时开口检测阈值：情况 1 用 1 dB（只有噪声，没有误检：每段开口前 1 s，共 750 s 纯噪声段 0 次）；若沿用多人场景的 3.5 dB，嘈杂环境 2 / 3 / 4 m 只有 ${pct(v.soundNoisy35[2])} / ${pct(v.soundNoisy35[3])} / ${pct(v.soundNoisy35[4])}（开口检不到），开口时刻已知时 GEVD-MUSIC 为 ${pct(v.gevd[2])} / ${pct(v.gevd[3])} / ${pct(v.gevd[4])}。安静环境 4 m 处加唇动反而略低（${pct(acc(QUIET, BIN, "高帧率档")[4])}），因唇动给的开口时刻有 ±0.1 s 误差、远处唇动更易判错。嘴宽像素按 5 cm、720p、视场 80° 估算。阈值 1 dB 时加低帧率人脸位置：0.5 / 1 / 2 / 3 / 4 m 为 ${v.faceNoisy1dB.map(pct).join(" / ")}（只用声音 ${v.soundNoisy1dB.map(pct).join(" / ")}），差别在统计误差以内。`);
   key(s, `距离每翻一倍，声音弱 6 dB、混响占比高 6 dB；嘈杂环境 3 m 以内只用声音 ${pct(v.soundNoisy1dB[3])} 以上，4 m 降到 ${pct(v.soundNoisy1dB[4])}`);
   s.addChart(p.charts.LINE, [
     { name: "只用声音（嘈杂）", labels: DL, values: v.soundNoisy1dB },
     { name: "只用声音（安静）", labels: DL, values: v.soundQuiet },
+    { name: "声音 + 人脸位置（嘈杂）", labels: DL, values: v.faceNoisy1dB },
     { name: "声音 + 唇动（嘈杂）", labels: DL, values: v.lipNoisy },
     { name: "只看摄像头唇动（嘈杂）", labels: DL, values: v.visNoisy },
-  ], Object.assign({ x: 0.6, y: 1.6, w: 7.2, h: 5.15, chartColors: [C.navy, C.navyLt, "7F7F7F", "BFBFBF"], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 6,
+  ], Object.assign({ x: 0.6, y: 1.6, w: 7.2, h: 5.15, chartColors: [C.navy, C.navyLt, "2E75B6", "7F7F7F", "BFBFBF"], lineSize: 2, lineDataSymbol: "circle", lineDataSymbolSize: 6,
     valAxisMinVal: 40, valAxisMaxVal: 100, showLegend: true, legendPos: "b", showTitle: true, title: "方位误差 ≤ 10° 的比例（%）",
     showCatAxisTitle: true, catAxisTitle: "说话人距离（m）" }, chartBase));
   const fmt = (x) => (x < 0 ? "−" + (-x).toFixed(1) : x.toFixed(1)); const snr = (d) => fmt(10 - 20 * Math.log10(d / 1.5)), drr = (d) => fmt(0 - 20 * Math.log10(d / 1.5)), px = (d) => Math.round(38.1 / d);
@@ -166,7 +168,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响 0.5 s，面�
   ], 8.15, 1.7, [1.0, 1.35, 1.25, 1.0], [0.4, 0.38, 0.38, 0.38, 0.38, 0.38]);
   para(s, ["2 m 以内声音清楚：只用声音 100%，加唇动 99% 以上；只看摄像头约 76–78%。",
     "远处主要受混响和噪声限制：4 m、嘈杂时 SNR 只剩约 1.5 dB，直达声比混响弱约 8.5 dB。",
-    "摄像头在远处帮助有限：嘴在画面里只有约 10 像素，唇动更易判错。"], 8.15, 4.2, 4.6, 2.5, { fontSize: 12 });
+    `摄像头帮助很小：加人脸位置最多多 ${(Math.max(...v.faceNoisy1dB.map((x, i) => x - v.soundNoisy1dB[i]))).toFixed(1)} 个百分点；加唇动远处反而更低（开口时刻有误差、嘴只有约 10 像素）。`], 8.15, 4.2, 4.6, 2.5, { fontSize: 12 });
 }
 
 // ================= 4b 声源定位算法有哪些 =================
@@ -257,16 +259,16 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响 0.5 s，面�
 // ================= 8 功耗 =================
 {
   const s = newSlide("情况 1 的功耗（每只耳机）", "基准：FreeClip 2 S 每只 60 mAh、通话 6 h（华为官网），按 3.7 V 约 37 mW；其余为按公开器件估算",
-    "续航 = 222 mWh ÷（37 mW + 新增）。耳间传输：nRF5340 射频约 5 nJ/bit × 协议开销 2，64 kbps 约 0.7 mW。定位计算：按偏老工艺 MCU 约 0.19 mW/MHz 估上限。摄像头低帧率档：HM0360 常开监测模式 140–256 µA。情况 2 需要高帧率档看唇动（传感器 + NPU 约 1.2–11 mW），续航约 4.6–5.3 h，另行分析。");
-  key(s, "情况 1 新增约 6 mW，续航约 5.2 h（基准 6 h）；摄像头只开低帧率档，只多 0.4–0.8 mW");
+    "续航 = 222 mWh ÷（37 mW + 新增）。耳间传输：nRF5340 射频约 5 nJ/bit × 协议开销 2，64 kbps 约 0.7 mW。定位计算：按偏老工艺 MCU 约 0.19 mW/MHz 估上限。摄像头打开时按低帧率档：HM0360 常开监测模式 140–256 µA；按需短暂打开的时间占比很小，未计入。情况 2 需要高帧率档看唇动（传感器 + NPU 约 1.2–11 mW），续航约 4.6–5.3 h，另行分析。");
+  key(s, "情况 1 新增约 5.3 mW，续航约 5.25 h（基准 6 h）；摄像头平时不开，只在需要时短暂打开");
   const rt = (add) => (222 / (37 + add)).toFixed(2);
   table(s, [
     [head("部分"), head("功耗", { align: "center" }), head("依据")],
     [bold("耳间传输（定位用 1 路 ADPCM）"), ctr("约 0.7 mW"), cell("64 kbps；仿真中 ADPCM 与不压缩精度差别不显著")],
     [bold("定位计算（GEVD-MUSIC + 开口检测）"), ctr("≤ 4.6 mW"), cell("约 19 MFLOPS，按偏老工艺 MCU 估上限")],
-    [bold("摄像头低帧率档（1–2 fps，一直开）"), ctr("0.4–0.8 mW"), cell("低功耗传感器监测模式")],
-    [bold("合计新增"), ctr("约 5.7–6.1 mW", { bold: true }), cell("")],
-    [bold("续航"), ctr(`约 ${rt(6.1)}–${rt(5.7)} h`, { bold: true }), cell(`不开摄像头约 ${rt(5.3)} h；基准 6 h`)],
+    [bold("摄像头（平时不开，按需短暂打开）"), ctr("很小"), cell("打开时低帧率 1–2 fps 约 0.4–0.8 mW；加人脸对精度帮助很小（第 4 页）")],
+    [bold("合计新增"), ctr("约 5.3 mW", { bold: true }), cell("")],
+    [bold("续航"), ctr(`约 ${rt(5.3)} h`, { bold: true }), cell(`若低帧率档一直开约 ${rt(6.1)}–${rt(5.7)} h；基准 6 h`)],
   ], 0.6, 1.75, [4.0, 2.2, 5.93], [0.42, 0.5, 0.5, 0.5, 0.5, 0.5]);
   para(s, ["功耗主要在定位计算（约 4.6 mW 上限），实际取决于芯片工艺【待确认】。",
     "若改用 SRP-PHAT 可省约一半计算，但 2 m 以外精度不可用（第 6 页）。"], 0.6, 5.0, 12.1, 1.6, { fontSize: 12.5 });
