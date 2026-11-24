@@ -55,6 +55,17 @@ def build_features(split, data="train_data"):
     return {"feat": feat, **meta}
 
 
+def is_meeting_default(data):
+    """会议室场景 + 会议室阵列（6 麦线阵 17.5 cm）的数据才评测会议室固定测试集；放大数据量的目录（如 train_data_60k）按 info.json 判断。"""
+    if data == "train_data":
+        return True
+    p = os.path.join(WORK, data, "val", "info.json")
+    if os.path.exists(p):
+        info = json.load(open(p, encoding="utf-8"))
+        return info.get("scene") == "meeting" and info.get("array") == "lin6_17.5cm"
+    return False
+
+
 def predict(model, feat, bs=128):
     model.eval(); outs = []
     dev = next(model.parameters()).device
@@ -87,7 +98,7 @@ def main():
     dev = torch.device("cuda" if (a.device == "auto" and torch.cuda.is_available()) else ("cpu" if a.device == "auto" else a.device))
     print("设备：", dev, flush=True)
     tr, va = build_features("train", a.data), build_features("val", a.data)
-    te = build_features("test") if a.data == "train_data" else None
+    te = build_features("test") if is_meeting_default(a.data) else None
     model = CRNN(in_ch=tr["feat"].shape[1], **SIZES[a.size]).to(dev)
     n_params = sum(p.numel() for p in model.parameters()); macs = count_macs(model, tr["feat"].shape[1], tr["feat"].shape[3])
     print(f"参数量 {n_params}，每次判决乘加 {macs / 1e6:.0f} M", flush=True)

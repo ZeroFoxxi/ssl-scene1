@@ -67,8 +67,8 @@ if res:
 vo = {}
 for f in sorted(glob.glob(os.path.join(ROOT, "work", "models", "crnn_*_seed*.json"))):
     d = json.load(open(f, encoding="utf-8"))
-    if d.get("data", "train_data") == "train_data":
-        continue
+    if d.get("data", "train_data") == "train_data" or os.path.exists(os.path.join(OUT, f"nn_test_results_{os.path.basename(f)[:-5]}.json")):
+        continue                                                             # 有会议室固定测试集结果的，已列在上面
     vo[os.path.basename(f)[:-5]] = d
 if vo:
     p("其他数据配置（只有验证集，误差 ≤10°；验证集最好轮次）：")
