@@ -28,11 +28,10 @@ p("正在运行：" + ("无" if not run else ""))
 for r in run.splitlines():
     m = re.search(r"(scripts/\S+\.py.*)", r); p("  " + (m.group(1)[:120] if m else r[:120]))
 
-sl = os.path.join(LOGS, "start.log")
-if os.path.exists(sl):
+for sl in sorted(glob.glob(os.path.join(LOGS, "start*.log")), key=os.path.getmtime)[-3:]:     # 最近的几个配置
     st = [x for x in open(sl, encoding="utf-8", errors="replace").read().splitlines() if x.startswith("[")]
-    p("启动日志最后几步：")
-    for x in st[-4:]:
+    p(f"启动日志 {os.path.basename(sl)} 最后几步：")
+    for x in st[-3:]:
         p("  " + x[:150])
 
 base = os.path.join(OUT, "test_baselines.json")

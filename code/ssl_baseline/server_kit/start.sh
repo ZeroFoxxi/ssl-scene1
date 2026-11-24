@@ -7,22 +7,12 @@
 #   SCENE=general ARRAY=lin6_3cm bash server_kit/start.sh     RealMAN 阵列（6 麦 3 cm）的通用房间仿真数据：只训练与验证（没有会议室固定测试集）
 #   SCENE=general ARRAY=lin6_3cm ROOMS_TRAIN=6000 DATA_TAG=_60k bash server_kit/start.sh    训练数据放大到 60,000（单独目录）
 #   ROOMS_TRAIN=6000 DATA_TAG=_60k bash server_kit/start.sh                                 会议室阵列，训练数据 60,000（仍评测同一个固定测试集）
-# 看进度：tail -f work/logs/start.log        跑完后看结果：python3 server_kit/summary.py
+#   SCENE=general ARRAY=lin6_3cm EPOCHS=150 RUN_TAG=_ep150 SIZES="s" bash server_kit/start.sh  同一份 12,000 数据训练 150 轮（对照：训练步数与 60,000 × 30 轮相同）
+# 不同配置可以同时运行（各自的日志 work/logs/start_<配置>.log）；同一份数据还没生成时，不要同时启动两个用它的配置。
+# 跑完后看结果：python3 server_kit/summary.py
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p work/logs out
-if [ "${_SSL_INNER:-0}" != "1" ]; then
-  if [ -f work/logs/start.pid ] && kill -0 "$(cat work/logs/start.pid)" 2>/dev/null; then
-    echo "已有一个任务在运行（进程 $(cat work/logs/start.pid)），看进度：tail -f work/logs/start.log"; exit 1
-  fi
-  _SSL_INNER=1 nohup bash "$0" "$@" > work/logs/start.log 2>&1 &
-  echo $! > work/logs/start.pid
-  echo "已在后台启动（进程 $!）。"
-  echo "看进度：tail -f work/logs/start.log    （按 Ctrl+C 只是退出查看，不会停止任务）"
-  echo "跑完后：python3 server_kit/summary.py"
-  exit 0
-fi
-
 PY=${PY:-python3}
 SIZES=${SIZES:-"s m l"}
 SEEDS=${SEEDS:-"0 1"}
@@ -34,11 +24,26 @@ ROOMS_VAL=${ROOMS_VAL:-100}
 SCENE=${SCENE:-meeting}
 ARRAY=${ARRAY:-lin6_17.5cm}
 DATA_TAG=${DATA_TAG:-}             # 如 _60k：数据量放大时存到单独目录，特征缓存也分开
+RUN_TAG=${RUN_TAG:-}               # 如 _ep150：同一份数据、不同训练设置时区分实验名（不覆盖已有模型）
 if [ "$SCENE" = "meeting" ] && [ "$ARRAY" = "lin6_17.5cm" ]; then
-  DATA=train_data${DATA_TAG}; PREFIX=crnn_meeting${DATA_TAG}; MEETING=1   # 会议室配置（含放大数据量）：都在同一个固定测试集上评测，有传统基线
+  DATA=train_data${DATA_TAG}; PREFIX=crnn_meeting${DATA_TAG}${RUN_TAG}; MEETING=1   # 会议室配置（含放大数据量）：都在同一个固定测试集上评测，有传统基线
 else
-  DATA=train_data_${SCENE}_${ARRAY}${DATA_TAG}; PREFIX=crnn_${SCENE}_${ARRAY}${DATA_TAG}; MEETING=0
+  DATA=train_data_${SCENE}_${ARRAY}${DATA_TAG}; PREFIX=crnn_${SCENE}_${ARRAY}${DATA_TAG}${RUN_TAG}; MEETING=0
 fi
+RUN_ID=${SCENE}_${ARRAY}${DATA_TAG}${RUN_TAG}   # 每种配置一份日志与进程号：不同配置可以同时跑
+LOG=work/logs/start_${RUN_ID}.log; PIDF=work/logs/start_${RUN_ID}.pid
+if [ "${_SSL_INNER:-0}" != "1" ]; then
+  if [ -f "$PIDF" ] && kill -0 "$(cat "$PIDF")" 2>/dev/null; then
+    echo "这个配置已有任务在运行（进程 $(cat "$PIDF")），看进度：tail -f $LOG"; exit 1
+  fi
+  _SSL_INNER=1 nohup bash "$0" "$@" > "$LOG" 2>&1 &
+  echo $! > "$PIDF"
+  echo "已在后台启动（进程 $!，配置 $RUN_ID）。"
+  echo "看进度：tail -f $LOG    （按 Ctrl+C 只是退出查看，不会停止任务）"
+  echo "跑完后：python3 server_kit/summary.py"
+  exit 0
+fi
+
 log() { echo "[$(date '+%m-%d %H:%M:%S')] $*"; }
 
 log "0/6 环境检查"
