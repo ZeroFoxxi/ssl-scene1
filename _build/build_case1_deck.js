@@ -106,7 +106,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响 0.5 s，面�
     [H("算法"), R("传统信号处理 GEVD-MUSIC（子空间 + 背景白化），没有用 AI；2 m 以外明显好于 SRP-PHAT、MUSIC")],
     [H("拾音距离"), R(`嘈杂环境只用声音：1–2 m ${pct(v.soundNoisy1dB[2])}，3 m ${pct(v.soundNoisy1dB[3])}，4 m ${pct(v.soundNoisy1dB[4])}；安静环境 4 m ${pct(v.soundQuiet[4])}`)],
     [H("摄像头"), R(`平时不开，确认是哪张脸或校正方位偏差时短暂打开；加人脸位置最多多 ${(Math.max(...v.faceNoisy1dB.map((x, i) => x - v.soundNoisy1dB[i]))).toFixed(1)} 个百分点，不需要看唇动`)],
-    [H("计算量与功耗"), R("约 19 MFLOPS、内存约 215 KB；新增约 5.3 mW，续航约 5.25 h（基准 6 h，估算）")],
+    [H("计算量与功耗"), R("约 19 MFLOPS、内存约 0.5 MB（含 1.5 s 帧缓存）；新增约 5.3 mW，续航约 5.25 h（基准 6 h，估算）")],
     [H("AI"), R("适合耳机的定位网络约 3.5 万–31 万参数（8 比特约 40–300 KB）；情况 1 暂不需要，12 月在实测数据上对比")],
   ], 0.6, 1.75, [2.1, 10.03], [0.48, 0.66, 0.66, 0.66, 0.66, 0.66, 0.66]);
 }
@@ -244,7 +244,7 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响 0.5 s，面�
   key(s, "目前用传统方法，没有 AI；适合耳机的 AI 定位网络约 3.5 万–31 万参数，情况 1 暂不需要");
   table(s, [
     [head("方法"), head("类型"), head("参数量", { align: "center" }), head("内存（8 比特）", { align: "center" }), head("要不要训练数据", { align: "center" })],
-    [bold("GEVD-MUSIC（本方案）", { color: C.navy }), cell("传统信号处理"), ctr("无（方向模板）"), ctr("约 215 KB"), ctr("不要")],
+    [bold("GEVD-MUSIC（本方案）", { color: C.navy }), cell("传统信号处理"), ctr("无（方向模板）"), ctr("模板 + 状态约 215 KB"), ctr("不要")],
     [bold("LightDOA"), cell("轻量卷积网络"), ctr("3.5 万–3.9 万"), ctr("约 40 KB"), ctr("要")],
     [bold("CP-Mobile"), cell("移动端小网络"), ctr("6.1 万–6.4 万"), ctr("约 65 KB"), ctr("要")],
     [bold("CRNN"), cell("卷积循环网络"), ctr("约 31 万"), ctr("约 300 KB"), ctr("要")],
