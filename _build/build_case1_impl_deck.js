@@ -80,47 +80,7 @@ const SRC = "公式与仿真代码实现一致（code/earbud_ssl）；参数为�
   s.addNotes("情况 1：面前 3 个人，只有 1 个人在跟你说话。本文件把声源定位的每一层写清楚：输入、输出、维度、参数、计算公式和计算量。全部为信号处理，没有需要训练的参数。");
 }
 
-// ================= 2 逐层框图 =================
-{
-  const s = newSlide("逐层处理框图", "每秒计算量为估算（每 0.25 s 扫描一次）；L8 只在摄像头按需打开时使用",
-    "代码对应：L1 sim.highpass；L2 sim.stft；L3 run_camera_policy.novelty_raw、acoustic_onsets；L4 methods.frame_energy_db、onset_weights、covariance（时间窗见 run_camera_policy.gevd_spec）；L5–L6 methods.music；L7 methods.peak；L8 methods.fuse_soft；方向模板 sphere.sphere_tf。");
-  key(s, "10 层，全部在主耳音频 DSP 上做信号处理，约 19 MFLOPS，没有需要训练的参数");
-  const W = 2.2, H = 1.2, GAP = 0.28, xs = [0, 1, 2, 3, 4].map((i) => 0.6 + i * (W + GAP));
-  const Y1 = 1.75, Y2 = 3.95;
-  const row1 = [
-    ["L0 采集与汇集", "主耳 2 路 + 副耳 1 路\n（ADPCM 解码）", "3 路 PCM，16 kHz"],
-    ["L1 高通", "4 阶 Butterworth\n截止 100 Hz", mf(g["高通"])],
-    ["L2 分帧加窗 + FFT", "512 点汉宁窗，帧移 256\n保留 200–7000 Hz", "3 × 218 频点 / 16 ms；" + mf(g["分帧 + FFT"])],
-    ["L3 开口检测", "短时 / 背景协方差递推\n白化后最大特征值 > 1 dB", "开口时刻 t_on；6.6 MFLOPS"],
-    ["L4 协方差估计", "背景：开口前 1 s\n目标：开口起，起始段加权", "218 × 两个 3×3；" + mf(g["协方差"] + g["判帧"])],
-  ];
-  const row2 = [   // 从右往左
-    ["L5 白化 + 特征分解", "背景 Cholesky 白化目标\n取 2 维噪声子空间", "218 × 3×2；" + mf(g["白化 + 特征分解"])],
-    ["L6 空间谱扫描", "72 个方向 × 218 频点\nMUSIC 谱，频点平均", "72 个分数；" + mf(g["方向扫描"])],
-    ["L7 找峰 + 插值", "最大值 + 抛物线插值", "方位 θ̂；很小"],
-    ["L8 与人脸融合", "人脸方位 ±8° 内取谱峰\n摄像头按需打开时", "方位 θ_out；很小"],
-    ["L9 输出", "IMU 换到世界坐标跟踪\n每 16 ms 下发 8 字节", "→ 增强模块"],
-  ];
-  const draw = (r, x, y) => {
-    s.addShape(p.shapes.RECTANGLE, { x, y, w: W, h: H, fill: { color: "FFFFFF" }, line: { color: C.navy, width: 0.75 } });
-    T(s, r[0], { x: x + 0.06, y: y + 0.06, w: W - 0.12, h: 0.3, fontSize: 11, bold: true, color: C.navy, align: "center", valign: "middle" });
-    T(s, r[1], { x: x + 0.06, y: y + 0.38, w: W - 0.12, h: 0.78, fontSize: 10, align: "center", valign: "middle" });
-    T(s, r[2], { x, y: y + H + 0.04, w: W, h: 0.26, fontSize: 9, color: C.gray, align: "center", valign: "middle" });
-  };
-  row1.forEach((r, i) => { draw(r, xs[i], Y1); if (i < 4) line(s, xs[i] + W, Y1 + H / 2, xs[i + 1], Y1 + H / 2); });
-  row2.forEach((r, i) => { const x = xs[4 - i]; draw(r, x, Y2); if (i < 4) line(s, x, Y2 + H / 2, xs[3 - i] + W, Y2 + H / 2); });
-  line(s, xs[4] + W / 2, Y1 + H + 0.32, xs[4] + W / 2, Y2);
-  // 旁路输入
-  const Y3 = 5.85;
-  box(s, "方向模板（离线制作）\n72 方向 × 218 频点 × 3 路，约 184 KB", xs[3] - 0.1, Y3, W + 0.2, 0.72, { fs: 9.5, line: C.box });
-  line(s, xs[3] + W / 2, Y3, xs[3] + W / 2, Y2 + H + 0.32, { color: C.gray });
-  box(s, "摄像头（按需短暂打开）\n人脸方位 φ_i", xs[1], Y3, W, 0.72, { fs: 9.5, dash: "dash" });
-  line(s, xs[1] + W / 2, Y3, xs[1] + W / 2, Y2 + H + 0.32, { color: C.gray, dash: "dash" });
-  box(s, "IMU：头部偏航角 ψ(t)", xs[0], Y3, W, 0.72, { fs: 9.5 });
-  line(s, xs[0] + W / 2, Y3, xs[0] + W / 2, Y2 + H + 0.32, { color: C.gray });
-}
-
-// ---------- 细框图用的小工具：富文本（_ 下标，^ 上标，{} 分组）、运算块、带维度标注的箭头 ----------
+// ---------- 富文本（_ 下标，^ 上标，{} 分组），用于框图标注和表格中的公式 ----------
 function rich(str, base) {
   const runs = []; let buf = ""; let i = 0;
   const flush = () => { if (buf) { runs.push({ text: buf, options: Object.assign({}, base) }); buf = ""; } };
@@ -136,160 +96,109 @@ function rich(str, base) {
   flush();
   return runs;
 }
-function blk(s, x, y, w, h, title, lines, o) {
+// 多行富文本：lines 为字符串数组，行间换行
+const richLines = (lines, base) => {
+  const out = [];
+  lines.forEach((ln, k) => { const r = rich(ln, base); if (k < lines.length - 1) r[r.length - 1].options = Object.assign({}, r[r.length - 1].options, { breakLine: true }); out.push(...r); });
+  return out;
+};
+// 框图中的运算块：编号 + 名称（粗体）+ 一行说明
+function node(s, x, y, w, h, num, name, sub, o) {
   o = o || {};
-  s.addShape(p.shapes.RECTANGLE, { x, y, w, h, fill: { color: o.fill || "FFFFFF" }, line: { color: o.line || C.navy, width: 0.75, dashType: o.dash || "solid" } });
-  const base = { fontFace: F, lang: "zh-CN", fontSize: o.fs || 9, color: o.color || C.ink };
-  const parts = [];
-  parts.push({ text: title, options: Object.assign({}, base, { bold: true, color: o.tcolor || C.navy, fontSize: (o.fs || 9) + 1, breakLine: lines.length > 0 }) });
-  lines.forEach((ln, k) => {
-    const r = rich(ln, base);
-    if (k < lines.length - 1) r[r.length - 1].options.breakLine = true;
-    parts.push(...r);
-  });
-  s.addText(parts, { x: x + 0.04, y, w: w - 0.08, h, align: "center", valign: "middle", margin: 0.02, paraSpaceAfter: 1, isTextBox: true });
+  s.addShape(p.shapes.RECTANGLE, { x, y, w, h, fill: { color: o.fill || "FFFFFF" }, line: { color: o.line || C.navy, width: o.lw || 1, dashType: o.dash || "solid" } });
+  const base = { fontFace: F, lang: "zh-CN", fontSize: 9, color: o.color || C.gray };
+  const runs = [{ text: (num ? num + " " : "") + name, options: { fontFace: F, lang: "zh-CN", fontSize: 10, bold: true, color: o.tcolor || C.navy, breakLine: !!sub } }];
+  if (sub) runs.push(...rich(sub, base));
+  s.addText(runs, { x: x + 0.03, y, w: w - 0.06, h, align: "center", valign: "middle", margin: 0.02, isTextBox: true });
 }
-const lab = (s, text, x, y, w, o) => s.addText(rich(text, { fontFace: F, lang: "zh-CN", fontSize: 8, color: C.gray }),
-  Object.assign({ x, y, w, h: 0.22, align: "center", valign: "middle", margin: 0, isTextBox: true }, o || {}));
-const arrow = (s, x1, y1, x2, y2, o) => line(s, x1, y1, x2, y2, Object.assign({ color: C.navy, width: 0.9 }, o || {}));
-const SRC_D = "参数为仿真所用值；标【设计】的为方案设计、仿真中未实现";
+const arrow = (s, x1, y1, x2, y2, o) => line(s, x1, y1, x2, y2, Object.assign({ color: C.navy, width: 1 }, o || {}));
+const small = (s, text, x, y, w, o) => s.addText(rich(text, { fontFace: F, lang: "zh-CN", fontSize: 8.5, color: C.gray }),
+  Object.assign({ x, y, w, h: 0.24, align: "center", valign: "middle", margin: 0, isTextBox: true }, o || {}));
 
-// ================= 3 细框图①：前端与开口检测 =================
+// ================= 2 信号流图 =================
 {
-  const s = newSlide("算法框图①　前端与开口检测（每 16 ms 一帧）", SRC_D,
-    "第 1 行每个样本 / 每帧都做；第 2、3 行（开口检测）每 2 帧做一次，从第 0.3 s 起计算 ν、从第 1 s 起判决。背景递推在本帧判决之后才用本帧更新。代码：sim.stft、run_camera_policy.novelty_raw、acoustic_onsets。");
-  key(s, "3 路声音逐帧变成 3 × 218 个频点；背景白化后的最大特征值上穿阈值即判为有人开口，输出开口帧 t_on");
-  const W1 = 1.5, G1 = 0.27, Y1 = 1.72, H1 = 1.0;
-  const xa = [0, 1, 2, 3, 4, 5, 6].map((i) => 0.6 + i * (W1 + G1));
-  const A = [
-    ["麦克风 × 3", ["主耳前、后 + 副耳前", "PDM → 16 kHz / 16 bit"]],
-    ["耳间传输", ["副耳 1 路 ADPCM 4 bit", "主耳解码，按采样计数对齐"]],
-    ["高通", ["4 阶 Butterworth", "f_c = 100 Hz"]],
-    ["分帧", ["帧长 512、帧移 256", "32 ms / 16 ms"]],
-    ["加窗", ["汉宁窗", "w(n) = 0.5 − 0.5cos(2πn/512)"]],
-    ["FFT", ["512 点实数 FFT", "每路 257 个频点"]],
-    ["取频带", ["频点 7–224（200–7000 Hz）", "x(f,t)：3 × 218 复数"]],
+  const s = newSlide("算法框图", "编号与下两页的逐步说明表对应；虚线为按需或设计中的部分（仿真中未实现）；计算量为估算",
+    "主线（中间一行）每 0.25 s 做一次定位；上方支路是开口检测，每帧都在跑，给出对方开口的时刻 t_on；下方是离线的方向模板、自语音检测、输出，以及 IMU。摄像头在情况 1 中平时不开，只在需要确认是哪张脸时短暂打开。代码对应见逐步说明表的备注。");
+  key(s, "声音每 16 ms 变成 3 × 218 个频点；开口检测给出开口时刻；每 0.25 s 用开口前后的帧白化、扫描 72 个方向，输出方位");
+  const P = 1.1, W = 0.92, H = 0.82, X0 = 0.6;
+  const X = (i) => X0 + i * P;
+  const YM = 3.55, YU = 2.0, YL = 5.2;
+  const main = [
+    ["①", "麦克风", "3 路，16 kHz"], ["②", "高通", "100 Hz"], ["③", "分帧加窗", "512 点，移 256"], ["④", "FFT", "取 3 × 218 频点"],
+    ["⑤", "帧缓存", "最近 1.5 s"], ["⑨", "协方差", "R_b、R_s"], ["⑩", "白化", "L^{−1}"], ["⑪", "特征分解", "E_n：3 × 2"],
+    ["⑫", "空间谱", "72 个方向"], ["⑬", "找峰插值", "θ_a"], ["⑭", "融合", "θ_{out}"],
   ];
-  A.forEach(([t, l], i) => { blk(s, xa[i], Y1, W1, H1, t, l); if (i < 6) arrow(s, xa[i] + W1, Y1 + H1 / 2, xa[i + 1], Y1 + H1 / 2); });
-  lab(s, "x(f,t)：3 × 218 复数 / 帧 → 帧缓存（框图②）", xa[6] - 1.6, Y1 + H1 + 0.04, 3.1, { align: "right" });
-  // 第 2 行（从右到左）
-  const W2 = 1.75, G2 = 0.32, Y2 = 3.3, H2 = 1.1;
-  const xb = [0, 1, 2, 3, 4, 5].map((i) => 0.6 + (5 - i) * (W2 + G2));
-  const B = [
-    ["外积", ["R(f,t) = x x^H", "218 个 3×3 厄米矩阵"]],
-    ["递推平均（两路）", ["S ← αS + (1 − α)R", "短时 S_s：α_s = 0.938", "背景 S_b：α_b = 0.984"]],
-    ["偏差校正", ["R̃_b = S_b / (1 − α_b^t)", "R̃_s = S_s / (1 − α_s^{t+1})"]],
-    ["对角加载 + Cholesky", ["L L^H = R̃_b + δI", "δ = 0.01·tr(R̃_b) / 3"]],
-    ["白化 + 最大特征值", ["W = L^{−1} R̃_s L^{−H}", "218 个 λ_{max}(W)"]],
-    ["频点中位数 → dB", ["ν(t) = 10·lg median_f λ_{max}", "每 32 ms 一次"]],
-  ];
-  arrow(s, xa[6] + W1 / 2, Y1 + H1 + 0.28, xb[0] + W2 / 2, Y2);
-  B.forEach(([t, l], i) => { blk(s, xb[i], Y2, W2, H2, t, l); if (i < 5) arrow(s, xb[i], Y2 + H2 / 2, xb[i + 1] + W2, Y2 + H2 / 2); });
-  // 第 3 行（从左到右）
-  const Y3 = 5.05, H3 = 0.95;
-  arrow(s, xb[5] + W2 / 2, Y2 + H2, xb[5] + W2 / 2, Y3);
-  lab(s, "ν(t)，dB", xb[5] + W2 / 2 + 0.05, Y2 + H2 + 0.12, 0.9, { align: "left" });
-  const Cc = [
-    ["阈值判决", ["ν(t) 上穿 η", "η = 1 dB（情况 1）；有他人说话时 3.5 dB"]],
-    ["回溯开口时刻", ["退到 ν 最后一次 ≤ η/2 的下一帧"]],
-    ["输出开口帧", ["t_{on} → 框图②", "取背景帧与目标帧"]],
-  ];
-  const xc = [0, 1, 2].map((i) => 0.6 + i * (W2 + G2));
-  Cc.forEach(([t, l], i) => { blk(s, xc[i], Y3, W2, H3, t, l); if (i < 2) arrow(s, xc[i] + W2, Y3 + H3 / 2, xc[i + 1], Y3 + H3 / 2); });
-  blk(s, xb[1], Y3, W2 * 2 + G2, H3, "自语音检测【设计】", ["骨声纹传感器判定佩戴者在说话时，该帧不进背景、不进目标，输出冻结"], { dash: "dash", line: C.box, tcolor: C.gray, color: C.gray });
+  main.forEach(([n, a, b], i) => { node(s, X(i), YM, W, H, n, a, b); if (i < main.length - 1) arrow(s, X(i) + W, YM + H / 2, X(i + 1), YM + H / 2); });
+  // 上方支路：开口检测（每 32 ms）
+  const up = [["⑥", "递推平均", "S_s、S_b"], ["⑦", "最大特征值", "ν(t)，dB"], ["⑧", "判决回溯", "t_{on}"]];
+  up.forEach(([n, a, b], i) => { node(s, X(4 + i), YU, W, H, n, a, b); if (i < 2) arrow(s, X(4 + i) + W, YU + H / 2, X(5 + i), YU + H / 2); });
+  const bx = X(4) - (P - W) / 2;
+  arrow(s, bx, YM + H / 2, bx, YU + H / 2, { arrow: false });
+  arrow(s, bx, YU + H / 2, X(4), YU + H / 2);
+  arrow(s, X(6) + W / 2, YU + H, X(5) + W / 2 + 0.15, YM);
+  small(s, "t_{on}", X(5) + 0.62, YU + H + 0.08, 0.5);
+  small(s, "开口检测：每 32 ms", X(4), YU - 0.3, W * 3 + (P - W) * 2);
+  // 摄像头（按需）
+  node(s, X(9) + 0.1, YU, W * 2 + (P - W) - 0.1, H, "", "摄像头（按需打开）", "人脸方位 φ_i，1–2 fps", { dash: "dash", line: C.box });
+  arrow(s, X(10) + W / 2, YU + H, X(10) + W / 2, YM, { dash: "dash" });
+  // 下方：自语音、方向模板、输出、IMU
+  node(s, X(5) - 0.05, YL, W + 0.1, H, "", "自语音检测", "【设计】跳过该帧", { dash: "dash", line: C.box });
+  arrow(s, X(5) + W / 2, YL, X(5) + W / 2, YM + H, { dash: "dash" });
+  node(s, X(8) - 0.15, YL, W + 0.3, H, "", "方向模板", "72 × 218 × 3，184 KB", { line: C.box });
+  arrow(s, X(8) + W / 2, YL, X(8) + W / 2, YM + H);
+  node(s, X(9) + 0.1, YL, W * 2 + (P - W) - 0.1, H, "⑮", "输出", "θ_{world} = θ_{out} + ψ，8 B / 16 ms → 增强");
+  arrow(s, X(10) + W / 2, YM + H, X(10) + W / 2, YL);
+  node(s, X(9) + 0.1, YL + H + 0.25, W, 0.5, "", "IMU", "ψ(t)", { line: C.box });
+  arrow(s, X(9) + 0.1 + W / 2, YL + H + 0.25, X(9) + 0.1 + W / 2, YL + H);
+  // 处理节奏
+  const br = (i0, i1, text) => {
+    const x1 = X(i0), x2 = X(i1) + W, y = YM + H + 0.12;
+    s.addShape(p.shapes.LINE, { x: x1, y, w: x2 - x1, h: 0, line: { color: C.navyLt, width: 1.5 } });
+    small(s, text, x1, y + 0.04, x2 - x1);
+  };
+  br(0, 1, "逐样本，16 kHz"); br(2, 4, "每 16 ms 一帧"); br(5, 9, "每 0.25 s 一次（开口后 0.5 s 起）"); br(10, 10, "每 16 ms");
+  // 计算量
+  small(s, "计算量：①–④ 2.1　⑥–⑧ 6.6　⑨ 0.8　⑩⑪ 1.0　⑫ 8.2　⑬–⑮ 很小　合计约 19 MFLOPS", X(0), 6.55, 8.5, { align: "left" });
 }
 
-// ================= 4 细框图②：定位核心 =================
+// ================= 3–4 逐步说明表 =================
+const stepTable = (s, rows, y) => {
+  const fbase = { fontFace: F, lang: "zh-CN", fontSize: 9.5, color: C.ink };
+  const R = (txt) => ({ text: richLines(Array.isArray(txt) ? txt : [txt], fbase), options: { fontFace: F, fontSize: 9.5, valign: "middle", border: [NONE, NONE, RULE, NONE] } });
+  const hd = (t) => head(t, { fontSize: 10 });
+  const body = rows.map(([n, name, fml, par, outp, mfl]) => [ctr(n, { fontSize: 11, bold: true, color: C.navy }), bold(name, { fontSize: 10 }), R(fml), R(par), R(outp), ctr(mfl, { fontSize: 9.5 })]);
+  table(s, [[hd("步"), hd("运算"), hd("公式"), hd("参数"), hd("输出"), hd("MFLOPS")], ...body], 0.6, y, [0.45, 1.35, 5.3, 2.35, 1.75, 0.93],
+    [0.36, ...rows.map((r) => (Array.isArray(r[2]) && r[2].length > 2 ? 0.68 : Array.isArray(r[2]) && r[2].length === 2 ? 0.55 : 0.42))]);
+};
 {
-  const s = newSlide("算法框图②　定位核心（每 0.25 s 一次）", SRC_D + "；帧缓存为实现所需，按开口检测最长 0.3 s 时延估算",
-    "背景窗 [t_on − 1.05 s, t_on − 0.05 s)，目标窗 [t_on, t_d]，最长 1 s。因为开口要在 t_on 之后才被检出（情况 1 仿真中 0.3 s 内全部检出），背景帧必须事先缓存：1.5 s × 62.5 帧 × 3 路 × 218 频点，复数半精度约 240 KB。代码：methods.frame_energy_db、onset_weights、covariance、music；时间窗 run_camera_policy.gevd_spec。");
-  key(s, "从帧缓存取开口前的背景、开口后的目标，背景 Cholesky 白化目标，取噪声子空间，再在 72 个方向上扫描模板");
-  const W = 1.75, G = 0.32, H = 1.05;
-  const xs = [0, 1, 2, 3, 4, 5].map((i) => 0.6 + i * (W + G));
-  const Y1 = 1.7, Y2 = 3.35, Y3 = 5.0;
-  const A = [
-    ["帧缓存", ["最近 1.5 s 的 x(f,t)", "94 帧 × 3 × 218，约 240 KB"]],
-    ["取背景帧", ["[t_{on} − 1.05 s, t_{on} − 0.05 s)", "62 帧，等权"]],
-    ["外积平均", ["R_b(f) = (1/62) Σ x x^H", "218 个 3×3"]],
-    ["对角加载 + Cholesky", ["L L^H = R_b + δI", "δ = 0.01·tr(R_b) / 3"]],
-    ["三角求逆", ["L^{−1}(f)", "218 个下三角 3×3"]],
-  ];
-  A.forEach(([t, l], i) => { blk(s, xs[i], Y1, W, H, t, l); if (i < 4) arrow(s, xs[i] + W, Y1 + H / 2, xs[i + 1], Y1 + H / 2); });
-  lab(s, "t_{on}（框图①）", xs[1], Y1 - 0.24, W);
-  const B = [
-    ["取目标帧", ["[t_{on}, t_d]，最长 1 s", "t_d：开口后 0.5 s 起，每 0.25 s"]],
-    ["帧能量", ["e(t) = 10·lg mean_{m,f} |X_m|^2"]],
-    ["起始段权重", ["w = 0.2 + min(max(Δe, 0), 10)/10", "e < max e − 30 dB 时 w = 0"]],
-    ["加权外积平均", ["R_s(f) = Σ w x x^H / Σ w", "218 个 3×3"]],
-    ["白化", ["R_w = L^{−1} R_s L^{−H}"]],
-    ["3×3 特征分解", ["R_w = U Λ U^H", "E_n = [u_2, u_3]：218 个 3×2"]],
-  ];
-  arrow(s, xs[0] + W / 2, Y1 + H, xs[0] + W / 2, Y2);
-  B.forEach(([t, l], i) => { blk(s, xs[i], Y2, W, H, t, l); if (i < 5) arrow(s, xs[i] + W, Y2 + H / 2, xs[i + 1], Y2 + H / 2); });
-  arrow(s, xs[4] + W / 2, Y1 + H, xs[4] + W / 2, Y2);
-  lab(s, "L^{−1}(f)", xs[4] + W / 2 + 0.04, Y1 + H + 0.16, 0.8, { align: "left" });
-  const Cc = [
-    ["方向模板（ROM）", ["h(θ,f)：72 × 218 × 3", "头部传递函数，184 KB"]],
-    ["归一化 + 白化", ["a = h / ‖h‖", "a_w = L^{−1} a（L^{−1} 来自第 1 行）"]],
-    ["投影", ["‖E_n^H a_w‖^2，‖a_w‖^2", "72 × 218"]],
-    ["单频点谱", ["P_f(θ) = ‖a_w‖^2 / ‖E_n^H a_w‖^2"]],
-    ["每频点归一化", ["P_f(θ) / max_θ P_f(θ)", "峰值归一到 1"]],
-    ["频点平均", ["P(θ) = mean_f，218 个频点", "→ 72 个方向的空间谱"]],
-  ];
-  Cc.forEach(([t, l], i) => { blk(s, xs[i], Y3, W, H, t, l); if (i < 5) arrow(s, xs[i] + W, Y3 + H / 2, xs[i + 1], Y3 + H / 2); });
-  const ym = (Y2 + H + Y3) / 2;
-  arrow(s, xs[5] + W / 2, Y2 + H, xs[5] + W / 2, ym, { arrow: false });
-  arrow(s, xs[5] + W / 2, ym, xs[2] + W / 2, ym, { arrow: false });
-  arrow(s, xs[2] + W / 2, ym, xs[2] + W / 2, Y3);
-  lab(s, "E_n(f)", xs[4], ym - 0.23, W);
-  lab(s, "P(θ) → 框图③", xs[5], Y3 + H + 0.04, W);
+  const s = newSlide("逐步说明（一）：前端与开口检测", "参数为仿真所用值；计算量为估算；完整推导见附录 A1–A2",
+    "代码：② sim.highpass（仿真中离线零相位，实时为因果 IIR）；③④ sim.stft；⑥–⑧ run_camera_policy.novelty_raw、acoustic_onsets。⑥ 的背景协方差在本帧判决之后才用本帧更新；⑦ 从第 0.3 s 起每 2 帧算一次，⑧ 从第 1 s 起判决。⑤ 帧缓存为实现所需：背景取开口前 1 s 的帧，而开口要在之后（情况 1 仿真中 0.3 s 内）才被检出。");
+  key(s, "前端把 3 路声音变成每帧 3 × 218 个频点；开口检测看背景白化后的最大特征值，上穿阈值即给出开口时刻");
+  stepTable(s, [
+    ["①", "采集与汇集", ["主耳前、后 2 路；副耳前麦 1 路经 ADPCM 压缩转发，主耳解码", "按采样计数对齐"], "16 kHz、16 bit；两耳同步 ≤ 50 µs", "3 路 x_m[n]", "—"],
+    ["②", "高通", "y_m[n] = HPF(x_m[n])", "4 阶 Butterworth，100 Hz", "3 路 y_m[n]", "1.0"],
+    ["③", "分帧加窗", "y_m(256t + n)·w(n)，w(n) = 0.5 − 0.5cos(2πn/512)", "帧长 512（32 ms），帧移 256（16 ms）", "每帧 3 × 512", "—"],
+    ["④", "FFT 取频带", "X_m(f,t) = Σ_n y_m(256t + n) w(n) e^{−j2πfn/512}，x(f,t) = [X_1, X_2, X_3]^T", "512 点；频点 7–224（200–7000 Hz）", "x(f,t)：3 × 218", "1.2"],
+    ["⑤", "帧缓存", "保存最近 1.5 s 的 x(f,t)", "94 帧，复数半精度", "约 240 KB", "—"],
+    ["⑥", "递推协方差", ["S ← αS + (1 − α) x x^H（短时 S_s、背景 S_b 两路）", "偏差校正：R̃ = S / (1 − α^t)"], "α_s = 0.938（0.25 s）；α_b = 0.984（1 s）", "218 × 两个 3×3", "6.6"],
+    ["⑦", "白化最大特征值", ["L L^H = R̃_b + δI", "ν(t) = 10·lg median_f λ_{max}(L^{−1} R̃_s L^{−H})"], "δ = 0.01·tr(R̃_b) / 3；每 32 ms", "ν(t)，dB", "（含在⑥）"],
+    ["⑧", "判决回溯", "ν(t) 上穿 η 判为开口；回溯到 ν 最后一次 ≤ η/2 的下一帧", "η = 1 dB（情况 1）；有他人说话时 3.5 dB", "开口帧 t_{on}", "很小"],
+  ], 1.65);
 }
-
-// ================= 5 细框图③：找峰、融合与输出 =================
 {
-  const s = newSlide("算法框图③　找峰、融合与输出", SRC_D + "；λ、μ 在开发数据上调得",
-    "情况 1 中摄像头平时不开，L8 只在需要确认是哪张脸或校正方位偏差时使用；不开摄像头时直接输出插值后的 θ̂。像素到方位的换算、IMU 世界坐标跟踪、置信度为设计，仿真中视觉直接给出人脸方位（误差 2°）。代码：methods.peak、methods.fuse_soft。");
-  key(s, "空间谱取峰并插值得到方位；摄像头打开时在人脸附近取谱峰打分；输出按 IMU 换到世界坐标，每 16 ms 下发");
-  const W = 1.75, G = 0.32, H = 1.05;
-  const xs = [0, 1, 2, 3, 4, 5].map((i) => 0.6 + i * (W + G));
-  const Y1 = 1.7, Y2 = 3.35, Y3 = 5.0;
-  const A = [
-    ["空间谱", ["P(θ)，72 个方向", "θ = −180°, −175°, …, 175°"]],
-    ["找峰", ["k^* = argmax_k P(θ_k)"]],
-    ["抛物线插值", ["δ = (P_{k−1} − P_{k+1}) /", "(2(P_{k−1} − 2P_k + P_{k+1}))，|δ| ≤ 0.5"]],
-    ["方位", ["θ̂ = θ_{k^*} + 5°·δ"]],
-  ];
-  A.forEach(([t, l], i) => { blk(s, xs[i], Y1, W, H, t, l); if (i < 3) arrow(s, xs[i] + W, Y1 + H / 2, xs[i + 1], Y1 + H / 2); });
-  const B = [
-    ["摄像头（按需打开）", ["低帧率 1–2 fps", "两耳各一"]],
-    ["人脸检测", ["人脸框中心像素 u_i", "（视觉模块）"]],
-    ["像素 → 方位【设计】", ["φ_i = atan((u_i − c_x)/f_x)", "+ 摄像头安装偏角"]],
-    ["换到头心坐标【设计】", ["按摄像头与头心的位置", "和曝光时刻的 IMU 角度"]],
-  ];
-  B.forEach(([t, l], i) => { blk(s, xs[i], Y2, W, H, t, l, { dash: "dash" }); if (i < 3) arrow(s, xs[i] + W, Y2 + H / 2, xs[i + 1], Y2 + H / 2, { dash: "dash" }); });
-  // 融合
-  const xf = xs[4], yf = Y1 + 0.2, hf = Y2 + H - yf - 0.2;
-  blk(s, xf, yf, W, hf, "融合打分", ["只用声音：s_0 = P(θ_{k^*}) − μ", "第 i 张脸：", "s_i = max_{|θ−φ_i|≤8°} P(θ)", "+ λ(l_i − 0.5)", "λ = 0.1，μ = 0.05", "（低帧率档 l_i = 0.5）"]);
-  arrow(s, xs[3] + W, Y1 + H / 2, xf, Y1 + H / 2);
-  arrow(s, xs[3] + W, Y2 + H / 2, xf, Y2 + H / 2, { dash: "dash" });
-  blk(s, xs[5], yf, W, hf, "选择", ["max_i s_i > s_0：", "θ_{out} = φ_{i^*}", "否则：θ_{out} = θ_{k^*}", "（不开摄像头：θ_{out} = θ̂）"]);
-  arrow(s, xf + W, yf + hf / 2, xs[5], yf + hf / 2);
-  // 输出
-  const Cc = [
-    ["IMU 换坐标【设计】", ["θ_{world} = θ_{out} + ψ(t)", "ψ：头部偏航角，200 Hz"]],
-    ["跟踪【设计】", ["世界坐标下保持目标方位", "转头时目标不丢"]],
-    ["置信度【待确认】", ["候选：P(θ_{k^*})", "或峰值与次峰之比"]],
-    ["打包下发", ["每 16 ms 8 字节：方位 2 B、置信度 1 B、", "说话 1 B、干扰方位 3 B、序号 1 B"]],
-  ];
-  const xc = [xs[5], xs[4], xs[3], xs[1]];
-  arrow(s, xs[5] + W / 2, yf + hf, xs[5] + W / 2, Y3);
-  Cc.forEach(([t, l], i) => {
-    const w = i === 3 ? W * 2 + G : W;
-    blk(s, xc[i], Y3, w, H, t, l, i === 2 ? { dash: "dash", line: C.box } : {});
-    if (i < 3) arrow(s, xc[i], Y3 + H / 2, xc[i + 1] + (i + 1 === 3 ? W * 2 + G : W), Y3 + H / 2);
-  });
-  arrow(s, xs[1], Y3 + H / 2, xs[0] + W, Y3 + H / 2);
-  blk(s, xs[0], Y3, W, H, "→ 增强模块", ["两耳增强（波束成形等）"], { line: C.box });
+  const s = newSlide("逐步说明（二）：定位、融合与输出", "参数为仿真所用值；计算量为估算；λ、μ 在开发数据上调得；标【设计】的为方案设计、仿真中未实现；完整推导见附录 A3–A6",
+    "代码：⑨ methods.frame_energy_db、onset_weights、covariance（时间窗 run_camera_policy.gevd_spec）；⑩–⑫ methods.music；⑬ methods.peak；⑭ methods.fuse_soft。⑭ 没选中人脸时输出网格峰值 θ_k*；不开摄像头时直接输出 ⑬ 的 θ_a。置信度的计算方式待确认（候选：空间谱峰高，或峰值与次峰之比）。");
+  key(s, "每 0.25 s：开口前 1 s 估背景、开口后估目标，背景白化后用噪声子空间扫描 72 个方向，取峰得到方位");
+  stepTable(s, [
+    ["⑨", "协方差", ["R_b = 平均 x x^H，t ∈ [t_{on} − 1.05 s, t_{on} − 0.05 s)", "R_s = Σ w x x^H / Σ w，t ∈ [t_{on}, t_d]；w = 0.2 + min(max(Δe, 0), 10)/10"], "背景 1 s、保护 0.05 s；目标最长 1 s；e < max e − 30 dB 的帧 w = 0", "218 × 两个 3×3", "0.8"],
+    ["⑩", "白化", ["L L^H = R_b + δI，R_w = L^{−1} R_s L^{−H}"], "δ = 0.01·tr(R_b) / 3", "218 × 3×3", "1.0"],
+    ["⑪", "特征分解", "R_w = U Λ U^H，E_n = [u_2, u_3]", "单声源：噪声子空间 2 维", "218 × 3×2", "（含在⑩）"],
+    ["⑫", "空间谱", ["a_w = L^{−1} h / ‖h‖，P_f(θ) = ‖a_w‖^2 / ‖E_n^H a_w‖^2", "P(θ) = 平均_f [P_f(θ) / max_θ P_f]"], "72 个方向（5°）；模板 h(θ,f) 见附录 A6", "P(θ)：72 个", "8.2"],
+    ["⑬", "找峰插值", ["k^* = argmax P，δ = (P_{k−1} − P_{k+1}) / (2(P_{k−1} − 2P_k + P_{k+1}))", "θ_a = θ_{k^*} + 5°·δ（声学方位）"], "|δ| ≤ 0.5", "θ_a", "很小"],
+    ["⑭", "融合", ["s_0 = P(θ_{k^*}) − μ；s_i = max_{|θ−φ_i|≤8°} P(θ) + λ(l_i − 0.5)", "取得分最高者：人脸 φ_{i^*} 或 θ_{k^*}"], "λ = 0.1，μ = 0.05；摄像头按需打开", "θ_{out}", "很小"],
+    ["⑮", "输出", "θ_{world} = θ_{out} + ψ(t)（IMU 偏航角）；打包下发", "每 16 ms 8 字节；置信度【待确认】", "→ 增强模块", "很小"],
+  ], 1.65);
+  s.addText(rich("外部输入：方向模板（离线，184 KB，附录 A6）；摄像头人脸方位 φ_i = atan((u_i − c_x) / f_x) + 安装偏角【设计】；IMU 偏航角 ψ(t)，200 Hz；自语音检测（骨声纹）【设计】。", { fontFace: F, lang: "zh-CN", fontSize: 11, color: C.ink }), { x: 0.6, y: 6.3, w: 12.1, h: 0.5, valign: "top", margin: 0.03, isTextBox: true });
 }
 
 // ================= 9 参数与计算量汇总 =================
@@ -392,7 +301,7 @@ const SRC_D = "参数为仿真所用值；标【设计】的为方案设计、�
 // ================= 7 L7–L9 找峰、融合与输出 =================
 {
   const s = newSlide("附录 A5　L7–L9 找峰、融合与输出", SRC + "；λ、μ 在开发数据上调得",
-    "代码：methods.peak（抛物线插值）、methods.fuse_soft（λ = 0.1，μ = 0.05，门限 8°）。没选中人脸时，融合分支输出网格峰值 θ_k*；不做融合时输出插值后的 θ̂。低帧率档没有唇动信息，l_i 取 0.5。L9 为设计：置信度的计算方式待确认（候选：空间谱峰高 P(θ_k*)，或峰值与次峰之比），尚未在仿真中验证。");
+    "代码：methods.peak（抛物线插值）、methods.fuse_soft（λ = 0.1，μ = 0.05，门限 8°）。没选中人脸时，融合分支输出网格峰值 θ_k*；不做融合时输出插值后的 θ_a。低帧率档没有唇动信息，l_i 取 0.5。L9 为设计：置信度的计算方式待确认（候选：空间谱峰高 P(θ_k*)，或峰值与次峰之比），尚未在仿真中验证。");
   key(s, "空间谱取峰并插值得到方位；摄像头打开时与人脸方位融合；输出按 IMU 换到世界坐标");
   let y = 1.78;
   T(s, "L7 找峰 + 抛物线插值", { x: 0.6, y, w: 8, h: 0.3, fontSize: 13, bold: true, color: C.navy }); y += 0.4;
