@@ -1,7 +1,7 @@
 // 声源定位与波束成形技术总结（声源定位技术预研项目；mentor 2026-11-25 布置）。
 // 四项：技术原理、大 / 小模型选型、连云 / 离线端侧、友商竞品；会议系统为重点，智能家居简要概括（mentor 11-25 14:29）。
 // 只写查到的事实与计算，不写建议与下一步；不含本项目训练结果（用户 11-25 决定）。
-// 复用已有材料：竞品补充页（mentor 认可版）、竞品调研、公开参照方案汇总；新查资料的来源见附录与各页备注。
+// 复用已有材料：竞品补充页（mentor 认可版）、竞品调研、公开参照方案汇总；新查资料的来源见各页备注。
 // 波束指向性数字读自 code/ssl_baseline/out/bf_directivity.json（scripts/bf_directivity.py）。
 const path = require("path");
 const fs = require("fs");
@@ -64,7 +64,7 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
   const s = p.addSlide({ masterName: "COVER" });
   s.addShape(p.shapes.LINE, { x: 0.9, y: 3.55, w: 11.5, h: 0, line: { color: C.navy, width: 1.25 } });
   T(s, "声源定位与波束成形技术总结", { x: 0.9, y: 2.3, w: 11.5, h: 0.9, fontSize: 34, bold: true, color: C.navy, valign: "bottom" });
-  T(s, "会议系统为主，智能家居简述：技术原理、大 / 小模型选型、连云 / 离线端侧、友商竞品", { x: 0.9, y: 3.75, w: 11.5, h: 0.5, fontSize: 16, color: C.gray });
+  T(s, "会议系统与智能家居：技术原理、大 / 小模型选型、连云 / 离线端侧、友商竞品", { x: 0.9, y: 3.75, w: 11.5, h: 0.5, fontSize: 16, color: C.gray });
   T(s, "2026 年 11 月", { x: 0.9, y: 4.35, w: 11.5, h: 0.4, fontSize: 14, color: C.gray });
 }
 
@@ -77,7 +77,7 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
     [bold("两者的关系"), cell("定位给出发言人方位（同时驱动摄像头取景）；波束成形按这个方位增强目标、压低其他方向。会议和家居都是多人场景，两者配套使用")],
     [bold("技术原理"), cell("定位：时间差类（SRP-PHAT）、子空间类（MUSIC、GEVD-MUSIC）、神经网络三类。波束：固定、自适应（MVDR / GSC）、神经网络掩码 + 多通道滤波、端到端多通道网络四类")],
     [bold("小阵列的限制"), cell(`6 麦线阵（孔径 17.5 cm）用延迟求和，1 kHz 以下指向性只有 ${f1(LIN.DS["250"].DI_dB)}–${f1(LIN.DS["1000"].DI_dB)} dB；定位偏 10° 时目标损失 ${f1(LIN["DS_测向偏差损失_1to4kHz_dB"]["10°"])} dB（计算）`)],
-    [bold("大 / 小模型"), cell("端侧可部署的定位与增强网络约 3.7 万–231 万参数；千万级以上（1450 万–1.28 亿）及 70 亿参数的空间音频大语言模型只在服务器上运行")],
+    [bold("大 / 小模型"), cell("端侧可部署的定位与增强网络约 3.7 万–231 万参数；本项目定位网络部署档 0.28 M、开发版 2.13 M 与此一致。千万级以上（1450 万–1.28 亿）及 70 亿参数的空间音频大语言模型只在服务器上运行")],
     [bold("连云 / 端侧"), cell("回声消除、定位、波束成形、降噪、摄像头取景都在设备上逐帧运行；连云的是增强后的单路语音，用于转写、识别和对话")],
     [bold("友商竞品"), cell("会议视频条 6–16 麦，吊顶阵列 28–64 单元，普遍为多波束 + 自适应 + 网络降噪；音箱 3–7 麦。定位与波束的算法、模型大小、芯片均未公开")],
     [bold("智能家居"), cell("用唤醒词锁定说话人方向；设备自身播放比人声高 30–40 dB，回声消除是前提")],
@@ -133,6 +133,7 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
     notesOf(["odas", "smp", "espDoa", "ipdnet2", "cross3d", "realman"],
       "GEVD-MUSIC：先用开口前一段只有背景（噪声 + 混响 + 其他声源）的协方差做白化，再做 MUSIC；对持续干扰（喇叭、空调）有效，背景段里若有目标本人或刚停的上一位发言人则会失效。\n乐鑫 ESP-SR DOA 条件：ESP32-P4 400 MHz，4 麦圆阵半径 5 cm，10° 网格；206 KB = 内部 RAM 57 KB + PSRAM 149 KB。"));
   key(s, "传统方法算力小、无需训练；神经网络在多人和混响下更稳，但效果取决于训练数据与场景是否匹配");
+  T(s, "基本关系：声音到两个麦克风的时间差 τ = d·sinθ / c（d 为间距，θ 为方位，c = 343 m/s）。17.5 cm 线阵两端最大时间差 0.51 ms，16 kHz 采样下约 8 个采样点。", { x: 0.6, y: 1.66, w: 12.13, h: 0.42, fontSize: 11.5, color: C.ink, valign: "middle" });
   table(s, [
     [cell("类别"), cell("原理"), cell("资源（公开数字）"), cell("效果（原文口径）"), cell("会议场景的难点")],
     [bold("时间差类\nGCC-PHAT、SRP-PHAT"), cell("各麦克风对的到达时间差；按候选方向把各对互相关相加，取能量最大的方向"),
@@ -141,8 +142,8 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
       cell("乐鑫 ESP-SR（Capon，4 麦）：内存约 206 KB，每 8 ms 帧 0.65 ms，CPU 8.1%"), cell("乐鑫官方仿真：±10° 内 100%"), cell("开口前的背景段里若有别人说话，白化失效")],
     [bold("神经网络\nCRNN、IPDnet2"), cell("输入各麦相位差或多路频谱，网络直接输出方向；可同时输出置信度、多个声源"),
       cell("IPDnet2-Tiny：0.5 M 参数，0.2 GFLOPs/s\nCross3D-Edge：0.14 M 参数，树莓派 4B 每帧 8.59 ms"), cell("IPDnet2（RealMAN 实录）：误差 1.2–1.6°\nRealMAN 基线 5° 内：只用仿真训练 60.4%，用实录训练 89.2%"), cell("需要与会议室匹配的训练数据（阵列、安装位置、干扰）")],
-  ], 0.6, 1.72, [2.05, 3.0, 2.85, 2.5, 1.73], [0.4, 1.25, 1.25, 1.45], { fontSize: 10.5 });
-  T(s, "DOA：声源到达方向估计。会议系统只需要方向（摄像头转到哪里、波束对准哪里），不需要距离和声音类别。", { x: 0.6, y: 6.25, w: 12.13, h: 0.45, fontSize: 11, color: C.gray });
+  ], 0.6, 2.15, [2.05, 3.0, 2.85, 2.5, 1.73], [0.4, 1.15, 1.15, 1.35], { fontSize: 10.5 });
+  T(s, "DOA：声源到达方向估计。会议系统只需要方向（摄像头转到哪里、波束对准哪里），不需要距离和声音类别。", { x: 0.6, y: 6.33, w: 12.13, h: 0.45, fontSize: 11, color: C.gray });
 }
 
 // ================= 5 波束成形：方法 =================
@@ -151,6 +152,7 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
     notesOf(["shure", "rally", "ciscoCeil", "espGsc", "homepod", "rnnoise", "dfn2", "spatialnet", "tfgrid"],
       "估算：固定波束每帧每频点 6 次复乘，6 × 257 × 62.5 ≈ 9.6 万次复乘 / 秒；自适应波束每次更新每频点解一个 6 × 6 线性方程组（约 6³ / 3 ≈ 72 次复乘加的分解 + 回代），257 个频点约 2–3 万次复乘加。\n乐鑫 GSC：ESP32-P4 400 MHz 单核约 20%（ESP-SR 用户指南），滤波器收敛约 1 s。\nHomePod：6 麦；多通道回声消除；深度学习掩码 + 多通道维纳滤波；无监督盲源分离为多路，用 \"Hey Siri\" 检测器选出目标那一路；在 A8 芯片上常开运行。"));
   key(s, "会议产品公开的做法是多波束 + 自适应；神经网络主要用在掩码估计和后置降噪");
+  T(s, "每个频点 y = wᴴx。延迟求和：w = a / M；MVDR：w = R⁻¹a / (aᴴR⁻¹a)。a：目标方向向量，R：噪声与干扰协方差，M：麦克风数。", { x: 0.6, y: 1.66, w: 12.13, h: 0.42, fontSize: 11.5, color: C.ink, valign: "middle" });
   table(s, [
     [cell("类别"), cell("原理"), cell("需要的输入"), cell("计算量 / 规模"), cell("公开实例")],
     [bold("固定波束\n延迟求和、超指向、差分"), cell("按目标方位补偿各麦时延后加权相加；超指向按扩散噪声优化权重，低频更强但放大麦克风噪声"),
@@ -161,7 +163,7 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
       cell("多路频谱；目标方位或唤醒词"), cell("同类增强网络：RNNoise 8.8 万参数，DeepFilterNet2 231 万参数"), cell("Apple HomePod：6 麦，掩码多通道维纳滤波 + 盲源分离成多路，由唤醒词检测选路")],
     [bold("端到端多通道网络\n分离、目标说话人提取"), cell("网络直接从多路信号输出目标语音，不显式求波束权重"),
       cell("多路波形或频谱"), cell("SpatialNet 160 万 / 730 万参数，TF-GridNet 1450 万参数"), cell("论文为主；未见会议产品公开采用")],
-  ], 0.6, 1.72, [2.1, 3.3, 2.0, 2.45, 2.28], [0.4, 1.0, 1.15, 1.0, 0.82], { fontSize: 10.5 });
+  ], 0.6, 2.15, [2.1, 3.3, 2.0, 2.45, 2.28], [0.4, 1.0, 1.15, 1.0, 0.82], { fontSize: 10.5 });
 }
 
 // ================= 6 小阵列的波束能压多少 =================
@@ -198,19 +200,21 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
 
 // ================= 7 大 / 小模型选型 =================
 {
-  const s = newSlide("大 / 小模型选型", "参数量为论文原文数字；DCASE 2025 第 1 名为多模型集成；DTLN 原文为\"少于 100 万\"，图中按 100 万画",
+  const s = newSlide("大 / 小模型选型", "参数量为论文原文数字，横轴为对数刻度；DCASE 2025 第 1 名为多模型集成；DTLN 原文为\"少于 100 万\"，图中按 100 万画",
     notesOf(["lightdoa", "rnnoise", "cross3d", "ipdnet2", "dcase24", "dtln", "spatialnet", "dfn2", "tfgrid", "dcase25", "bat"],
-      "端侧实测：Cross3D-Edge 0.14 M 参数，树莓派 4B 每帧 8.59 ms、127 MFLOPS；RNNoise 约 8.8 万权重，总计算约 40 MFLOPS（网络 17.5），未优化 C 代码占树莓派 3（1.2 GHz）约 14%；DeepFilterNet2 在笔记本 i5 单线程实时率 0.04；DTLN 可在树莓派 3B+ 上实时运行（TF-Lite 量化）。\nBAT：空间音频编码器 Spatial-AST + LLaMA-2 7B，回答声音的方向、距离与相互关系，训练数据为合成双耳音频。"));
-  key(s, "端侧可部署的定位和增强网络在几万到两百多万参数；千万级以上和大语言模型只在服务器上运行");
-  const SSL = C.navy, ENH = "8DA9C4";
+      "本项目定位网络：部署档 276,508 个参数、每次判决约 2.73 亿次乘加、8 比特权重约 270 KB（场景一 11-18 阶段汇报与工作记录）；开发版 2.13 M 参数、每次判决约 11.1 亿次乘加。\n端侧实测：Cross3D-Edge 0.14 M 参数，树莓派 4B 每帧 8.59 ms、127 MFLOPS；RNNoise 约 8.8 万权重，总计算约 40 MFLOPS（网络 17.5），未优化 C 代码占树莓派 3（1.2 GHz）约 14%；DeepFilterNet2 在笔记本 i5 单线程实时率 0.04；DTLN 可在树莓派 3B+ 上实时运行（TF-Lite 量化）。\nBAT：空间音频编码器 Spatial-AST + LLaMA-2 7B，回答声音的方向、距离与相互关系，训练数据为合成双耳音频。"));
+  key(s, "本项目定位网络部署档 0.28 M、开发版 2.13 M，与端侧可部署的模型同量级；千万级以上和大语言模型只在服务器上运行");
+  const SSL = C.navy, ENH = "8DA9C4", OURS = "404040";
   const items = [
     { name: "LightDOA（定位，2025）", value: 3.7e4, label: "3.7 万", color: SSL },
     { name: "RNNoise（降噪）", value: 8.8e4, label: "8.8 万", color: ENH },
     { name: "Cross3D-Edge（定位）", value: 1.4e5, label: "14 万", color: SSL },
+    { name: "本项目定位网络（部署档）", value: 2.77e5, label: "28 万", color: OURS },
     { name: "IPDnet2-Tiny（定位）", value: 5e5, label: "50 万", color: SSL },
     { name: "DCASE 2024 基线（定位 + 检测）", value: 7.4e5, label: "74 万", color: SSL },
     { name: "DTLN（降噪）", value: 1e6, label: "< 100 万", color: ENH },
     { name: "SpatialNet-small（多通道分离）", value: 1.6e6, label: "160 万", color: ENH },
+    { name: "本项目定位网络（开发版）", value: 2.13e6, label: "213 万", color: OURS },
     { name: "DeepFilterNet2（降噪）", value: 2.31e6, label: "231 万", color: ENH },
     { name: "SpatialNet-large（多通道分离）", value: 7.3e6, label: "730 万", color: ENH },
     { name: "IPDnet2-Large（定位）", value: 7.8e6, label: "780 万", color: SSL },
@@ -218,26 +222,26 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
     { name: "DCASE 2025 第 1 名（集成）", value: 5.85e7, label: "5850 万", color: SSL },
     { name: "EINV2（定位 + 检测）", value: 1.28e8, label: "1.28 亿", color: SSL },
   ];
-  const X0 = 0.6, Y0 = 1.85, RH = 0.33, W = 7.9;
+  const X0 = 0.6, Y0 = 1.8, RH = 0.29, W = 7.9;
   // 端侧量级底色（10 万–100 万）
   const hb = { nameW: 2.75, labW: 0.85, vmin: 1e4, vmax: 2e8, log: true };
   const bw = W - hb.nameW - hb.labW, pos = (v) => bw * (Math.log10(v) - 4) / (Math.log10(2e8) - 4);
   s.addShape(p.shapes.RECTANGLE, { x: X0 + hb.nameW + pos(1e5), y: Y0 - 0.05, w: pos(1e6) - pos(1e5), h: items.length * RH + 0.07, fill: { color: "E4ECF4" }, line: { type: "none" } });
-  T(s, "几十万：端侧常见量级", { x: X0 + hb.nameW + pos(1e5), y: Y0 + items.length * RH + 0.3, w: pos(1e6) - pos(1e5) + 0.4, h: 0.25, fontSize: 9, color: C.navy });
   hbars(s, items, X0, Y0, W, RH, Object.assign({ fs: 10, ticks: [[1e4, "1 万"], [1e5, "10 万"], [1e6, "100 万"], [1e7, "1000 万"], [1e8, "1 亿"]] }, hb));
   // 图例
-  [[SSL, "定位"], [ENH, "降噪 / 分离"]].forEach(([c, t], i) => {
-    s.addShape(p.shapes.RECTANGLE, { x: X0 + 0.2 + i * 1.6, y: 6.5, w: 0.22, h: 0.16, fill: { color: c }, line: { type: "none" } });
-    T(s, t, { x: X0 + 0.5 + i * 1.6, y: 6.43, w: 1.2, h: 0.3, fontSize: 10, color: C.gray, valign: "middle" });
+  [[SSL, "定位"], [ENH, "降噪 / 分离"], [OURS, "本项目"], ["E4ECF4", "端侧常见量级（10 万–100 万）"]].forEach(([c, t], i) => {
+    const lx = X0 + 0.2 + [0, 1.25, 2.85, 4.2][i];
+    s.addShape(p.shapes.RECTANGLE, { x: lx, y: 6.52, w: 0.22, h: 0.16, fill: { color: c }, line: { type: "none" } });
+    T(s, t, { x: lx + 0.3, y: 6.45, w: 2.6, h: 0.3, fontSize: 10, color: C.gray, valign: "middle" });
   });
-  T(s, "参数量（对数刻度）", { x: X0 + 5.2, y: 6.43, w: 2.7, h: 0.3, fontSize: 10, color: C.gray, valign: "middle", align: "right" });
   table(s, [
     [cell("档位"), cell("规模与运行位置")],
     [bold("小模型"), cell("几万–两百多万参数；8 比特量化后约 0.04–2.3 MB。端侧实测：Cross3D-Edge 树莓派 4B 每帧 8.59 ms；RNNoise 约 40 MFLOPS")],
     [bold("大模型"), cell("千万–上亿参数（TF-GridNet 1450 万、DCASE 2025 第 1 名 5850 万、EINV2 1.28 亿），服务器上运行")],
     [bold("大语言模型"), cell("BAT（2024）：空间音频编码器 + LLaMA-2 7B（70 亿参数），能回答声音的方向和距离，只能在服务器上运行")],
     [bold("选型口径"), cell("与竞品同量级（端侧几百 K 参数）；开发时先放大约 10 倍训练，再剪枝、减通道并做 8 比特量化")],
-  ], 8.75, 1.8, [1.1, 2.88], [0.36, 1.2, 0.95, 1.05, 0.95], { fontSize: 10 });
+    [bold("本项目"), cell("定位网络（卷积 + 双向 GRU）：部署档 0.28 M 参数，每次判决约 2.7 亿次乘加，8 比特权重约 270 KB；开发版放大到 2.13 M（约 8 倍）")],
+  ], 8.75, 1.75, [1.1, 2.88], [0.34, 1.0, 0.8, 0.9, 0.8, 1.0], { fontSize: 10 });
 }
 
 // ================= 8 连云 / 离线端侧 =================
@@ -311,9 +315,9 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
   ], 9.2, 3.55, 3.53, 2.9, { fontSize: 11.5 });
 }
 
-// ================= 11 智能家居（简述） =================
+// ================= 11 智能家居 =================
 {
-  const s = newSlide("智能家居（简述）", "厂商官网、技术博客与论文；萤石、海雀为家用云台摄像头",
+  const s = newSlide("智能家居", "厂商官网、技术博客与论文；萤石、海雀为家用云台摄像头",
     notesOf(["echoSIR", "echoDev", "homepod", "homepod2", "echoShow", "google", "soundx", "ezviz", "az1"],
       "华为智选海雀（雀蛋 Pro）：双麦，唤醒后转向，评测称正面 180° 内识别（第三方评测，官方页面未找到）。萤石 C6Wi：商城标注 3MIC 听声辨位。"));
   key(s, "智能家居用唤醒词锁定说话人方向；设备自身在播放，回声消除是前提");
@@ -325,39 +329,6 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
     [bold("带云台的摄像头"), cell("萤石 C6Wi：3 麦听声辨位，云台转向；华为智选海雀 Pro：双麦，唤醒后转向（评测）")],
     [bold("端侧 / 云"), cell("前端在设备上常开（HomePod 用 A8；Echo Show 10 用 AZ1）；部分常用命令可在 Echo 上端侧识别，其余上云")],
   ], 0.6, 1.72, [2.0, 10.13], [0.38, 0.62, 1.3, 0.55, 0.55, 0.55], { fontSize: 11 });
-}
-
-// ================= 附录 A1–A2 来源 =================
-function srcSlide(title, keys) {
-  const s = newSlide(title, null, null);
-  const half = Math.ceil(keys.length / 2);
-  [keys.slice(0, half), keys.slice(half)].forEach((ks, col) => {
-    const runs = [];
-    ks.forEach((k, i) => {
-      runs.push({ text: SRC[k][0], options: { hyperlink: { url: SRC[k][1] }, color: C.navy, breakLine: i < ks.length - 1 } });
-    });
-    s.addText(runs, { x: 0.6 + col * 6.15, y: 1.3, w: 5.95, h: 5.4, fontFace: S.F, lang: "zh-CN", fontSize: 10.5, valign: "top", paraSpaceAfter: 5, margin: 0.03, isTextBox: true });
-  });
-  return s;
-}
-srcSlide("附录 A1　来源：产品与厂商资料", ["rally", "ciscoBar", "ciscoBarPro", "ciscoCeil", "ciscoBlog", "ciscoLocal", "jabra", "yealink", "owl", "ideahub", "c60", "shure", "tcc2",
-  "echoDev", "echoSIR", "echoShow", "az1", "homepod", "homepod2", "google", "soundx", "ezviz", "xmos", "espDoa", "espGsc", "fesp"]);
-srcSlide("附录 A2　来源：论文与技术文档", ["odas", "smp", "cross3d", "ipdnet2", "realman", "lightdoa", "dcase24", "dcase25", "rnnoise", "dtln", "dfn2", "spatialnet", "tfgrid", "bat"]);
-
-// ================= 附录 A3 计算条件 =================
-{
-  const s = newSlide("附录 A3　计算条件", "计算脚本 code/ssl_baseline/scripts/bf_directivity.py，结果 out/bf_directivity.json");
-  table(s, [
-    [cell("项目"), cell("条件")],
-    [bold("阵列"), cell("6 麦线阵，间距 3.5 cm，孔径 17.5 cm；目标在线阵正前方（法向）")],
-    [bold("声场"), cell("理想自由场、远场平面波，声速 343 m/s；不含混响、麦克风幅相误差")],
-    [bold("指向性"), cell("对正前方目标的增益 / 对各向同性扩散噪声的平均增益（dB）；扩散噪声相干函数 sinc(2fd/c)")],
-    [bold("超指向"), cell("扩散噪声下的 MVDR，加对角加载，使白噪声增益 ≥ −10 dB")],
-    [bold("干扰衰减"), cell("延迟求和对准正前方，单个平面波干扰来自偏离 60° 的方向，在各频率的功率增益（dB）")],
-    [bold("定位误差损失"), cell("延迟求和对准偏离真实方向 5° / 10° / 20° 的位置，对目标的功率增益在 1–4 kHz 的平均（dB）")],
-    [bold("计算量估算"), cell("512 点 FFT、帧移 256 点（16 kHz 下 16 ms）：257 个频点、每秒 62.5 帧；固定波束每频点 6 次复乘；自适应波束每次更新每频点解一个 6 × 6 方程组")],
-    [bold("带宽"), cell("16 kHz、16 bit PCM 未压缩：每路 0.256 Mbit/s，6 路 1.536 Mbit/s")],
-  ], 0.6, 1.3, [2.0, 10.13], [0.38, 0.45, 0.45, 0.5, 0.45, 0.5, 0.5, 0.62, 0.45], { fontSize: 11 });
 }
 
 S.save(OUT);
