@@ -41,6 +41,8 @@ const SRC = {
   ndbf: ["Huang & Habets：Dual-Microphone Steerable High-Order Neural Differential Beamformer（IWAENC 2026，arXiv 2609.27021）", "https://arxiv.org/abs/2609.27021"],
   who: ["WHO：World report on hearing（2021）执行摘要", "https://cdn.who.int/media/docs/default-source/documents/health-topics/deafness-and-hearing-loss/world-report-on-hearing/wrh-executive-summary2-en.pdf"],
 };
+const sizeOf = (f) => { const b = fs.readFileSync(f); return b.readUInt32BE(16) / b.readUInt32BE(20); };   // PNG 宽高比
+const IMG = (s, n, x, y, w) => { const f = path.join(__dirname, "..", "figures", "summary", n); return s.addImage({ path: f, x, y, w, h: w / sizeOf(f) }); };
 const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" + keys.map((k, i) => `${i + 1}. ${SRC[k][0]}：${SRC[k][1]}`).join("\n");
 const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5 s，面前 3 人（相邻相隔 20–30°），嘈杂环境（1.5 m 处 SNR 10 dB），每点 150 次；准确率为方位误差 ≤ 10° 的比例。";
 
@@ -72,14 +74,15 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
     [bold("怎么知道该听谁"), ctr("头的朝向"), ctr("声学判断说话人方向"), ctr("先看着目标几秒，录入他的声音"), ctr("唇动 + 两耳定位", { bold: true, color: C.navy })],
     [bold("要先录入对方声音"), ctr("否"), ctr("否"), ctr("是"), ctr("否", { bold: true, color: C.navy })],
     [bold("用摄像头选人"), ctr("未见"), ctr("否（无摄像头）"), ctr("否"), ctr("是", { bold: true, color: C.navy })],
-  ], 6.65, 1.72, [1.45, 1.1, 1.35, 1.2, 1.18], [0.36, 0.58, 0.58, 0.42, 0.42], { fontSize: 10.5 });
-  T(s, "* Look Once to Hear（CHI 2024）；耳机 / 眼镜：AirPods Pro 2、Ray-Ban Meta 二代；助听器：Phonak、Signia IX", { x: 6.65, y: 4.12, w: 6.08, h: 0.3, fontSize: 9, color: C.gray });
+  ], 6.65, 1.72, [1.4, 1.05, 1.3, 1.15, 1.18], [0.36, 0.58, 0.58, 0.42, 0.42], { fontSize: 10.5 });
+  T(s, "* Look Once to Hear（CHI 2024）；耳机 / 眼镜：AirPods Pro 2、Ray-Ban Meta 二代；助听器：Phonak、Signia IX", { x: 6.65, y: 4.3, w: 6.08, h: 0.3, fontSize: 9, color: C.gray });
   T(s, "创新点", { x: 0.6, y: 4.65, w: 3, h: 0.35, fontSize: 13, bold: true, color: C.navy });
   S.para(s, [
     "摄像头告诉耳机该听谁：人脸给方位，唇动给开口时刻，用开口前的背景把其他人和噪声白化掉；换人后约 0.25 s 锁定（仿真），不需要事先录入对方的声音。",
     "两耳组阵定位走旁路：副耳只转发 1 路（64 kbps），不经过你听到的声音；嘈杂环境 3 m 处 94.7%，单只耳机做不到（仿真）。",
     "全部端侧、低功耗：定位约 19 MFLOPS，新增约 5.3 mW / 只，续航约 6 h → 5.25 h（估算）；图像不出摄像头模组。",
-  ], 0.6, 5.05, 12.13, 1.75, { fontSize: 11.5 });
+  ], 0.6, 5.05, 9.2, 1.75, { fontSize: 11.5 });
+  IMG(s, "earbud_positioning.png", 9.95, 4.55, 2.78);
 }
 
 // ================= 3 总结 =================
@@ -103,6 +106,8 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
   const s = newSlide("应用场景：多人对话", "精度为仿真（刚性球头部模型，见各页条件）；骨声纹与降级处理为设计",
     "移动与转头：慢速移动（≤ 20°/s）靠跟踪 + 视觉 85–92%；快速移动（40°/s）是弱点；转头需要 IMU + 视觉一起。视觉很差时纯声学仍 68–83%。换人锁定 0.25 s 为高帧率档（看唇动）一直开时的多人对话仿真。");
   key(s, "核心是在多人对话中锁定正在和你说话的那个人；按其他人说不说话分成两种情况，其余情况由跟踪和降级处理覆盖");
+  IMG(s, "earbud_cases.png", 9.2, 1.95, 3.53);
+  T(s, "示意：面前 3 个人，深色为正在和你说话的人", { x: 9.2, y: 3.95, w: 3.53, h: 0.5, fontSize: 10, color: C.gray, align: "center" });
   table(s, [
     [cell("情况"), cell("例子"), cell("用到的算法"), cell("目前结果")],
     [bold("情况 1：只有他在说"), cell("面前 3 个人，只有 1 个在跟你说话"), cell("声源定位（摄像头按需确认人脸）"), cell(`嘈杂环境 3 m 内 ${sys1dB("3 m")}% 以上（仿真）`)],
@@ -111,7 +116,7 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
     [bold("说话人移动、佩戴者转头"), cell("对方边走边说；你转头看别处"), cell("跟踪 + IMU 换到世界坐标 + 视觉校正"), cell("慢速移动、转头 85–92%；快速移动是弱点（仿真）")],
     [bold("佩戴者自己说话"), cell("你在回话"), cell("骨声纹检测自语音，冻结定位"), cell("设计")],
     [bold("看不到对方"), cell("侧脸、遮挡、暗光、在视野外"), cell("退回纯声学，置信度降一级"), cell("视觉很差时仍 68–83%（仿真）")],
-  ], 0.6, 1.72, [2.4, 3.2, 3.3, 3.23], [0.4, 0.62, 0.62, 0.55, 0.62, 0.55, 0.55], { fontSize: 11 });
+  ], 0.6, 1.72, [1.75, 2.1, 2.2, 2.3], [0.38, 0.72, 0.72, 0.6, 0.72, 0.6, 0.6], { fontSize: 10.5 });
 }
 
 // ================= 4 硬件限制 =================
@@ -124,7 +129,8 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
     [bold("麦克风间距"), cell("最远只隔一个头宽：两耳最大时间差约 0.5–0.7 ms，正前方附近每 1° 约 9 µs\n单只耳机两麦间距 1.5 cm：最大时间差只有约 44 µs"), cell("单只耳机测不准方向，必须两耳组阵；两耳采样同步需 ≤ 50 µs")],
     [bold("功耗"), cell("通话约 37 mW / 只（FreeClip 2 S：60 mAh、6 h）\n新增的定位、耳间传输、摄像头合计只能几 mW"), cell("用传统信号处理（约 19 MFLOPS，≤ 4.6 mW）；副耳只转发 1 路（约 0.7 mW）；摄像头按需打开")],
     [bold("实时"), cell("声音通路时延：入耳式约 10–20 ms，开放式约 5–6 ms\n定位开口后约 0.5 s 锁定即可"), cell("定位走旁路，只输出方位控制量；增强在每只耳机本地做；不能连云")],
-  ], 0.6, 1.72, [1.9, 5.6, 4.63], [0.4, 1.15, 1.15, 1.15], { fontSize: 12 });
+  ], 0.6, 1.72, [1.4, 4.4, 3.0], [0.4, 1.4, 1.3, 1.3], { fontSize: 11 });
+  IMG(s, "earbud_spacing.png", 9.45, 2.0, 3.28);
 }
 
 // ================= 5 算法框图（情况 1，逐层） =================
@@ -185,23 +191,25 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
     notesOf(["ndbf", "speechSensor", "stereoZoom"],
       "NDBF：两个全向麦克风，间距 3 cm；转向范围 0–180°（两麦线阵的波束关于阵列轴对称），按 5° 一档（36 个方向）训练；网络先沿频率做双向 LSTM、再沿时间做单向 LSTM，目标方向编码后输入，输出每个频点两麦的波束权重；端射方向 SDR：一阶 25.93 dB、三阶 23.24 dB，同条件神经方向滤波 25.85 / 23.13 dB，参数化空间滤波 13.77 / 10.32 dB，传统一阶差分 −0.99 dB；训练与测试为消声环境，立体声录音示例房间 RT60 0.15 s。论文未给参数量与运行耗时。"));
   key(s, "助听器等的波束多是固定方向；要跟住正在说话的人需要可转向波束，神经网络已能在两个麦克风上做可转向的高阶波束");
+  IMG(s, "earbud_beams.png", 0.6, 1.68, 5.6);
+  const rx = 6.55, rw = 6.18;
+  T(s, "NDBF：两个全向麦、间距 3 cm", { x: rx, y: 1.68, w: rw, h: 0.3, fontSize: 11.5, bold: true, color: C.navy });
+  S.para(s, [
+    "传统两麦差分只能做一阶、基本不能转向；NDBF 在 0–180° 内任意转向（5° 一档），可做到三阶，波束图不随频率变化。",
+    "端射方向 SDR：一阶 25.9 dB、三阶 23.2 dB；传统一阶差分 −1.0 dB（消声环境仿真）；论文未给参数量与运行耗时。",
+  ], rx, 1.98, rw, 1.1, { fontSize: 10.5, paraSpaceAfter: 3 });
+  T(s, "对本方案（判断）", { x: rx, y: 3.08, w: rw, h: 0.3, fontSize: 11.5, bold: true, color: C.navy });
+  S.para(s, [
+    "每只耳机的 2 麦（间距 1.5 cm）同样是双麦线阵：可转向高阶波束有望改善本地增强（A）约 2 dB 的分辨力，方向由定位给出。",
+    "需要验证：混响下的效果；1.5 cm 间距下低频噪声放大；两麦沿前后排列时波束左右对称；耳机芯片上的实时性。",
+  ], rx, 3.38, rw, 1.0, { fontSize: 10.5, paraSpaceAfter: 3 });
   table(s, [
     [cell("类型"), cell("怎么做"), cell("波束方向"), cell("应用场景"), cell("例子")],
     [bold("固定方向"), cell("两麦差分或固定权重，形成心形、超心形"), cell("固定，通常朝正前方或朝嘴"), cell("助听器方向性麦克风；耳机通话拾音"), cell("Phonak StereoZoom：双耳 4 麦窄波束，朝向正前方")],
     [bold("按场景切换"), cell("预设几种指向模式，按声学场景自动切换"), cell("前 / 侧 / 后几档"), cell("助听器"), cell("Phonak SpeechSensor：判断主要说话人在前、侧或后，切换指向")],
     [bold("可转向（经典）"), cell("按定位给出的方位实时算权重：延迟求和、MVDR"), cell("任意方向，跟随说话人"), cell("会议设备；本方案增强（A / B）"), cell("本方案：每 16 ms 下发目标方位与干扰方位")],
     [bold("可转向高阶（神经网络）"), cell("网络按指定方向输出两麦的波束权重"), cell("0–180° 任意方向，波束形状不变"), cell("双麦耳机、小型设备、立体声录音"), cell("NDBF（IWAENC 2026）")],
-  ], 0.6, 1.72, [2.25, 3.05, 2.2, 2.35, 2.28], [0.38, 0.62, 0.62, 0.62, 0.62], { fontSize: 10.5 });
-  T(s, "NDBF：两个全向麦、间距 3 cm", { x: 0.6, y: 4.75, w: 6, h: 0.32, fontSize: 12, bold: true, color: C.navy });
-  S.para(s, [
-    "传统两麦差分只能做一阶、基本不能转向；NDBF 在 0–180° 内任意转向（5° 一档），可做到三阶，波束图不随频率变化。",
-    "端射方向 SDR：一阶 25.9 dB、三阶 23.2 dB；传统一阶差分 −1.0 dB（消声环境仿真）；论文未给参数量与运行耗时。",
-  ], 0.6, 5.1, 6.0, 1.7, { fontSize: 11 });
-  T(s, "对本方案（判断）", { x: 6.85, y: 4.75, w: 5.88, h: 0.32, fontSize: 12, bold: true, color: C.navy });
-  S.para(s, [
-    "每只耳机的 2 麦（间距 1.5 cm）同样是双麦线阵：可转向高阶波束有望改善本地增强（A）约 2 dB 的分辨力，方向由定位给出。",
-    "需要验证：混响下的效果；1.5 cm 间距下低频噪声放大；两麦沿前后排列时波束左右对称；耳机芯片上的实时性。",
-  ], 6.85, 5.1, 5.88, 1.7, { fontSize: 11 });
+  ], 0.6, 4.42, [2.25, 3.05, 2.2, 2.35, 2.28], [0.3, 0.5, 0.5, 0.5, 0.5], { fontSize: 9.5 });
 }
 
 // ================= 8 大 / 小模型选型 =================
@@ -246,6 +254,20 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
     notesOf(["airpods", "phonakAI", "neuralaids", "lo2h", "vuebuds", "vuebudsNews", "freeclip"],
       "情况 1 新增功耗（每只耳机）：耳间传输 1 路 ADPCM 约 0.7 mW；定位计算约 19 MFLOPS，按偏老工艺 MCU 估上限约 4.6 mW；摄像头平时不开，按需打开时低帧率 1–2 fps 约 0.4–0.8 mW；合计约 5.3 mW，续航约 6 h → 5.25 h。VueBuds 把低分辨率灰度图经蓝牙发到手机，由手机上的小模型约 1 s 内回答问题。"));
   key(s, "声音通路只有十几毫秒余量，定位、增强和视觉检测都在耳机与摄像头模组上离线运行");
+  // 部署框图：副耳 → 主耳 DSP ← 摄像头模组；主耳 → 两耳本地增强；手机只做非实时功能
+  const by = 1.75, bh = 0.62;
+  box(s, "副耳：2 麦", 0.6, by, 1.9, bh, { fs: 11, bold: true, color: C.navy });
+  box(s, "主耳音频 DSP\n定位 + 融合，约 19 MFLOPS", 3.55, by, 2.75, bh, { fs: 10.5, fill: C.navyPale, line: C.navy, lw: 1.25, color: C.navy });
+  box(s, "两只耳机本地增强 → 播放", 7.35, by, 2.75, bh, { fs: 11, color: C.navy });
+  box(s, "手机：看图问答等\n非实时（秒级）", 10.6, by, 2.13, bh, { fs: 10, dash: "dash", color: C.gray });
+  box(s, "摄像头模组 NPU：人脸 + 唇动\n图像不出模组", 3.55, by + 0.95, 2.75, bh, { fs: 10, color: C.navy });
+  line(s, 2.5, by + bh / 2, 3.55, by + bh / 2, { color: C.navy });
+  T(s, "1 路 ADPCM\n64 kbps", { x: 2.52, y: by + bh / 2 + 0.03, w: 1.0, h: 0.4, fontSize: 9, align: "center", color: C.gray });
+  line(s, 6.3, by + bh / 2, 7.35, by + bh / 2, { color: C.navy });
+  T(s, "方位\n每 16 ms", { x: 6.32, y: by + bh / 2 + 0.03, w: 1.0, h: 0.4, fontSize: 9, align: "center", color: C.gray });
+  line(s, 4.925, by + 0.95, 4.925, by + bh, { color: C.navy });
+  T(s, "人脸方位 + 唇动分数（每张脸 16 字节）", { x: 5.0, y: by + bh + 0.02, w: 2.6, h: 0.3, fontSize: 9, color: C.gray });
+  T(s, [{ text: "新增功耗：", options: { bold: true, color: C.navy } }, { text: "情况 1 约 5.3 mW / 只，续航约 6 h → 5.25 h（估算）" }], { x: 7.35, y: by + 0.95, w: 5.38, h: bh, fontSize: 11, valign: "middle" });
   table(s, [
     [cell("环节"), cell("运行位置"), cell("原因"), cell("公开做法")],
     [bold("增强（实时听）"), cell("每只耳机本地"), cell("声音通路时延入耳式约 10–20 ms，连云或经手机都来不及"), cell("NeuralAids：GAP9 上每 6 ms 块 5.54 ms；Look Once to Hear：嵌入式 CPU 每 8 ms 块 6.24 ms")],
@@ -253,8 +275,7 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
     [bold("人脸与唇动检测"), cell("摄像头模组 NPU"), cell("图像不出模组，只输出人脸方位与唇动分数（每张脸 16 字节）；隐私与带宽"), cell("Phonak DEEPSONIC：AI 芯片在助听器内")],
     [bold("耳间传输"), cell("副耳 → 主耳"), cell("只为定位转发 1 路，ADPCM 64 kbps，约 0.7 mW"), cell("ClearBuds：两耳同步 < 64 µs")],
     [bold("看图问答等非实时功能"), cell("可经手机"), cell("对时延不敏感（秒级），不在听觉通路上"), cell("VueBuds：图像经蓝牙到手机，约 1 s 内回答")],
-  ], 0.6, 1.72, [2.3, 1.75, 4.1, 3.98], [0.4, 0.8, 0.8, 0.8, 0.7, 0.7], { fontSize: 11 });
-  T(s, "情况 1 新增功耗约 5.3 mW / 只，续航约 6 h → 5.25 h（估算）。", { x: 0.6, y: 6.1, w: 12.13, h: 0.4, fontSize: 12, bold: true, color: C.navy });
+  ], 0.6, 3.5, [2.3, 1.75, 4.1, 3.98], [0.32, 0.62, 0.62, 0.62, 0.52, 0.52], { fontSize: 10 });
 }
 
 // ================= 10 友商竞品 =================

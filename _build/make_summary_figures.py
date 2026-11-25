@@ -130,7 +130,7 @@ def ear_case(ax, x0, talk_others, beam, title, sub):
 
 
 def ear_cases():
-    fig, ax = canvas(8.0, 4.0, (-2.0, 6.4), (-1.7, 2.8))
+    fig, ax = canvas(5.6, 3.0, (-2.0, 6.4), (-1.7, 2.8))
     ear_case(ax, 0.0, False, False, "情况 1：只有他在说", "只需定位")
     ear_case(ax, 4.4, True, True, "情况 2：其他人也在说", "定位 + 增强")
     save(fig, "earbud_cases.png")
@@ -138,25 +138,25 @@ def ear_cases():
 
 # ---------- 耳机：固定方向 vs 可转向 ----------
 def beams():
-    fig, ax = canvas(9.0, 4.0, (-2.6, 7.4), (-1.5, 3.0))
+    fig, ax = canvas(7.0, 3.15, (-2.6, 7.4), (-1.5, 3.0))
     lobe(ax, 0, 0.35, 90, 1.4, order=3)
     ear_person(ax, 0, 2.1, tgt=True)
     ear_person(ax, 1.7, 1.25)
     ear_wearer(ax, 0, 0)
-    ax.text(0, -1.15, "固定方向：一直朝正前方", ha="center", fontsize=FS + 1, color=NAVY, weight="bold")
+    ax.text(0, -1.15, "固定方向：一直朝正前方", ha="center", fontsize=FS - 1, color=NAVY, weight="bold")
     x0, a = 5.0, 45
     xt, yt = x0 + 2.0 * np.cos(np.deg2rad(a)), 0.3 + 2.0 * np.sin(np.deg2rad(a))
     lobe(ax, x0, 0.35, a, 1.55, order=14)
     ear_person(ax, x0, 2.1)
     ear_person(ax, xt, yt, tgt=True)
     ear_wearer(ax, x0, 0)
-    ax.text(x0, -1.15, "可转向：按定位结果对准说话人", ha="center", fontsize=FS + 1, color=NAVY, weight="bold")
+    ax.text(x0, -1.15, "可转向：按定位结果对准说话人", ha="center", fontsize=FS - 1, color=NAVY, weight="bold")
     save(fig, "earbud_beams.png")
 
 
 # ---------- 耳机：产品定位示意 ----------
 def positioning():
-    fig, ax = canvas(5.6, 4.3, (-2.7, 2.7), (-1.45, 2.85))
+    fig, ax = canvas(4.2, 3.35, (-2.7, 2.7), (-1.45, 2.85))
     lobe(ax, 0, 0.4, 90, 1.45, order=14, alpha=0.2)
     for x, y, tgt in [(-1.25, 2.0, False), (0.0, 2.3, True), (1.25, 2.0, False)]:
         ear_person(ax, x, y, tgt=tgt, talking=True)
@@ -170,7 +170,7 @@ def positioning():
 
 # ---------- 耳机：麦克风间距（硬件限制） ----------
 def head_spacing():
-    fig, ax = canvas(5.6, 3.6, (-2.8, 2.8), (-1.7, 1.9))
+    fig, ax = canvas(4.6, 2.96, (-2.8, 2.8), (-1.7, 1.9))
     ax.add_patch(Ellipse((0, 0.25), 2.3, 2.6, color="#E6E6E6", lw=0))
     ax.add_patch(Polygon([[-0.15, 1.5], [0.15, 1.5], [0, 1.75]], color="#E6E6E6", lw=0))
     ax.text(0, 1.95, "前", ha="center", fontsize=FS - 2, color=DGRAY)
