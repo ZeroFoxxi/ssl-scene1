@@ -38,6 +38,7 @@ const SRC = {
   dcase24: ["DCASE 2024 SELD 基线（arXiv 2408.05057）", "https://arxiv.org/abs/2408.05057"],
   tfgrid: ["TF-GridNet 参数量（arXiv 2602.22487 对比表）", "https://arxiv.org/abs/2602.22487"],
   nearlink: ["FreeBuds Pro 5 评测（星闪时延）", "https://ngxptech.com/huawei-freebuds-pro-5-review-is-nearlink-better/"],
+  ndbf: ["Huang & Habets：Dual-Microphone Steerable High-Order Neural Differential Beamformer（IWAENC 2026，arXiv 2609.27021）", "https://arxiv.org/abs/2609.27021"],
   who: ["WHO：World report on hearing（2021）执行摘要", "https://cdn.who.int/media/docs/default-source/documents/health-topics/deafness-and-hearing-loss/world-report-on-hearing/wrh-executive-summary2-en.pdf"],
 };
 const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" + keys.map((k, i) => `${i + 1}. ${SRC[k][0]}：${SRC[k][1]}`).join("\n");
@@ -84,7 +85,7 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
 // ================= 2b 总结 =================
 {
   const s = newSlide("总结", "精度为仿真（刚性球头部模型）；计算量与功耗为估算；模型规模与竞品为公开资料",
-    "本页各条的依据：产品定位第 2 页；场景第 4 页；硬件限制第 5 页；算法框图第 6 页；定位第 7 页；增强第 8 页；模型第 9 页；连云 / 端侧第 10 页；竞品第 11–12 页；本项目选型第 13 页。");
+    "本页各条的依据：产品定位第 2 页；场景第 4 页；硬件限制第 5 页；算法框图第 6 页；定位第 7 页；增强第 8–9 页；模型第 10 页；连云 / 端侧第 11 页；竞品第 12–13 页；本项目选型第 14 页。");
   key(s, "两只耳机一起测向就能在嘈杂环境 3 m 内找准人；难点在其他人也说话时，增强能否把相邻的人分开");
   table(s, [
     [cell("项目"), cell("结论")],
@@ -178,6 +179,31 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
     [bold("C 目标说话人提取"), cell("网络从混合声中只留下目标；方位或人脸作为线索"), cell("能（不依赖阵列孔径）"), cell("约 17.5–20 ms：入耳式临界，开放式不满足"), cell("耳机上要跑网络；推理功耗未知")],
   ], 0.6, 2.2, [1.9, 3.2, 2.2, 2.6, 2.23], [0.4, 0.8, 0.9, 0.9], { fontSize: 11 });
   T(s, "参照：Phonak 助听器经专用耳间链路组成 4 麦双耳波束（B 的先例）；NeuralAids 在 GAP9 上每 6 ms 块处理 5.54 ms；Look Once to Hear 在嵌入式 CPU 上每 8 ms 块 6.24 ms，但需先注册目标。", { x: 0.6, y: 5.45, w: 12.13, h: 0.7, fontSize: 11.5, color: C.ink });
+}
+
+// ================= 8b 波束：固定方向与可转向 =================
+{
+  const s = newSlide("波束：固定方向与可转向", "NDBF 数字为论文原文（消声环境仿真）；其余为厂商资料与本方案设计；\"对本方案\"一栏为判断",
+    notesOf(["ndbf", "speechSensor", "stereoZoom"],
+      "NDBF：两个全向麦克风，间距 3 cm；转向范围 0–180°（两麦线阵的波束关于阵列轴对称），按 5° 一档（36 个方向）训练；网络先沿频率做双向 LSTM、再沿时间做单向 LSTM，目标方向编码后输入，输出每个频点两麦的波束权重；端射方向 SDR：一阶 25.93 dB、三阶 23.24 dB，同条件神经方向滤波 25.85 / 23.13 dB，参数化空间滤波 13.77 / 10.32 dB，传统一阶差分 −0.99 dB；训练与测试为消声环境，立体声录音示例房间 RT60 0.15 s。论文未给参数量与运行耗时。"));
+  key(s, "助听器等的波束多是固定方向；要跟住正在说话的人需要可转向波束，神经网络已能在两个麦克风上做可转向的高阶波束");
+  table(s, [
+    [cell("类型"), cell("怎么做"), cell("波束方向"), cell("应用场景"), cell("例子")],
+    [bold("固定方向"), cell("两麦差分或固定权重，形成心形、超心形"), cell("固定，通常朝正前方或朝嘴"), cell("助听器方向性麦克风；耳机通话拾音"), cell("Phonak StereoZoom：双耳 4 麦窄波束，朝向正前方")],
+    [bold("按场景切换"), cell("预设几种指向模式，按声学场景自动切换"), cell("前 / 侧 / 后几档"), cell("助听器"), cell("Phonak SpeechSensor：判断主要说话人在前、侧或后，切换指向")],
+    [bold("可转向（经典）"), cell("按定位给出的方位实时算权重：延迟求和、MVDR"), cell("任意方向，跟随说话人"), cell("会议设备；本方案增强（A / B）"), cell("本方案：每 16 ms 下发目标方位与干扰方位")],
+    [bold("可转向高阶（神经网络）"), cell("网络按指定方向输出两麦的波束权重"), cell("0–180° 任意方向，波束形状不变"), cell("双麦耳机、小型设备、立体声录音"), cell("NDBF（IWAENC 2026）")],
+  ], 0.6, 1.72, [2.25, 3.05, 2.2, 2.35, 2.28], [0.38, 0.62, 0.62, 0.62, 0.62], { fontSize: 10.5 });
+  T(s, "NDBF：两个全向麦、间距 3 cm", { x: 0.6, y: 4.75, w: 6, h: 0.32, fontSize: 12, bold: true, color: C.navy });
+  S.para(s, [
+    "传统两麦差分只能做一阶、基本不能转向；NDBF 在 0–180° 内任意转向（5° 一档），可做到三阶，波束图不随频率变化。",
+    "端射方向 SDR：一阶 25.9 dB、三阶 23.2 dB；传统一阶差分 −1.0 dB（消声环境仿真）；论文未给参数量与运行耗时。",
+  ], 0.6, 5.1, 6.0, 1.7, { fontSize: 11 });
+  T(s, "对本方案（判断）", { x: 6.85, y: 4.75, w: 5.88, h: 0.32, fontSize: 12, bold: true, color: C.navy });
+  S.para(s, [
+    "每只耳机的 2 麦（间距 1.5 cm）同样是双麦线阵：可转向高阶波束有望改善本地增强（A）约 2 dB 的分辨力，方向由定位给出。",
+    "需要验证：混响下的效果；1.5 cm 间距下低频噪声放大；两麦沿前后排列时波束左右对称；耳机芯片上的实时性。",
+  ], 6.85, 5.1, 5.88, 1.7, { fontSize: 11 });
 }
 
 // ================= 8 大 / 小模型选型 =================
