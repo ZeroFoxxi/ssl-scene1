@@ -8,6 +8,7 @@
 #   SCENE=general ARRAY=lin6_3cm ROOMS_TRAIN=6000 DATA_TAG=_60k bash server_kit/start.sh    训练数据放大到 60,000（单独目录）
 #   ROOMS_TRAIN=6000 DATA_TAG=_60k bash server_kit/start.sh                                 会议室阵列，训练数据 60,000（仍评测同一个固定测试集）
 #   SCENE=general ARRAY=lin6_3cm EPOCHS=150 RUN_TAG=_ep150 SIZES="s" bash server_kit/start.sh  同一份 12,000 数据训练 150 轮（对照：训练步数与 60,000 × 30 轮相同）
+#   SCENE=general ARRAY=lin6_3cm DATA_TAG=_dif GEN_ARGS="--diffuse-p 0.7 --diffuse-snr 0 20" SIZES="s" SEEDS="0 1 2 3" bash server_kit/start.sh   仿真加扩散噪声
 # 不同配置可以同时运行（各自的日志 work/logs/start_<配置>.log）；同一份数据还没生成时，不要同时启动两个用它的配置。
 # 跑完后看结果：python3 server_kit/summary.py
 set -euo pipefail
@@ -25,6 +26,7 @@ SCENE=${SCENE:-meeting}
 ARRAY=${ARRAY:-lin6_17.5cm}
 DATA_TAG=${DATA_TAG:-}             # 如 _60k：数据量放大时存到单独目录，特征缓存也分开
 RUN_TAG=${RUN_TAG:-}               # 如 _ep150：同一份数据、不同训练设置时区分实验名（不覆盖已有模型）
+GEN_ARGS=${GEN_ARGS:-}             # 传给数据生成的额外参数，如 "--diffuse-p 0.7 --diffuse-snr 0 20 --mic-jitter 0.002"（配合 DATA_TAG 存到单独目录）
 if [ "$SCENE" = "meeting" ] && [ "$ARRAY" = "lin6_17.5cm" ]; then
   DATA=train_data${DATA_TAG}; PREFIX=crnn_meeting${DATA_TAG}${RUN_TAG}; MEETING=1   # 会议室配置（含放大数据量）：都在同一个固定测试集上评测，有传统基线
 else
@@ -57,8 +59,16 @@ for s in dev-clean test-clean; do
 done
 
 log "2/6 仿真数据：场景 $SCENE，阵列 $ARRAY → work/$DATA（训练 $((ROOMS_TRAIN * 10)) / 验证 $((ROOMS_VAL * 10))；已有分片自动跳过）"
-$PY scripts/gen_meeting_train_data.py --split val --rooms "$ROOMS_VAL" --workers "$WORKERS" --scene "$SCENE" --array "$ARRAY" --tag "$DATA_TAG"
-$PY scripts/gen_meeting_train_data.py --split train --rooms "$ROOMS_TRAIN" --workers "$WORKERS" --scene "$SCENE" --array "$ARRAY" --tag "$DATA_TAG"
+FEAT_TR=work/feat/${DATA}_train.npz; FEAT_VA=work/feat/${DATA}_val.npz
+if [ "$DATA" = "train_data" ]; then FEAT_TR=work/feat/train.npz; FEAT_VA=work/feat/val.npz; fi
+if [ -f "$FEAT_TR" ] && [ -f "$FEAT_VA" ]; then
+  log "  特征已算好（$FEAT_TR），跳过数据生成（原始分片可能已被 cleanup_raw.py 删除）"
+else
+  # shellcheck disable=SC2086
+  $PY scripts/gen_meeting_train_data.py --split val --rooms "$ROOMS_VAL" --workers "$WORKERS" --scene "$SCENE" --array "$ARRAY" --tag "$DATA_TAG" $GEN_ARGS
+  # shellcheck disable=SC2086
+  $PY scripts/gen_meeting_train_data.py --split train --rooms "$ROOMS_TRAIN" --workers "$WORKERS" --scene "$SCENE" --array "$ARRAY" --tag "$DATA_TAG" $GEN_ARGS
+fi
 if [ "$MEETING" = 1 ]; then
   [ -f work/train_data/test/test.npz ] || $PY scripts/gen_meeting_test_data.py
   log "3/6 固定测试集上的传统基线"

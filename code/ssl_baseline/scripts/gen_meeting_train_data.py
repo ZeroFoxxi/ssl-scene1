@@ -45,7 +45,28 @@ ARRAYS = {"lin6_17.5cm": np.stack([np.zeros(6), (np.arange(6) - 2.5) * 0.175 / 5
           "lin5_4cm": np.stack([np.zeros(5), np.array([-0.08, -0.04, 0.0, 0.04, 0.08])], 0),  # LOCATA DICIT 中间 5 麦
           "lin6_3cm": np.stack([np.zeros(6), np.array([-0.06, -0.03, 0.0, 0.03, 0.06, 0.09])], 0)}  # RealMAN 阵列 x 轴上 6 麦
 MIC_XY = ARRAYS["lin6_17.5cm"]
-CFG = {"scene": "meeting", "array": "lin6_17.5cm"}
+CFG = {"scene": "meeting", "array": "lin6_17.5cm", "diffuse_p": 0.0, "diffuse_snr": (0.0, 20.0), "mic_jitter": 0.0}
+C_SOUND = 343.0
+
+
+def diffuse_mixer(mics):
+    """球面各向同性扩散噪声：麦克风 i、j 间的相干函数为 sinc(2 f d_ij / c)。返回每个频点的混合矩阵（rfft 频点 × M × M），
+    白噪声向量左乘它即得到具有该相干性的多通道噪声。"""
+    d = np.linalg.norm(mics[:, :, None] - mics[:, None, :], axis=0)
+    f = np.fft.rfftfreq(N, 1 / FS)
+    G = np.sinc(2 * f[:, None, None] * d[None] / C_SOUND)
+    w, V = np.linalg.eigh(G)
+    return V * np.sqrt(np.clip(w, 0, None))[:, None, :]
+
+
+def diffuse_noise(mixer, rng):
+    """一段扩散噪声（M × N）：频谱倾斜随机（1/f^α，α 0–1.5，从白噪声到偏低频）。"""
+    nf, M = mixer.shape[0], mixer.shape[1]
+    z = (rng.normal(size=(nf, M)) + 1j * rng.normal(size=(nf, M))) / np.sqrt(2)
+    X = np.einsum("fij,fj->fi", mixer, z)
+    f = np.fft.rfftfreq(N, 1 / FS); f[0] = f[1]
+    X *= ((f / 1000.0) ** (-rng.uniform(0, 1.5) / 2))[:, None]
+    return np.fft.irfft(X, n=N, axis=0).T
 CONDS = ["C1 换人", "C2 抢话", "C3 远端扬声器", "C4 空调噪声"]
 COND_P = [0.35, 0.25, 0.20, 0.20]
 SEED_BASE = {"train": 1_000_000, "val": 2_000_000}
@@ -76,10 +97,10 @@ def load_speech(split):
     return out
 
 
-def _init(split, scene="meeting", array="lin6_17.5cm"):
+def _init(split, scene="meeting", array="lin6_17.5cm", diffuse_p=0.0, diffuse_snr=(0.0, 20.0), mic_jitter=0.0):
     global _SPEECH, MIC_XY
     _SPEECH = load_speech(split)
-    CFG.update(scene=scene, array=array); MIC_XY = ARRAYS[array]
+    CFG.update(scene=scene, array=array, diffuse_p=diffuse_p, diffuse_snr=tuple(diffuse_snr), mic_jitter=mic_jitter); MIC_XY = ARRAYS[array]
 
 
 def make_general_scene(rng):
@@ -124,14 +145,18 @@ def make_room(args):
             dims, c, people, azs, _, _, spk_pos, vent = R.make_scene(rng)
         M = MIC_XY.shape[1]
         mics = np.vstack([MIC_XY + c[:2, None], np.full((1, M), c[2])])
+        # 增强用单独的随机数（不改变房间、说话人、语音等其余内容，便于与不增强的数据对比）
+        arng = np.random.default_rng(SEED_BASE[split] + room_idx + attempt * 50_000_000 + 7_000_000)
+        mics_sim = mics + arng.normal(0, CFG["mic_jitter"], mics.shape) if CFG["mic_jitter"] > 0 else mics   # 麦克风实际位置的小误差（只用于声学仿真）
         try:
-            H = [R.rirs(dims, rt60, p, mics) for p in list(people) + [spk_pos, vent]]   # 0–5 参会人，6 喇叭，7 出风口
+            H = [R.rirs(dims, rt60, p, mics_sim) for p in list(people) + [spk_pos, vent]]   # 0–5 参会人，6 喇叭，7 出风口
             break
         except RuntimeError:
             if attempt == 2:
                 raise
             print(f"[房间 {room_idx}] 冲激响应多次出错，换种子重生成", file=sys.stderr, flush=True)
     xs, meta = [], []
+    mixer = None                                     # 扩散噪声的混合矩阵：每个房间第一次用到时计算一次
     for _ in range(SAMPLES_PER_ROOM):
         ia, ib = rng.choice(6, 2, replace=False)
         while CFG["scene"] == "general" and abs(((azs[ia] - azs[ib] + 180) % 360) - 180) < 10:
@@ -158,6 +183,11 @@ def make_room(args):
         if cond == "C4 空调噪声":
             yV = R.conv(H[7], R.ac_noise(N, rng), N)
             y = y + yV * np.sqrt(bpow / (R.band_power(yV, ON, N) + 1e-12) / 10 ** (rng.uniform(0, 20) / 10))
+        if CFG["diffuse_p"] > 0 and arng.random() < CFG["diffuse_p"]:          # 扩散噪声（混响尾、环境噪声的空间特性），信噪比相对 B 的带内功率
+            if mixer is None:
+                mixer = diffuse_mixer(mics_sim)
+            yD = diffuse_noise(mixer, arng)
+            y = y + yD * np.sqrt(bpow / (R.band_power(yD, ON, N) + 1e-12) / 10 ** (arng.uniform(*CFG["diffuse_snr"]) / 10))
         pB = np.mean(R.conv(H[ib], sB, N)[:, ON:] ** 2)
         y = y + rng.normal(0, np.sqrt(pB / 10 ** (rng.uniform(20, 40) / 10)), y.shape)
         scale = float(np.max(np.abs(y)) / 32000.0 + 1e-12)
@@ -175,13 +205,16 @@ def main():
     ap.add_argument("--shard-rooms", type=int, default=50)
     ap.add_argument("--scene", choices=["meeting", "general"], default="meeting")
     ap.add_argument("--array", choices=list(ARRAYS), default="lin6_17.5cm")
+    ap.add_argument("--diffuse-p", type=float, default=0.0, help="每个样本加入扩散噪声的概率（0 = 不加）")
+    ap.add_argument("--diffuse-snr", type=float, nargs=2, default=[0.0, 20.0], help="扩散噪声信噪比范围（dB，相对说话人 B 开口后的带内功率）")
+    ap.add_argument("--mic-jitter", type=float, default=0.0, help="麦克风位置误差的标准差（m），只用于声学仿真，如 0.002")
     ap.add_argument("--tag", default="", help="输出目录后缀，如 _60k（放大数据量时与原数据分开存放）")
     a = ap.parse_args()
     sub = ("train_data" if (a.scene, a.array) == ("meeting", "lin6_17.5cm") else f"train_data_{a.scene}_{a.array}") + a.tag
     outdir = os.path.join(WORK, sub, a.split); os.makedirs(outdir, exist_ok=True)
     t0 = time.time()
     # 语音在主进程读一次，子进程以 fork 方式共享（不重复占内存；服务器核数多时尤其重要）
-    _init(a.split, a.scene, a.array)
+    _init(a.split, a.scene, a.array, a.diffuse_p, a.diffuse_snr, a.mic_jitter)
     with get_context("fork").Pool(a.workers) as pool:
         for s0 in range(0, a.rooms, a.shard_rooms):
             fn = os.path.join(outdir, f"shard_{s0 // a.shard_rooms:03d}.npz")
@@ -193,7 +226,7 @@ def main():
             print(f"[{a.split}] {min(a.rooms, s0 + a.shard_rooms)}/{a.rooms} 个房间  {len(xs)} 个样本 → {os.path.basename(fn)}  {time.time() - t0:.0f}s", flush=True)
     json.dump({"split": a.split, "rooms": a.rooms, "samples_per_room": SAMPLES_PER_ROOM, "fs": FS, "pre_s": PRE_S, "post_s": POST_S,
                "scene": a.scene, "array": a.array, "mic_xy_m": ARRAYS[a.array].round(4).tolist(), "speech": f"LibriSpeech {LIBRI[a.split]}（CC BY 4.0）", "seed_base": SEED_BASE[a.split],
-               "conds": CONDS, "cond_p": COND_P}, open(os.path.join(outdir, "info.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+               "conds": CONDS, "cond_p": COND_P, "diffuse_p": a.diffuse_p, "diffuse_snr": a.diffuse_snr, "mic_jitter": a.mic_jitter}, open(os.path.join(outdir, "info.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 
 if __name__ == "__main__":
