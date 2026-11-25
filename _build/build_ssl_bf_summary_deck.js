@@ -137,14 +137,14 @@ const Ls = LIN["DS_测向偏差损失_1to4kHz_dB"];
     notesOf(["owl", "yealink", "rally", "ideahub", "ciscoBar", "ciscoCeil", "ciscoBlog", "tcc2", "homepod"],
       "回声消除：远端参会人的声音从本地喇叭播出，会被麦克风收进；不先消除，定位会被喇叭声带偏（Cisco 社区也提到本地扩声会干扰发言人跟踪）。HomePod 资料给出播放声比人声高 30–40 dB、回声消除后残留仍可比人声高 10–20 dB。\n摄像头执行方式：机械转向（Logitech 主摄云台）、数字取景（Jabra、Owl）、多镜头切换（Cisco Quad Camera）。\n拾音距离：Meeting Owl 4+ 5.5 m、Yealink A40 6 m（4 m 内高质量）、Logitech Rally Bar 7 m、华为 IdeaHub ES2 Plus 12 m。"));
   key(s, "回声消除在定位之前；定位输出的方位同时给摄像头和波束成形");
-  const Y = 1.95, H = 0.95, W = 1.84, G = 0.218;
-  const blocks = [["麦克风阵列", "6–16 麦"], ["回声消除", "去掉喇叭声"], ["声源定位", "方位 + 置信度"], ["波束成形", "对准发言人"], ["降噪 / 混音", "单通道降噪"], ["输出", "单路语音上行"]];
+  const Y = 1.9, H = 1.15, W = 1.84, G = 0.218;
+  const blocks = [["麦克风阵列", "视频条 6–16 麦\n吊顶 28–64 单元"], ["回声消除", "参考：远端播放信号\n先于定位"], ["声源定位", "SRP / MUSIC / 网络\n输出方位 + 置信度"], ["波束成形", "5–8 个自适应波束\n（Rally Bar / Cisco）"], ["降噪 / 混音", "单通道网络降噪\n多波束自动混音"], ["输出", "单路语音\n16 kHz 约 0.26 Mbit/s"]];
   const xs = blocks.map((_, i) => 0.6 + i * (W + G));
   blocks.forEach(([t, d], i) => {
     const hi = i === 2 || i === 3;
     s.addShape(p.shapes.RECTANGLE, { x: xs[i], y: Y, w: W, h: H, fill: { color: hi ? C.navyPale : "FFFFFF" }, line: { color: hi ? C.navy : C.box, width: hi ? 1.25 : 0.75 } });
     T(s, t, { x: xs[i], y: Y + 0.12, w: W, h: 0.36, fontSize: 13, bold: true, align: "center", color: C.navy });
-    T(s, d, { x: xs[i], y: Y + 0.52, w: W, h: 0.3, fontSize: 10.5, align: "center", color: C.gray });
+    T(s, d, { x: xs[i] + 0.04, y: Y + 0.5, w: W - 0.08, h: 0.55, fontSize: 10, align: "center", color: C.gray });
     if (i > 0) line(s, xs[i - 1] + W, Y + H / 2, xs[i], Y + H / 2);
   });
   const Y2 = 3.45, H2 = 0.55;
@@ -174,11 +174,11 @@ const Ls = LIN["DS_测向偏差损失_1to4kHz_dB"];
   key(s, "都是从声音到各麦克风的时间差反推方向；神经网络在多人和混响下更稳，但依赖训练数据");
   IMG(s, "doa_principle.png", 0.6, 1.8, 4.9, 1.635);
   table(s, [
-    [cell("类别"), cell("做法"), cell("端侧资源（公开）")],
-    [bold("时间差类\nSRP-PHAT"), cell("各方向的互相关能量，取最大"), cell("ODAS 8 麦：树莓派 3 单核 14%")],
-    [bold("子空间类\nMUSIC / GEVD"), cell("协方差分解，噪声子空间找峰"), cell("乐鑫 4 麦：内存 206 KB，CPU 8.1%")],
-    [bold("神经网络\nCRNN / IPDnet2"), cell("相位差 → 网络输出方向 + 置信度"), cell("IPDnet2-Tiny：0.5 M 参数")],
-  ], 5.85, 1.85, [1.75, 2.75, 2.38], [0.42, 0.78, 0.78, 0.78], { fontSize: 11 });
+    [cell("类别"), cell("做法"), cell("端侧资源"), cell("效果（原文）")],
+    [bold("时间差类\nSRP-PHAT"), cell("各方向互相关能量，取最大"), cell("ODAS 8 麦：树莓派 3 单核 14%"), cell("SMP-PHAT 平均误差 16.2°")],
+    [bold("子空间类\nMUSIC / GEVD"), cell("协方差分解，噪声子空间找峰"), cell("乐鑫 4 麦：206 KB，CPU 8.1%"), cell("乐鑫仿真 ±10° 内 100%")],
+    [bold("神经网络\nCRNN / IPDnet2"), cell("相位差 → 方向 + 置信度"), cell("IPDnet2-Tiny 0.5 M 参数"), cell("IPDnet2 实录误差 1.2–1.6°")],
+  ], 5.75, 1.85, [1.6, 1.95, 1.88, 1.55], [0.42, 0.85, 0.85, 0.85], { fontSize: 10.5 });
   s.addShape(p.shapes.LINE, { x: 0.6, y: 5.1, w: 12.13, h: 0, line: { color: C.rule, width: 0.75 } });
   labelLine(s, "会议难点", "抢话、远端喇叭声时，传统方法的峰值容易落在干扰上", 0.6, 5.25, 12.13);
   labelLine(s, "数据依赖", "RealMAN 实录评测（5° 内）：只用仿真训练 60.4%，用实录训练 89.2%", 0.6, 5.7, 12.13);
@@ -191,17 +191,18 @@ const Ls = LIN["DS_测向偏差损失_1to4kHz_dB"];
     "指向性计算：理想自由场、远场平面波，对各向同性扩散噪声；目标在线阵正前方；不含混响与麦克风误差（code/ssl_baseline/scripts/bf_directivity.py；波束图 _build/make_summary_figures.py）。延迟求和指向性：250 Hz " + f1(LIN.DS["250"].DI_dB) + "、500 Hz " + f1(LIN.DS["500"].DI_dB) + "、1 kHz " + f1(LIN.DS["1000"].DI_dB) + "、2 kHz " + f1(LIN.DS["2000"].DI_dB) + "、4 kHz " + f1(LIN.DS["4000"].DI_dB) + " dB；超指向（白噪声增益 ≥ −10 dB）250 Hz / 1 kHz 为 " + f1(LIN["超指向"]["250"].DI_dB) + " / " + f1(LIN["超指向"]["1000"].DI_dB) + " dB。\n波束图右图：MVDR，干扰在偏离目标 60° 处，噪声协方差 = 扩散噪声 + 干扰（功率 100 倍）+ 0.01 白噪声。\n公式：每个频点 y = wᴴx；延迟求和 w = a / M；MVDR w = R⁻¹a / (aᴴR⁻¹a)。\n计算量（估算，6 麦、512 点 FFT、帧移 16 ms）：固定波束约 9.6 万次复乘 / 秒；自适应每次更新约 2–3 万次复乘加。乐鑫 GSC：ESP32-P4 单核约 20%，收敛约 1 s。\n" + notesOf(["shure", "rally", "ciscoCeil", "espGsc", "homepod", "rnnoise", "dfn2", "spatialnet", "tfgrid"],
       "HomePod：6 麦；多通道回声消除；深度学习掩码 + 多通道维纳滤波；盲源分离为多路，用 \"Hey Siri\" 检测器选出目标那一路。\n网络规模：RNNoise 8.8 万、DeepFilterNet2 231 万、SpatialNet 160 万 / 730 万、TF-GridNet 1450 万参数。"));
   key(s, "固定波束朝定位方向拾音；自适应波束还能在干扰方向置零");
-  IMG(s, "beam_patterns.png", 0.6, 1.8, 7.3, 2.192);
+  IMG(s, "beam_patterns.png", 0.6, 1.8, 6.6, 2.192);
   T(s, `延迟求和指向性：500 Hz ${f1(LIN.DS["500"].DI_dB)} dB、1 kHz ${f1(LIN.DS["1000"].DI_dB)} dB、4 kHz ${f1(LIN.DS["4000"].DI_dB)} dB，低频几乎没有方向性`,
-    { x: 0.6, y: 5.25, w: 7.5, h: 0.4, fontSize: 12, color: C.ink });
-  T(s, `定位偏 10° 目标损失 ${f1(Ls["10°"])} dB，偏 20° 损失 ${f1(Ls["20°"])} dB`, { x: 0.6, y: 5.7, w: 7.5, h: 0.4, fontSize: 12, color: C.ink });
+    { x: 0.6, y: 5.0, w: 6.6, h: 0.6, fontSize: 11.5, color: C.ink });
+  T(s, `定位偏 10° 目标损失 ${f1(Ls["10°"])} dB，偏 20° 损失 ${f1(Ls["20°"])} dB`, { x: 0.6, y: 5.55, w: 6.6, h: 0.4, fontSize: 11.5, color: C.ink });
   table(s, [
-    [cell("类别"), cell("公开实例")],
-    [bold("固定波束\n延迟求和、超指向"), cell("Shure MXA920：8 个可指向波瓣")],
-    [bold("自适应波束\nMVDR、GSC"), cell("Logitech Rally Bar：5 个\nCisco 吊顶麦 Pro：8 个")],
-    [bold("网络掩码\n+ 多通道滤波"), cell("Apple HomePod（6 麦）")],
-    [bold("端到端多通道网络"), cell("论文为主，未见会议产品")],
-  ], 8.25, 1.85, [2.0, 2.48], [0.42, 0.85, 0.85, 0.75, 0.6], { fontSize: 11 });
+    [cell("类别"), cell("计算量 / 规模"), cell("公开实例")],
+    [bold("固定波束\n延迟求和、超指向"), cell("约 9.6 万次复乘 / 秒（估算）"), cell("Shure MXA920\n8 个可指向波瓣")],
+    [bold("自适应波束\nMVDR、GSC"), cell("每次更新约 2–3 万次复乘加（估算）；乐鑫 GSC 单核约 20%"), cell("Rally Bar：5 个\nCisco 吊顶：8 个")],
+    [bold("网络掩码\n+ 多通道滤波"), cell("降噪网络 8.8 万–231 万参数"), cell("HomePod 6 麦")],
+    [bold("端到端多通道网络"), cell("160 万–1450 万参数"), cell("论文为主")],
+  ], 7.45, 1.85, [1.6, 2.2, 1.48], [0.42, 0.8, 1.0, 0.7, 0.6], { fontSize: 10.5 });
+  T(s, "计算量按 6 麦、512 点 FFT、帧移 16 ms 估算", { x: 7.45, y: 5.6, w: 5.28, h: 0.3, fontSize: 9.5, color: C.gray });
 }
 
 // ================= 7 大 / 小模型选型 =================
@@ -363,14 +364,14 @@ const Ls = LIN["DS_测向偏差损失_1to4kHz_dB"];
   key(s, "6 麦线阵 + 端侧小网络：麦克风数与主流视频条相当，模型与端侧公开模型同量级");
   table(s, [
     [cell("项目"), cell("选型"), cell("原因"), cell("与竞品对比")],
-    [bold("阵列"), cell("6 麦线阵，孔径 17.5 cm"), cell("仿真：孔径比麦数重要"), cell("与 Rally Bar 同为 6 麦")],
-    [bold("定位方法"), cell("端侧小网络\n传统方法作对照"), cell("抢话、喇叭声下更稳，给置信度"), cell("竞品算法未公开")],
-    [bold("模型规格"), cell("0.28 M 参数\n8 比特约 270 KB"), cell("先训大模型，再压缩"), cell("IPDnet2-Tiny 0.5 M；乐鑫 206 KB")],
+    [bold("阵列"), cell("6 麦线阵，孔径 17.5 cm"), cell("仿真：孔径比麦数重要，6 麦与 8 麦相当；圆阵贴墙明显变差"), cell("与 Rally Bar 同为 6 麦")],
+    [bold("定位方法"), cell("端侧小网络\n传统方法作对照"), cell("抢话、喇叭声时传统方法峰值落在干扰上；网络可学会区分并给置信度"), cell("竞品算法未公开；IPDnet2 实录误差 1.2–1.6°")],
+    [bold("模型规格"), cell("0.28 M 参数，8 比特约 270 KB\n每次判决约 2.7 亿次乘加"), cell("先训大模型，再压缩"), cell("IPDnet2-Tiny 0.5 M；乐鑫 206 KB")],
     [bold("运行位置"), cell("端侧离线"), cell("实时，音频不出设备"), cell("与 Cisco、HomePod 一致")],
     [bold("给波束成形"), cell("方位 + 置信度"), cell(`偏 10° 损失 ${f1(Ls["10°"])} dB，低置信度不切换`), cell("会议产品为多波束 + 自适应")],
-  ], 0.6, 1.8, [1.75, 3.2, 3.85, 3.33], [0.42, 0.5, 0.66, 0.66, 0.5, 0.5], { fontSize: 12 });
-  T(s, "本项目负责的范围", { x: 0.6, y: 5.3, w: 4, h: 0.32, fontSize: 12, bold: true, color: C.navy });
-  chain(s, [["6 麦线阵", "孔径 17.5 cm"], ["回声消除", "前置条件"], ["定位网络", "0.28 M 参数"], ["方位 + 置信度", "每次判决"], ["摄像头 / 波束", "转向与拾音"]], 0.6, 5.75, 12.13, { fs: 12, dfs: 10, hi: [2, 3] });
+  ], 0.6, 1.8, [1.75, 3.2, 3.85, 3.33], [0.42, 0.62, 0.72, 0.66, 0.5, 0.5], { fontSize: 11.5 });
+  T(s, "本项目负责的范围", { x: 0.6, y: 5.4, w: 4, h: 0.32, fontSize: 12, bold: true, color: C.navy });
+  chain(s, [["6 麦线阵", "孔径 17.5 cm"], ["回声消除", "前置条件"], ["定位网络", "0.28 M 参数"], ["方位 + 置信度", "每次判决"], ["摄像头 / 波束", "转向与拾音"]], 0.6, 5.82, 12.13, { fs: 12, dfs: 10, hi: [2, 3] });
 }
 
 S.save(OUT);
