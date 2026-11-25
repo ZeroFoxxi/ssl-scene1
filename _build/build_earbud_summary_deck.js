@@ -175,13 +175,59 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
     notesOf(["stone", "nearlink", "lo2h", "neuralaids", "stereoZoom"], "A：每只耳机只用本耳 2 麦（间距 1.5 cm），即使用定位给出的干扰方位做自适应置零，相隔 25° 的人也只能压约 2 dB；固定超指向 0.2–0.5 dB。B：两耳 4 麦组阵，自适应置零在直达混响比 0 dB 时约 8 dB、消声时约 14 dB（方位误差 2–3°）。C：目标说话人提取，端到端约 17.5–20 ms（无线耳机 + AI 加速器 17.5 ms；Look Once to Hear 目标 < 20 ms）。B 的额外功耗：双向持续传 1–2 路 PCM，每侧约 2.6–5.2 mW。"));
   key(s, "单只耳机分不开相邻的人；两耳组阵要几毫秒级的耳间音频链路，目标说话人提取时延约 20 ms 在边缘");
   T(s, "朝目标增强、干扰方向置零（MVDR）：w = R⁻¹a / (aᴴR⁻¹a)，a 为目标方向向量，R 为干扰与噪声协方差；孔径越小，相邻方向的 a 越接近，越难分开。", { x: 0.6, y: 1.66, w: 12.13, h: 0.42, fontSize: 11.5, valign: "middle" });
+  // 表只留做法与代价；分开能力与时延画成下方两张对比图
   table(s, [
-    [cell("方案"), cell("怎么做"), cell("分开相隔 25° 的人"), cell("声音通路时延"), cell("代价")],
-    [bold("A 本地增强"), cell("每只耳机用本耳 2 麦，按定位给出的方位增强、干扰置零"), cell("基本不能：约 2 dB"), cell("几 ms，满足入耳式与开放式"), cell("不跨耳；与已有产品差别小")],
-    [bold("B 两耳组阵增强"), cell("两耳 4 麦组成一个阵列做自适应置零"), cell("能：约 8 dB（消声时约 14 dB）"), cell("专用耳间链路几 ms 满足；蓝牙 / 星闪约 15–40 ms 不满足"), cell("每侧多 2.6–5.2 mW；需几毫秒级耳间音频链路")],
-    [bold("C 目标说话人提取"), cell("网络从混合声中只留下目标；方位或人脸作为线索"), cell("能（不依赖阵列孔径）"), cell("约 17.5–20 ms：入耳式临界，开放式不满足"), cell("耳机上要跑网络；推理功耗未知")],
-  ], 0.6, 2.2, [1.9, 3.2, 2.2, 2.6, 2.23], [0.4, 0.8, 0.9, 0.9], { fontSize: 11 });
-  T(s, "参照：Phonak 助听器经专用耳间链路组成 4 麦双耳波束，是 B 的先例；C 的耳机端实测时延见连云 / 端侧页。", { x: 0.6, y: 5.45, w: 12.13, h: 0.7, fontSize: 11.5, color: C.ink });
+    [cell("方案"), cell("怎么做"), cell("代价")],
+    [bold("A 本地增强"), cell("每只耳机用本耳 2 麦，按定位给出的方位增强、干扰置零"), cell("不跨耳；与已有产品差别小")],
+    [bold("B 两耳组阵增强"), cell("两耳 4 麦组成一个阵列做自适应置零"), cell("每侧多 2.6–5.2 mW；需几毫秒级耳间音频链路")],
+    [bold("C 目标说话人提取"), cell("网络从混合声中只留下目标；方位或人脸作为线索"), cell("耳机上要跑网络；推理功耗未知")],
+  ], 0.6, 2.15, [2.2, 5.5, 4.43], [0.36, 0.44, 0.44, 0.44], { fontSize: 11 });
+  const SUB = (t, x, y, w) => T(s, t, { x, y, w, h: 0.3, fontSize: 11.5, bold: true, color: C.navy, valign: "middle" });
+  const axis = (x0, y0, w, h, vmax, ticks, unit) => {
+    s.addShape(p.shapes.LINE, { x: x0, y: y0 + h, w, h: 0, line: { color: "BFBFBF", width: 0.75 } });
+    ticks.forEach((v) => {
+      const xx = x0 + w * v / vmax;
+      s.addShape(p.shapes.LINE, { x: xx, y: y0, w: 0, h, line: { color: "E3E3E3", width: 0.5, dashType: "dash" } });
+      T(s, v + (v === ticks[ticks.length - 1] ? " " + unit : ""), { x: xx - 0.35, y: y0 + h + 0.03, w: 0.7, h: 0.22, fontSize: 9, align: "center", color: C.gray });
+    });
+  };
+  const rowName = (t, x, y, w, rh) => T(s, t, { x, y, w: w - 0.1, h: rh, fontSize: 10.5, align: "right", valign: "middle", color: C.ink });
+  const bar = (x, y, w, h, o) => s.addShape(p.shapes.RECTANGLE, { x, y, w, h, fill: o.fill ? { color: o.fill } : { type: "none" }, line: o.line ? { color: o.line, width: 1, dashType: o.dash || "solid" } : { type: "none" } });
+  // 左图：分开相隔 25° 的两个人
+  {
+    const X = 0.6, NW = 1.25, W = 4.1, Y = 4.45, RH = 0.42, VMAX = 16, k = W / VMAX, x0 = X + NW;
+    SUB("分开相隔 25° 的两个人：信干比提升（dB）", X, 4.05, 6.0);
+    axis(x0, Y, W, RH * 3, VMAX, [0, 4, 8, 12, 16], "dB");
+    const bh = RH * 0.55, yy = (i) => Y + i * RH + (RH - bh) / 2;
+    rowName("A 本地", X, Y, NW, RH); bar(x0, yy(0), 2 * k, bh, { fill: "A6A6A6" });
+    T(s, "约 2 dB：基本分不开", { x: x0 + 2 * k + 0.08, y: Y, w: 2.8, h: RH, fontSize: 10, valign: "middle", color: C.gray });
+    rowName("B 两耳组阵", X, Y + RH, NW, RH); bar(x0, yy(1), 14 * k, bh, { fill: "C9D7E6" }); bar(x0, yy(1), 8 * k, bh, { fill: C.navy });
+    T(s, "约 8 dB", { x: x0 + 0.08, y: Y + RH, w: 1.2, h: RH, fontSize: 10, bold: true, valign: "middle", color: "FFFFFF" });
+    T(s, "消声时约 14 dB", { x: x0 + 8 * k + 0.08, y: Y + RH, w: 1.6, h: RH, fontSize: 10, valign: "middle", color: C.navy });
+    rowName("C 提取", X, Y + 2 * RH, NW, RH);
+    T(s, "不依赖阵列孔径，信干比未量化", { x: x0 + 0.08, y: Y + 2 * RH, w: 3.5, h: RH, fontSize: 10, valign: "middle", color: C.gray });
+  }
+  // 右图：声音通路时延与容忍度
+  {
+    const X = 6.85, NW = 1.55, W = 4.3, Y = 4.45, RH = 0.34, VMAX = 40, k = W / VMAX, x0 = X + NW, n = 4;
+    SUB("声音通路时延（ms）与可容忍上限", X, 4.05, 5.88);
+    s.addShape(p.shapes.RECTANGLE, { x: x0 + 10 * k, y: Y, w: 10 * k, h: RH * n, fill: { color: "E4ECF4" }, line: { type: "none" } });
+    s.addShape(p.shapes.RECTANGLE, { x: x0 + 5 * k, y: Y, w: 1 * k, h: RH * n, fill: { color: "F2C4C4" }, line: { type: "none" } });
+    axis(x0, Y, W, RH * n, VMAX, [0, 10, 20, 30, 40], "ms");
+    const bh = RH * 0.6, yy = (i) => Y + i * RH + (RH - bh) / 2;
+    const lab = (t, x, i, o) => T(s, t, Object.assign({ x, y: Y + i * RH, w: 2.4, h: RH, fontSize: 9.5, valign: "middle", color: C.gray }, o || {}));
+    rowName("A 本地", X, Y, NW, RH); bar(x0, yy(0), 5 * k, bh, { line: C.gray, dash: "dash" }); lab("几 ms：入耳式、开放式都满足", x0 + 6 * k + 0.08, 0, { w: 3.2 });
+    rowName("B 专用链路", X, Y + RH, NW, RH); bar(x0, yy(1), 5 * k, bh, { line: C.navy, dash: "dash" }); lab("几 ms：满足", x0 + 6 * k + 0.08, 1, { color: C.navy });
+    rowName("B 蓝牙 / 星闪", X, Y + 2 * RH, NW, RH); bar(x0 + 15 * k, yy(2), 25 * k, bh, { fill: "A6A6A6" }); lab("15–40 ms：不满足", x0 + 15 * k + 0.06, 2, { color: "FFFFFF", bold: true });
+    rowName("C 提取", X, Y + 3 * RH, NW, RH); bar(x0 + 17.5 * k, yy(3), 2.5 * k, bh, { fill: C.navy }); lab("17.5–20 ms：入耳式临界", x0 + 20 * k + 0.06, 3, { w: 2.1, color: C.navy });
+    // 图例
+    [["F2C4C4", "开放式可容忍上限 5–6 ms"], ["E4ECF4", "入耳式可容忍上限 10–20 ms"]].forEach(([c, t], i) => {
+      const lx = X + 0.2 + i * 2.6;
+      s.addShape(p.shapes.RECTANGLE, { x: lx, y: 6.18, w: 0.22, h: 0.15, fill: { color: c }, line: { type: "none" } });
+      T(s, t, { x: lx + 0.3, y: 6.11, w: 2.3, h: 0.3, fontSize: 9.5, color: C.gray, valign: "middle" });
+    });
+  }
+  T(s, "参照：Phonak 助听器经专用耳间链路组成 4 麦双耳波束，是 B 的先例；C 的耳机端实测时延见连云 / 端侧页；虚线框\"几 ms\"只表示量级；落在红色线右侧即超出开放式上限。", { x: 0.6, y: 6.45, w: 12.13, h: 0.35, fontSize: 10, color: C.gray, valign: "middle" });
 }
 
 // ================= 8b 波束：固定方向与可转向 =================
