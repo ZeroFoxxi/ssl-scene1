@@ -170,7 +170,76 @@ def positioning():
     save(fig, "earbud_positioning.png")
 
 
+# ---------- 会议：定位原理（时间差） ----------
+def doa_principle():
+    fig, ax = canvas(5.6, 3.4, (-2.4, 3.4), (-1.05, 2.45))
+    R, th = 1.25, np.deg2rad(35)
+    u = np.array([np.sin(th), np.cos(th)])                       # 来波方向（θ 从阵列法向量起）
+    xs = np.linspace(-R, R, 6)
+    ax.add_patch(FancyBboxPatch((-R - 0.2, -0.13), 2 * R + 0.4, 0.26, boxstyle="round,pad=0.01", color=PALE, ec=NAVY, lw=1))
+    for x in xs:
+        ax.add_patch(Circle((x, 0), 0.07, color=NAVY, lw=0))
+    # 平面波波前（垂直于 u），最后一条过最右端麦克风
+    for k in range(4):
+        c0 = np.array([R, 0]) + u * (0.5 * k)
+        t = np.array([-u[1], u[0]])
+        a, b = c0 - 0.9 * t, c0 + 2.4 * t
+        ax.plot([a[0], b[0]], [a[1], b[1]], color=LT, lw=1.6, alpha=1 - 0.2 * k)
+    icon(ax, "record_voice_over-fill", R + u[0] * 2.3 + 0.2, u[1] * 2.3, 0.75, NAVY)
+    ax.annotate("", xy=(R + u[0] * 0.35, u[1] * 0.35), xytext=(R + u[0] * 1.8, u[1] * 1.8), arrowprops=dict(arrowstyle="-|>", color=NAVY, lw=1.6))
+    # 法向与角度
+    ax.plot([-R, -R], [0, 1.6], color=DGRAY, lw=1, ls="--")
+    ax.add_patch(Arc((-R, 0), 1.6, 1.6, theta1=90 - np.degrees(th), theta2=90, color=DGRAY, lw=1.2))
+    ax.text(-R + 0.12, 1.0, "θ", fontsize=FS + 1, color=DGRAY)
+    # 程差
+    e = np.array([-R, 0]) + u * (2 * R * np.sin(th))
+    ax.plot([-R, e[0]], [0, e[1]], color="#B22222", lw=2.4)
+    ax.text(-R - 0.12, 0.45, "多走\nd·sinθ", fontsize=FS - 1, color="#B22222", ha="right")
+    ax.annotate("", xy=(R, -0.35), xytext=(-R, -0.35), arrowprops=dict(arrowstyle="<->", color=DGRAY, lw=1))
+    ax.text(0, -0.62, "孔径 d = 17.5 cm（6 麦）", ha="center", fontsize=FS - 2, color=DGRAY)
+    ax.text(0.3, -0.98, "时间差 τ = d·sinθ / c，最大 0.51 ms", ha="center", fontsize=FS - 1, color=NAVY, weight="bold")
+    save(fig, "doa_principle.png")
+
+
+# ---------- 会议：波束图（6 麦线阵，计算） ----------
+def beam_patterns():
+    C0 = 343.0
+    pos = (np.arange(6) - 2.5) * 0.035
+    phi = np.deg2rad(np.linspace(0, 180, 721))
+    A = lambda f, ph: np.exp(2j * np.pi * f * np.outer(np.cos(ph), pos) / C0)     # 行：方向
+    db = lambda w, f: np.clip(20 * np.log10(np.abs(A(f, phi) @ w.conj()) + 1e-9), -30, 0) + 30
+    fig = plt.figure(figsize=(9.0, 3.7))
+    # 固定波束：延迟求和，目标在正前方 90°
+    ax = fig.add_subplot(121, projection="polar")
+    for f, c, lab in [(500, "#B5C7DA", "500 Hz"), (1000, LT, "1 kHz"), (4000, NAVY, "4 kHz")]:
+        a0 = A(f, np.array([np.pi / 2]))[0]
+        ax.plot(phi, db(a0 / 6, f), color=c, lw=2, label=lab)
+    ax.set_title("固定波束：延迟求和", fontsize=FS, color=NAVY, weight="bold", pad=4)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 0.0), ncol=3, fontsize=FS - 3, frameon=False)
+    # 自适应：MVDR，干扰在 30°（偏离目标 60°）
+    ax2 = fig.add_subplot(122, projection="polar")
+    f = 2000
+    a0, ai = A(f, np.array([np.pi / 2]))[0], A(f, np.array([np.deg2rad(30)]))[0]
+    d = np.abs(pos[:, None] - pos[None])
+    Rn = np.sinc(2 * f * d / C0) + 100 * np.outer(ai, ai.conj()) + 0.01 * np.eye(6)
+    w = np.linalg.solve(Rn, a0); w = w / (a0.conj() @ w)
+    ax2.plot(phi, db(a0 / 6, f), color=GRAY, lw=1.5, ls="--", label="延迟求和")
+    ax2.plot(phi, db(w, f), color=NAVY, lw=2, label="MVDR")
+    ax2.annotate("干扰", xy=(np.deg2rad(30), 4), xytext=(np.deg2rad(22), 33), fontsize=FS - 2, color="#B22222",
+                 arrowprops=dict(arrowstyle="-|>", color="#B22222", lw=1.2), ha="center")
+    ax2.set_title("自适应波束：MVDR（2 kHz）", fontsize=FS, color=NAVY, weight="bold", pad=4)
+    ax2.legend(loc="lower center", bbox_to_anchor=(0.5, 0.0), ncol=2, fontsize=FS - 3, frameon=False)
+    for a in (ax, ax2):
+        a.set_thetamin(0); a.set_thetamax(180); a.set_ylim(0, 30)
+        a.set_yticks([10, 20, 30]); a.set_yticklabels(["−20", "−10", "0 dB"], fontsize=FS - 5, color=DGRAY)
+        a.set_xticks(np.deg2rad([0, 30, 60, 90, 120, 150, 180]))
+        a.set_xticklabels(["", "", "", "正前方", "", "", ""], fontsize=FS - 3, color=DGRAY)
+        a.grid(color="#DDDDDD", lw=0.6); a.spines["polar"].set_color("#BBBBBB")
+    fig.subplots_adjust(wspace=0.15)
+    save(fig, "beam_patterns.png")
+
+
 if __name__ == "__main__":
-    meeting(); home(); ear_cases(); beams(); positioning()
+    meeting(); home(); ear_cases(); beams(); positioning(); doa_principle(); beam_patterns()
     for f in sorted(os.listdir(OUT)):
         print(f)
