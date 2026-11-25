@@ -288,4 +288,13 @@ const SIM = "仿真：刚性球头部模型（无耳廓），混响 0.5 s，面�
   para(s, ["12 月：用实测头部传递函数复核本页结论；训练一个约 4 万参数的 AI 网络做对比；之后进入情况 2（波束成形）。"], 0.6, 4.75, 12.1, 1.0, { fontSize: 12.5 });
 }
 
-p.writeFile({ fileName: OUT }).then((f) => console.log("saved", f));
+// 段落结束标记默认 en-US，统一改为 zh-CN
+p.write({ outputType: "nodebuffer" }).then(async (buf) => {
+  const JSZip = require("jszip");
+  const z = await JSZip.loadAsync(buf);
+  for (const n of Object.keys(z.files)) {
+    if (/^ppt\/slides\/slide\d+\.xml$/.test(n)) z.file(n, (await z.file(n).async("string")).replace(/lang="en-US"/g, 'lang="zh-CN"'));
+  }
+  require("fs").writeFileSync(OUT, await z.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
+  console.log("saved", OUT);
+});

@@ -156,7 +156,7 @@ const small = (s, text, x, y, w, o) => s.addText(rich(text, { fontFace: F, lang:
     s.addShape(p.shapes.LINE, { x: x1, y, w: x2 - x1, h: 0, line: { color: C.navyLt, width: 1.5 } });
     small(s, text, x1, y + 0.04, x2 - x1);
   };
-  br(0, 1, "逐样本，16 kHz"); br(2, 4, "每 16 ms 一帧"); br(5, 9, "每 0.25 s 一次（开口后 0.5 s 起）"); br(10, 10, "每 16 ms");
+  br(0, 1, "逐样本，16 kHz"); br(2, 4, "每 16 ms 一帧"); br(5, 9, "检出开口后每 0.25 s 一次"); br(10, 10, "每 16 ms");
   // 计算量
   small(s, "计算量：①–④ 2.1　⑥–⑧ 6.6　⑨ 0.8　⑩⑪ 1.0　⑫ 8.2　⑬–⑮ 很小　合计约 19 MFLOPS", X(0), 6.55, 8.5, { align: "left" });
 }
@@ -190,12 +190,12 @@ const stepTable = (s, rows, y) => {
     "代码：⑨ methods.frame_energy_db、onset_weights、covariance（时间窗 run_camera_policy.gevd_spec）；⑩–⑫ methods.music；⑬ methods.peak；⑭ methods.fuse_soft。⑭ 没选中人脸时输出网格峰值 θ_k*；不开摄像头时直接输出 ⑬ 的 θ_a。置信度的计算方式待确认（候选：空间谱峰高，或峰值与次峰之比）。");
   key(s, "每 0.25 s：开口前 1 s 估背景、开口后估目标，背景白化后用噪声子空间扫描 72 个方向，取峰得到方位");
   stepTable(s, [
-    ["⑨", "协方差", ["R_b = 平均 x x^H，t ∈ [t_{on} − 1.05 s, t_{on} − 0.05 s)", "R_s = Σ w x x^H / Σ w，t ∈ [t_{on}, t_d]；w = 0.2 + min(max(Δe, 0), 10)/10"], "背景 1 s、保护 0.05 s；目标最长 1 s；e < max e − 30 dB 的帧 w = 0", "218 × 两个 3×3", "0.8"],
+    ["⑨", "协方差", ["R_b = 平均 x x^H，t ∈ [t_{on} − 1.05 s, t_{on} − 0.05 s)", "R_s = Σ w x x^H / Σ w，t ∈ [max(t_{on}, t_d − 1 s), t_d)；w = 0.2 + min(max(Δe, 0), 10)/10"], "背景 1 s、保护 0.05 s；目标最长 1 s；e < max e − 30 dB 的帧 w = 0", "218 × 两个 3×3", "0.8"],
     ["⑩", "白化", ["L L^H = R_b + δI，R_w = L^{−1} R_s L^{−H}"], "δ = 0.01·tr(R_b) / 3", "218 × 3×3", "1.0"],
     ["⑪", "特征分解", "R_w = U Λ U^H，E_n = [u_2, u_3]", "单声源：噪声子空间 2 维", "218 × 3×2", "（含在⑩）"],
     ["⑫", "空间谱", ["a_w = L^{−1} h / ‖h‖，P_f(θ) = ‖a_w‖^2 / ‖E_n^H a_w‖^2", "P(θ) = 平均_f [P_f(θ) / max_θ P_f]"], "72 个方向（5°）；模板 h(θ,f) 见附录 A6", "P(θ)：72 个", "8.2"],
     ["⑬", "找峰插值", ["k^* = argmax P，δ = (P_{k−1} − P_{k+1}) / (2(P_{k−1} − 2P_k + P_{k+1}))", "θ_a = θ_{k^*} + 5°·δ（声学方位）"], "|δ| ≤ 0.5", "θ_a", "很小"],
-    ["⑭", "融合", ["s_0 = P(θ_{k^*}) − μ；s_i = max_{|θ−φ_i|≤8°} P(θ) + λ(l_i − 0.5)", "取得分最高者：人脸 φ_{i^*} 或 θ_{k^*}"], "λ = 0.1，μ = 0.05；摄像头按需打开", "θ_{out}", "很小"],
+    ["⑭", "融合", ["s_0 = P(θ_{k^*}) − μ；s_i = max_{|θ−φ_i|≤8°} P(θ) + λ(l_i − 0.5)", "摄像头关：θ_{out} = θ_a；开：得分最高的人脸 φ_{i^*}，否则 θ_{k^*}"], "λ = 0.1，μ = 0.05；摄像头按需打开", "θ_{out}", "很小"],
     ["⑮", "输出", "θ_{world} = θ_{out} + ψ(t)（IMU 偏航角）；打包下发", "每 16 ms 8 字节；置信度【待确认】", "→ 增强模块", "很小"],
   ], 1.65);
   s.addText(rich("外部输入：方向模板（离线，184 KB，附录 A6）；摄像头人脸方位 φ_i = atan((u_i − c_x) / f_x) + 安装偏角【设计】；IMU 偏航角 ψ(t)，200 Hz；自语音检测（骨声纹）【设计】。", { fontFace: F, lang: "zh-CN", fontSize: 11, color: C.ink }), { x: 0.6, y: 6.3, w: 12.1, h: 0.5, valign: "top", margin: 0.03, isTextBox: true });
@@ -271,8 +271,8 @@ const stepTable = (s, rows, y) => {
   y = eq(s, "rs", 0.6, y, "目标协方差") + 0.25;
   table(s, [
     [head("量"), head("时间窗"), head("说明")],
-    [bold("R_b(f)"), cell("开口前 1.05 s 至前 0.05 s"), cell("等权平均；包含噪声与混响")],
-    [bold("R_s(f)"), cell("开口起，至判决时刻（最长 1 s）"), cell("判决在开口后 0.5 s；运行时每 0.25 s 更新")],
+    [bold("R_b(f)"), cell("开口前 1.05 s 至前 0.05 s"), cell("等权平均，含噪声与混响；检出开口时算一次并保存")],
+    [bold("R_s(f)"), cell("开口起，至判决时刻（最长 1 s）"), cell("情况 1 仿真在开口后 0.5 s 判决；运行时每 0.25 s 更新")],
     [bold("维度"), cell("每个频点 3×3 厄米矩阵"), cell("218 个频点 × 2 份，约 31 KB")],
   ], 0.6, y + 0.05, [1.4, 4.0, 6.73], [0.36, 0.38, 0.38, 0.38]);
 }
@@ -341,4 +341,13 @@ const stepTable = (s, rows, y) => {
   note(s, ["a = 8.75 cm（头半径），c = 343 m/s；模板存储：72 × 218 × 3 个复数，半精度 4 字节，约 184 KB。"], 0.6, y + 1.7, 12.1, 0.6);
 }
 
-p.writeFile({ fileName: OUT }).then((f) => console.log("saved", f));
+// 段落结束标记默认 en-US，统一改为 zh-CN
+p.write({ outputType: "nodebuffer" }).then(async (buf) => {
+  const JSZip = require("jszip");
+  const z = await JSZip.loadAsync(buf);
+  for (const n of Object.keys(z.files)) {
+    if (/^ppt\/slides\/slide\d+\.xml$/.test(n)) z.file(n, (await z.file(n).async("string")).replace(/lang="en-US"/g, 'lang="zh-CN"'));
+  }
+  require("fs").writeFileSync(OUT, await z.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
+  console.log("saved", OUT);
+});

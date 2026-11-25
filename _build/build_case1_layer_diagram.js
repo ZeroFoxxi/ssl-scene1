@@ -104,7 +104,7 @@ const outY = (lastRow) => rowY(lastRow) + BH + 0.3;
 
 // ---------- 标题与图例 ----------
 txt("耳机声源定位：情况 1 逐层算法框图", 0.6, 0.28, 30, 0.7, { fs: 30, bold: true, color: C.navy, align: "left" });
-txt("顶部一排为处理流程（箭头上方是传给下一模块的量，下方是维度），每个模块向下展开到每一层。全部在主耳音频 DSP 上，合计约 19 MFLOPS、内存约 0.5 MB，没有需要训练的参数；每层公式见《情况1算法实现》。",
+txt("顶部一排为处理流程（箭头上方是传给下一模块的量，下方是维度），每个模块向下展开到每一层。全部在主耳音频 DSP 上，合计约 19 MFLOPS、内存约 0.5 MB，没有需要训练的参数；每层公式见《情况1算法实现》。实时性：开口后约 0.3 s 内检出（情况 1 仿真），之后每 0.25 s 更新一次方位。",
   0.6, 1.02, 46.4, 0.34, { fs: 13, color: C.gray, align: "left" });
 txt("灰框：一层运算（上行名称，下行参数或公式）；右侧白框：该层输出维度；左侧引线：上一模块的量在这一层接入；虚线：按需打开或待确认；【设计】：仿真中未实现。f：218 个频点（200–7000 Hz），θ：72 个方向（间隔 5°）。",
   0.6, 1.38, 46.4, 0.34, { fs: 13, color: C.gray, align: "left" });
@@ -115,11 +115,11 @@ const colX = (X) => X + LM;              // 单列模块层框 x
 
 // ================= ① 前端 =================
 module(X1, MW, "① 前端", "三路 PCM → 每帧频谱 x(f,t)", "逐样本处理，每 16 ms 一帧 · 2.1 MFLOPS");
-const i1 = pin("3 路麦克风（主耳 2 + 副耳 1）", colX(X1), PIN_Y, BW + GAP + TW);
+const i1 = pin("3 路麦克风：主耳 2 + 副耳 1，两耳相距约 19 cm", colX(X1), PIN_Y, BW + GAP + TW, { fs: 11 });
 const c1 = stack(colX(X1), 1, [
-  ["PDM 抽取滤波", "PDM → PCM，16 bit", "3 × 16 kHz"],
-  ["耳间链路（副耳 1 路）", "ADPCM 4 bit，64 kbps", "3 × 16 kHz"],
-  ["采样计数对齐", "两耳同步 ≤ 50 µs", "3 × 16 kHz"],
+  ["PDM 抽取滤波【设计】", "PDM → PCM，16 bit", "3 × 16 kHz"],
+  ["耳间链路（副耳 1 路）", "IMA ADPCM，4 bit，64 kbps", "3 × 16 kHz"],
+  ["采样计数对齐【设计】", "两耳同步 ≤ 50 µs", "3 × 16 kHz"],
   ["高通 IIR", "4 阶 Butterworth，100 Hz", "3 × 16 kHz"],
   ["分帧", "帧长 512，帧移 256", "3 × 512"],
   ["汉宁窗", "w(n) = 0.5 − 0.5cos(2πn/512)", "3 × 512"],
@@ -166,32 +166,33 @@ const o2 = pin("输出 t_{on} → ③", colX(X2), outY(12), BW);
 seg(c2d[4].cx, c2d[4].bot, c2d[4].cx, o2.top, { arrow: true, w: 1 });
 
 // ================= ③ 帧缓存与协方差 =================
-module(X3, DW, "③ 帧缓存与协方差", "取开口前、后两段帧，得背景 R_b 与目标 R_s", "每 0.25 s（开口后 0.5 s 起）· 0.8 MFLOPS");
+module(X3, DW, "③ 帧缓存与协方差", "取开口前、后两段帧，得背景 R_b 与目标 R_s", "检出开口后每 0.25 s 一次 · 0.8 MFLOPS");
 const bx = X3 + (DW - BW - GAP - TW) / 2;
 const i3 = pin("输入 x(f,t)（每帧写入），t_{on}", bx, PIN_Y, BW + GAP + TW);
-const buf = layer(bx, 1, "环形帧缓存", "最近 1.5 s，半精度 240 KB", "94 × 3 × 218");
+const buf = layer(bx, 1, "环形帧缓存", "最近 1.5 s，复数半精度 240 KB", "94 × 3 × 218");
 seg(buf.cx, i3.bot, buf.cx, buf.top, { arrow: true, w: 1 });
 const sL = X3 + 0.15, sR = X3 + 0.15 + SW + 0.15;
 subunit(sL, 2, 4, "背景");
-subunit(sR, 2, 6, "目标");
+subunit(sR, 2, 7, "目标");
 const c3L = stack(sL + 0.15, 2, [
   ["取背景帧", "[t_{on} − 1.05, t_{on} − 0.05) s", "62 × 3 × 218"],
   ["外积", "x x^H", "62 × f × 3 × 3"],
-  ["平均 → R_b", "(1/62) Σ x x^H", "f × 3 × 3"],
+  ["平均 → R_b", "(1/62) Σ x x^H；检出开口时算一次并保存", "f × 3 × 3"],
 ]);
 const c3R = stack(sR + 0.15, 2, [
-  ["取目标帧", "[t_{on}, t_d]，最长 1 s", "≤ 63 × 3 × 218"],
-  ["帧能量", "e = 10·lg mean_{m,f} |X|^2", "≤ 63"],
-  ["起始段权重", "w = 0.2 + min(max(Δe,0),10)/10", "≤ 63"],
+  ["取目标帧", "[max(t_{on}, t_d − 1 s), t_d)", "≤ 62 × 3 × 218"],
+  ["帧能量", "e = 10·lg mean_{m,f} |X|^2", "≤ 62"],
+  ["起始段权重", "w = 0.2 + min(max(Δe,0),10)/10", "≤ 62"],
+  ["能量门限", "e < max e − 30 dB 的帧 w = 0", "≤ 62"],
   ["加权外积累加", "Σ w x x^H，Σ w", "f × 3 × 3"],
   ["归一 → R_s", "÷ Σ w", "f × 3 × 3"],
 ]);
 const yB3 = buf.bot + 0.12;
 seg(buf.cx, buf.bot, buf.cx, yB3); seg(c3L[0].cx, yB3, c3R[0].cx, yB3);
 seg(c3L[0].cx, yB3, c3L[0].cx, c3L[0].top, { arrow: true, w: 1 }); seg(c3R[0].cx, yB3, c3R[0].cx, c3R[0].top, { arrow: true, w: 1 });
-const o3 = pin("输出 R_b(f)，R_s(f) → ④", bx, outY(7), BW + GAP + TW);
+const o3 = pin("输出 R_b(f)，R_s(f) → ④", bx, outY(8), BW + GAP + TW);
 wire([[c3L[2].cx, c3L[2].bot], [c3L[2].cx, o3.top - 0.2], [o3.cx - 0.6, o3.top - 0.2], [o3.cx - 0.6, o3.top]], { w: 1 });
-wire([[c3R[4].cx, c3R[4].bot], [c3R[4].cx, o3.top - 0.2], [o3.cx + 0.6, o3.top - 0.2], [o3.cx + 0.6, o3.top]], { w: 1 });
+wire([[c3R[5].cx, c3R[5].bot], [c3R[5].cx, o3.top - 0.2], [o3.cx + 0.6, o3.top - 0.2], [o3.cx + 0.6, o3.top]], { w: 1 });
 
 // 左侧引线：从输入标签沿模块左沿下来，接入第 k 行层框左边
 const tap = (X, pinObj, rows) => {
@@ -221,7 +222,7 @@ seg(c4[6].cx, c4[6].bot, c4[6].cx, o4.top, { arrow: true, w: 1 });
 module(X5, MW, "⑤ MUSIC 空间谱", "72 个方向逐一打分，得空间谱 P(θ)", "每 0.25 s · 8.2 MFLOPS");
 const i5 = pin("输入 L^{−1}(f)，E_n(f)", X5 + 0.1, PIN_Y, BW + LM - 0.1);
 const c5 = stack(colX(X5), 1, [
-  ["方向模板（ROM）", "头部传递函数 h(θ,f)，184 KB", "72 × f × 3"],
+  ["方向模板（ROM）", "刚性球头 a = 8.75 cm，声源 1.5 m；184 KB", "72 × f × 3"],
   ["归一化", "a = h / ‖h‖", "72 × f × 3"],
   ["白化", "a_w = L^{−1} a（L^{−1} 接入）", "72 × f × 3"],
   ["投影", "E_n^H a_w（E_n 接入）", "72 × f × 2"],
@@ -248,18 +249,18 @@ const c6L = stack(sL6 + 0.15, 1, [
 seg(c6L[0].cx, i6.bot, c6L[0].cx, c6L[0].top, { arrow: true, w: 1 });
 const c6R = stack(sR6 + 0.15, 1, [
   ["摄像头", "1–2 fps，两耳各一", "图像"],
-  ["人脸检测", "人脸框中心 u_i", "N 个框"],
+  ["人脸检测", "人脸框中心 u_i；无唇动，l_i 取 0.5", "N 个框"],
   ["像素 → 方位【设计】", "φ_i = atan((u_i − c_x)/f_x) + 安装角", "N"],
   ["换到头心坐标【设计】", "安装位置 + 曝光时刻 IMU 角", "N"],
 ], { dash: "dash" });
-const MWd = 3.7, xM = X6 + (DW - MWd - GAP - TW) / 2 + 0.6;
+const MWd = 4.3, xM = X6 + DW - 0.2 - (MWd + GAP + TW);
 const c6M = stack(xM, 5, [
-  ["融合打分", "s_0 = P(θ_{k*}) − μ；s_i = ±8° 内谱峰 + λ(l_i − 0.5)", "N + 1"],
-  ["取最大", "θ_{out} = φ_{i*}（若 max s_i > s_0），否则 θ_{k*}", "1"],
+  ["融合打分（摄像头开时）", "s_0 = P(θ_{k*}) − μ，s_i = ±8° 内谱峰 + λ(l_i − 0.5)；λ = 0.1，μ = 0.05", "N + 1", { pfs: 8.5 }],
+  ["选方位", "摄像头关：θ_{out} = θ_a；开：max s_i > s_0 取 φ_{i*}，否则 θ_{k*}", "1", { pfs: 9 }],
   ["IMU 换坐标【设计】", "θ_{world} = θ_{out} + ψ(t)", "1"],
   ["跟踪【设计】", "世界坐标下保持目标", "1"],
   ["置信度【待确认】", "候选：谱峰高，或峰值 / 次峰", "1", { dash: "dash" }],
-  ["打包", "方位、置信度、说话、干扰 ×3、序号", "8 字节"],
+  ["打包【设计】", "方位、置信度、说话、干扰 ×3、序号", "8 字节"],
 ], { w: MWd });
 const yM = rowY(5) - 0.17;
 wire([[c6L[2].cx, c6L[2].bot], [c6L[2].cx, yM], [c6M[0].cx - 0.5, yM], [c6M[0].cx - 0.5, c6M[0].top]], { w: 1 });
@@ -295,5 +296,5 @@ const yBy = MT - 0.3, xa = X1 + MW - 0.6, xb = X3 + 0.8;
 wire([[xa, MT], [xa, yBy], [xb, yBy], [xb, MT]], { w: 2, color: C.navy });
 txt("x(f,t) 每帧写入 ③ 的帧缓存", X2, yBy - 0.36, MW, 0.32, { fs: 12, bold: true, color: C.navy });
 
-s.addNotes("代码对应：① sim.highpass、sim.stft；② run_camera_policy.novelty_raw、acoustic_onsets（从第 0.3 s 起计算，第 1 s 起判决，背景递推在本帧判决后才更新）；③ methods.frame_energy_db、onset_weights、covariance，时间窗 run_camera_policy.gevd_spec；④⑤ methods.music；⑥ methods.peak、methods.fuse_soft（λ = 0.1，μ = 0.05）；方向模板 sphere.sphere_tf（刚性球，1.5 m）。帧缓存为实现所需：背景取开口前 1 s 的帧，而开口在之后才被检出（情况 1 仿真中 0.3 s 内）。仿真中未实现：耳间链路、对齐、像素到方位、头心换算、IMU 跟踪、置信度（仿真中视觉直接给出人脸方位，误差 2°）。不开摄像头时 θ_out = θ_a。");
+s.addNotes("代码对应：① sim.highpass、sim.stft；② run_camera_policy.novelty_raw、acoustic_onsets（从第 0.3 s 起计算，第 1 s 起判决，背景递推在本帧判决后才更新）；③ methods.frame_energy_db、onset_weights、covariance，时间窗 run_camera_policy.gevd_spec；④⑤ methods.music；⑥ methods.peak、methods.fuse_soft（λ = 0.1，μ = 0.05）；方向模板 sphere.sphere_tf（刚性球，1.5 m）。帧缓存为实现所需：背景取开口前 1 s 的帧，而开口在之后才被检出（情况 1 仿真中 0.3 s 内）。高通在仿真中为离线零相位滤波，实时实现为因果 IIR（各路相同，不影响方位）。耳间链路 IMA ADPCM 编码对测向的影响已单独仿真（编码对测向的影响.md）。主耳两麦间距 1.5 cm。仿真中未实现：PDM 抽取、两耳对齐、像素到方位、头心换算、IMU 换坐标与跟踪、置信度、打包（仿真中视觉直接给出人脸方位，误差 2°）。R_b 在检出开口时由帧缓存算出并保存，之后每 0.25 s 只更新 R_s；帧缓存 1.5 s 覆盖开口前 1.05 s 到检出时刻（≤ 0.3 s）。");
 p.writeFile({ fileName: OUT }).then((f) => console.log("saved", f));

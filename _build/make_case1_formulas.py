@@ -23,7 +23,7 @@ F = {
     "rb": r"$\mathbf{R}_b(f)=\dfrac{1}{|\mathcal{T}_b|}\sum_{t\in\mathcal{T}_b}\mathbf{x}\mathbf{x}^H,\qquad \mathcal{T}_b=[t_{on}-1.05\,\mathrm{s},\ t_{on}-0.05\,\mathrm{s})$",
     "e": r"$e(t)=10\log_{10}\dfrac{1}{3\cdot 218}\sum_{m,f}|X_m(f,t)|^2$",
     "w": r"$w(t)=0.2+\min(\max(e(t)-e(t-1),\,0),\,10)\,/\,10,\qquad e(t)>\max\,e-30\,\mathrm{dB}$",
-    "rs": r"$\mathbf{R}_s(f)=\dfrac{\sum_{t\in\mathcal{T}_s}w(t)\,\mathbf{x}\mathbf{x}^H}{\sum_{t\in\mathcal{T}_s}w(t)},\qquad \mathcal{T}_s=[t_{on},\ t_d]$",
+    "rs": r"$\mathbf{R}_s(f)=\dfrac{\sum_{t\in\mathcal{T}_s}w(t)\,\mathbf{x}\mathbf{x}^H}{\sum_{t\in\mathcal{T}_s}w(t)},\qquad \mathcal{T}_s=[\max(t_{on},\,t_d-1\,\mathrm{s}),\ t_d)$",
     "chol": r"$\mathbf{L}\mathbf{L}^H=\mathbf{R}_b+\delta\mathbf{I},\qquad \delta=0.01\,\mathrm{tr}(\mathbf{R}_b)\,/\,M$",
     "rw": r"$\mathbf{R}_w=\mathbf{L}^{-1}\mathbf{R}_s\mathbf{L}^{-H}=\mathbf{U}\Lambda\mathbf{U}^H,\qquad \lambda_1\geq\lambda_2\geq\lambda_3$",
     "en": r"$\mathbf{E}_n=[\mathbf{u}_2,\ \mathbf{u}_3]$",
