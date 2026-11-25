@@ -1,4 +1,4 @@
-// 耳机声源定位：情况 1 算法实现（给 mentor，回应 11-24 "每个 layer 都得清楚，具体的计算公式都要清楚，详细列出每个步骤的框图"）。
+// 耳机声源定位：情况 1 算法实现（给 mentor，回应 mentor 11-23 "每个 layer 都得清楚，具体的计算公式都要清楚，详细列出每个步骤的框图"）。
 // 公式图片由 _build/make_case1_formulas.py 生成；公式与 02_耳机声源定位/情况1算法实现.md、code/earbud_ssl 的实现一致。
 // 风格同 build_case1_deck.js：浅灰底、深蓝主色、短标题 + 一句加粗要点、表格按 mentor 调研 PPT 样式。
 const pptxgen = require("pptxgenjs");
