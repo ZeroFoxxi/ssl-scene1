@@ -76,7 +76,7 @@ def main():
     import re
     groups = {}
     for r in rows:
-        groups.setdefault(re.sub(r"_seed\d+$", "", r["model"]), []).append(r)
+        groups.setdefault(re.sub(r"_seed\d+", "", r["model"]), []).append(r)        # 种子编号可能在中间（如 ..._seed0_ft）
     lines.append("")
     lines.append(f"{'配置（种子平均）':<34}{'种子数':>6}{'实录≤10°':>10}{'各种子':>24}{'≤20°':>8}{'平均误差':>9}")
     for g, rs in groups.items():

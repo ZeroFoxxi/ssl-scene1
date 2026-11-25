@@ -30,6 +30,7 @@ def main():
     ap.add_argument("--lr", type=float, default=3e-4)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--threads", type=int, default=4)
+    ap.add_argument("--device", default="cpu", help="cpu / cuda / auto")
     a = ap.parse_args()
     torch.manual_seed(a.seed); np.random.seed(a.seed); torch.set_num_threads(a.threads)
     side = a.init[:-3] + ".json"
@@ -38,21 +39,24 @@ def main():
     sim = build_features("train", a.sim)
     model = CRNN(in_ch=rtr["feat"].shape[1], **SIZES[size])
     model.load_state_dict(torch.load(a.init, map_location="cpu"))
+    dev = torch.device("cuda" if (a.device in ("cuda", "auto") and torch.cuda.is_available()) else "cpu")
+    model = model.to(dev)
     acc0 = acc10(predict(model, rva["feat"]), rva["az"])
     print(f"微调前：挑选场景 ≤10° {acc0:.3f}", flush=True)
     half = a.bs // 2
     steps_per_ep = int(np.ceil(len(rtr["az"]) / half))
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=1e-3)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=a.epochs * steps_per_ep)
-    lr_real, lr_sim = torch.from_numpy(soft_label(rtr["az"])), torch.from_numpy(soft_label(sim["az"]))
+    lr_real, lr_sim = torch.from_numpy(soft_label(rtr["az"])).to(dev), torch.from_numpy(soft_label(sim["az"])).to(dev)
     ck = os.path.join(WORK, "models", f"{a.name}.pt")
     best, log = acc0, [{"epoch": 0, "sel_acc10": round(acc0, 4)}]
-    torch.save(model.state_dict(), ck)                                     # 若微调不提升，保留原模型
+    save = lambda: torch.save({k: v.cpu() for k, v in model.state_dict().items()}, ck)
+    save()                                                                 # 若微调不提升，保留原模型
     for ep in range(a.epochs):
         model.train(); t0 = time.time(); perm = np.random.permutation(len(rtr["az"])); tot = 0.0
         for i in range(0, len(perm), half):
             ir = perm[i:i + half]; js = np.random.randint(0, len(sim["az"]), len(ir))
-            xb = torch.from_numpy(np.concatenate([rtr["feat"][ir], sim["feat"][js]]).astype(np.float32))
+            xb = torch.from_numpy(np.concatenate([rtr["feat"][ir], sim["feat"][js]]).astype(np.float32)).to(dev)
             yb = torch.cat([lr_real[ir], lr_sim[js]])
             loss = -(yb * F.log_softmax(model(xb), dim=1)).sum(1).mean()
             opt.zero_grad(); loss.backward(); opt.step(); sched.step(); tot += loss.item()
@@ -60,8 +64,8 @@ def main():
         log.append({"epoch": ep + 1, "loss": round(tot / steps_per_ep, 4), "sel_acc10": round(acc, 4), "sec": round(time.time() - t0, 1)})
         print(log[-1], flush=True)
         if acc > best:
-            best = acc; torch.save(model.state_dict(), ck)
-    json.dump({"size": size, "in_ch": int(rtr["feat"].shape[1]), "init": os.path.basename(a.init), "real": a.real, "sim": a.sim,
+            best = acc; save()
+    json.dump({"size": size, "in_ch": int(rtr["feat"].shape[1]), "init": os.path.basename(a.init), "real": a.real, "sim": a.sim, "seed": a.seed, "params": int(sum(p.numel() for p in model.parameters())),
                "sel_acc10_before": round(acc0, 4), "sel_acc10_best": round(best, 4)}, open(ck[:-3] + ".json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump(log, open(os.path.join(ROOT, "out", f"nn_finetune_log_{a.name}.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print(f"完成：挑选场景 微调前 {acc0:.3f} → 最好 {best:.3f}；模型 {ck}")
