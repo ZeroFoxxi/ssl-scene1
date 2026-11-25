@@ -1,7 +1,7 @@
 // 耳机声源定位：情况 1 逐层算法框图（按 mentor 11-25 示意图的画法：每层一个灰框写层名，旁边黄色标签写该层输出维度；
 // 模块用底框，子结构用深一档底框；层从下往上堆，输入在下、输出在上；模块之间连线）。
 // 回应 mentor 11-23 "每个 layer 都得清楚，具体的计算公式都要清楚"。每层的公式见《情况1算法实现》逐步说明表与附录。
-// 内容与 02_耳机声源定位/情况1算法实现.md、code/earbud_ssl 的实现一致；虚线为按需打开或【设计】（仿真中未实现）。
+// 内容与 02_耳机声源定位/情况1算法实现.md、code/earbud_ssl 的实现一致；虚线为按需打开（摄像头）或待确认，标【设计】的层在仿真中未实现。
 // 版面 40 × 16 in，导出 PDF 可缩放查看。
 const pptxgen = require("pptxgenjs");
 const path = require("path");
@@ -31,7 +31,7 @@ function rich(str, base) {
   flush(); return runs;
 }
 const txt = (t, x, y, w, h, o) => s.addText(rich(t, { fontFace: F, lang: "zh-CN", fontSize: o.fs || 12, color: o.color || C.ink, bold: !!o.bold }),
-  { x, y, w, h, margin: 0, align: o.align || "center", valign: o.valign || "middle", isTextBox: true });
+  { x, y, w, h, margin: 0, align: o.align || "center", valign: o.valign || "middle", isTextBox: true, lang: "zh-CN" });
 // ---------- 连线（折线，最后一段带箭头） ----------
 function seg(x1, y1, x2, y2, o) {
   o = o || {};
@@ -47,7 +47,7 @@ function layer(x, y, name, param, dim, o) {
   s.addShape(p.shapes.RECTANGLE, { x, y, w, h: BH, fill: { color: C.layFill }, line: { color: C.layLine, width: 1, dashType: o.dash || "solid" } });
   const runs = [{ text: name, options: { fontFace: F, lang: "zh-CN", fontSize: 11, bold: true, color: C.ink, breakLine: !!param } }];
   if (param) runs.push(...rich(param, { fontFace: F, lang: "zh-CN", fontSize: 8.5, color: C.gray }));
-  s.addText(runs, { x: x + 0.03, y, w: w - 0.06, h: BH, margin: 0, align: "center", valign: "middle", isTextBox: true });
+  s.addText(runs, { x: x + 0.03, y, w: w - 0.06, h: BH, margin: 0, align: "center", valign: "middle", isTextBox: true, lang: "zh-CN" });
   if (dim) {
     const tw = o.tw || TW;
     s.addShape(p.shapes.RECTANGLE, { x: x + w + 0.08, y: y + 0.1, w: tw, h: BH - 0.2, fill: { color: C.tag }, line: { color: C.tagLine, width: 0.75 } });
@@ -78,7 +78,7 @@ const note = (t, x, y, w, o) => txt(t, x, y, w, 0.3, Object.assign({ fs: 10, col
 
 // ---------- 标题 ----------
 txt("耳机声源定位：情况 1 逐层算法框图", 0.6, 0.3, 24, 0.7, { fs: 28, bold: true, color: C.navy, align: "left" });
-txt("灰框为一层运算（第二行为参数），右侧小标签为该层输出维度；f：218 个频点（200–7000 Hz），θ：72 个方向（5°）；虚线为按需打开或【设计】（仿真中未实现）。全部在主耳音频 DSP 上，约 19 MFLOPS、内存约 0.5 MB，没有需要训练的参数；每层公式见《情况1算法实现》。",
+txt("灰框为一层运算（第二行为参数），右侧小标签为该层输出维度；f：218 个频点（200–7000 Hz），θ：72 个方向（5°）；虚线为按需打开（摄像头）或待确认，标【设计】的层在仿真中未实现。全部在主耳音频 DSP 上，约 19 MFLOPS、内存约 0.5 MB，没有需要训练的参数；每层公式见《情况1算法实现》。",
   0.6, 1.05, 38.5, 0.4, { fs: 12.5, color: C.gray, align: "left" });
 
 // ---------- 版面参数 ----------
@@ -89,7 +89,7 @@ const MW = 4.6;                       // 单列模块宽
 
 // ================= ① 前端 =================
 const X1 = 0.6;
-module(X1, YB - 7 * PITCH, MW, "① 前端", "逐样本 16 kHz → 每 16 ms 一帧；2.2 MFLOPS");
+module(X1, YB - 7 * PITCH, MW, "① 前端", "逐样本 16 kHz → 每 16 ms 一帧；2.1 MFLOPS");
 const c1 = stack(X1 + 0.3, YB, [
   ["PDM 抽取滤波", "PDM → PCM，16 bit", "3 × 16 kHz"],
   ["耳间链路（副耳 1 路）", "ADPCM 4 bit，64 kbps", "3 × 16 kHz"],
