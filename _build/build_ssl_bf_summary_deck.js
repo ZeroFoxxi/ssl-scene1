@@ -95,19 +95,19 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
   key(s, "两个场景都是先听出声音从哪里来，再驱动摄像头转向，或朝这个方向增强语音");
   const col = (x, title, img, value, steps) => {
     T(s, title, { x, y: 1.7, w: 5.9, h: 0.36, fontSize: 14, bold: true, color: C.navy, valign: "middle" });
-    s.addImage({ path: FIG(img), x, y: 2.08, w: 3.4, h: 3.4 * 4.2 / 6.0 });
-    T(s, value, { x: x + 3.55, y: 2.2, w: 2.3, h: 2.1, fontSize: 11.5, color: C.ink, valign: "top" });
-    chain(s, steps, x, 4.5, 5.85, { fs: 11.5, dfs: 9.5, hi: [1] });
+    s.addImage({ path: FIG(img), x, y: 2.1, w: 3.95, h: 3.95 * 4.2 / 6.0 });
+    T(s, value, { x: x + 4.1, y: 2.2, w: 1.8, h: 2.6, fontSize: 11.5, color: C.ink, valign: "top" });
+    chain(s, steps, x, 5.0, 5.85, { fs: 11.5, dfs: 9.5, hi: [1] });
   };
   col(0.6, "场景一：摄像头自动转向说话人（会议室）", "scene_meeting.png", "价值：感知说话人方向，驱动摄像头自动转向并跟踪；发言人切换时画面跟着切换。",
     [["语音检测", "检测有人开口、换人"], ["声源定位", "估计说话人方向"], ["转向 / 跟踪", "控制摄像头转向并跟踪"]]);
   col(6.88, "场景二：智能家居语音交互", "scene_home.png", "价值：感知用户方向，增强该方向的语音、压低其他方向，提升远场和噪声环境下的交互体验。",
     [["语音唤醒", "唤醒词触发"], ["声源定位", "获取用户方向"], ["波束成形", "定向增强语音"], ["语音交互", "识别与控制"]]);
-  s.addShape(p.shapes.LINE, { x: 0.6, y: 5.72, w: 12.13, h: 0, line: { color: C.rule, width: 0.75 } });
+  s.addShape(p.shapes.LINE, { x: 0.6, y: 6.05, w: 12.13, h: 0, line: { color: C.rule, width: 0.75 } });
   T(s, [{ text: "端侧部署：", options: { bold: true, color: C.navy } }, { text: "在设备上实时完成方向感知，交互延迟低、音频不出设备，断网时照常可用。" }],
-    { x: 0.6, y: 5.82, w: 12.13, h: 0.4, fontSize: 12, valign: "middle" });
+    { x: 0.6, y: 6.1, w: 12.13, h: 0.36, fontSize: 12, valign: "middle" });
   T(s, [{ text: "技术难点：", options: { bold: true, color: C.navy } }, { text: "混响与噪声下的稳健性；远场弱语音；多人同时说话与喇叭、电视等干扰声源；阵列尺寸与端侧算力受限。" }],
-    { x: 0.6, y: 6.25, w: 12.13, h: 0.4, fontSize: 12, valign: "middle" });
+    { x: 0.6, y: 6.45, w: 12.13, h: 0.36, fontSize: 12, valign: "middle" });
 }
 
 // ================= 2b 总结 =================

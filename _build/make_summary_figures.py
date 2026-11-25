@@ -6,13 +6,24 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import Circle, Ellipse, FancyBboxPatch, Polygon, Wedge, Arc
+import re
+from matplotlib.patches import Circle, Ellipse, FancyBboxPatch, Polygon, Wedge, Arc, PathPatch
+from matplotlib.transforms import Affine2D
+from svgpath2mpl import parse_path   # pip install svgpath2mpl
 
 plt.rcParams["font.family"] = ["Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans CJK JP", "WenQuanYi Zen Hei", "SimHei", "sans-serif"]
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "figures", "summary")
 os.makedirs(OUT, exist_ok=True)
 NAVY, LT, GRAY, DGRAY, PALE = "#134074", "#8DA9C4", "#B5B5B5", "#595959", "#EAF2F8"
 FS = 13
+ICONS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icons")   # Material Symbols（Apache 2.0）
+
+
+def icon(ax, name, x, y, size, color):
+    """在 (x, y) 处画一个图标（中心对齐，边长 size）。"""
+    d = re.search(r' d="([^"]+)"', open(os.path.join(ICONS, name + ".svg"), encoding="utf-8").read()).group(1)
+    pth = parse_path(d).transformed(Affine2D().translate(-480, 480).scale(size / 960, -size / 960).translate(x, y))
+    ax.add_patch(PathPatch(pth, color=color, lw=0))
 
 
 def canvas(w, h, xlim, ylim):
@@ -57,42 +68,42 @@ def save(fig, name):
     plt.close(fig)
 
 
-# ---------- 场景一：摄像头自动转向说话人（会议室俯视） ----------
+# ---------- 场景一：摄像头自动转向说话人（会议室） ----------
 def meeting():
-    fig, ax = canvas(6.0, 4.2, (-3.2, 3.2), (-2.3, 2.3))
-    ax.add_patch(FancyBboxPatch((-3.0, -2.1), 6.0, 4.2, boxstyle="round,pad=0.02,rounding_size=0.1", fill=False, ec=GRAY, lw=1.2))
-    ax.add_patch(FancyBboxPatch((-1.25, 1.72), 2.5, 0.32, boxstyle="round,pad=0.02", color=NAVY, lw=0))
-    ax.text(0, 1.88, "摄像头 + 麦克风阵列", color="white", ha="center", va="center", fontsize=FS - 3)
-    ax.add_patch(Ellipse((0, -0.45), 2.4, 1.5, color="#E6E6E6", lw=0))
-    seats = [(-1.65, 0.05, 0), (-1.65, -0.95, 0), (1.65, 0.05, 180), (1.65, -0.95, 180), (-0.55, -1.6, 90), (0.55, -1.6, 90)]
-    tgt = 2
-    for i, (x, y, f) in enumerate(seats):
-        person(ax, x, y, NAVY if i == tgt else GRAY, face=f)
-    xt, yt = seats[tgt][:2]
-    waves(ax, xt, yt, 180, NAVY)
-    ang = np.degrees(np.arctan2(yt - 1.75, xt - 0.0))
-    ax.add_patch(Wedge((0, 1.72), float(np.hypot(xt, yt - 1.72)) + 0.3, ang - 10, ang + 10, color=NAVY, alpha=0.15, lw=0))
-    ax.text(1.95, 1.1, "转向发言人", color=NAVY, fontsize=FS - 1, ha="center")
+    fig, ax = canvas(6.0, 4.2, (-3.2, 3.2), (-2.25, 2.25))
+    ax.add_patch(FancyBboxPatch((-3.1, -2.15), 6.2, 4.3, boxstyle="round,pad=0,rounding_size=0.12", fill=False, ec=GRAY, lw=1.2))
+    ax.add_patch(FancyBboxPatch((-0.85, 1.6), 1.7, 0.42, boxstyle="round,pad=0.02", color=NAVY, lw=0))
+    icon(ax, "videocam-fill", -0.45, 1.81, 0.38, "white"); icon(ax, "mic-fill", 0.05, 1.81, 0.34, "white"); icon(ax, "mic-fill", 0.45, 1.81, 0.34, "white")
+    ax.text(-1.75, 1.2, "摄像头 + 麦克风阵列", ha="center", va="center", fontsize=FS + 1, color=NAVY)
+    ax.add_patch(Polygon([[-1.3, -0.3], [1.3, -0.3], [1.9, -1.35], [-1.9, -1.35]], color="#E6E6E6", lw=0))
+    for (x, y) in [(-2.35, -0.6), (-1.05, 0.25), (1.05, 0.25), (-0.55, -1.8), (0.75, -1.8)]:
+        icon(ax, "person-fill", x, y, 0.85, GRAY)
+    xt, yt = 2.35, -0.6
+    ang = np.degrees(np.arctan2(yt - 1.6, xt))
+    ax.add_patch(Wedge((0, 1.6), float(np.hypot(xt, yt - 1.6)) - 0.35, ang - 9, ang + 9, color=NAVY, alpha=0.16, lw=0))
+    icon(ax, "record_voice_over-fill", xt, yt, 0.9, NAVY)
+    ax.text(2.35, 0.1, "发言人", ha="center", fontsize=FS + 2, color=NAVY, weight="bold")
     save(fig, "scene_meeting.png")
 
 
-# ---------- 场景二：智能家居语音交互（客厅俯视） ----------
+# ---------- 场景二：智能家居语音交互（客厅） ----------
 def home():
-    fig, ax = canvas(6.0, 4.2, (-3.2, 3.2), (-2.3, 2.3))
-    ax.add_patch(FancyBboxPatch((-3.0, -2.1), 6.0, 4.2, boxstyle="round,pad=0.02,rounding_size=0.1", fill=False, ec=GRAY, lw=1.2))
-    ax.add_patch(Circle((0, 1.55), 0.28, color=NAVY, lw=0))
-    ax.text(0.45, 1.5, "智能设备\n（麦克风阵列）", color=NAVY, ha="left", va="center", fontsize=FS - 3)
-    xu, yu = -1.6, -1.1
-    lobe(ax, 0, 1.55, np.degrees(np.arctan2(yu - 1.55, xu)), float(np.hypot(xu, yu - 1.55)) + 0.3, order=12)
-    person(ax, xu, yu, NAVY, face=60)
-    waves(ax, xu, yu, 60, NAVY)
-    ax.text(xu - 0.15, yu - 0.62, "唤醒词", color=NAVY, fontsize=FS - 1, ha="center")
-    ax.add_patch(FancyBboxPatch((2.2, -0.9), 0.35, 1.3, boxstyle="round,pad=0.02", color=DGRAY, lw=0))
-    ax.text(2.37, -1.25, "电视", color=DGRAY, ha="center", fontsize=FS - 3)
-    waves(ax, 2.2, -0.25, 180, GRAY)
-    person(ax, 1.0, -1.55, GRAY, face=90)
-    waves(ax, 1.0, -1.55, 90, GRAY, n=2)
-    ax.text(-1.9, 0.9, "增强用户方向\n压低其他方向", color=NAVY, fontsize=FS - 2, ha="center")
+    fig, ax = canvas(6.0, 4.2, (-3.2, 3.2), (-2.25, 2.25))
+    ax.add_patch(FancyBboxPatch((-3.1, -2.15), 6.2, 4.3, boxstyle="round,pad=0,rounding_size=0.12", fill=False, ec=GRAY, lw=1.2))
+    xd, yd = 0.0, 1.45
+    xu, yu = -1.9, -1.1
+    ang = np.degrees(np.arctan2(yu - yd, xu - xd))
+    lobe(ax, xd, yd, ang, float(np.hypot(xu - xd, yu - yd)) - 0.2, order=14, alpha=0.16)
+    icon(ax, "speaker-fill", xd, yd, 0.75, NAVY)
+    ax.text(xd + 0.5, yd, "智能设备\n（麦克风阵列）", ha="left", va="center", fontsize=FS + 1, color=NAVY)
+    icon(ax, "record_voice_over-fill", xu, yu, 0.9, NAVY)
+    ax.text(xu + 0.15, yu - 0.75, "说唤醒词的用户", ha="center", fontsize=FS + 1, color=NAVY, weight="bold")
+    icon(ax, "tv-fill", 2.35, -0.2, 0.95, DGRAY)
+    waves(ax, 2.0, -0.2, 180, GRAY, n=2, r0=0.3)
+    ax.text(2.35, -0.9, "电视", ha="center", fontsize=FS + 1, color=DGRAY)
+    icon(ax, "person-fill", 0.7, -1.35, 0.8, GRAY)
+    waves(ax, 0.7, -1.05, 90, GRAY, n=2, r0=0.25)
+    ax.text(-2.95, 0.35, "增强用户方向\n压低其他方向", ha="left", fontsize=FS + 1, color=NAVY)
     save(fig, "scene_home.png")
 
 
