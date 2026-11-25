@@ -72,7 +72,7 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
   const s = p.addSlide({ masterName: "COVER" });
   s.addShape(p.shapes.LINE, { x: 0.9, y: 3.55, w: 11.5, h: 0, line: { color: C.navy, width: 1.25 } });
   T(s, "声源定位与波束成形技术总结", { x: 0.9, y: 2.3, w: 11.5, h: 0.9, fontSize: 34, bold: true, color: C.navy, valign: "bottom" });
-  T(s, "会议系统与智能家居：技术原理、大 / 小模型选型、连云 / 离线端侧、友商竞品", { x: 0.9, y: 3.75, w: 11.5, h: 0.5, fontSize: 16, color: C.gray });
+  T(s, "会议系统与智能家居", { x: 0.9, y: 3.75, w: 11.5, h: 0.5, fontSize: 16, color: C.gray });
   T(s, "2026 年 11 月", { x: 0.9, y: 4.35, w: 11.5, h: 0.4, fontSize: 14, color: C.gray });
 }
 
