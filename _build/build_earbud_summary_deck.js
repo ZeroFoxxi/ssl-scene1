@@ -38,6 +38,7 @@ const SRC = {
   dcase24: ["DCASE 2024 SELD 基线（arXiv 2408.05057）", "https://arxiv.org/abs/2408.05057"],
   tfgrid: ["TF-GridNet 参数量（arXiv 2602.22487 对比表）", "https://arxiv.org/abs/2602.22487"],
   nearlink: ["FreeBuds Pro 5 评测（星闪时延）", "https://ngxptech.com/huawei-freebuds-pro-5-review-is-nearlink-better/"],
+  who: ["WHO：World report on hearing（2021）执行摘要", "https://cdn.who.int/media/docs/default-source/documents/health-topics/deafness-and-hearing-loss/world-report-on-hearing/wrh-executive-summary2-en.pdf"],
 };
 const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" + keys.map((k, i) => `${i + 1}. ${SRC[k][0]}：${SRC[k][1]}`).join("\n");
 const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5 s，面前 3 人（相邻相隔 20–30°），嘈杂环境（1.5 m 处 SNR 10 dB），每点 150 次；准确率为方位误差 ≤ 10° 的比例。";
@@ -51,10 +52,39 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
   T(s, "2026 年 11 月", { x: 0.9, y: 4.35, w: 11.5, h: 0.4, fontSize: 14, color: C.gray });
 }
 
-// ================= 2 总结 =================
+// ================= 2 产品定位与创新 =================
+{
+  const s = newSlide("产品定位与创新", "听力损失人数：WHO《World report on hearing》（2021）；竞品能力为公开资料；本方案数字为仿真与估算",
+    notesOf(["who", "airpods", "boost", "meta", "phonakAI", "speechSensor", "signia", "lo2h"],
+      "WHO 估计全球超过 15 亿人有不同程度的听力损失，其中 4.3 亿为中度及以上。本方案数字：换人后约 0.25 s 锁定为高帧率档（看唇动）一直开时的多人对话仿真；3 m 处 94.7% 为情况 1 嘈杂环境仿真（开口时刻已知）；新增功耗约 5.3 mW / 只为情况 1 估算。"));
+  key(s, "带摄像头的耳机：在多人对话中自动锁定正在和你说话的人并增强他的声音，不需要注册，全部在耳机上完成");
+  table(s, [
+    [cell("项目"), cell("定位")],
+    [bold("产品形态"), cell("TWS 耳机加前向摄像头，介于普通耳机与 AR 眼镜之间；没有显示屏，可全天佩戴")],
+    [bold("目标用户"), cell("听力损失人群（全球超过 15 亿人，WHO）；餐厅、会议、通勤等嘈杂环境中本来就戴着耳机的普通用户")],
+    [bold("解决的问题"), cell("多人对话中听清正在和你说话的那个人；已有产品只增强正前方或整组说话人")],
+  ], 0.6, 1.72, [1.5, 4.3], [0.36, 0.78, 0.9, 0.78], { fontSize: 11 });
+  const N = (t) => ctr(t, { color: "7F7F7F" });
+  table(s, [
+    [cell("能力"), ctr("耳机 / 眼镜"), ctr("助听器"), ctr("研究原型*"), ctr("本方案")],
+    [bold("增强谁"), ctr("正前方"), ctr("跟随说话人方向，增强整组"), ctr("注册过的人"), ctr("正在和你说话的那个人", { bold: true, color: C.navy })],
+    [bold("怎么知道该听谁"), ctr("头的朝向"), ctr("声学判断说话人方向"), ctr("用户先看着目标注册"), ctr("唇动 + 两耳定位", { bold: true, color: C.navy })],
+    [bold("需要注册"), ctr("否"), ctr("否"), ctr("是"), ctr("否", { bold: true, color: C.navy })],
+    [bold("用摄像头选人"), ctr("未见"), ctr("否（无摄像头）"), ctr("否"), ctr("是", { bold: true, color: C.navy })],
+  ], 6.65, 1.72, [1.45, 1.1, 1.35, 1.2, 1.18], [0.36, 0.58, 0.58, 0.42, 0.42], { fontSize: 10.5 });
+  T(s, "* Look Once to Hear（CHI 2024）；耳机 / 眼镜：AirPods Pro 2、Ray-Ban Meta 二代；助听器：Phonak、Signia IX", { x: 6.65, y: 4.12, w: 6.08, h: 0.3, fontSize: 9, color: C.gray });
+  T(s, "创新点", { x: 0.6, y: 4.65, w: 3, h: 0.35, fontSize: 13, bold: true, color: C.navy });
+  S.para(s, [
+    "摄像头告诉耳机该听谁：人脸给方位，唇动给开口时刻，用开口前的背景把其他人和噪声白化掉；换人后约 0.25 s 锁定（仿真），不需要注册。",
+    "两耳组阵定位走旁路：副耳只转发 1 路（64 kbps），不经过你听到的声音；嘈杂环境 3 m 处 94.7%，单只耳机做不到（仿真）。",
+    "全部端侧、低功耗：定位约 19 MFLOPS，新增约 5.3 mW / 只，续航约 6 h → 5.25 h（估算）；图像不出摄像头模组。",
+  ], 0.6, 5.05, 12.13, 1.75, { fontSize: 11.5 });
+}
+
+// ================= 2b 总结 =================
 {
   const s = newSlide("总结", "精度为仿真（刚性球头部模型）；计算量与功耗为估算；模型规模与竞品为公开资料",
-    "本页各条的依据：场景第 3 页；硬件限制第 4 页；算法框图第 5 页；定位第 6 页；增强第 7 页；模型第 8 页；连云 / 端侧第 9 页；竞品第 10–11 页；本项目选型第 12 页。");
+    "本页各条的依据：产品定位第 2 页；场景第 4 页；硬件限制第 5 页；算法框图第 6 页；定位第 7 页；增强第 8 页；模型第 9 页；连云 / 端侧第 10 页；竞品第 11–12 页；本项目选型第 13 页。");
   key(s, "两只耳机一起测向就能在嘈杂环境 3 m 内找准人；难点在其他人也说话时，增强能否把相邻的人分开");
   table(s, [
     [cell("项目"), cell("结论")],
