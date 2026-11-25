@@ -56,6 +56,7 @@ const SRC = {
   spatialnet: ["SpatialNet（arXiv 2307.16516）", "https://arxiv.org/abs/2307.16516"],
   tfgrid: ["TF-GridNet 参数量（arXiv 2602.22487 对比表）", "https://arxiv.org/abs/2602.22487"],
   bat: ["BAT：空间音频大语言模型（ICML 2024，arXiv 2402.01591）", "https://arxiv.org/abs/2402.01591"],
+  ndbf: ["Huang & Habets：Dual-Microphone Steerable High-Order Neural Differential Beamformer（IWAENC 2026，arXiv 2609.27021）", "https://arxiv.org/abs/2609.27021"],
   ezvizChip: ["萤石官网：产品家族（专用芯片 1.0T 算力）", "https://www.ezviz.com/cn/news/6270.html"],
   th1520: ["经济观察网：思必驰 AI 芯片 TH1520（2019）", "http://m.eeo.com.cn/2019/0105/344821.shtml"],
   th2608: ["智东西：深聪智能二代 AI 芯片 TH2608（2021）", "https://zhidx.com/news/35716.html"],
@@ -77,7 +78,7 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
 
 // ================= 2 总结 =================
 {
-  const s = newSlide("总结", "各项依据见后续页；数字均为厂商公开资料、论文或理想条件下的计算", "本页各条的依据：原理第 3–5 页；模型第 6 页；连云 / 端侧第 7 页；竞品第 8–10 页；智能家居第 11 页；本项目选型第 12 页。");
+  const s = newSlide("总结", "各项依据见后续页；数字均为厂商公开资料、论文或理想条件下的计算", "本页各条的依据：原理第 3–6 页；模型第 7 页；连云 / 端侧第 8 页；竞品第 9–11 页；智能家居第 12 页；本项目选型第 13 页。");
   key(s, "会议系统和智能家居都是多人场景，声源定位给出方位，波束成形按方位拾音");
   table(s, [
     [cell("项目"), cell("结论")],
@@ -177,6 +178,26 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
     { x: 0.6, y: 6.4, w: 12.13, h: 0.36, fontSize: 10.5, color: C.ink, valign: "middle" });
 }
 
+// ================= 5b 波束：固定方向与可转向 =================
+{
+  const s = newSlide("波束：固定方向与可转向", "NDBF 数字为论文原文（消声环境仿真）；其余为厂商公开资料",
+    notesOf(["ndbf", "shure", "echoSIR", "rally", "tcc2", "ciscoCeil"],
+      "NDBF：两个全向麦克风，间距 3 cm；转向范围 0–180°（两麦线阵的波束关于阵列轴对称），按 5° 一档训练；网络先沿频率做双向 LSTM、再沿时间做单向 LSTM，目标方向编码后输入，输出每个频点两麦的波束权重；端射方向 SDR：一阶 25.93 dB、三阶 23.24 dB，传统一阶差分 −0.99 dB；训练与测试为消声环境。论文未给参数量与运行耗时。"));
+  key(s, "会议设备的波束普遍可转向、跟随发言人；助听器的波束多为固定方向；神经网络已能在两个麦克风上做可转向的高阶波束");
+  table(s, [
+    [cell("类型"), cell("怎么做"), cell("波束方向"), cell("应用场景"), cell("例子")],
+    [bold("固定方向"), cell("固定权重或定向麦，形成心形、超心形"), cell("固定，安装或设置时定好"), cell("助听器；手动设置拾音区的吊顶麦"), cell("Shure MXA920 手动模式：8 个波瓣指向设置好的位置")],
+    [bold("预设多波束 + 选择"), cell("同时形成几个指向不同方向的波束，选出最好的一个"), cell("离散的几个方向"), cell("智能音箱"), cell("Amazon Echo：按子带信干比选波束")],
+    [bold("可转向 / 自动跟随"), cell("按定位结果实时对准说话人，或自适应跟随"), cell("任意方向，跟随发言人"), cell("会议视频条、吊顶阵列"), cell("Rally Bar 5 个自适应波束；Sennheiser TCC2 动态波束跟随说话人；Cisco 吊顶麦 8 个自适应波束")],
+    [bold("可转向高阶（神经网络）"), cell("网络按指定方向输出两麦的波束权重"), cell("0–180° 任意方向，波束形状不变"), cell("双麦小设备、耳机、立体声录音"), cell("NDBF（IWAENC 2026）")],
+  ], 0.6, 1.72, [2.25, 3.0, 2.15, 2.2, 2.53], [0.38, 0.62, 0.55, 0.8, 0.62], { fontSize: 10.5 });
+  T(s, "NDBF：两个全向麦、间距 3 cm", { x: 0.6, y: 4.9, w: 12.13, h: 0.32, fontSize: 12, bold: true, color: C.navy });
+  S.para(s, [
+    "传统两麦差分只能做一阶、基本不能转向；NDBF 在 0–180° 内任意转向（5° 一档），可做到三阶，波束图不随频率变化。",
+    "端射方向 SDR：一阶 25.9 dB、三阶 23.2 dB；传统一阶差分 −1.0 dB（消声环境仿真）；论文未给参数量与运行耗时。",
+  ], 0.6, 5.25, 12.13, 1.5, { fontSize: 11.5 });
+}
+
 // ================= 6 大 / 小模型选型 =================
 {
   const s = newSlide("大 / 小模型选型", "参数量为论文原文数字，横轴为对数刻度；DCASE 2025 第 1 名为多模型集成；DTLN 原文为\"少于 100 万\"，图中按 100 万画",
@@ -241,7 +262,7 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
 
 // ================= 8 友商竞品：会议系统 =================
 {
-  const s = newSlide("友商竞品：会议系统", "厂商官网、数据表与技术博客；各家定位与波束的算法、模型大小均未公开，芯片与部署见第 9 页",
+  const s = newSlide("友商竞品：会议系统", "厂商官网、数据表与技术博客；各家定位与波束的算法、模型大小均未公开，芯片与部署见第 10 页",
     notesOf(["rally", "ciscoBar", "ciscoBarPro", "jabra", "yealink", "owl", "ideahub", "c60", "shure", "tcc2", "ciscoCeil", "ciscoBlog"],
       "Cisco Room Bar：4 单元阵列做波束降噪，另有专用麦克风阵列做发言人跟踪；Room Bar Pro：16 单元阵列。Cisco Quad Camera：内置 8 麦只用于发言人跟踪计算。Shure MXA920 的单元数未公开。Sennheiser TCC2 的约 60 m² 为零售商转引厂商说法。"));
   key(s, "视频条 6–16 麦、拾音 5.5–12 m；吊顶阵列 28–64 单元，按区域自动跟随说话人");
