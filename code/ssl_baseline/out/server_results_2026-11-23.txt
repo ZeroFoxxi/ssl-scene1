@@ -53,3 +53,20 @@ crnn_general_lin6_3cm_60k_l_seed0     96.4%    80.0%   85.3%  12.9°     4.32   
 crnn_general_lin6_3cm_60k_l_seed1     96.9%    80.3%   85.8%  12.9°     4.40      85.7%    72.5%     3.10     74.6%
 SRP-PHAT                                                         4.70      76.8%    65.8%
 GEVD-MUSIC                                                       6.12      82.2%    64.0%
+
+== 11-25 下午：仿真加入真实因素（RealMAN 阵列，12,000 数据，s 档，每组 4 个种子；实录 = RealMAN 测试集 600 个样本单次测向）==
+模型                                   仿真验证  实录≤10°  ≤20°   平均误差
+crnn_general_lin6_3cm_s_seed0          92.4%    76.2%   84.5%  13.6°
+crnn_general_lin6_3cm_s_seed1          92.5%    82.0%   89.0%  10.5°
+crnn_general_lin6_3cm_s_seed2          90.6%    77.3%   83.8%  13.7°
+crnn_general_lin6_3cm_s_seed3          91.5%    84.7%   90.5%   9.7°
+crnn_general_lin6_3cm_dif_s_seed0      86.8%    79.2%   86.3%  12.6°
+crnn_general_lin6_3cm_dif_s_seed1      86.6%    83.7%   89.5%  10.2°
+crnn_general_lin6_3cm_dif_s_seed2      85.8%    83.5%   87.8%  11.3°
+crnn_general_lin6_3cm_dif_s_seed3      87.2%    82.7%   89.8%  10.5°
+crnn_general_lin6_3cm_difjit_s_seed0   85.1%    84.8%   90.0%   9.8°
+crnn_general_lin6_3cm_difjit_s_seed1   86.1%    83.2%   90.0%  10.3°
+crnn_general_lin6_3cm_difjit_s_seed2   85.8%    86.2%   91.8%   8.9°
+crnn_general_lin6_3cm_difjit_s_seed3   85.9%    78.0%   85.0%  13.6°
+种子平均：基线 80.0%（≤20° 86.9%，11.9°）；+扩散噪声 82.3%（88.4%，11.1°）；+扩散噪声+麦克风位置误差 83.0%（89.2%，10.7°）
+（dif：--diffuse-p 0.7 --diffuse-snr 0 20；difjit：另加 --mic-jitter 0.002。仿真验证集也带同样的增强，因此更难，分数不与基线比较）
