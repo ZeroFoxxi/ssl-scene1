@@ -148,13 +148,12 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
   const s = newSlide("声源定位：方法", "仿真：刚性球头部模型；面前 3 人，嘈杂环境，开口时刻已知，只用声音；计算量为估算（不含开口检测约 6.6 MFLOPS）",
     SIMNOTE + "\n计算量：3 路、218 个频点、72 个方向、每 0.25 s 扫描一次；方向模板 184 KB。\n情况 1 系统（声学检测开口，阈值 1 dB）：1–2 m 100%，3 m " + sys1dB("3 m") + "%，4 m " + sys1dB("4 m") + "%。");
   key(s, `两耳组阵 + 背景白化才能测远：3 m 处 GEVD-MUSIC ${accS(BIN, "GEVD-MUSIC", "3 m")}%，SRP-PHAT、MUSIC 只有 ${accS(BIN, "SRP-PHAT", "3 m")}%、${accS(BIN, "MUSIC", "3 m")}%`);
-  T(s, "基本关系：时间差 τ = d·sinθ / c。两耳 d ≈ 18 cm，最大 τ 约 0.5 ms；单只耳机 d = 1.5 cm，最大 τ 只有 44 µs，混响和噪声下分不出方向。", { x: 0.6, y: 1.66, w: 12.13, h: 0.42, fontSize: 11.5, valign: "middle" });
   s.addChart(p.charts.BAR, [
     { name: "SRP-PHAT（两耳）", labels: DK, values: DK.map((d) => acc(BIN, "SRP-PHAT", d)) },
     { name: "MUSIC（两耳）", labels: DK, values: DK.map((d) => acc(BIN, "MUSIC", d)) },
     { name: "GEVD-MUSIC（两耳）", labels: DK, values: DK.map((d) => acc(BIN, "GEVD-MUSIC", d)) },
     { name: "GEVD-MUSIC（单只耳机）", labels: DK, values: DK.map((d) => acc(MONO, "GEVD-MUSIC", d)) },
-  ], Object.assign({}, S.chartBase, { x: 0.6, y: 2.15, w: 6.9, h: 4.6, barDir: "col", barGrouping: "clustered", barGapWidthPct: 60,
+  ], Object.assign({}, S.chartBase, { x: 0.6, y: 1.8, w: 6.9, h: 4.95, barDir: "col", barGrouping: "clustered", barGapWidthPct: 60,
     chartColors: ["BFBFBF", "8DA9C4", C.navy, "7F7F7F"], valAxisMinVal: 0, valAxisMaxVal: 100, valAxisMajorUnit: 20,
     showLegend: true, legendPos: "b", showValue: false, showTitle: true, title: "方位误差 ≤ 10° 的比例（%），按说话人距离" }));
   table(s, [
@@ -163,11 +162,11 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
     [bold("MUSIC"), cell("协方差特征分解，噪声子空间扫描"), ctr(`${mf("MUSIC")} MFLOPS`), ctr(`${accS(BIN, "MUSIC", "3 m")}%`)],
     [bold("GEVD-MUSIC"), cell("先用开口前的背景白化噪声和混响，再做 MUSIC"), ctr(`${mf("GEVD-MUSIC")} MFLOPS`), ctr(`${accS(BIN, "GEVD-MUSIC", "3 m")}%`)],
     [bold("神经网络"), cell("网络从数据中学方向；需训练数据，换耳机形态要重训"), ctr("随网络大小"), ctr("—")],
-  ], 7.75, 2.2, [1.2, 2.1, 1.0, 0.68], [0.36, 0.62, 0.62, 0.72, 0.72], { fontSize: 10 });
+  ], 7.75, 1.85, [1.2, 2.1, 1.0, 0.68], [0.36, 0.62, 0.62, 0.72, 0.72], { fontSize: 10 });
   S.para(s, [
     `近处（≤ 1 m）三种方法都在 ${Math.min(...["0.5 m", "1 m"].flatMap((d) => ["SRP-PHAT", "MUSIC", "GEVD-MUSIC"].map((m) => acc(BIN, m, d))))}% 以上，2 m 外只有 GEVD-MUSIC 可用。`,
     "GEVD-MUSIC 计算量约为 SRP-PHAT 的 2.7 倍，不需要训练数据，方向模板按标准头型做一次（184 KB）。",
-  ], 7.75, 5.4, 4.98, 1.3, { fontSize: 11 });
+  ], 7.75, 5.1, 4.98, 1.4, { fontSize: 11 });
 }
 
 // ================= 7 波束成形 / 增强 =================
@@ -182,7 +181,7 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
     [bold("B 两耳组阵增强"), cell("两耳 4 麦组成一个阵列做自适应置零"), cell("能：约 8 dB（消声时约 14 dB）"), cell("专用耳间链路几 ms 满足；蓝牙 / 星闪约 15–40 ms 不满足"), cell("每侧多 2.6–5.2 mW；需几毫秒级耳间音频链路")],
     [bold("C 目标说话人提取"), cell("网络从混合声中只留下目标；方位或人脸作为线索"), cell("能（不依赖阵列孔径）"), cell("约 17.5–20 ms：入耳式临界，开放式不满足"), cell("耳机上要跑网络；推理功耗未知")],
   ], 0.6, 2.2, [1.9, 3.2, 2.2, 2.6, 2.23], [0.4, 0.8, 0.9, 0.9], { fontSize: 11 });
-  T(s, "参照：Phonak 助听器经专用耳间链路组成 4 麦双耳波束（B 的先例）；NeuralAids 在 GAP9 上每 6 ms 块处理 5.54 ms；Look Once to Hear 在嵌入式 CPU 上每 8 ms 块 6.24 ms，但需先录入目标的声音。", { x: 0.6, y: 5.45, w: 12.13, h: 0.7, fontSize: 11.5, color: C.ink });
+  T(s, "参照：Phonak 助听器经专用耳间链路组成 4 麦双耳波束，是 B 的先例；C 的耳机端实测时延见连云 / 端侧页。", { x: 0.6, y: 5.45, w: 12.13, h: 0.7, fontSize: 11.5, color: C.ink });
 }
 
 // ================= 8b 波束：固定方向与可转向 =================
@@ -241,7 +240,7 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
   table(s, [
     [cell("档位"), cell("规模与运行位置")],
     [bold("定位小模型"), cell("3.5 万–31 万参数，8 比特约 35–300 KB；需要训练数据，换耳机形态要重训")],
-    [bold("增强小模型"), cell("NeuralAids 约 299 KB，耳机级处理器上实时；Look Once to Hear 嵌入式 CPU 每 8 ms 块 6.24 ms")],
+    [bold("增强小模型"), cell("NeuralAids 模型约 299 KB、Look Once to Hear，都能在耳机级处理器上实时运行")],
     [bold("助听器"), cell("Phonak 专用 AI 芯片 DEEPSONIC，450 万参数降噪网络（厂商资料）")],
     [bold("大模型"), cell("TF-GridNet 1450 万参数，嵌入式上不能实时；只适合作开发起点或服务器上运行")],
     [bold("本项目"), cell(`定位用传统 GEVD-MUSIC：无训练参数，方向模板 184 KB，约 ${Math.round(mf("GEVD-MUSIC") + 6.6)} MFLOPS；小网络（约 4 万参数级）作对照候选`)],
@@ -269,13 +268,13 @@ const SIMNOTE = "仿真：刚性球头部模型（无耳廓），混响 RT60 0.5
   T(s, "人脸方位 + 唇动分数（每张脸 16 字节）", { x: 5.0, y: by + bh + 0.02, w: 2.6, h: 0.3, fontSize: 9, color: C.gray });
   T(s, [{ text: "新增功耗：", options: { bold: true, color: C.navy } }, { text: "情况 1 约 5.3 mW / 只，续航约 6 h → 5.25 h（估算）" }], { x: 7.35, y: by + 0.95, w: 5.38, h: bh, fontSize: 11, valign: "middle" });
   table(s, [
-    [cell("环节"), cell("运行位置"), cell("原因"), cell("公开做法")],
-    [bold("增强（实时听）"), cell("每只耳机本地"), cell("声音通路时延入耳式约 10–20 ms，连云或经手机都来不及"), cell("NeuralAids：GAP9 上每 6 ms 块 5.54 ms；Look Once to Hear：嵌入式 CPU 每 8 ms 块 6.24 ms")],
-    [bold("声源定位与融合"), cell("主耳音频 DSP"), cell("每 16 ms 输出一次方位；约 19 MFLOPS，新增功耗约 4.6 mW 以内（估算）"), cell("助听器：两耳经专用链路组阵，全部在助听器内处理")],
-    [bold("人脸与唇动检测"), cell("摄像头模组 NPU"), cell("图像不出模组，只输出人脸方位与唇动分数（每张脸 16 字节）；隐私与带宽"), cell("Phonak DEEPSONIC：AI 芯片在助听器内")],
-    [bold("耳间传输"), cell("副耳 → 主耳"), cell("只为定位转发 1 路，ADPCM 64 kbps，约 0.7 mW"), cell("ClearBuds：两耳同步 < 64 µs")],
-    [bold("看图问答等非实时功能"), cell("可经手机"), cell("对时延不敏感（秒级），不在听觉通路上"), cell("VueBuds：图像经蓝牙到手机，约 1 s 内回答")],
-  ], 0.6, 3.5, [2.3, 1.75, 4.1, 3.98], [0.32, 0.62, 0.62, 0.62, 0.52, 0.52], { fontSize: 10 });
+    [cell("环节"), cell("为什么放在这里"), cell("公开做法")],
+    [bold("增强：每只耳机本地"), cell("声音通路时延入耳式约 10–20 ms，连云或经手机都来不及"), cell("NeuralAids：GAP9 上每 6 ms 块 5.54 ms；Look Once to Hear：嵌入式 CPU 每 8 ms 块 6.24 ms")],
+    [bold("定位与融合：主耳 DSP"), cell("计算量小，新增功耗约 4.6 mW 以内（估算）；方位只在耳机内部使用"), cell("助听器：两耳经专用链路组阵，全部在助听器内处理")],
+    [bold("人脸与唇动：摄像头模组"), cell("图像不出模组：隐私；不用传图，省带宽和功耗"), cell("Phonak DEEPSONIC：AI 芯片在助听器内")],
+    [bold("耳间传输：副耳 → 主耳"), cell("只为定位转发 1 路，约 0.7 mW；不经过你听到的声音"), cell("ClearBuds：两耳同步 < 64 µs")],
+    [bold("看图问答：可经手机"), cell("对时延不敏感（秒级），不在听觉通路上"), cell("VueBuds：图像经蓝牙到手机，约 1 s 内回答")],
+  ], 0.6, 3.5, [2.75, 4.7, 4.68], [0.34, 0.6, 0.55, 0.55, 0.5, 0.5], { fontSize: 10.5 });
 }
 
 // ================= 10 友商竞品 =================
