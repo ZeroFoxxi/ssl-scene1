@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 """服务器训练的 RealMAN 阵列模型（12,000 / 60,000 训练数据 × s / l）在实录上的同条件对比。
 
-模型放在 code/ssl_baseline/server_models/（.pt 与同名 .json，大小读 .json）。依次：
+模型默认放在 code/ssl_baseline/server_models/（.pt 与同名 .json，大小读 .json）；在服务器上直接用 --dir work/models --pattern 挑选。依次：
+  0. 没有 work/realman_test/realman_test.npz 时，从 work/realman/ 的原始录音生成（build_realman_test.py，固定种子，与云端是同一批 600 个样本）；
   1. RealMAN 测试集单次测向（600 个样本，与 out/realman_eval.json 同一批，eval_locata.py）；
   2. 实录回放（RealMAN 测试集 5 个场景 × 10 段 60 s 会议，与 out/realman_replay_test.json 同一批会议），
      每个模型给"不加门限"与"置信度 ≥0.7"（门限沿用仿真验证会议上选定的值，不在实录上调）；
   3. 汇总成一张表，存到 out/server_models_realman.json 与 .txt。
 都是只用仿真数据训练的模型（未做实录微调）；与之前云端的仿真训练版（12,000、s）可直接对照。
 运行：python scripts/eval_server_models.py            （已有的单次测向结果会跳过；加 --redo 重算）
+      服务器上：python3 scripts/eval_server_models.py --dir work/models --pattern "crnn_general_lin6_3cm_?_seed*" "crnn_general_lin6_3cm_60k_*"
 """
 import argparse, glob, json, os, subprocess, sys
 
@@ -23,13 +25,20 @@ def run(cmd):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", default="server_models")
+    ap.add_argument("--pattern", nargs="*", default=["*"], help="只评测文件名匹配这些模式的模型（不含 .pt）")
     ap.add_argument("--meetings", type=int, default=10)
     ap.add_argument("--redo", action="store_true")
     a = ap.parse_args()
-    cks = sorted(glob.glob(os.path.join(ROOT, a.dir, "*.pt")))
+    cks = sorted({c for pat in a.pattern for c in glob.glob(os.path.join(ROOT, a.dir, pat + ".pt"))})
+    cks = [c for c in cks if os.path.exists(c[:-3] + ".json")]                # 只要有大小信息的模型
     if not cks:
         sys.exit(f"{a.dir}/ 下没有模型")
     names = [os.path.basename(c)[:-3] for c in cks]
+    print("评测模型：", ", ".join(names), flush=True)
+    if not os.path.exists(os.path.join(ROOT, "work", "realman_test", "realman_test.npz")):
+        if not os.path.isdir(os.path.join(ROOT, "work", "realman")):
+            sys.exit("缺少 RealMAN 原始录音：请把数据包解压到 code/ssl_baseline/work/realman/")
+        run([PY, "scripts/build_realman_test.py"])
     # 1. 单次测向
     for c, n in zip(cks, names):
         out = os.path.join(ROOT, "out", f"realman_eval_{n}.json")
