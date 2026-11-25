@@ -65,6 +65,19 @@ const SRC = {
   soundaiGX: ["深圳湾：声智 × 国芯 GX8008 模组（2019-12）", "https://www.shenzhenware.com/articles/13718"],
   soundai21ic: ["21ic：声智离在线混合语音模组（2020-05）", "https://www.21ic.com/article/731027.html"],
 };
+const FIG = (n) => path.join(__dirname, "..", "figures", "summary", n);
+// 方框链：每步一个框（名称），框下小字说明；框之间箭头
+function chain(s, steps, x, y, w, o) {
+  o = o || {};
+  const g = o.gap || 0.28, bw = (w - g * (steps.length - 1)) / steps.length, bh = o.bh || 0.5;
+  steps.forEach(([t, d], i) => {
+    const xx = x + i * (bw + g), hi = o.hi && o.hi.includes(i);
+    s.addShape(p.shapes.RECTANGLE, { x: xx, y, w: bw, h: bh, fill: { color: hi ? C.navy : "FFFFFF" }, line: { color: C.navy, width: 1 } });
+    T(s, t, { x: xx, y, w: bw, h: bh, fontSize: o.fs || 12, bold: true, align: "center", valign: "middle", color: hi ? "FFFFFF" : C.navy });
+    if (d) T(s, d, { x: xx - 0.05, y: y + bh + 0.05, w: bw + 0.1, h: 0.62, fontSize: o.dfs || 10, align: "center", color: C.gray });
+    if (i > 0) line(s, xx - g, y + bh / 2, xx, y + bh / 2, { color: C.navy });
+  });
+}
 const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" + keys.map((k, i) => `${i + 1}. ${SRC[k][0]}：${SRC[k][1]}`).join("\n");
 
 // ================= 1 封面 =================
@@ -76,9 +89,30 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
   T(s, "2026 年 11 月", { x: 0.9, y: 4.35, w: 11.5, h: 0.4, fontSize: 14, color: C.gray });
 }
 
-// ================= 2 总结 =================
+// ================= 2 应用场景 =================
 {
-  const s = newSlide("总结", "各项依据见后续页；数字均为厂商公开资料、论文或理想条件下的计算", "本页各条的依据：原理第 3–5 页；模型第 6 页；连云 / 端侧第 7 页；竞品第 8–10 页；智能家居第 11 页；本项目选型第 12 页。");
+  const s = newSlide("应用场景", "示意图不按比例；流程与价值为两个场景的通用做法", null);
+  key(s, "两个场景都是先听出声音从哪里来，再驱动摄像头转向，或朝这个方向增强语音");
+  const col = (x, title, img, value, steps) => {
+    T(s, title, { x, y: 1.7, w: 5.9, h: 0.36, fontSize: 14, bold: true, color: C.navy, valign: "middle" });
+    s.addImage({ path: FIG(img), x, y: 2.08, w: 3.4, h: 3.4 * 4.2 / 6.0 });
+    T(s, value, { x: x + 3.55, y: 2.2, w: 2.3, h: 2.1, fontSize: 11.5, color: C.ink, valign: "top" });
+    chain(s, steps, x, 4.5, 5.85, { fs: 11.5, dfs: 9.5, hi: [1] });
+  };
+  col(0.6, "场景一：摄像头自动转向说话人（会议室）", "scene_meeting.png", "价值：感知说话人方向，驱动摄像头自动转向并跟踪；发言人切换时画面跟着切换。",
+    [["语音检测", "检测有人开口、换人"], ["声源定位", "估计说话人方向"], ["转向 / 跟踪", "控制摄像头转向并跟踪"]]);
+  col(6.88, "场景二：智能家居语音交互", "scene_home.png", "价值：感知用户方向，增强该方向的语音、压低其他方向，提升远场和噪声环境下的交互体验。",
+    [["语音唤醒", "唤醒词触发"], ["声源定位", "获取用户方向"], ["波束成形", "定向增强语音"], ["语音交互", "识别与控制"]]);
+  s.addShape(p.shapes.LINE, { x: 0.6, y: 5.72, w: 12.13, h: 0, line: { color: C.rule, width: 0.75 } });
+  T(s, [{ text: "端侧部署：", options: { bold: true, color: C.navy } }, { text: "在设备上实时完成方向感知，交互延迟低、音频不出设备，断网时照常可用。" }],
+    { x: 0.6, y: 5.82, w: 12.13, h: 0.4, fontSize: 12, valign: "middle" });
+  T(s, [{ text: "技术难点：", options: { bold: true, color: C.navy } }, { text: "混响与噪声下的稳健性；远场弱语音；多人同时说话与喇叭、电视等干扰声源；阵列尺寸与端侧算力受限。" }],
+    { x: 0.6, y: 6.25, w: 12.13, h: 0.4, fontSize: 12, valign: "middle" });
+}
+
+// ================= 2b 总结 =================
+{
+  const s = newSlide("总结", "各项依据见后续页；数字均为厂商公开资料、论文或理想条件下的计算", "本页各条的依据：场景第 2 页；原理第 4–6 页；模型第 7 页；连云 / 端侧第 8 页；竞品第 9–11 页；智能家居第 12 页；本项目选型第 13 页。");
   key(s, "会议系统和智能家居都是多人场景，声源定位给出方位，波束成形按方位拾音");
   table(s, [
     [cell("项目"), cell("结论")],
@@ -230,19 +264,32 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
     notesOf(["rally", "ciscoLocal", "echoShow", "homepod", "fesp", "espDoa", "az1"],
       "带宽：6 路 × 16,000 × 16 bit = 1.536 Mbit/s；单路 0.256 Mbit/s。会议系统常用 48 kHz 采样时再乘 3。\nCisco：所有与摄像头切换和控制相关的智能都在设备本地运行（Cisco Connect 资料）。Echo Show 10：声学定位与视觉在 AZ1 Neural Edge 上端侧处理，图像不出设备。Echo（2021）：AZ1 可在设备上识别部分常用命令，不必上传音频。"));
   key(s, "定位、波束成形和回声消除都在设备上逐帧运行；连云的是增强后的单路语音和上层应用");
+  // 设备端
+  s.addShape(p.shapes.RECTANGLE, { x: 0.6, y: 1.75, w: 8.3, h: 2.55, fill: { color: C.navyPale }, line: { color: C.navy, width: 1, dashType: "dash" } });
+  T(s, "设备端（离线，每帧十几毫秒）", { x: 0.75, y: 1.8, w: 5, h: 0.32, fontSize: 12, bold: true, color: C.navy });
+  chain(s, [["麦克风阵列", ""], ["回声消除", ""], ["声源定位", ""], ["波束成形", ""], ["降噪", ""]], 0.8, 2.3, 7.9, { fs: 11.5, gap: 0.25, hi: [2, 3] });
+  box(s, "开口 / 唤醒检测（常开）", 2.3, 3.3, 2.3, 0.5, { fs: 10.5 });
+  line(s, 4.6, 3.55, 4.35, 3.55, { color: C.navy, arrow: false }); line(s, 4.35, 3.55, 4.35, 2.8, { color: C.navy });
+  box(s, "摄像头取景、发言人跟踪", 5.9, 3.3, 2.6, 0.5, { fs: 10.5 });
+  line(s, 5.15, 2.8, 5.15, 3.55, { color: C.navy, arrow: false }); line(s, 5.15, 3.55, 5.9, 3.55, { color: C.navy });
+  // 云端
+  s.addShape(p.shapes.RECTANGLE, { x: 10.0, y: 1.75, w: 2.73, h: 2.55, fill: { color: "FFFFFF" }, line: { color: C.box, width: 1 } });
+  T(s, "云端", { x: 10.15, y: 1.8, w: 2.4, h: 0.32, fontSize: 12, bold: true, color: C.gray });
+  T(s, "转写、识别\n会议纪要\n大模型对话", { x: 10.15, y: 2.2, w: 2.45, h: 1.5, fontSize: 12, align: "center", valign: "middle", color: C.ink });
+  line(s, 8.9, 2.55, 10.0, 2.55, { color: C.navy });
+  T(s, "单路语音\n0.26 Mbit/s", { x: 8.92, y: 2.62, w: 1.06, h: 0.55, fontSize: 9.5, align: "center", color: C.navy });
+  T(s, "6 路原始音频需 1.54 Mbit/s，不上传", { x: 0.8, y: 3.92, w: 7.9, h: 0.3, fontSize: 9.5, color: C.gray, align: "right" });
   table(s, [
-    [cell("环节"), cell("运行位置"), cell("原因"), cell("公开做法")],
-    [bold("回声消除、定位、波束成形、降噪"), cell("端侧"), cell("逐帧处理（每帧十几毫秒），延迟直接影响通话与转向；上传 6 路原始音频需 1.54 Mbit/s，波束后单路只需 0.26 Mbit/s"),
-      cell("Logitech Rally Bar：6 麦、5 个自适应波束、回声消除、AI 降噪在整机内；HomePod：6 麦前端在 A8 上常开运行；思必驰离线前端 SDK、乐鑫 ESP-SR 离线运行")],
-    [bold("开口 / 唤醒检测"), cell("端侧常开"), cell("需要一直监听；音频不出设备"), cell("思必驰离线前端：唤醒后回调方位 {\"doa\": 95}")],
-    [bold("发言人跟踪、摄像头取景"), cell("端侧"), cell("要连续处理每一帧音频和画面；画面不出设备"), cell("Cisco：摄像头切换与控制的智能全部在设备本地运行；Echo Show 10：定位与视觉在 AZ1 上处理")],
-    [bold("转写、识别、会议纪要、对话"), cell("云端（部分命令词端侧）"), cell("输入为增强后的单路语音；模型大、需要联网服务"), cell("Echo：AZ1 可在设备上识别部分常用命令，其余请求上云")],
-  ], 0.6, 1.72, [2.45, 1.45, 3.7, 4.53], [0.4, 1.2, 0.7, 0.85, 0.75], { fontSize: 10.5 });
+    [cell("公开做法"), cell("内容")],
+    [bold("前端在设备上"), cell("Logitech Rally Bar：6 麦、5 个自适应波束、回声消除、AI 降噪在整机内；HomePod：6 麦前端在 A8 上常开运行；思必驰离线前端 SDK、乐鑫 ESP-SR 离线运行")],
+    [bold("取景在设备上"), cell("Cisco：摄像头切换与控制的智能全部在设备本地运行；Echo Show 10：定位与视觉在 AZ1 上处理，图像不出设备")],
+    [bold("识别部分上云"), cell("Echo：AZ1 可在设备上识别部分常用命令，其余请求上云")],
+  ], 0.6, 4.55, [2.0, 10.13], [0.36, 0.62, 0.55, 0.45], { fontSize: 10.5 });
 }
 
 // ================= 8 友商竞品：会议系统 =================
 {
-  const s = newSlide("友商竞品：会议系统", "厂商官网、数据表与技术博客；各家定位与波束的算法、模型大小均未公开，芯片与部署见第 9 页",
+  const s = newSlide("友商竞品：会议系统", "厂商官网、数据表与技术博客；各家定位与波束的算法、模型大小均未公开，芯片与部署见第 10 页",
     notesOf(["rally", "ciscoBar", "ciscoBarPro", "jabra", "yealink", "owl", "ideahub", "c60", "shure", "tcc2", "ciscoCeil", "ciscoBlog"],
       "Cisco Room Bar：4 单元阵列做波束降噪，另有专用麦克风阵列做发言人跟踪；Room Bar Pro：16 单元阵列。Cisco Quad Camera：内置 8 麦只用于发言人跟踪计算。Shure MXA920 的单元数未公开。Sennheiser TCC2 的约 60 m² 为零售商转引厂商说法。"));
   key(s, "视频条 6–16 麦、拾音 5.5–12 m；吊顶阵列 28–64 单元，按区域自动跟随说话人");
@@ -267,20 +314,20 @@ const notesOf = (keys, extra) => (extra ? extra + "\n\n" : "") + "来源：\n" +
   const s = newSlide("友商竞品：部署与资源", "厂商官网、手册、招股书与报道；\"未公开\"表示公开资料中查不到",
     notesOf(["c60", "fesp", "th1520", "th2608", "aispeechIPO", "ezviz", "ezvizChip", "echoShow", "homepod", "ciscoLocal", "soundaiR328", "soundaiGX", "soundai21ic", "espDoa", "xmos"],
       "芯片有 DSP / NPU 不能说明定位在其上执行；整机芯片算力也不等于定位模块的开销。萤石 1.0T 为系列口径，单款型号未公开。乐鑫数字的条件：ESP32-P4 400 MHz，4 麦圆阵半径 5 cm，10° 网格。"));
-  key(s, "芯片和离线 / 在线情况部分公开；定位模块的内存、模型大小和时延只有乐鑫公开");
+  key(s, "公开的是芯片和离线 / 在线情况；定位模块的内存、模型大小和时延，竞品都没有公开，只有乐鑫给出");
   const N = (t) => cell(t, { color: "7F7F7F" });
   table(s, [
-    [cell("产品 / 方案"), cell("芯片 / 算力"), cell("离线 / 在线"), cell("内存 / 模型"), cell("时延"), cell("公开的定位与波束信息")],
-    [bold("思必驰 C60（会议摄像机）"), N("未公开"), N("未公开"), N("未公开"), N("未公开"), cell("8 麦线阵；语音定位 → 视觉锁定 → 云台特写")],
-    [bold("思必驰离线前端 SDK"), cell("自研芯片 TH1520（双 DSP，常开毫瓦级）、TH2608（Cortex-M + DSP + NPU）；SDK 支持平台未公开"), cell("离线"), N("未公开"), N("未公开"), cell("线阵 4 / 6 麦，16 kHz 输入；回声消除、定位、波束、唤醒一体，唤醒后回调方位")],
-    [bold("萤石 C6Wi 4K（家用云台）"), cell("系列标注专用芯片 1.0T 算力"), cell("端侧运行"), N("未公开"), N("未公开"), cell("3 麦听声辨位 → 云台转向 → AI 追踪")],
-    [bold("声智离在线语音模组"), cell("全志 R328；国芯 GX8008（运行约 100 mW，待机 < 25 mW）"), cell("离在线混合"), N("未公开"), N("未公开"), cell("2 / 4 / 8 麦；回声消除、降噪、声源定位、波束成形")],
-    [bold("Amazon Echo Show 10"), cell("自研 AZ1 Neural Edge"), cell("端侧（图像不出设备）"), N("未公开"), N("未公开"), cell("声学定位 + 视觉识别人体，区分人声与墙面反射")],
-    [bold("Apple HomePod"), cell("A8"), cell("前端端侧常开"), N("未公开"), N("未公开"), cell("6 麦；掩码多通道维纳滤波 + 盲源分离，唤醒词选路")],
-    [bold("Cisco 会议终端"), N("未公开"), cell("摄像头切换与控制在本地运行"), N("未公开"), N("未公开"), cell("麦阵定位发言人大致位置，人脸检测确认")],
-    [bold("XMOS XVF3800（芯片）"), cell("专用语音处理器"), cell("端侧"), N("未公开"), N("未公开"), cell("4 麦；1 个扫描波束 + 2 个跟踪波束，主机可读说话人方位")],
-    [bold("乐鑫 ESP-SR（芯片 SDK）"), cell("ESP32-P4 400 MHz，CPU 8.1%"), cell("端侧"), cell("约 206 KB；无神经网络"), cell("每 8 ms 帧处理 0.65 ms"), cell("4 麦 Capon，10° 网格")],
-  ], 0.6, 1.72, [2.3, 2.75, 1.45, 1.35, 1.25, 3.03], [0.38, 0.45, 0.68, 0.45, 0.55, 0.45, 0.45, 0.45, 0.45, 0.45], { fontSize: 10 });
+    [cell("产品 / 方案"), cell("芯片 / 算力"), cell("离线 / 在线"), cell("公开的定位与波束信息")],
+    [bold("思必驰 C60（会议摄像机）"), N("未公开"), N("未公开"), cell("8 麦线阵；语音定位 → 视觉锁定 → 云台特写")],
+    [bold("思必驰离线前端 SDK"), cell("自研芯片 TH1520（双 DSP，常开毫瓦级）、TH2608（Cortex-M + DSP + NPU）；SDK 支持平台未公开"), cell("离线"), cell("线阵 4 / 6 麦，16 kHz 输入；回声消除、定位、波束、唤醒一体，唤醒后回调方位")],
+    [bold("萤石 C6Wi 4K（家用云台）"), cell("系列标注专用芯片 1.0T 算力"), cell("端侧运行"), cell("3 麦听声辨位 → 云台转向 → AI 追踪")],
+    [bold("声智离在线语音模组"), cell("全志 R328；国芯 GX8008（运行约 100 mW，待机 < 25 mW）"), cell("离在线混合"), cell("2 / 4 / 8 麦；回声消除、降噪、声源定位、波束成形")],
+    [bold("Amazon Echo Show 10"), cell("自研 AZ1 Neural Edge"), cell("端侧（图像不出设备）"), cell("声学定位 + 视觉识别人体，区分人声与墙面反射")],
+    [bold("Apple HomePod"), cell("A8"), cell("前端端侧常开"), cell("6 麦；掩码多通道维纳滤波 + 盲源分离，唤醒词选路")],
+    [bold("Cisco 会议终端"), N("未公开"), cell("摄像头切换与控制在本地运行"), cell("麦阵定位发言人大致位置，人脸检测确认")],
+    [bold("XMOS XVF3800（芯片）"), cell("专用语音处理器"), cell("端侧"), cell("4 麦；1 个扫描波束 + 2 个跟踪波束，主机可读说话人方位")],
+    [bold("乐鑫 ESP-SR（芯片 SDK）"), cell("ESP32-P4 400 MHz，CPU 8.1%"), cell("端侧"), cell("4 麦 Capon，10° 网格；内存约 206 KB，每 8 ms 帧处理 0.65 ms")],
+  ], 0.6, 1.72, [2.5, 3.6, 1.9, 4.13], [0.38, 0.45, 0.68, 0.45, 0.55, 0.45, 0.45, 0.45, 0.45, 0.45], { fontSize: 10 });
 }
 
 // ================= 10 麦克风数量 =================
