@@ -43,6 +43,7 @@ def main():
     ap.add_argument("--utt-frac", type=float, default=1.0, help="每个场景只用这个比例的话语（模拟实录采得少）")
     ap.add_argument("--scenes", nargs="*", default=None, help="微调用的场景（默认 3 个）")
     ap.add_argument("--subset-seed", type=int, default=0)
+    ap.add_argument("--kinds", nargs="*", default=["static", "moving"], help="只用静止（static）或走动（moving）的话语")
     ap.add_argument("--name", default="train_data_realman_ft")
     ap.add_argument("--splits", nargs="*", default=["train", "val"])
     a = ap.parse_args()
@@ -57,6 +58,8 @@ def main():
             files = sorted(glob.glob(os.path.join(W, sc, "*", "*", "*_CH0.flac")))
             utts = [(f, T.fold(90.0 - lab[os.path.basename(f).replace("_CH0", "")])) for f in files if os.path.basename(f).replace("_CH0", "") in lab]
             utts = [u for u in utts if abs(u[1]) <= 80]
+            if split == "train" and set(a.kinds) != {"static", "moving"}:
+                utts = [u for u in utts if os.path.basename(os.path.dirname(os.path.dirname(u[0]))) in a.kinds]
             if split == "train" and a.utt_frac < 1.0:                     # 只留一部分话语（单独的随机数，按场景固定）
                 sub = np.random.default_rng(a.subset_seed * 1000 + sum(map(ord, sc)))
                 keep = np.sort(sub.permutation(len(utts))[:max(2, int(round(a.utt_frac * len(utts))))])
