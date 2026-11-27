@@ -114,11 +114,11 @@ class Lock:
         回应：佩戴者说完后第一个接话（1.5 s 内开口、说满 0.5 s）的人，且佩戴者说话时他没在说（高帧率档看唇动）；
         看向：佩戴者 2 s 内转头超过 10°，且此人在正前方 ±10° 内说满 1 s；
         冷场：另一方向的人连续说满 2 s、这期间组员都没说话（得分减半）。
-      佩戴者说话时唇动显示还在说的组员减分（在和别人说话），得分 ≤ 0 不再算组员。场景开头先跟第一个说话的人（临时组员）。"""
+      每段自语音结束后结算：期间一半以上时间唇动显示还在说的组员扣 1 分（在和别人说话），得分 ≤ 0 不再算组员。场景开头先跟第一个说话的人（临时组员）。"""
     def __init__(self, rule):
         self.rule = rule; self.az = None; self.cand = None; self.last_lock_obs = -9.0
         self.members = []; self.switches = []
-        self.first_after = {}; self.talked_over = {}; self.self_steps = {}; self.last_member_talk = -9.0
+        self.first_after = {}; self.talked_over = {}; self.self_steps = {}; self.settled = set(); self.last_member_talk = -9.0
 
     def _join(self, t, az, score):
         for m in self.members:
@@ -130,16 +130,25 @@ class Lock:
         self._set(t, az); self.last_member_talk = t
 
     def talking_during_self(self, self_start_key, az, t=None):
-        """高帧率档：佩戴者说话时唇动显示在说的人——记下来；若是组员则减分。锁定对象被减到出组时，改锁分数最高的组员。"""
+        """高帧率档：佩戴者说话时唇动显示在说的人——先记下来，这段自语音结束后统一结算（settle）。"""
         self.talked_over.setdefault(self_start_key, []).append(az)
+
+    def settle(self, t, se):
+        """一段自语音结束后结算一次：期间一半以上时间被看到在说的组员扣 1 分（他在和别人说话）；
+        锁定对象出组时改锁分数最高的组员。偶发的唇动判错不扣分。"""
+        if se is None or se in self.settled:
+            return
+        self.settled.add(se)
+        n_steps = self.self_steps.get(se, 0)
+        over = self.talked_over.get(se, [])
         for m in self.members:
-            if angdiff(m["az"], az) <= LOCK["same_deg"]:
-                m["score"] -= 0.25
-                if m["score"] <= 0 and self.az is not None and angdiff(m["az"], self.az) <= LOCK["same_deg"]:
-                    valid = [x for x in self.members if x["score"] > 0]
-                    if valid:
-                        best = max(valid, key=lambda x: x["score"])
-                        self._set(t if t is not None else 0.0, best["az"])
+            n = sum(1 for a in over if angdiff(m["az"], a) <= LOCK["same_deg"])
+            if n >= max(2, 0.5 * n_steps):
+                m["score"] -= 1.0
+        if self.az is not None and not any(angdiff(m["az"], self.az) <= LOCK["same_deg"] and m["score"] > 0 for m in self.members):
+            valid = [x for x in self.members if x["score"] > 0]
+            if valid:
+                self._set(t, max(valid, key=lambda x: x["score"])["az"])
 
     def _set(self, t, az):
         if self.az is not None and angdiff(az, self.az) > LOCK["same_deg"]:
@@ -156,6 +165,8 @@ class Lock:
     def update(self, t, own, new, self_end, yaw=0.0, yaw_prev=0.0):
         """own：按锁定对象本人开口时刻测得的观测（高帧率档才有）；new：当前（或新开口的人）的观测。"""
         same = LOCK["same_deg"]
+        if self.rule == "对话组" and self_end is not None and t > self_end:
+            self.settle(t, self_end)
         if own is not None and self.az is not None and angdiff(own, self.az) <= same:
             self._track(t, own)
         z = new
