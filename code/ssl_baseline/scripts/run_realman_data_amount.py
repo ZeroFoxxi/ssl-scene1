@@ -81,6 +81,10 @@ def job(name, gpus=()):
             ftr = os.path.join(WORK, "feat", f"{data}_train.npz")
             if not os.path.exists(ftr):
                 run([PY, "scripts/build_realman_finetune.py", *bargs, "--name", data, "--splits", "train"], log)
+                run([PY, "-c", "import sys; sys.path[:0] = ['.', 'scripts']; from train_doa_net import build_features; "
+                     f"build_features('train', '{data}')"], log)
+                if not A.dry_run:                                              # 特征算好后原始片段即可删除（省硬盘）
+                    shutil.rmtree(os.path.join(WORK, data, "train"), ignore_errors=True)
             fva = os.path.join(WORK, "feat", f"{data}_val.npz")                 # 挑选场景（Auditorium）与全量相同
             if not os.path.exists(fva) and not A.dry_run:
                 os.link(os.path.join(WORK, "feat", f"{FULL}_val.npz"), fva)
