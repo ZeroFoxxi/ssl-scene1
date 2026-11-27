@@ -112,7 +112,7 @@ class Lock:
     对话组（新增【设计】）：记住"在和佩戴者交谈的人"（组员，计分）。组员说话时立即对准他；入组 / 加分条件：
         回应：佩戴者说完后第一个接话（1.5 s 内开口、说满 0.5 s）的人，且佩戴者说话时他没在说（高帧率档看唇动）；
         看向：佩戴者 2 s 内转头超过 10°，且此人在正前方 ±10° 内说满 1 s；
-        冷场：组员 4 s 以上没说话，另一方向的人连续说满 2 s（得分减半）。
+        冷场：另一方向的人连续说满 2 s、这期间组员都没说话（得分减半）。
       佩戴者说话时唇动显示还在说的组员减分（在和别人说话），得分 ≤ 0 不再算组员。场景开头先跟第一个说话的人（临时组员）。"""
     def __init__(self, rule):
         self.rule = rule; self.az = None; self.cand = None; self.last_lock_obs = -9.0
@@ -210,7 +210,7 @@ class Lock:
                 self._join(t, c["az"], 1.0)
                 return
             look = abs(wrap(yaw - yaw_prev)) > 10 and abs(wrap(c["az"] - yaw)) <= 10 and c["dur"] >= 1.0
-            lapse = c["dur"] >= LOCK["switch_s"] and t - self.last_member_talk >= 4.0   # 组员 4 s 以上都没说话：对话可能换了人
+            lapse = c["dur"] >= LOCK["switch_s"] and self.last_member_talk < c["start"]   # 候选连续说满 2 s、这期间组员都没说话
             if look or lapse:
                 self._join(t, c["az"], 1.0 if look else 0.5)
             return
@@ -287,9 +287,10 @@ def run_scene(sc, Y, ctx, rng, thresh):
                     if not selfsp:
                         faces_t = faces_now(sc, k, rng, True)
                         # 锁定对象本人：用他自己最近一次唇动开口作开口时刻，且他此刻唇动显示在说话
-                        talking = any(angdiff(wrap(fa + yaw), L.az) <= 8 and li > 0.5 for fa, li in faces_t)
+                        om = lip_open_mask(sc, L.az, k, yaw_imu, rng, s.setdefault("lipcache", {}))
+                        # 锁定对象"还在说"：最近 0.5 s 里一半以上时间嘴张着（单次唇动判错不算）
+                        talking = om is not None and om[max(0, k - int(0.5 * FPS)):k + 1].mean() >= 0.5
                         if talking:
-                            om = lip_open_mask(sc, L.az, k, yaw_imu, rng, s.setdefault("lipcache", {}))
                             sp = lip_gated_spec(Y, k, om, sc.self_speech, ctx) if om is not None else None
                             if sp is None:   # 门控帧不够时退回按开口时刻
                                 mine = [e for e in s["seen"] if angdiff(e[2], L.az) <= LOCK["same_deg"]]
@@ -374,7 +375,7 @@ def main():
     ap.add_argument("--seed", type=int, default=101)
     ap.add_argument("--thresh", type=float, default=3.5)
     ap.add_argument("--tag", default="dev")
-    ap.add_argument("--confirm", type=int, default=1, help="换到新方向前要求连续几次观测一致（跟随、对话组）")
+    ap.add_argument("--confirm", type=int, default=2, help="换到新方向前要求连续几次观测一致（跟随、对话组）")
     a = ap.parse_args()
     LOCK["confirm_n"] = a.confirm
     ctx = build_ctx()
