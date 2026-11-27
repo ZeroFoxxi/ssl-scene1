@@ -65,6 +65,46 @@ def faces_now(sc, k, rng, with_lip):
     return out
 
 
+def lip_gated_spec(Y, k, open_mask, self_mask, ctx, win_s=1.0, bg_s=3.0):
+    """唇动门控的 GEVD-MUSIC（设计 7.3 第 3 步）：目标 = 最近 win_s 内目标嘴张着的帧（起始段加权）；
+    背景 = 最近 bg_s 内目标嘴闭着、佩戴者也没说话的帧。帧数不够时返回 None。"""
+    fm = ctx["fmask"]
+    a_s, a_b = max(0, k - int(win_s * FPS)), max(0, k - int(bg_s * FPS))
+    ks = np.arange(a_s, k)[open_mask[a_s:k]]
+    kb = np.arange(a_b, k)[(~open_mask[a_b:k]) & (~self_mask[a_b:k])]
+    if len(ks) < int(0.1 * FPS) or len(kb) < int(0.3 * FPS):
+        return None
+    Yd = Y[:, :, ks]
+    e = M.frame_energy_db(Yd, fm)
+    return M.music(M.covariance(Yd, fm, M.onset_weights(e, e.max() - 30)), ctx["Hg"], fm, M.covariance(Y[:, :, kb], fm, np.ones(len(kb))))
+
+
+def lip_open_mask(sc, az_world, k, yaw_imu, rng, cache):
+    """锁定方向上那张脸的唇动（嘴张着 = 在说话），按 0.25 s 一块加入 10% 判错；用方向找最近的人（模拟人脸编号的身份延续）。"""
+    best = min(sc.persons, key=lambda p: angdiff(float(p.az_world[k]), az_world))
+    if angdiff(float(best.az_world[k]), az_world) > LOCK["same_deg"]:
+        return None
+    if best.pid not in cache:
+        sp = best.speaking.copy()
+        nb = int(np.ceil(sc.T / int(round(DT * FPS))))
+        flip = np.repeat(rng.random(nb) < RA.VIS["lip_err"], int(round(DT * FPS)))[: sc.T]
+        vis = np.abs(sc.az_head(best)) <= sc.cfg["fov_half_deg"]
+        cache[best.pid] = (sp ^ flip) & vis
+    return cache[best.pid]
+
+
+def face_peak(spec, grid, face_head, width=10.0, min_rel=0.5):
+    """已知是哪张脸时：只在这张脸方位 ±width 内找空间谱的峰；峰值不到全局峰值的 min_rel 倍时认为这张脸方向没有明显声源，返回 None。"""
+    d = np.abs(wrap(grid - face_head))
+    win = d <= width
+    if not win.any():
+        return None
+    i = np.flatnonzero(win)[np.argmax(spec[win])]
+    if spec[i] < min_rel * spec.max():
+        return None
+    return float(grid[i])
+
+
 class Lock:
     """锁定规则；方位都在世界坐标里。
     跟随：锁定 = 当前说话人的估计。
@@ -77,7 +117,7 @@ class Lock:
     def __init__(self, rule):
         self.rule = rule; self.az = None; self.cand = None; self.last_lock_obs = -9.0
         self.members = []; self.switches = []
-        self.first_after = {}; self.talked_over = {}; self.last_member_talk = -9.0
+        self.first_after = {}; self.talked_over = {}; self.self_steps = {}; self.last_member_talk = -9.0
 
     def _join(self, t, az, score):
         for m in self.members:
@@ -88,12 +128,17 @@ class Lock:
             self.members.append({"az": az, "score": score})
         self._set(t, az); self.last_member_talk = t
 
-    def talking_during_self(self, self_start_key, az):
-        """高帧率档：佩戴者说话时唇动显示在说的人——记下来；若是组员则减分。"""
+    def talking_during_self(self, self_start_key, az, t=None):
+        """高帧率档：佩戴者说话时唇动显示在说的人——记下来；若是组员则减分。锁定对象被减到出组时，改锁分数最高的组员。"""
         self.talked_over.setdefault(self_start_key, []).append(az)
         for m in self.members:
             if angdiff(m["az"], az) <= LOCK["same_deg"]:
                 m["score"] -= 0.25
+                if m["score"] <= 0 and self.az is not None and angdiff(m["az"], self.az) <= LOCK["same_deg"]:
+                    valid = [x for x in self.members if x["score"] > 0]
+                    if valid:
+                        best = max(valid, key=lambda x: x["score"])
+                        self._set(t if t is not None else 0.0, best["az"])
 
     def _set(self, t, az):
         if self.az is not None and angdiff(az, self.az) > LOCK["same_deg"]:
@@ -130,7 +175,9 @@ class Lock:
                 self.members.append({"az": z, "score": 0.5})     # 场景开头：先跟第一个说话的人（临时组员）
                 self.last_member_talk = t
             return
-        if angdiff(z, self.az) <= same:
+        lock_valid = (self.rule != "对话组" or not self.members or
+                      any(angdiff(m["az"], self.az) <= same and m["score"] > 0 for m in self.members))
+        if angdiff(z, self.az) <= same and lock_valid:
             self._track(t, z); self.cand = None
             return
         if self.rule == "对话组":
@@ -146,15 +193,19 @@ class Lock:
                 m["az"] = wrap(m["az"] + LOCK["track_gain"] * wrap(z - m["az"]))
                 self._set(t, m["az"]); self.last_member_talk = t
                 return
+        if self.cand is not None and t - self.cand.get("last", self.cand["start"]) > 1.0:
+            self.cand = None                                   # 候选超过 1 s 没有新观测：丢掉
         if self.cand is not None and angdiff(z, self.cand["az"]) <= same:
-            c = self.cand; c["az"] = wrap(c["az"] + 0.5 * wrap(z - c["az"])); c["dur"] += DT
+            c = self.cand; c["az"] = wrap(c["az"] + 0.5 * wrap(z - c["az"])); c["dur"] += DT; c["last"] = t
         else:
-            self.cand = c = {"az": z, "start": t, "dur": DT}
+            self.cand = c = {"az": z, "start": t, "dur": DT, "last": t}
         reply = self_end is not None and 0 <= c["start"] - self_end <= LOCK["reply_window_s"] and c["dur"] >= LOCK["reply_min_s"]
         if self.rule == "对话组":
             # 回应：佩戴者说完后第一个接话的人，且佩戴者说话时他没在说（高帧率档看唇动；纯声学 / 低帧率档没有这条信息）
             first = self_end is not None and self.first_after.get(self_end) in (None, c["start"])
-            if reply and first and not any(angdiff(c["az"], a) <= same for a in self.talked_over.get(self_end, [])):
+            n_over = sum(1 for a in self.talked_over.get(self_end, []) if angdiff(c["az"], a) <= same)
+            n_steps = self.self_steps.get(self_end, 0)
+            if reply and first and n_over < max(2, 0.5 * n_steps):   # 佩戴者说话期间一半以上时间被看到在说才排除（唇动有 10% 判错）
                 self.first_after[self_end] = c["start"]
                 self._join(t, c["az"], 1.0)
                 return
@@ -197,15 +248,18 @@ def run_scene(sc, Y, ctx, rng, thresh):
         selfsp = self_block(sc, k, 0.0)
         se = max([e for e in self_ends if e <= t], default=None)
         yaw, yaw_prev = float(yaw_imu[k]), float(yaw_imu[max(0, k - k2)])
-        row = {"t": float(t), "tgt": tgt, "par": par, "truth_t": truth_t, "truth_p": truth_p, "vis_p": vis_p, "self": selfsp, "out": {}}
+        n_other = sum(1 for p in sc.persons if p.role == "partner" and p.pid != par and p.speaking[k])
+        row = {"t": float(t), "tgt": tgt, "par": par, "truth_t": truth_t, "truth_p": truth_p, "vis_p": vis_p, "self": selfsp,
+               "n_other": n_other, "after_first_reply": bool(self_ends) and t > self_ends[0], "out": {}}
         if selfsp:
             # 本段自语音结束的时刻（作为键）
             nxt = min([e for e in self_ends if e >= t], default=None)
             if nxt is not None:
+                Lg = state["高帧率档常开"]["locks"]["对话组"]; Lg.self_steps[nxt] = Lg.self_steps.get(nxt, 0) + 1
                 fs_ = faces_now(sc, k, rng, True)
                 for fa, li in fs_:
                     if li > 0.5:
-                        state["高帧率档常开"]["locks"]["对话组"].talking_during_self(nxt, wrap(fa + yaw))
+                        state["高帧率档常开"]["locks"]["对话组"].talking_during_self(nxt, wrap(fa + yaw), t)
         for m in MODES:
             s = state[m]
             ev = lip_ev if m == "高帧率档常开" else ac_ev
@@ -233,19 +287,30 @@ def run_scene(sc, Y, ctx, rng, thresh):
                     if not selfsp:
                         faces_t = faces_now(sc, k, rng, True)
                         # 锁定对象本人：用他自己最近一次唇动开口作开口时刻，且他此刻唇动显示在说话
-                        mine = [e for e in s["seen"] if angdiff(e[2], L.az) <= LOCK["same_deg"]]
                         talking = any(angdiff(wrap(fa + yaw), L.az) <= 8 and li > 0.5 for fa, li in faces_t)
-                        if mine and talking:
-                            sp = RC.gevd_spec(Y, k, mine[-1][1], ctx)
+                        if talking:
+                            om = lip_open_mask(sc, L.az, k, yaw_imu, rng, s.setdefault("lipcache", {}))
+                            sp = lip_gated_spec(Y, k, om, sc.self_speech, ctx) if om is not None else None
+                            if sp is None:   # 门控帧不够时退回按开口时刻
+                                mine = [e for e in s["seen"] if angdiff(e[2], L.az) <= LOCK["same_deg"]]
+                                sp = RC.gevd_spec(Y, k, mine[-1][1], ctx) if mine else None
                             if sp is not None:
-                                own = wrap(M.fuse_soft(sp, grid, faces_t, **RA.SOFT) + yaw)
+                                zp = face_peak(sp, grid, wrap(L.az - yaw))
+                                own = None if zp is None else wrap(zp + yaw)
                         # 别的人：锁定方向以外最近一次唇动开口
                         oth = [e for e in s["seen"] if angdiff(e[2], L.az) > LOCK["same_deg"]]
                         if oth:
-                            sp = RC.gevd_spec(Y, k, oth[-1][1], ctx)
+                            # 新开口的那张脸：同样按他自己的唇动门控；他此刻没在说（唇动）就不算新观测
+                            om = lip_open_mask(sc, oth[-1][2], k, yaw_imu, rng, s.setdefault("lipcache", {}))
+                            sp = None
+                            if om is not None and om[k]:
+                                sp = lip_gated_spec(Y, k, om, sc.self_speech, ctx)
+                            if sp is None and (om is None or om[k]):
+                                sp = RC.gevd_spec(Y, k, oth[-1][1], ctx)
                             if sp is not None:
-                                zn = wrap(M.fuse_soft(sp, grid, faces_t, **RA.SOFT) + yaw)
-                                new = None if angdiff(zn, L.az) <= LOCK["same_deg"] else zn
+                                zp = face_peak(sp, grid, wrap(oth[-1][2] - yaw))
+                                zn = None if zp is None else wrap(zp + yaw)
+                                new = None if zn is None or angdiff(zn, L.az) <= LOCK["same_deg"] else zn
                     L.update(t, own, new, se, yaw, yaw_prev)
                 else:
                     L.update(t, None, z_world, se, yaw, yaw_prev)
@@ -272,7 +337,9 @@ def summarize(all_rows, all_sw, minutes):
                       "佩戴者说话时": acc(lambda r: r["self"])[0],
                       "对方在说话时": acc(lambda r: r["tgt"] >= 0 and not r["self"])[0],
                       "对话对象在视野外时": acc(lambda r: r["vis_p"] is False)[0],
-                      "对话对象在视野外的样本数": acc(lambda r: r["vis_p"] is False)[1]}
+                      "对话对象在视野外的样本数": acc(lambda r: r["vis_p"] is False)[1],
+                      "佩戴者第一次回话之后": acc(lambda r: r["after_first_reply"])[0],
+                      "对话对象说话时另有对面的人也在说": acc(lambda r: r["tgt"] >= 0 and not r["self"] and r["n_other"] > 0)[0]}
             # 换人后锁定时间：真值对话对象改变后，第一次输出落在新对象 ±10° 内的时间
             lat, never = [], 0
             for rows in all_rows_by_scene:

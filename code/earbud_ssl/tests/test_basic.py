@@ -173,7 +173,7 @@ def test_lock_rules():
     H = Lock("对话组")
     for t, z in seq[:8]:
         H.update(t, None, z, None)
-    H.talking_during_self(2.0, -30.0)          # C（-30°）在佩戴者说话时也在说：不算回应
+    H.talking_during_self(2.0, -30.0); H.talking_during_self(2.0, -31.0)   # C（-30°）在佩戴者说话时也在说（≥ 2 次）：不算回应
     for i in range(3):
         H.update(2.25 + i * DT, None, -30.0, 2.0)
     assert abs(H.az) < 6 and len(H.members) == 1
