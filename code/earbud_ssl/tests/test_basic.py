@@ -144,6 +144,31 @@ def test_scene60():
     Y, parts = SC.render(sc, ctx, rng, lambda n, r: r.standard_normal(n))
     assert Y.shape == (3, len(FREQS), sc.T) and np.isfinite(Y).all() and "noise" in parts
 
+
+def test_lock_rules():
+    """锁定规则：防抖要连续 2 s 才换人；回应佩戴者立即换；对话组里组员说话立即对准。"""
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
+    from run_scene60_pipeline import Lock, DT
+    seq = [(i * DT, 0.0) for i in range(8)] + [(2.0 + i * DT, 30.0) for i in range(12)]   # 先 A（0°）说 2 s，再 B（30°）说 3 s
+    L = Lock("防抖")
+    for t, z in seq:
+        L.update(t, None, z, None)
+        if t < 2.0 + 1.5:
+            assert abs(L.az) < 1e-6            # B 说满 2 s 之前不换
+    assert abs(L.az - 30.0) < 6                # 之后换到 B
+    L = Lock("防抖")
+    for t, z in seq[:8]:
+        L.update(t, None, z, None)
+    for i in range(3):                         # 佩戴者 2.0 s 说完，B 2.25 s 开口：说满 0.5 s 即换
+        L.update(2.25 + i * DT, None, 30.0, 2.0)
+    assert abs(L.az - 30.0) < 6
+    G = Lock("对话组")
+    for t, z in seq:                           # A 入组；B 连续 2 s 且 A 没说话 → 入组
+        G.update(t, None, z, None)
+    assert len(G.members) == 2
+    G.update(6.0, None, 0.0, None)             # A 再说话：立即对准
+    assert abs(G.az) < 6
+
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for t in tests:
