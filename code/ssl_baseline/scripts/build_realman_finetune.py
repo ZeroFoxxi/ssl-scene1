@@ -24,6 +24,7 @@ import build_realman_test as T
 W = os.path.join(ROOT, "work", "realman_val")
 SPLITS = {"train": ["OfficeRoom1", "LivingRoom6", "LivingRoom8"], "val": ["Auditorium"]}
 PER_SCENE = {"train": 1500, "val": 400}
+TRAIN_TOTAL = 4500                     # 微调样本总数固定：默认 3 个场景各 1500；只用 1 个场景时该场景 4500（与多场景可比）
 FS = 16000
 N = int(1.5 * FS); ON = FS
 
@@ -66,7 +67,8 @@ def main():
             cache = {}
             get = lambda f: cache.setdefault(f, T.load(f))
             bank = T.noise_bank(utts, 30 * FS)
-            for k in range(PER_SCENE[split]):
+            n_per = PER_SCENE[split] if split == "val" else TRAIN_TOTAL // len(scenes)
+            for k in range(n_per):
                 fb, azb = utts[rng.integers(len(utts))]
                 cond = int(rng.choice(3, p=[0.4, 0.3, 0.3]))                 # 0 换人、1 抢话、2 安静后开口
                 seg = np.zeros((6, N)); xb = get(fb)
@@ -86,7 +88,7 @@ def main():
                 sc_ = float(np.max(np.abs(seg)) / 32000.0 + 1e-12)
                 X.append(np.round(seg / sc_).astype(np.int16))
                 meta.append({"scale": sc_, "az": azb, "az_prev": aza, "cond": cond, "rt60": -1.0, "room": si})
-            print(f"[{split}] {sc}: 话语 {len(utts)}，样本 {PER_SCENE[split]}", flush=True)
+            print(f"[{split}] {sc}: 话语 {len(utts)}，样本 {n_per}", flush=True)
         out = os.path.join(ROOT, "work", a.name, split); os.makedirs(out, exist_ok=True)
         np.savez(os.path.join(out, "shard_000.npz"), x=np.stack(X), **{k: np.array([m[k] for m in meta]) for k in meta[0]})
         print(f"[{split}] 共 {len(X)} 个样本 → {out}")
