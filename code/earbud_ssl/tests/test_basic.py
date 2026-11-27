@@ -163,11 +163,20 @@ def test_lock_rules():
         L.update(2.25 + i * DT, None, 30.0, 2.0)
     assert abs(L.az - 30.0) < 6
     G = Lock("对话组")
-    for t, z in seq:                           # A 入组；B 连续 2 s 且 A 没说话 → 入组
+    for t, z in seq[:8]:                       # A 先说（临时组员）
         G.update(t, None, z, None)
-    assert len(G.members) == 2
-    G.update(6.0, None, 0.0, None)             # A 再说话：立即对准
+    for i in range(3):                         # 佩戴者 2.0 s 说完，B 第一个接话 → 入组并对准
+        G.update(2.25 + i * DT, None, 30.0, 2.0)
+    assert abs(G.az - 30.0) < 6 and len(G.members) == 2
+    G.update(3.5, None, 0.0, 2.0)              # A 是组员，再说话立即对准
     assert abs(G.az) < 6
+    H = Lock("对话组")
+    for t, z in seq[:8]:
+        H.update(t, None, z, None)
+    H.talking_during_self(2.0, -30.0)          # C（-30°）在佩戴者说话时也在说：不算回应
+    for i in range(3):
+        H.update(2.25 + i * DT, None, -30.0, 2.0)
+    assert abs(H.az) < 6 and len(H.members) == 1
 
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]

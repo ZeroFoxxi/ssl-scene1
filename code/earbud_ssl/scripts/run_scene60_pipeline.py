@@ -69,12 +69,31 @@ class Lock:
     """锁定规则；方位都在世界坐标里。
     跟随：锁定 = 当前说话人的估计。
     防抖（第 8.1 节）：另一方向的人连续说满 2 s、且原目标这段时间没说话才切换；佩戴者说完 1.5 s 内开口并说满 0.5 s 的人视为回应，立即切换。
-    对话组（新增【设计】）：记住"在和佩戴者交谈的人"（组员）。组员说话时立即对准他；不在组里的人按以下条件入组并对准：
-        佩戴者说完 1.5 s 内开口并说满 0.5 s（回应）；佩戴者 2 s 内转头超过 10° 且此人在正前方 ±10° 内说满 1 s（看向）；
-        连续说满 2 s 且这段时间组员都没说话（防抖）。场景开始时第一个说话的人直接入组。"""
+    对话组（新增【设计】）：记住"在和佩戴者交谈的人"（组员，计分）。组员说话时立即对准他；入组 / 加分条件：
+        回应：佩戴者说完后第一个接话（1.5 s 内开口、说满 0.5 s）的人，且佩戴者说话时他没在说（高帧率档看唇动）；
+        看向：佩戴者 2 s 内转头超过 10°，且此人在正前方 ±10° 内说满 1 s；
+        冷场：组员 4 s 以上没说话，另一方向的人连续说满 2 s（得分减半）。
+      佩戴者说话时唇动显示还在说的组员减分（在和别人说话），得分 ≤ 0 不再算组员。场景开头先跟第一个说话的人（临时组员）。"""
     def __init__(self, rule):
         self.rule = rule; self.az = None; self.cand = None; self.last_lock_obs = -9.0
         self.members = []; self.switches = []
+        self.first_after = {}; self.talked_over = {}; self.last_member_talk = -9.0
+
+    def _join(self, t, az, score):
+        for m in self.members:
+            if angdiff(m["az"], az) <= LOCK["same_deg"]:
+                m["score"] += score; m["az"] = az
+                break
+        else:
+            self.members.append({"az": az, "score": score})
+        self._set(t, az); self.last_member_talk = t
+
+    def talking_during_self(self, self_start_key, az):
+        """高帧率档：佩戴者说话时唇动显示在说的人——记下来；若是组员则减分。"""
+        self.talked_over.setdefault(self_start_key, []).append(az)
+        for m in self.members:
+            if angdiff(m["az"], az) <= LOCK["same_deg"]:
+                m["score"] -= 0.25
 
     def _set(self, t, az):
         if self.az is not None and angdiff(az, self.az) > LOCK["same_deg"]:
@@ -84,9 +103,9 @@ class Lock:
     def _track(self, t, z):
         old = self.az
         self.az = wrap(self.az + LOCK["track_gain"] * wrap(z - self.az)); self.last_lock_obs = t
-        for i, m in enumerate(self.members):
-            if angdiff(m, old) <= LOCK["same_deg"]:
-                self.members[i] = self.az
+        for m in self.members:
+            if angdiff(m["az"], old) <= LOCK["same_deg"]:
+                m["az"] = self.az; self.last_member_talk = t
 
     def update(self, t, own, new, self_end, yaw=0.0, yaw_prev=0.0):
         """own：按锁定对象本人开口时刻测得的观测（高帧率档才有）；new：当前（或新开口的人）的观测。"""
@@ -99,27 +118,38 @@ class Lock:
         if self.rule == "跟随" or self.az is None:
             self._set(t, z)
             if self.rule == "对话组" and not self.members:
-                self.members.append(z)
+                self.members.append({"az": z, "score": 0.5})     # 场景开头：先跟第一个说话的人（临时组员）
+                self.last_member_talk = t
             return
         if angdiff(z, self.az) <= same:
             self._track(t, z); self.cand = None
             return
         if self.rule == "对话组":
-            near = [m for m in self.members if angdiff(m, z) <= same]
+            near = [m for m in self.members if angdiff(m["az"], z) <= same and m["score"] > 0]
             if near:
-                self._set(t, wrap(near[0] + LOCK["track_gain"] * wrap(z - near[0])))
+                m = near[0]; m["az"] = wrap(m["az"] + LOCK["track_gain"] * wrap(z - m["az"]))
+                self._set(t, m["az"])
                 return
         if self.cand is not None and angdiff(z, self.cand["az"]) <= same:
             c = self.cand; c["az"] = wrap(c["az"] + 0.5 * wrap(z - c["az"])); c["dur"] += DT
         else:
             self.cand = c = {"az": z, "start": t, "dur": DT}
         reply = self_end is not None and 0 <= c["start"] - self_end <= LOCK["reply_window_s"] and c["dur"] >= LOCK["reply_min_s"]
+        if self.rule == "对话组":
+            # 回应：佩戴者说完后第一个接话的人，且佩戴者说话时他没在说（高帧率档看唇动；纯声学 / 低帧率档没有这条信息）
+            first = self_end is not None and self.first_after.get(self_end) in (None, c["start"])
+            if reply and first and not any(angdiff(c["az"], a) <= same for a in self.talked_over.get(self_end, [])):
+                self.first_after[self_end] = c["start"]
+                self._join(t, c["az"], 1.0)
+                return
+            look = abs(wrap(yaw - yaw_prev)) > 10 and abs(wrap(c["az"] - yaw)) <= 10 and c["dur"] >= 1.0
+            lapse = c["dur"] >= LOCK["switch_s"] and t - self.last_member_talk >= 4.0   # 组员 4 s 以上都没说话：对话可能换了人
+            if look or lapse:
+                self._join(t, c["az"], 1.0 if look else 0.5)
+            return
         long_ = c["dur"] >= LOCK["switch_s"] and self.last_lock_obs < c["start"]
-        look = (self.rule == "对话组" and abs(wrap(yaw - yaw_prev)) > 10 and abs(wrap(c["az"] - yaw)) <= 10 and c["dur"] >= 1.0)
-        if reply or long_ or look:
-            az = c["az"]; self._set(t, az)
-            if self.rule == "对话组":
-                self.members.append(az)
+        if reply or long_:
+            self._set(t, c["az"])
 
 
 def run_scene(sc, Y, ctx, rng, thresh):
@@ -152,6 +182,14 @@ def run_scene(sc, Y, ctx, rng, thresh):
         se = max([e for e in self_ends if e <= t], default=None)
         yaw, yaw_prev = float(yaw_imu[k]), float(yaw_imu[max(0, k - k2)])
         row = {"t": float(t), "tgt": tgt, "par": par, "truth_t": truth_t, "truth_p": truth_p, "vis_p": vis_p, "self": selfsp, "out": {}}
+        if selfsp:
+            # 本段自语音结束的时刻（作为键）
+            nxt = min([e for e in self_ends if e >= t], default=None)
+            if nxt is not None:
+                fs_ = faces_now(sc, k, rng, True)
+                for fa, li in fs_:
+                    if li > 0.5:
+                        state["高帧率档常开"]["locks"]["对话组"].talking_during_self(nxt, wrap(fa + yaw))
         for m in MODES:
             s = state[m]
             ev = lip_ev if m == "高帧率档常开" else ac_ev
