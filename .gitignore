@@ -20,3 +20,4 @@ desktop.ini
 # 训练数据与语音素材（可由脚本重新生成 / 下载，不进仓库）
 code/ssl_baseline/work/
 code/earbud_ssl/cache/
+code/earbud_ssl/out/scene60_pipeline_*.log
