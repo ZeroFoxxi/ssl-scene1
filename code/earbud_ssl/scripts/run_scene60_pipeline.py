@@ -100,8 +100,9 @@ def face_peak(spec, grid, face_head, width=10.0, min_rel=0.5):
     if not win.any():
         return None
     i = np.flatnonzero(win)[np.argmax(spec[win])]
-    if spec[i] < min_rel * spec.max():
-        return None
+    n = len(spec)
+    if spec[i] < min_rel * spec.max() or spec[i] < spec[(i - 1) % n] or spec[i] < spec[(i + 1) % n]:
+        return None          # 窗内最大值不是局部峰（真正的峰在窗外，只是坡上的点）或太弱
     return float(grid[i])
 
 
