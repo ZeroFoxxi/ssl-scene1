@@ -29,6 +29,13 @@ SCENE=general ARRAY=lin6_3cm SIZES="s l" bash server_kit/start.sh
 
 生成"通用房间"仿真数据（声源在前方 ±80°、1–4 m）到 `work/train_data_general_lin6_3cm/`，训练 s、l 两档 × 两个种子。没有会议室固定测试集，汇总里只列验证集结果；实录微调与评测需要 RealMAN 数据，另见说明。
 
+**其他后台任务**（都会自动转到后台，各有日志）：
+
+| 任务 | 命令 | 结果 |
+|---|---|---|
+| RealMAN 实录微调 + 评测（需 `work/realman_val/`） | `bash server_kit/finetune_realman.sh "<起点模型模式>"` | `out/server_models_realman.txt` |
+| 会议室模型检查：连续会议仿真（验证会议选门限 → 报告会议评测一次）+ 置信度 + 8 比特量化（主要用 CPU） | `bash server_kit/meeting_model_check.sh work/models/<模型>.pt` | `out/meeting_check_<模型>.txt` |
+
 ## 0. 需要什么
 
 | 项 | 要求 |

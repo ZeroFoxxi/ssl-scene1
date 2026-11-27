@@ -118,7 +118,9 @@ def main():
     a = ap.parse_args()
     torch.set_num_threads(4)
     name = os.path.basename(a.ckpt)[:-3]
-    model = CRNN(in_ch=11, **SIZES["s"]); model.load_state_dict(torch.load(a.ckpt, map_location="cpu")); model.eval()
+    side = a.ckpt[:-3] + ".json"
+    size = json.load(open(side, encoding="utf-8")).get("size", "s") if os.path.exists(side) else "s"      # 网络大小以模型旁的 .json 为准
+    model = CRNN(in_ch=11, **SIZES[size]); model.load_state_dict(torch.load(a.ckpt, map_location="cpu")); model.eval()
     rows = layer_macs(model)
     tot = sum(r["乘加"] for r in rows); npar = sum(p.numel() for p in model.parameters())
     for r in rows: r["占比"] = round(r["乘加"] / tot, 3)
