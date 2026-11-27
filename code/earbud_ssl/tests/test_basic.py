@@ -113,6 +113,29 @@ def test_room_early_ir():
     assert len(image_sources(room, src, 2, beta)) == 1 + 6 + 18
 
 
+
+def test_scene60():
+    """60 s 场景生成器：目标真值只落在正在说话的人身上；渲染形状正确；两种类型都能生成。"""
+    from earbud_ssl import scene60 as SC
+    from earbud_ssl.sphere import earbud_mic_set
+    rng = np.random.default_rng(3)
+    for kind in ("turns", "case2"):
+        sc = SC.make_scene(rng, {"kind": kind, "duration_s": 20.0})
+        for p in sc.persons:
+            m = sc.target == p.pid
+            assert np.all(p.speaking[m]), (kind, p.pid)
+        assert sc.yaw.shape == (sc.T,) and len(sc.persons) == 5
+        if kind == "case2":
+            tg = set(sc.target[sc.target >= 0].tolist())
+            assert len(tg) == 1
+    mics = earbud_mic_set("2+1")
+    ctx = {"Htab": sphere_tf(azimuth_points(np.arange(0, 360, 1.0), 1.5), mics, FREQS),
+           "H_diff": sphere_tf(fibonacci_sphere(8, 2.0), mics, FREQS),
+           "H_self": sphere_tf(azimuth_points([0.0], 0.115, el_deg=-40.0), mics, FREQS)[0], "psd": np.ones(len(FREQS))}
+    sc = SC.make_scene(rng, {"kind": "turns", "duration_s": 12.0, "rt60": 0.3})
+    Y, parts = SC.render(sc, ctx, rng, lambda n, r: r.standard_normal(n))
+    assert Y.shape == (3, len(FREQS), sc.T) and np.isfinite(Y).all() and "noise" in parts
+
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for t in tests:
