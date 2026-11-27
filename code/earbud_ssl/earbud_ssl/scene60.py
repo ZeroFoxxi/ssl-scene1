@@ -42,7 +42,7 @@ DEFAULT = {
     "n_walk": 1,                # 走动的说话人次数
     "walk_speed_dps": (10, 40),
     "walk_dur_s": (2.0, 4.0),
-    "fov_half_deg": 45.0,       # 两只耳机摄像头合起来的水平视野（头部坐标）【设计，待硬件确认】
+    "fov_half_deg": 70.0,       # 摄像头视野（头部坐标 ±70°，与 11 月各仿真的 VIS["fov"] 一致）【设计，待硬件确认】
     "case2_sir_db": 0.0,        # 情况 2：互相说话的两人相对目标的电平（0 = 一样响，-6 = 低 6 dB）
     "rt60": 0.5, "drr_db": 0.0, "snr_db": 10.0,
 }
@@ -55,7 +55,7 @@ class Person:
     dist: float
     az_world: np.ndarray        # (T,) 世界坐标方位（°），0 = 佩戴者起始正前方，左正
     speaking: np.ndarray        # (T,) bool
-    gain_db: float = 0.0        # 相对 1.5 m 处对面说话人的直达声电平
+    gain_db: float = 0.0        # 嗓音大小（dB，相对普通说话）；到耳机处的直达声电平 = gain_db − 20·log10(dist / 1.5 m)
 
 
 @dataclass
@@ -68,6 +68,7 @@ class Scene:
     self_speech: np.ndarray     # (T,) bool
     target: np.ndarray          # (T,) int：正在和佩戴者说话的人的 pid，-1 = 没有
     events: list = field(default_factory=list)
+    partner: np.ndarray = None  # (T,) int：对话对象——最近一个和佩戴者说话的人，佩戴者回话、停顿时保持，直到换人；开场前为 -1
 
     def az_head(self, p):
         """某人在头部坐标里的方位（°，-180–180）。"""
@@ -113,8 +114,24 @@ def make_scene(rng, cfg=None):
     for j in range(cfg["n_side"]):
         sgn = 1 if j % 2 == 0 else -1
         a = sgn * rng.uniform(*cfg["side_az_abs_deg"])
-        persons.append(Person(n + j, "side", rng.uniform(*cfg["side_dist_m"]), np.full(T, a), np.zeros(T, bool),
-                              gain_db=-cfg["side_sir_db"]))
+        d = rng.uniform(*cfg["side_dist_m"])
+        # 旁桌在耳机处比 1.5 m 处的对面说话人低 side_sir_db（直达声），据此反推嗓音大小；混响尾按距离自然变化
+        persons.append(Person(n + j, "side", d, np.full(T, a), np.zeros(T, bool), gain_db=-cfg["side_sir_db"] + 20 * np.log10(d / 1.5)))
+
+    partners_w = [p for p in persons if p.role == "partner"]
+    # 走动：对面某人在一段时间内匀速改变方位
+    for _ in range(cfg["n_walk"]):
+        p = partners_w[rng.integers(len(partners_w))]
+        w = rng.uniform(*cfg["walk_speed_dps"]) * rng.choice([-1, 1])
+        D = rng.uniform(*cfg["walk_dur_s"]); lo = min(5.0, 0.2 * dur)
+        if dur - D - lo <= lo:
+            continue
+        t0 = rng.uniform(lo, dur - D - lo)
+        a, b = _frames(t0), _frames(t0 + D)
+        ramp = np.zeros(T); ramp[a:b] = w * (tt[a:b] - tt[a]); ramp[b:] = w * (tt[b - 1] - tt[a])
+        p.az_world = np.clip(p.az_world + ramp, -60, 60)     # 走动限制在正前方 ±60° 内（仍是"对面"的人）【设计】
+        ev.append({"t": round(t0, 2), "type": "走动", "pid": p.pid, "deg_per_s": round(float(w), 1), "dur": round(D, 2)})
+
 
     yaw = np.zeros(T)
     self_sp = np.zeros(T, bool)
@@ -173,8 +190,8 @@ def make_scene(rng, cfg=None):
             p = others[k % 2]; L = rng.uniform(*cfg["utt_s"])
             _mark(p.speaking, t, t + L, T); ev.append({"t": round(t, 2), "type": "旁人互相说话", "pid": p.pid, "dur": round(L, 2)})
             t += L + rng.uniform(*cfg["gap_s"]); k += 1
-        for p in others:
-            p.gain_db = cfg["case2_sir_db"]
+        for p in others:   # 在耳机处与目标的直达声电平差 = case2_sir_db（"一样响"指到耳机处一样响）
+            p.gain_db = cfg["case2_sir_db"] + 20 * np.log10(p.dist / tgt.dist)
     else:
         raise ValueError(cfg["kind"])
 
@@ -186,21 +203,12 @@ def make_scene(rng, cfg=None):
         while t < dur:
             L = rng.uniform(2.0, 8.0); _mark(p.speaking, t, t + L, T); t += L + rng.uniform(0.3, 1.5)
 
-    # 走动：对面某人在一段时间内匀速改变方位
-    for _ in range(cfg["n_walk"]):
-        p = partners[rng.integers(len(partners))]
-        w = rng.uniform(*cfg["walk_speed_dps"]) * rng.choice([-1, 1])
-        D = rng.uniform(*cfg["walk_dur_s"]); lo = min(5.0, 0.2 * dur)
-        if dur - D - lo <= lo:
-            continue
-        t0 = rng.uniform(lo, dur - D - lo)
-        a, b = _frames(t0), _frames(t0 + D)
-        ramp = np.zeros(T); ramp[a:b] = w * (tt[a:b] - tt[a]); ramp[b:] = w * (tt[b - 1] - tt[a])
-        p.az_world = np.clip(p.az_world + ramp, -80, 80)
-        ev.append({"t": round(t0, 2), "type": "走动", "pid": p.pid, "deg_per_s": round(float(w), 1), "dur": round(D, 2)})
-
     ev.sort(key=lambda e: e["t"])
-    return Scene(cfg, T, tt, persons, yaw, self_sp, target, ev)
+    partner = target.copy()
+    for i in range(1, T):
+        if partner[i] < 0:
+            partner[i] = partner[i - 1]
+    return Scene(cfg, T, tt, persons, yaw, self_sp, target, ev, partner)
 
 
 def _render_track(S, az_head, gain, Htab, H_diff, rng, rt60, drr):
@@ -273,6 +281,9 @@ def summary(scene):
     for p in scene.persons:
         tv |= (scene.target == p.pid) & scene.visible(p)
     d["目标在视野内的占比（有目标时）"] = round(float(tv[tgt_on].mean()), 3) if tgt_on.any() else None
+    d["有对话对象的时间占比"] = round(float((scene.partner >= 0).mean()), 3)
     d["最大转头_deg"] = round(float(np.max(np.abs(scene.yaw))), 1)
+    lv = [p.gain_db - 20 * np.log10(p.dist / 1.5) for p in scene.persons if p.role == "side"]
+    d["旁桌到耳机处直达声电平_dB（设计值）"] = round(float(np.mean(lv)), 2) if lv else None
     d["事件数"] = len(scene.events)
     return d

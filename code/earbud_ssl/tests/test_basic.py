@@ -125,9 +125,17 @@ def test_scene60():
             m = sc.target == p.pid
             assert np.all(p.speaking[m]), (kind, p.pid)
         assert sc.yaw.shape == (sc.T,) and len(sc.persons) == 5
+        assert np.all(sc.partner[sc.target >= 0] == sc.target[sc.target >= 0])   # 有人说话时对话对象就是他
+        for p in sc.persons:   # 旁桌到耳机处的直达声比 1.5 m 处对面说话人低 side_sir_db
+            if p.role == "side":
+                assert abs(p.gain_db - 20 * np.log10(p.dist / 1.5) + sc.cfg["side_sir_db"]) < 1e-9
         if kind == "case2":
             tg = set(sc.target[sc.target >= 0].tolist())
             assert len(tg) == 1
+            t0 = sc.persons[next(iter(tg))]
+            for p in sc.persons:   # 情况 2：另外两人到耳机处与目标一样响
+                if p.role == "partner" and p is not t0:
+                    assert abs((p.gain_db - 20 * np.log10(p.dist / 1.5)) - (t0.gain_db - 20 * np.log10(t0.dist / 1.5)) - sc.cfg["case2_sir_db"]) < 1e-9
     mics = earbud_mic_set("2+1")
     ctx = {"Htab": sphere_tf(azimuth_points(np.arange(0, 360, 1.0), 1.5), mics, FREQS),
            "H_diff": sphere_tf(fibonacci_sphere(8, 2.0), mics, FREQS),

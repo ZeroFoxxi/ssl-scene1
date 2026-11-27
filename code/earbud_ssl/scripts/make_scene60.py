@@ -42,8 +42,10 @@ def plot(scene, path):
     tt = scene.tt
     fov = scene.cfg["fov_half_deg"]
     ax.axhspan(-fov, fov, color="#EAF2F8", lw=0, zorder=0)
+    def brk(a):   # 方位跨过 ±180° 时断开连线
+        a = np.asarray(a, float).copy(); a[1:][np.abs(np.diff(a)) > 90] = np.nan; return a
     for p in scene.persons:
-        az = scene.az_head(p)
+        az = brk(scene.az_head(p))
         col = "#5E5E5E" if p.role == "side" else NAVY
         ax.plot(tt, az, color=col, lw=0.6, alpha=0.35, zorder=1)
         sp = np.where(p.speaking, az, np.nan)
@@ -51,9 +53,10 @@ def plot(scene, path):
                 label=("对面说话人（说话时段）" if p.role == "partner" else "旁桌说话人") if p.pid in (0, scene.cfg["n_partners"]) else None)
     tgt_az = np.full(scene.T, np.nan)
     for p in scene.persons:
-        m = scene.target == p.pid
+        m = scene.partner == p.pid
         tgt_az[m] = scene.az_head(p)[m]
-    ax.plot(tt, tgt_az, color="#B22222", lw=1.0, ls="--", zorder=3, label="锁定目标真值")
+    tgt_az = brk(tgt_az)
+    ax.plot(tt, tgt_az, color="#B22222", lw=1.0, ls="--", zorder=3, label="对话对象真值（回话、停顿时保持）")
     ax.set_ylim(-160, 160); ax.set_ylabel("头部坐标方位（°，左正）")
     ax.set_title(f"60 s 场景剧本（{scene.cfg['kind']}）：浅蓝带为摄像头视野（±{fov:.0f}°），细线为不说话时的位置", fontsize=11)
     ax.legend(loc="upper right", fontsize=9, ncol=3, frameon=False)
