@@ -34,7 +34,7 @@ DT = 0.25
 T_START = 1.0
 MODES = ["纯声学", "低帧率档", "高帧率档常开"]
 LOCKS = ["跟随", "防抖", "对话组"]
-LOCK = {"same_deg": 12.0, "switch_s": 2.0, "reply_window_s": 1.5, "reply_min_s": 0.5, "track_gain": 0.3}
+LOCK = {"same_deg": 12.0, "switch_s": 2.0, "reply_window_s": 1.5, "reply_min_s": 0.5, "track_gain": 0.3, "confirm_n": 1}
 IMU_SIGMA = 0.5
 MON_FPS = 1.5
 KINDS = {"turns（轮流说话，旁桌低 6 dB）": {"kind": "turns"},
@@ -115,6 +115,15 @@ class Lock:
         z = new
         if z is None:
             return
+        if self.rule == "跟随" and self.az is not None and angdiff(z, self.az) > same and LOCK["confirm_n"] > 1:
+            pend = getattr(self, "pend", None)
+            if pend is not None and angdiff(z, pend[0]) <= same:
+                self.pend = (z, pend[1] + 1)
+            else:
+                self.pend = (z, 1)
+            if self.pend[1] < LOCK["confirm_n"]:
+                return
+            self.pend = None
         if self.rule == "跟随" or self.az is None:
             self._set(t, z)
             if self.rule == "对话组" and not self.members:
@@ -127,8 +136,15 @@ class Lock:
         if self.rule == "对话组":
             near = [m for m in self.members if angdiff(m["az"], z) <= same and m["score"] > 0]
             if near:
-                m = near[0]; m["az"] = wrap(m["az"] + LOCK["track_gain"] * wrap(z - m["az"]))
-                self._set(t, m["az"])
+                m = near[0]
+                if LOCK["confirm_n"] > 1:
+                    pend = getattr(self, "pend", None)
+                    self.pend = (m["az"], pend[1] + 1) if pend is not None and angdiff(pend[0], m["az"]) <= same else (m["az"], 1)
+                    if self.pend[1] < LOCK["confirm_n"]:
+                        return
+                    self.pend = None
+                m["az"] = wrap(m["az"] + LOCK["track_gain"] * wrap(z - m["az"]))
+                self._set(t, m["az"]); self.last_member_talk = t
                 return
         if self.cand is not None and angdiff(z, self.cand["az"]) <= same:
             c = self.cand; c["az"] = wrap(c["az"] + 0.5 * wrap(z - c["az"])); c["dur"] += DT
@@ -291,7 +307,9 @@ def main():
     ap.add_argument("--seed", type=int, default=101)
     ap.add_argument("--thresh", type=float, default=3.5)
     ap.add_argument("--tag", default="dev")
+    ap.add_argument("--confirm", type=int, default=1, help="换到新方向前要求连续几次观测一致（跟随、对话组）")
     a = ap.parse_args()
+    LOCK["confirm_n"] = a.confirm
     ctx = build_ctx()
     fm = (ctx["freqs"] >= 200) & (ctx["freqs"] <= 7000)
     grid = np.arange(-180, 180, 5.0)
