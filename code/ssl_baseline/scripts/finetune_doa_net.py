@@ -26,6 +26,7 @@ def main():
     ap.add_argument("--real", default="train_data_realman_ft")
     ap.add_argument("--sim", default="train_data_general_lin6_3cm")
     ap.add_argument("--epochs", type=int, default=8)
+    ap.add_argument("--steps", type=int, default=0, help="总步数（>0 时按它换算轮数；数据量实验里各组步数相同）")
     ap.add_argument("--bs", type=int, default=64)
     ap.add_argument("--lr", type=float, default=3e-4)
     ap.add_argument("--seed", type=int, default=0)
@@ -45,6 +46,9 @@ def main():
     print(f"微调前：挑选场景 ≤10° {acc0:.3f}", flush=True)
     half = a.bs // 2
     steps_per_ep = int(np.ceil(len(rtr["az"]) / half))
+    if a.steps > 0:
+        a.epochs = int(np.ceil(a.steps / steps_per_ep))
+        print(f"实录样本 {len(rtr['az'])}，每轮 {steps_per_ep} 步，共 {a.epochs} 轮", flush=True)
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, weight_decay=1e-3)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=a.epochs * steps_per_ep)
     lr_real, lr_sim = torch.from_numpy(soft_label(rtr["az"])).to(dev), torch.from_numpy(soft_label(sim["az"])).to(dev)

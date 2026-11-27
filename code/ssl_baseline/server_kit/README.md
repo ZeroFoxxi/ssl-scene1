@@ -35,6 +35,7 @@ SCENE=general ARRAY=lin6_3cm SIZES="s l" bash server_kit/start.sh
 |---|---|---|
 | RealMAN 实录微调 + 评测（需 `work/realman_val/`） | `bash server_kit/finetune_realman.sh "<起点模型模式>"` | `out/server_models_realman.txt` |
 | 会议室模型检查：连续会议仿真（验证会议选门限 → 报告会议评测一次）+ 置信度 + 8 比特量化（主要用 CPU） | `bash server_kit/meeting_model_check.sh work/models/<模型>.pt` | `out/meeting_check_<模型>.txt` |
+| 实录数据量与房间数（多个起点模型；GPU；需 `work/realman_val/`） | `bash server_kit/data_amount.sh` | `out/realman_data_amount_server.txt` |
 
 ## 0. 需要什么
 

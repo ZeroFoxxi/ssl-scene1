@@ -9,8 +9,12 @@
   空出的时段用同场景真实背景噪声填补（见 build_realman_test.py）。
 输出：work/train_data_realman_ft/{train,val}/shard_000.npz（字段同仿真训练数据：x int16、scale、az、az_prev、cond、rt60、room）
 运行：python scripts/build_realman_finetune.py
+数据量实验（只用一部分实录话语，样本数不变）：
+      python scripts/build_realman_finetune.py --utt-frac 0.25 --name train_data_realman_ft_f025 --splits train
+      python scripts/build_realman_finetune.py --scenes OfficeRoom1 --name train_data_realman_ft_OfficeRoom1 --splits train
+（默认参数时输出与原来逐字节一致；话语子集用单独的随机数，不影响样本合成的随机序列）
 """
-import csv, glob, os, sys
+import argparse, csv, glob, json, os, sys
 import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -34,14 +38,31 @@ def labels():
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--utt-frac", type=float, default=1.0, help="每个场景只用这个比例的话语（模拟实录采得少）")
+    ap.add_argument("--scenes", nargs="*", default=None, help="微调用的场景（默认 3 个）")
+    ap.add_argument("--subset-seed", type=int, default=0)
+    ap.add_argument("--name", default="train_data_realman_ft")
+    ap.add_argument("--splits", nargs="*", default=["train", "val"])
+    a = ap.parse_args()
     lab = labels()
-    for split, scenes in SPLITS.items():
+    splits = {"train": a.scenes or SPLITS["train"], "val": SPLITS["val"]}
+    stats = {}
+    for split in a.splits:
+        scenes = splits[split]
         rng = np.random.default_rng({"train": 101, "val": 202}[split])
         X, meta = [], []
         for si, sc in enumerate(scenes):
             files = sorted(glob.glob(os.path.join(W, sc, "*", "*", "*_CH0.flac")))
             utts = [(f, T.fold(90.0 - lab[os.path.basename(f).replace("_CH0", "")])) for f in files if os.path.basename(f).replace("_CH0", "") in lab]
             utts = [u for u in utts if abs(u[1]) <= 80]
+            if split == "train" and a.utt_frac < 1.0:                     # 只留一部分话语（单独的随机数，按场景固定）
+                sub = np.random.default_rng(a.subset_seed * 1000 + sum(map(ord, sc)))
+                keep = np.sort(sub.permutation(len(utts))[:max(2, int(round(a.utt_frac * len(utts))))])
+                utts = [utts[i] for i in keep]
+            if split == "train":
+                import soundfile as sf
+                stats[sc] = {"utts": len(utts), "minutes": round(sum(sf.info(u[0]).duration for u in utts) / 60, 2)}
             cache = {}
             get = lambda f: cache.setdefault(f, T.load(f))
             bank = T.noise_bank(utts, 30 * FS)
@@ -66,9 +87,11 @@ def main():
                 X.append(np.round(seg / sc_).astype(np.int16))
                 meta.append({"scale": sc_, "az": azb, "az_prev": aza, "cond": cond, "rt60": -1.0, "room": si})
             print(f"[{split}] {sc}: 话语 {len(utts)}，样本 {PER_SCENE[split]}", flush=True)
-        out = os.path.join(ROOT, "work", "train_data_realman_ft", split); os.makedirs(out, exist_ok=True)
+        out = os.path.join(ROOT, "work", a.name, split); os.makedirs(out, exist_ok=True)
         np.savez(os.path.join(out, "shard_000.npz"), x=np.stack(X), **{k: np.array([m[k] for m in meta]) for k in meta[0]})
         print(f"[{split}] 共 {len(X)} 个样本 → {out}")
+    if stats:
+        json.dump({"scenes": stats, "utt_frac": a.utt_frac, "subset_seed": a.subset_seed}, open(os.path.join(ROOT, "work", a.name, "info.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 
 if __name__ == "__main__":
