@@ -190,6 +190,8 @@ class Lock:
             if self.pend[1] < LOCK["confirm_n"]:
                 return
             self.pend = None
+        if self.az is None and self.rule != "跟随" and abs(wrap(z - yaw)) > 30:
+            return            # 开场引导只接受正前方 ±30° 内的人（设计 8.1），旁桌开口不当成对话对象
         if self.rule == "跟随" or self.az is None:
             self._set(t, z)
             if self.rule == "对话组" and not self.members:
@@ -255,7 +257,7 @@ def run_scene(sc, Y, ctx, rng, thresh):
         for k in onsets(p.speaking):
             if abs(sc.az_head(p)[k]) <= sc.cfg["fov_half_deg"] and rng.random() < RA.VIS["p_detect"]:
                 ko = RC.time_frame(RC.frame_time(k) + rng.uniform(-RA.ONSET_JIT, RA.ONSET_JIT))
-                if not self_block(sc, ko):
+                if True:   # 唇动看的是别人的嘴，不受佩戴者自己说话影响（声学开口才需要排除自语音）
                     lip_ev.append((ko, ko, wrap(sc.az_head(p)[k] + rng.normal(0, RA.VIS["az_sigma"]) + yaw_imu[k])))
     lip_ev.sort()
     self_ends = [RC.frame_time(b) for b in np.flatnonzero(np.diff(np.r_[sc.self_speech.astype(int), 0]) == -1)]
@@ -320,10 +322,10 @@ def run_scene(sc, Y, ctx, rng, thresh):
                             if sp is not None:
                                 zp = face_peak(sp, grid, wrap(L.az - yaw))
                                 own = None if zp is None else wrap(zp + yaw)
-                        # 别的人：最近 5 s 内开过口、此刻嘴在张合、不在锁定方向的每张脸，各给一个观测
+                        # 别的人：最近 8 s 内开过口、此刻嘴在张合、不在锁定方向的每张脸，各给一个观测
                         new = []; done = []
                         for e in reversed(s["seen"]):
-                            if RC.frame_time(e[0]) < t - 5.0:
+                            if RC.frame_time(e[0]) < t - 8.0:
                                 break
                             if angdiff(e[2], L.az) <= LOCK["same_deg"] or any(angdiff(e[2], d) <= LOCK["same_deg"] for d in done):
                                 continue
