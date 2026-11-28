@@ -212,6 +212,7 @@ if (AM) {
   const s = newSlide("实录数据微调",
     "RealMAN 测试集 600 个样本；微调用 RealMAN 另外 3 个房间（办公室 1 个、客厅 2 个），第 4 个房间挑选模型",
     REAL_NOTE + "\n微调：从只用仿真训练的模型出发，每批一半真实录音、一半仿真数据，学习率较小；各组训练步数相同，只改真实录音的多少。录音分钟数为所用话语的总时长。"
+    + "\n微调后剩余错误（全量模型）：换人 93.0%、抢话 81.7%。抢话的 55 个错误中，19 个指向仍在说话的上一位（摄像头暂不转，属漏转，1.0 s 时可再判），11 个落在两人之间，其余分散。"
     + (AM ? `\n房间数对比（录音时长相近）：1 个房间（3 个房间各做一次，平均约 ${f0(amtLine.singleMin)} 分钟）${amtLine.single != null ? f1(amtLine.single) + "%" : TBD}；3 个房间各三分之一（约 ${f0(amtLine.multiMin)} 分钟）${amtLine.multi != null ? f1(amtLine.multi) + "%" : TBD}。` : ""));
   if (amtRows) {
     s.addChart(p.charts.BAR, [{ name: "真实录音 ≤10°", labels: amtRows.map((r) => r.m === 0 ? "不微调" : `${f0(r.m)} 分钟`), values: amtRows.map((r) => R1(r.acc)) }],
