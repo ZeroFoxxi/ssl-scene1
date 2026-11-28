@@ -116,7 +116,7 @@ class Lock:
         冷场：另一方向的人连续说满 2 s、这期间组员都没说话（得分减半）。
       每段自语音结束后结算：期间一半以上时间唇动显示还在说的组员扣 1 分（在和别人说话），得分 ≤ 0 不再算组员。场景开头先跟第一个说话的人（临时组员）。"""
     def __init__(self, rule):
-        self.rule = rule; self.az = None; self.cand = None; self.last_lock_obs = -9.0
+        self.rule = rule; self.az = None; self.cands = []; self.last_lock_obs = -9.0
         self.members = []; self.switches = []
         self.first_after = {}; self.talked_over = {}; self.self_steps = {}; self.settled = set(); self.last_member_talk = -9.0
 
@@ -153,7 +153,8 @@ class Lock:
     def _set(self, t, az):
         if self.az is not None and angdiff(az, self.az) > LOCK["same_deg"]:
             self.switches.append(t)
-        self.az = az; self.last_lock_obs = t; self.cand = None
+        self.az = az; self.last_lock_obs = t
+        self.cands = [c for c in self.cands if angdiff(c["az"], az) > LOCK["same_deg"]]
 
     def _track(self, t, z):
         old = self.az
@@ -169,9 +170,12 @@ class Lock:
             self.settle(t, self_end)
         if own is not None and self.az is not None and angdiff(own, self.az) <= same:
             self._track(t, own)
-        z = new
-        if z is None:
-            return
+        news = [] if new is None else (list(new) if isinstance(new, (list, tuple)) else [new])
+        for z in news:
+            self._obs(t, z, self_end, yaw, yaw_prev)
+
+    def _obs(self, t, z, self_end, yaw, yaw_prev):
+        same = LOCK["same_deg"]
         if self.rule == "跟随" and self.az is not None and angdiff(z, self.az) > same and LOCK["confirm_n"] > 1:
             pend = getattr(self, "pend", None)
             if pend is not None and angdiff(z, pend[0]) <= same:
@@ -190,7 +194,7 @@ class Lock:
         lock_valid = (self.rule != "对话组" or not self.members or
                       any(angdiff(m["az"], self.az) <= same and m["score"] > 0 for m in self.members))
         if angdiff(z, self.az) <= same and lock_valid:
-            self._track(t, z); self.cand = None
+            self._track(t, z)
             return
         if self.rule == "对话组":
             near = [m for m in self.members if angdiff(m["az"], z) <= same and m["score"] > 0]
@@ -205,12 +209,14 @@ class Lock:
                 m["az"] = wrap(m["az"] + LOCK["track_gain"] * wrap(z - m["az"]))
                 self._set(t, m["az"]); self.last_member_talk = t
                 return
-        if self.cand is not None and t - self.cand.get("last", self.cand["start"]) > 1.0:
-            self.cand = None                                   # 候选超过 1 s 没有新观测：丢掉
-        if self.cand is not None and angdiff(z, self.cand["az"]) <= same:
-            c = self.cand; c["az"] = wrap(c["az"] + 0.5 * wrap(z - c["az"])); c["dur"] += DT; c["last"] = t
+        self.cands = [c for c in self.cands if t - c["last"] <= 1.0]     # 候选超过 1 s 没有新观测：丢掉
+        c = next((c for c in self.cands if angdiff(z, c["az"]) <= same), None)
+        if c is not None:
+            if c["last"] != t:
+                c["dur"] += DT
+            c["az"] = wrap(c["az"] + 0.5 * wrap(z - c["az"])); c["last"] = t
         else:
-            self.cand = c = {"az": z, "start": t, "dur": DT, "last": t}
+            c = {"az": z, "start": t, "dur": DT, "last": t}; self.cands.append(c)
         reply = self_end is not None and 0 <= c["start"] - self_end <= LOCK["reply_window_s"] and c["dur"] >= LOCK["reply_min_s"]
         if self.rule == "对话组":
             # 回应：佩戴者说完后第一个接话的人，且佩戴者说话时他没在说（高帧率档看唇动；纯声学 / 低帧率档没有这条信息）
@@ -310,20 +316,25 @@ def run_scene(sc, Y, ctx, rng, thresh):
                             if sp is not None:
                                 zp = face_peak(sp, grid, wrap(L.az - yaw))
                                 own = None if zp is None else wrap(zp + yaw)
-                        # 别的人：锁定方向以外最近一次唇动开口
-                        oth = [e for e in s["seen"] if angdiff(e[2], L.az) > LOCK["same_deg"]]
-                        if oth:
-                            # 新开口的那张脸：同样按他自己的唇动门控；他此刻没在说（唇动）就不算新观测
-                            om = lip_open_mask(sc, oth[-1][2], k, yaw_imu, rng, s.setdefault("lipcache", {}))
-                            sp = None
-                            if om is not None and om[k]:
-                                sp = lip_gated_spec(Y, k, om, sc.self_speech, ctx)
-                            if sp is None and (om is None or om[k]):
-                                sp = RC.gevd_spec(Y, k, oth[-1][1], ctx)
-                            if sp is not None:
-                                zp = face_peak(sp, grid, wrap(oth[-1][2] - yaw))
-                                zn = None if zp is None else wrap(zp + yaw)
-                                new = None if zn is None or angdiff(zn, L.az) <= LOCK["same_deg"] else zn
+                        # 别的人：最近 5 s 内开过口、此刻（最近 0.5 s 一半以上时间）嘴张着、不在锁定方向的每张脸，各给一个观测
+                        new = []; done = []
+                        for e in reversed(s["seen"]):
+                            if RC.frame_time(e[0]) < t - 5.0:
+                                break
+                            if angdiff(e[2], L.az) <= LOCK["same_deg"] or any(angdiff(e[2], d) <= LOCK["same_deg"] for d in done):
+                                continue
+                            done.append(e[2])
+                            om = lip_open_mask(sc, e[2], k, yaw_imu, rng, s.setdefault("lipcache", {}))
+                            if om is None or om[max(0, k - int(0.5 * FPS)):k + 1].mean() < 0.5:
+                                continue
+                            sp = lip_gated_spec(Y, k, om, sc.self_speech, ctx)
+                            if sp is None:
+                                sp = RC.gevd_spec(Y, k, e[1], ctx)
+                            if sp is None:
+                                continue
+                            zp = face_peak(sp, grid, wrap(e[2] - yaw))
+                            if zp is not None and angdiff(wrap(zp + yaw), L.az) > LOCK["same_deg"]:
+                                new.append(wrap(zp + yaw))
                     L.update(t, own, new, se, yaw, yaw_prev)
                 else:
                     L.update(t, None, z_world, se, yaw, yaw_prev)
