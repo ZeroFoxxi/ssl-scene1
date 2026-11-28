@@ -65,7 +65,7 @@ const f0 = (v) => String(Math.round(v));
 
 const RP = D.replay, CL = D.cl, SC = D.scale, AU = D.aug, DG = D.diag, RM = D.realman, Q = D.compute, AM = D.amount;
 const REAL_SRC = "RealMAN 测试集 5 个室内场景，6 麦线阵 3 cm 间距";
-const REAL_NOTE = "RealMAN（CC BY 4.0）：https://huggingface.co/datasets/AISHELL/RealMAN 。测试集 5 个室内场景，与微调、挑选模型用的场景不重叠。";
+const REAL_NOTE = "RealMAN（CC BY 4.0）：https://huggingface.co/datasets/AISHELL/RealMAN 。测试集 5 个室内场景，与微调、挑选模型用的场景不重叠。语音由音箱播放（走动时由人手持音箱），方位由鱼眼摄像头检测音箱得到（https://github.com/Audio-WestlakeU/RealMAN ）。";
 const minSeed = Math.min(...SC.flatMap((r) => r.real_seeds)), maxSeed = Math.max(...SC.flatMap((r) => r.real_seeds));
 const realLo = Math.min(...SC.map((r) => r.real)), realHi = Math.max(...SC.map((r) => r.real));
 
