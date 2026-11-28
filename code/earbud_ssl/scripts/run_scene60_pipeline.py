@@ -233,6 +233,7 @@ class Lock:
             near = [m for m in self.members if angdiff(m["az"], z) <= same and m["score"] > 0]
             if near and self.use_facing and facing is False:
                 near = []           # 组员此刻明确没朝向佩戴者（在和别人说话）：不切过去
+            if near:
                 m = near[0]
                 if LOCK["confirm_n"] > 1:
                     pend = getattr(self, "pend", None)
