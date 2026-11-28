@@ -84,6 +84,14 @@ if (AM) {
   const multi = B.find((r) => r.name === "f033");
   amtLine = { single: single.length ? 100 * single.reduce((a, r) => a + r.acc10, 0) / single.length : null, multi: multi ? 100 * multi.acc10 : null,
               singleN: single.length, singleMin: single.length ? single.reduce((a, r) => a + mins(r), 0) / single.length : null, multiMin: multi ? mins(multi) : null };
+  const full = amtRows[amtRows.length - 1].acc;
+  amtLine.enough = amtRows.find((r) => r.m > 0 && r.acc >= full - 2);          // 事先定好的"够用"：与全量相差 ≤2 个百分点
+  amtLine.full = full;
+  const C_ = Object.fromEntries(rows.filter((r) => r.group === "C").map((r) => [r.name, 100 * r.acc10]));
+  const f025 = rows.find((r) => r.name === "f025");
+  amtLine.noise = [C_.f1_seed1 != null ? Math.abs(C_.f1_seed1 - full) : null, C_.f025_sub1 != null && f025 ? Math.abs(C_.f025_sub1 - 100 * f025.acc10) : null].filter((v) => v != null);
+  amtLine.ftAll = rows.filter((r) => r.group !== "D").map((r) => 100 * r.acc10).concat([full]);
+  amtLine.D = rows.filter((r) => r.group === "D").map((r) => ({ name: r.name, m: mins(r), acc: 100 * r.acc10 })).sort((a, b) => a.m - b.m);
 }
 
 // 1 封面
@@ -99,7 +107,7 @@ if (AM) {
 // 2 阶段结论
 {
   const s = newSlide("阶段结论", "各项数字见后续页；真实录音为公开数据集 RealMAN，未在自有硬件上测试", "本页汇总；每项的数据与条件见后续页。");
-  const amt = amtLine && amtLine.multi != null ? `；只用三分之一的录音（约 ${f0(amtLine.multiMin)} 分钟）为 ${f1(amtLine.multi)}%` : "";
+  const amt = amtLine && amtLine.enough ? `；约 ${f0(amtLine.enough.m)} 分钟录音已达到全量效果，1 个房间与 3 个房间相同` : "";
   table(s, [
     [head("项目"), head("结论")],
     [bold("置信度"), cell(`小网络同时输出方向和置信度；连续会议仿真中加置信度门限，每分钟误转 ${CL.none.wrong} → ${CL.th7.wrong} 次，转向速度不变（第 3 页）`)],
@@ -207,21 +215,35 @@ if (AM) {
     + (AM ? `\n房间数对比（录音时长相近）：1 个房间（3 个房间各做一次，平均约 ${f0(amtLine.singleMin)} 分钟）${amtLine.single != null ? f1(amtLine.single) + "%" : TBD}；3 个房间各三分之一（约 ${f0(amtLine.multiMin)} 分钟）${amtLine.multi != null ? f1(amtLine.multi) + "%" : TBD}。` : ""));
   if (amtRows) {
     s.addChart(p.charts.BAR, [{ name: "真实录音 ≤10°", labels: amtRows.map((r) => r.m === 0 ? "不微调" : `${f0(r.m)} 分钟`), values: amtRows.map((r) => R1(r.acc)) }],
-      chartBase({ x: 0.6, y: 1.8, w: 7.4, h: 4.85, showLegend: false, chartColors: [C.base1, C.navyLt, C.navyLt, C.navyLt, C.navy], barGapWidthPct: 70,
+      chartBase({ x: 0.6, y: 1.8, w: 7.4, h: 4.85, showLegend: false, chartColors: [C.base1, ...amtRows.slice(1, -1).map(() => C.navyLt), C.navy], barGapWidthPct: 70,
                   dataLabelFormatCode: "0.0", showCatAxisTitle: true, catAxisTitle: "微调所用真实录音（3 个房间合计）" }));
   } else {
     s.addChart(p.charts.BAR, [{ name: "真实录音 ≤10°", labels: ["GEVD-MUSIC", "小网络（仿真训练）", "小网络 + 实录微调"], values: [RM.gevd, RM.base, RM.ft] }],
       chartBase({ x: 0.6, y: 1.8, w: 7.4, h: 4.85, showLegend: false, chartColors: [C.base1, C.navyLt, C.navy], barGapWidthPct: 80, dataLabelFormatCode: "0.0" }));
   }
-  table(s, [
-    [head("模型"), head("真实录音 ≤10°", { align: "center" })],
-    [bold("GEVD-MUSIC"), ctr(`${f1(RM.gevd)}%`)],
-    [bold("小网络（仿真训练）"), ctr(`${f1(RM.base)}%`)],
-    [bold("小网络 + 实录微调", { color: C.navy }), hi(`${f1(RM.ft)}%`)],
-    [bold("多种子验证（4 个起点模型）"), ctr(D.server_ft ? D.server_ft : TBD)],
-  ], 8.4, 1.95, [2.9, 1.4], [0.42, 0.42, 0.42, 0.42, 0.42]);
-  note(s, AM ? "录音分钟数可直接用于估算自有阵列的采集量。" : "录音多少、分几个房间的对比实验进行中。", 8.4, 4.25, 4.3, 0.8);
-  oneLine(s, `加入另外 3 个房间的真实录音微调，真实录音 ${f1(RM.base)}% → ${f1(RM.ft)}%，是目前最有效的改进。`);
+  if (AM) {
+    const L = amtLine;
+    table(s, [
+      [head("微调用的真实录音"), head("≤10°", { align: "center" })],
+      [bold("1 个房间（3 个房间各做一次取平均）"), ctr(`${f1(L.single)}%`)],
+      [bold(`3 个房间各三分之一（约 ${f0(L.multiMin)} 分钟）`), ctr(`${f1(L.multi)}%`)],
+      ...L.D.map((d) => [bold(`只用静止说话（约 ${f0(d.m)} 分钟）`), ctr(`${f1(d.acc)}%`)]),
+      [bold("多种子验证（4 个起点模型）"), ctr(D.server_ft ? D.server_ft : TBD)],
+    ], 8.4, 1.95, [3.1, 1.2], [0.42, 0.42, 0.42, ...L.D.map(() => 0.42), 0.42]);
+    note(s, `微调后各组都在 ${f1(Math.min(...L.ftAll))}–${f1(Math.max(...L.ftAll))}%；同一组换种子或换一组录音，相差 ≤${f1(Math.max(...L.noise))} 个百分点。`
+      + `在 ${f0(Math.min(...amtRows.filter((r) => r.m > 0).map((r) => r.m)))}–143 分钟范围内，录音多少、几个房间都不明显影响结果。`, 8.4, 4.35 + 0.42 * L.D.length, 4.3, 1.2);
+    oneLine(s, `约 ${f0(L.enough.m)} 分钟真实录音（每个房间约 ${f0(L.enough.m / 3)} 分钟）微调就从 ${f1(RM.base)}% 提高到 ${f1(L.enough.acc)}%，与全部 143 分钟相同。`);
+  } else {
+    table(s, [
+      [head("模型"), head("真实录音 ≤10°", { align: "center" })],
+      [bold("GEVD-MUSIC"), ctr(`${f1(RM.gevd)}%`)],
+      [bold("小网络（仿真训练）"), ctr(`${f1(RM.base)}%`)],
+      [bold("小网络 + 实录微调", { color: C.navy }), hi(`${f1(RM.ft)}%`)],
+      [bold("多种子验证（4 个起点模型）"), ctr(D.server_ft ? D.server_ft : TBD)],
+    ], 8.4, 1.95, [2.9, 1.4], [0.42, 0.42, 0.42, 0.42, 0.42]);
+    note(s, "录音多少、分几个房间的对比实验进行中。", 8.4, 4.25, 4.3, 0.8);
+    oneLine(s, `加入另外 3 个房间的真实录音微调，真实录音 ${f1(RM.base)}% → ${f1(RM.ft)}%，是目前最有效的改进。`);
+  }
 }
 
 // 8 端侧规格

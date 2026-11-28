@@ -221,7 +221,218 @@
   "ft": 87.3,
   "gevd": 70.0
  },
- "amount": null,
+ "amount": {
+  "steps": 1128,
+  "bases": [
+   "crnn_general_lin6_3cm"
+  ],
+  "base_model": "work/models/crnn_general_lin6_3cm.pt",
+  "ref": {
+   "crnn_general_lin6_3cm": {
+    "base": {
+     "acc10": 0.813,
+     "acc20": 0.877,
+     "mae": 11.3
+    },
+    "f1": {
+     "acc10": 0.873,
+     "acc20": 0.913,
+     "mae": 8.9
+    }
+   },
+   "base": {
+    "acc10": 0.813,
+    "acc20": 0.877,
+    "mae": 11.3
+   },
+   "f1": {
+    "acc10": 0.873,
+    "acc20": 0.913,
+    "mae": 8.9
+   }
+  },
+  "rows": [
+   {
+    "name": "f025",
+    "group": "A",
+    "seed": 0,
+    "base": "crnn_general_lin6_3cm",
+    "scenes": {
+     "OfficeRoom1": {
+      "utts": 244,
+      "minutes": 19.23
+     },
+     "LivingRoom6": {
+      "utts": 110,
+      "minutes": 7.76
+     },
+     "LivingRoom8": {
+      "utts": 119,
+      "minutes": 8.78
+     }
+    },
+    "sel_acc10_best": 0.8625,
+    "acc10": 0.883,
+    "acc20": 0.925,
+    "mae": 8.0
+   },
+   {
+    "name": "f0125",
+    "group": "A",
+    "seed": 0,
+    "base": "crnn_general_lin6_3cm",
+    "scenes": {
+     "OfficeRoom1": {
+      "utts": 122,
+      "minutes": 9.19
+     },
+     "LivingRoom6": {
+      "utts": 55,
+      "minutes": 3.83
+     },
+     "LivingRoom8": {
+      "utts": 59,
+      "minutes": 4.09
+     }
+    },
+    "sel_acc10_best": 0.8675,
+    "acc10": 0.87,
+    "acc20": 0.918,
+    "mae": 8.9
+   },
+   {
+    "name": "f05",
+    "group": "A",
+    "seed": 0,
+    "base": "crnn_general_lin6_3cm",
+    "scenes": {
+     "OfficeRoom1": {
+      "utts": 488,
+      "minutes": 38.5
+     },
+     "LivingRoom6": {
+      "utts": 219,
+      "minutes": 16.77
+     },
+     "LivingRoom8": {
+      "utts": 238,
+      "minutes": 16.65
+     }
+    },
+    "sel_acc10_best": 0.8625,
+    "acc10": 0.87,
+    "acc20": 0.915,
+    "mae": 8.8
+   },
+   {
+    "name": "f033",
+    "group": "B",
+    "seed": 0,
+    "base": "crnn_general_lin6_3cm",
+    "scenes": {
+     "OfficeRoom1": {
+      "utts": 326,
+      "minutes": 25.66
+     },
+     "LivingRoom6": {
+      "utts": 146,
+      "minutes": 11.03
+     },
+     "LivingRoom8": {
+      "utts": 158,
+      "minutes": 11.45
+     }
+    },
+    "sel_acc10_best": 0.875,
+    "acc10": 0.88,
+    "acc20": 0.925,
+    "mae": 8.2
+   },
+   {
+    "name": "OfficeRoom1",
+    "group": "B",
+    "seed": 0,
+    "base": "crnn_general_lin6_3cm",
+    "scenes": {
+     "OfficeRoom1": {
+      "utts": 977,
+      "minutes": 75.06
+     }
+    },
+    "sel_acc10_best": 0.8475,
+    "acc10": 0.87,
+    "acc20": 0.913,
+    "mae": 8.9
+   },
+   {
+    "name": "LivingRoom6",
+    "group": "B",
+    "seed": 0,
+    "base": "crnn_general_lin6_3cm",
+    "scenes": {
+     "LivingRoom6": {
+      "utts": 438,
+      "minutes": 32.88
+     }
+    },
+    "sel_acc10_best": 0.835,
+    "acc10": 0.873,
+    "acc20": 0.917,
+    "mae": 8.6
+   },
+   {
+    "name": "LivingRoom8",
+    "group": "B",
+    "seed": 0,
+    "base": "crnn_general_lin6_3cm",
+    "scenes": {
+     "LivingRoom8": {
+      "utts": 475,
+      "minutes": 34.8
+     }
+    },
+    "sel_acc10_best": 0.915,
+    "acc10": 0.872,
+    "acc20": 0.917,
+    "mae": 9.1
+   },
+   {
+    "name": "f1_seed1",
+    "group": "C",
+    "seed": 1,
+    "base": "crnn_general_lin6_3cm",
+    "scenes": null,
+    "sel_acc10_best": 0.8725,
+    "acc10": 0.878,
+    "acc20": 0.915,
+    "mae": 8.5
+   },
+   {
+    "name": "f025_sub1",
+    "group": "C",
+    "seed": 0,
+    "base": "crnn_general_lin6_3cm",
+    "scenes": {
+     "OfficeRoom1": {
+      "utts": 244,
+      "minutes": 17.2
+     },
+     "LivingRoom6": {
+      "utts": 110,
+      "minutes": 8.29
+     },
+     "LivingRoom8": {
+      "utts": 119,
+      "minutes": 9.02
+     }
+    },
+    "sel_acc10_best": 0.89,
+    "acc10": 0.882,
+    "acc20": 0.925,
+    "mae": 8.5
+   }
+  ]
+ },
  "server_ft": null,
  "meeting_check": null,
  "compute": {

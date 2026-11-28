@@ -58,7 +58,7 @@ const f1 = (v) => (Math.floor(v * 10 + 0.5 + 1e-9) / 10).toFixed(1);
 
 // 数据量实验：按分钟数排列（多个起点模型时取平均）
 const AM = D.amount, RM = D.realman, SC = D.scale, AU = D.aug;
-let curve = null, enough = null, rooms = null;
+let curve = null, enough = null, rooms = null, staticOk = null, staticRows = [];
 if (AM) {
   const mins = (r) => r.scenes ? Object.values(r.scenes).reduce((a, v) => a + v.minutes, 0) : null;
   const by = {};
@@ -70,6 +70,8 @@ if (AM) {
   enough = curve.find((c) => c.m > 0 && c.acc >= full - 2);                  // 事先定好的"够用"：与全量相差 ≤2 个百分点
   const single = rows.filter((r) => r.group === "B" && r.scenes && Object.keys(r.scenes).length === 1);
   const multi = rows.find((r) => r.name === "f033");
+  staticRows = rows.filter((r) => r.group === "D").map((r) => ({ m: mins(r), acc: r.acc }));
+  if (staticRows.length) staticOk = staticRows.every((r) => r.acc >= full - 2);   // 事先定好：只用静止说话与全量相差 ≤2
   if (single.length && multi) rooms = { single: single.reduce((a, r) => a + r.acc, 0) / single.length, multi: multi.acc,
                                         singleMin: single.reduce((a, r) => a + mins(r), 0) / single.length, multiMin: mins(multi) };
 }
@@ -93,7 +95,7 @@ const perRoom = enough ? enough.m / 3 : null;
     + (curve ? "" : "录音多少的对比实验进行中。"));
   if (curve) {
     s.addChart(p.charts.BAR, [{ name: "≤10°", labels: curve.map((c) => c.m === 0 ? "只用仿真" : `${f0(c.m)} 分钟`), values: curve.map((c) => Math.floor(c.acc * 10 + 0.5) / 10) }],
-      chartBase({ x: 0.6, y: 1.8, w: 7.4, h: 4.85, chartColors: [C.base1, C.navyLt, C.navyLt, C.navyLt, C.navy],
+      chartBase({ x: 0.6, y: 1.8, w: 7.4, h: 4.85, chartColors: [C.base1, ...curve.slice(1, -1).map(() => C.navyLt), C.navy],
                   showCatAxisTitle: true, catAxisTitle: "微调所用真实录音（3 个房间合计）" }));
   } else {
     s.addChart(p.charts.BAR, [{ name: "≤10°", labels: ["只用仿真", "+ 3 个房间实录微调"], values: [RM.base, RM.ft] }],
@@ -119,7 +121,7 @@ const perRoom = enough ? enough.m / 3 : null;
   table(s, [
     [head("内容"), head("做法"), head("规模（建议）"), head("用途")],
     [bold("单人说话（静止）"), cell("每个座位与站位（白板、门口）一人说话：读稿 + 自由说话，坐、站各一次"), cell("8–12 个位置 × 2–3 人 × 约 1 分钟"), cell("训练：合成换人、抢话样本")],
-    [bold("走动说话"), cell("边说边走：座位到白板、绕桌"), cell("3–5 条 × 约 1 分钟"), cell("训练与测试：跟踪")],
+    [bold("走动说话"), cell("边说边走：座位到白板、绕桌"), cell("3–5 条 × 约 1 分钟"), cell(staticOk ? "测试：跟踪（训练可不用）" : "训练与测试：跟踪")],
     [bold("远端喇叭"), cell("电视或会议音箱播放远端参会人语音"), cell("2 个位置 × 3 分钟"), cell("远端播放时不转")],
     [bold("无人说话"), cell("空调、投影仪、键盘、挪椅子、开关门"), cell("约 10 分钟"), cell("背景噪声；减少噪声段误转")],
     [bold("真实会议"), cell("2–4 人自然讨论"), cell("约 15 分钟"), cell("只用于测试")],
@@ -127,9 +129,10 @@ const perRoom = enough ? enough.m / 3 : null;
   const roomTxt = rooms
     ? `房间数：录音时长相近时，3 个房间（${f1(rooms.multi)}%）比 1 个房间（${f1(rooms.single)}%）${rooms.multi - rooms.single >= 3 ? "明显更好，优先多房间" : "相差在 3 个百分点内，按方便安排"}。`
     : `房间数：多房间与单房间的对比${TBD}。`;
-  note(s, [`建议至少 3 个大小不同的会议室（小、中、大），其中 1 个只用于测试。`, roomTxt,
-           enough ? `录音量：RealMAN 上约 ${f0(perRoom)} 分钟 / 房间已接近全量；上表单人说话每个房间约 16–36 分钟，留有余量。` : `录音量：按 RealMAN 上的数据量实验估算${TBD}。`].join("\n"),
-    0.6, 5.1, 12.1, 1.5);
+  note(s, ["分两步：先在 1 个会议室采集（约半天），用它微调、在另一个会议室测试；效果达到预期再扩展到更多、更大小不一的会议室。", roomTxt,
+           enough ? `录音量：RealMAN 上每个房间约 ${f0(perRoom)} 分钟已接近全量；产品阵列不同，上表单人说话每个房间约 16–36 分钟，留有余量。` : `录音量：按 RealMAN 上的数据量实验估算${TBD}。`]
+           .concat(staticRows.length ? [`只用静止说话微调：${staticRows.map((r) => `约 ${f0(r.m)} 分钟 ${f1(r.acc)}%`).join("、")}，${staticOk ? "与全量相当，训练以坐着说话为主即可" : "低于全量 2 个百分点以上，走动说话也需要按比例录"}。`] : []).join("\n"),
+    0.6, 5.0, 12.1, 1.7);
   oneLine(s, "以单人说话为主，换人、抢话离线合成；另录无人说话、远端喇叭和一段真实会议用于测试。");
 }
 
