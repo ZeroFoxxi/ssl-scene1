@@ -27,9 +27,10 @@ def main():
     ap.add_argument("--data", default="work/locata_test/locata_test.npz")
     ap.add_argument("--array", default="lin5_4cm")
     ap.add_argument("--out", default="locata_eval")
+    ap.add_argument("--mic-x", type=float, nargs="*", default=None, help="自有线阵：各麦克风沿阵列的坐标（米），顺序与通道一致；给出时代替 --array")
     a = ap.parse_args()
     d = dict(np.load(os.path.join(ROOT, a.data)))
-    xy = ARRAYS[a.array]; on = int(d["onset"]); names = list(d["cond_names"])
+    xy = np.stack([np.zeros(len(a.mic_x)), np.array(a.mic_x)], 0) if a.mic_x else ARRAYS[a.array]; on = int(d["onset"]); names = list(d["cond_names"])
     srp_cfg = SRPConfig(fmax=min(4000.0, 0.95 * aliasing_frequency(xy)))
     srp = WakeDOA(xy, FS, WakeDOAConfig(method="srp_sub", bg_subtract=False, pad_post=0.0, exclude=FRONT, srp=srp_cfg))
     gev = {}

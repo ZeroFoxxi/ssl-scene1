@@ -10,6 +10,9 @@
 样本：同一房间、不同位置（方位差 ≥10°）的两段说话相加（换人 / 抢话），或一段说话前面接安静段（安静后开口）；
      空出的时段用同一房间的背景声填补。长度 1.5 s（开口前 1.0 s + 开口后 0.5 s），与仿真训练数据同格式。
 运行：python scripts/build_own_finetune.py --manifest data.csv --root <录音目录> --train-rooms A B C --val-rooms D --name train_data_own_ft
+测试集（只评测、不参与训练的房间；与 build_realman_test.py 同一做法：开口前 2.0 s + 开口后 0.5 s，叠加换人 / 抢话，eval_locata.py 可直接用）：
+      python scripts/build_own_finetune.py --manifest data.csv --root <录音目录> --test-rooms E --name own_test   → work/own_test/test.npz
+      校验：--export-realman <清单> --realman-split test 把 RealMAN 测试集写成清单，再 --loader realman --test-rooms <5 个场景>，应与 realman_test.npz 逐字节一致。
 校验：python scripts/build_own_finetune.py --export-realman work/realman_val_manifest.csv  （把 RealMAN 验证集写成清单）
       再用 --loader realman 构建，结果应与 build_realman_finetune.py 的输出逐字节一致（11-28 已校验：train、val 两部分都一致）。
 """
@@ -76,18 +79,49 @@ def compose(utts, bank, get, n, rng):
     return X, meta
 
 
-def export_realman(out):
-    """把 RealMAN 验证集（work/realman_val）写成清单，顺序与 build_realman_finetune.py 读取的顺序相同。"""
+def export_realman(out, split="val"):
+    """把 RealMAN 验证集（work/realman_val）或测试集（work/realman）写成清单，顺序与原脚本读取的顺序相同。"""
     import build_realman_finetune as B
-    lab = B.labels(); W = B.W
+    if split == "val":
+        lab = B.labels(); W = B.W; scenes = ["OfficeRoom1", "LivingRoom6", "LivingRoom8", "Auditorium"]
+    else:
+        W = T.W; lab = {}
+        for kind in ["static", "moving"]:
+            for r in csv.DictReader(open(os.path.join(W, f"test_{kind}_source_location.csv"))):
+                v = [float(q) for q in r["angle(°)"].split(",")]
+                lab[os.path.basename(r["filename"])] = v[min(2, len(v) - 1)]
+        scenes = sorted(d for d in os.listdir(W) if os.path.isdir(os.path.join(W, d)))
     with open(out, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f); w.writerow(["path", "room", "kind", "azimuth_deg"])
-        for sc in ["OfficeRoom1", "LivingRoom6", "LivingRoom8", "Auditorium"]:
+        for sc in scenes:
             for p in sorted(glob.glob(os.path.join(W, sc, "*", "*", "*_CH0.flac"))):
                 k = os.path.basename(p).replace("_CH0", "")
                 if k in lab:
                     w.writerow([os.path.relpath(p, W), sc, "speech", repr(90.0 - lab[k])])
     print("清单 →", out)
+
+
+def compose_test(utts, bank, get, n_targets, rng, room, n_ch):
+    """与 build_realman_test.py 相同的测试样本（随机数的使用顺序也相同）：每个目标话语一个叠加换人、一个叠加抢话。"""
+    Nt, ONt = int((T.PRE_L + T.POST) * FS), int(T.PRE_L * FS)
+    X, meta = [], []
+    bs = [utts[i] for i in rng.permutation(len(utts))[:n_targets]]
+    for fb, azb in bs:
+        for cond, (lo, hi) in [(2, (-0.6, -0.2)), (3, (0.2, 0.8))]:
+            cands = [u for u in utts if u[0] != fb and abs(u[1] - azb) >= 10]
+            if not cands:
+                continue
+            fa, aza = cands[rng.integers(len(cands))]
+            xb, xa = get(fb), get(fa)
+            seg = np.zeros((n_ch, Nt))
+            nb = min(xb.shape[1], Nt - ONt); seg[:, ONt:ONt + nb] += xb[:, :nb]
+            end = ONt + int(rng.uniform(lo, hi) * FS); st = end - xa.shape[1]
+            a0, a1 = max(0, st), min(Nt, end)
+            seg[:, a0:a1] += xa[:, a0 - st: a1 - st]
+            T.fill(seg, bank, 0, a0, rng); T.fill(seg, bank, a1, ONt, rng)
+            X.append(seg.astype(np.float32))
+            meta.append({"az": azb, "cond": cond, "valid_from": 0, "src": f"{room}:{os.path.basename(fb)}", "extra": f"A={os.path.basename(fa)} 方位 {aza:.1f}°"})
+    return X, meta, ONt
 
 
 def main():
@@ -101,9 +135,12 @@ def main():
     ap.add_argument("--channels", type=int, nargs="*", default=None, help="用哪些通道（按阵列顺序）；默认全部")
     ap.add_argument("--max-az", type=float, default=80.0)
     ap.add_argument("--export-realman", default=None)
+    ap.add_argument("--realman-split", default="val", choices=["val", "test"])
+    ap.add_argument("--test-rooms", nargs="*", default=[], help="只用于测试的房间")
+    ap.add_argument("--test-per-room", type=int, default=60, help="每个测试房间的目标话语数（每个生成换人、抢话各 1 个样本）")
     a = ap.parse_args()
     if a.export_realman:
-        return export_realman(a.export_realman)
+        return export_realman(a.export_realman, a.realman_split)
     rows = list(csv.DictReader(open(a.manifest, encoding="utf-8")))
     load = make_loader(a.loader, a.channels)
     for split, rooms in (("train", a.train_rooms), ("val", a.val_rooms)):
@@ -133,6 +170,24 @@ def main():
         json.dump({"manifest": os.path.abspath(a.manifest), "rooms": stats}, open(os.path.join(ROOT, "work", a.name, f"info_{split}.json"), "w", encoding="utf-8"),
                   ensure_ascii=False, indent=1)
         print(f"[{split}] 共 {len(X)} 个样本 → {out}")
+    if a.test_rooms:
+        rng = np.random.default_rng(11); X, meta, on = [], [], None
+        for room in a.test_rooms:
+            sp = [r for r in rows if r["room"] == room and r.get("kind", "speech") == "speech"]
+            utts = [(os.path.join(a.root, r["path"]), T.fold(float(r["azimuth_deg"]))) for r in sp]
+            utts = [u for u in utts if abs(u[1]) <= a.max_az]
+            noise = [os.path.join(a.root, r["path"]) for r in rows if r["room"] == room and r.get("kind") == "noise"]
+            cache = {}
+            get = lambda f: cache.setdefault(f, load(f))
+            bank = noise_bank_from(noise, load, 30 * FS) if noise else T.noise_bank(utts, 30 * FS)
+            x, m, on = compose_test(utts, bank, get, a.test_per_room, rng, room, get(utts[0][0]).shape[0])
+            X += x; meta += m
+            print(f"[test] {room}: 说话 {len(utts)} 段，样本 {len(x)}", flush=True)
+        out = os.path.join(ROOT, "work", a.name); os.makedirs(out, exist_ok=True)
+        np.savez(os.path.join(out, "test.npz"), x=np.stack(X), onset=on, az=np.array([m["az"] for m in meta]),
+                 cond=np.array([m["cond"] for m in meta]), valid_from=np.array([m["valid_from"] for m in meta]),
+                 src=np.array([m["src"] for m in meta]), extra=np.array([m["extra"] for m in meta]), cond_names=np.array(T.COND_NAMES))
+        print(f"[test] 共 {len(X)} 个样本 → {out}/test.npz")
 
 
 if __name__ == "__main__":
