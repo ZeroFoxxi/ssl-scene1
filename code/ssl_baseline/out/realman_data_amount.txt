@@ -1,6 +1,8 @@
 实录微调的数据量与房间数（RealMAN 测试集 600 个样本，≤10°；各组 1128 步；起点模型 1 个，取平均）
   不微调（只用仿真）           0 分钟   81.3%  （81.3%）
   3 个房间全量                143 分钟   87.3%  （87.3%）
+  [A] f003125           5 分钟   85.5%  （≤20° 90.8%，平均误差 9.8°，挑选场景 86.2%；OfficeRoom1 2′、LivingRoom6 1′、LivingRoom8 1′）
+  [A] f00625            9 分钟   87.0%  （≤20° 91.5%，平均误差 8.9°，挑选场景 88.2%；OfficeRoom1 5′、LivingRoom6 2′、LivingRoom8 2′）
   [A] f0125            17 分钟   87.0%  （≤20° 91.8%，平均误差 8.9°，挑选场景 86.8%；OfficeRoom1 9′、LivingRoom6 4′、LivingRoom8 4′）
   [A] f025             36 分钟   88.3%  （≤20° 92.5%，平均误差 8.0°，挑选场景 86.2%；OfficeRoom1 19′、LivingRoom6 8′、LivingRoom8 9′）
   [A] f05              72 分钟   87.0%  （≤20° 91.5%，平均误差 8.8°，挑选场景 86.2%；OfficeRoom1 38′、LivingRoom6 17′、LivingRoom8 17′）
@@ -10,3 +12,5 @@
   [B] OfficeRoom1      75 分钟   87.0%  （≤20° 91.3%，平均误差 8.9°，挑选场景 84.8%；OfficeRoom1 75′）
   [C] f025_sub1        35 分钟   88.2%  （≤20° 92.5%，平均误差 8.5°，挑选场景 89.0%；OfficeRoom1 17′、LivingRoom6 8′、LivingRoom8 9′）
   [C] f1_seed1                 87.8%  （≤20° 91.5%，平均误差 8.5°，挑选场景 87.2%；3 个房间全量）
+  [D] static_f025      18 分钟   87.7%  （≤20° 92.3%，平均误差 8.5°，挑选场景 86.2%；OfficeRoom1 10′、LivingRoom6 4′、LivingRoom8 5′）
+  [D] static           76 分钟   87.7%  （≤20° 92.2%，平均误差 8.5°，挑选场景 86.2%；OfficeRoom1 39′、LivingRoom6 15′、LivingRoom8 22′）

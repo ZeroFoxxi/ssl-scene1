@@ -207,6 +207,102 @@
    "acc10": 0.882,
    "acc20": 0.925,
    "mae": 8.5
+  },
+  {
+   "name": "f00625",
+   "group": "A",
+   "seed": 0,
+   "base": "crnn_general_lin6_3cm",
+   "scenes": {
+    "OfficeRoom1": {
+     "utts": 61,
+     "minutes": 4.56
+    },
+    "LivingRoom6": {
+     "utts": 27,
+     "minutes": 1.95
+    },
+    "LivingRoom8": {
+     "utts": 30,
+     "minutes": 2.09
+    }
+   },
+   "sel_acc10_best": 0.8825,
+   "acc10": 0.87,
+   "acc20": 0.915,
+   "mae": 8.9
+  },
+  {
+   "name": "f003125",
+   "group": "A",
+   "seed": 0,
+   "base": "crnn_general_lin6_3cm",
+   "scenes": {
+    "OfficeRoom1": {
+     "utts": 31,
+     "minutes": 2.47
+    },
+    "LivingRoom6": {
+     "utts": 14,
+     "minutes": 0.83
+    },
+    "LivingRoom8": {
+     "utts": 15,
+     "minutes": 1.3
+    }
+   },
+   "sel_acc10_best": 0.8625,
+   "acc10": 0.855,
+   "acc20": 0.908,
+   "mae": 9.8
+  },
+  {
+   "name": "static",
+   "group": "D",
+   "seed": 0,
+   "base": "crnn_general_lin6_3cm",
+   "scenes": {
+    "OfficeRoom1": {
+     "utts": 515,
+     "minutes": 39.48
+    },
+    "LivingRoom6": {
+     "utts": 208,
+     "minutes": 14.79
+    },
+    "LivingRoom8": {
+     "utts": 306,
+     "minutes": 22.0
+    }
+   },
+   "sel_acc10_best": 0.8625,
+   "acc10": 0.877,
+   "acc20": 0.922,
+   "mae": 8.5
+  },
+  {
+   "name": "static_f025",
+   "group": "D",
+   "seed": 0,
+   "base": "crnn_general_lin6_3cm",
+   "scenes": {
+    "OfficeRoom1": {
+     "utts": 129,
+     "minutes": 9.77
+    },
+    "LivingRoom6": {
+     "utts": 52,
+     "minutes": 3.53
+    },
+    "LivingRoom8": {
+     "utts": 76,
+     "minutes": 4.88
+    }
+   },
+   "sel_acc10_best": 0.8625,
+   "acc10": 0.877,
+   "acc20": 0.923,
+   "mae": 8.5
   }
  ]
 }
