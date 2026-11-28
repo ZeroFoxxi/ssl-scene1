@@ -107,11 +107,11 @@ if (AM) {
 // 2 阶段结论
 {
   const s = newSlide("阶段结论", "各项数字见后续页；真实录音为公开数据集 RealMAN，未在自有硬件上测试", "本页汇总；每项的数据与条件见后续页。");
-  const amt = amtLine && amtLine.enough ? `；约 ${f0(amtLine.enough.m)} 分钟录音已达到全量效果，1 个房间与 3 个房间相同` : "";
+  const amt = amtLine && amtLine.enough ? `；约 ${f0(amtLine.enough.m)} 分钟录音已与全量相当，1 个房间与 3 个房间相当` : "";
   table(s, [
     [head("项目"), head("结论")],
     [bold("置信度"), cell(`小网络同时输出方向和置信度；连续会议仿真中加置信度门限，每分钟误转 ${CL.none.wrong} → ${CL.th7.wrong} 次，转向速度不变（第 3 页）`)],
-    [bold("实录会议"), cell(`RealMAN 实录拼成 ${D.replay_n.meetings} 段连续会议：小网络每分钟误转 ${f1(RP["+实录微调+门限"].wrong)} 次，GEVD-MUSIC ${f1(RP["GEVD-MUSIC"].wrong)} 次（第 4 页）`)],
+    [bold("实录会议"), cell(`RealMAN 实录拼成 ${D.replay_n.meetings} 段连续会议：小网络（实录微调 + 置信度门限）每分钟误转 ${f1(RP["+实录微调+门限"].wrong)} 次，GEVD-MUSIC ${f1(RP["GEVD-MUSIC"].wrong)} 次（第 4 页）`)],
     [bold("训练规模"), cell(`GPU 服务器上放大网络（2.13 M 参数）和训练数据（5 倍）：仿真最高 ${f0(SC[3].sim)}%，真实录音都在 ${f0(realLo)}–${f0(realHi)}%（第 5 页）`)],
     [bold("主要问题"), cell("仿真与真实录音的差距；0.28 M 参数的网络已够用，不需要放大后再压缩")],
     [bold("实录误差"), cell(`误差集中在两侧方向，越远越偏向正前方；仿真加扩散噪声提高 ${f1(AU.dif - AU.base)} 个百分点，在统计误差内（第 6 页）`)],
@@ -166,8 +166,8 @@ if (AM) {
 {
   const s = newSlide("训练规模与真实录音",
     "RealMAN 阵列（6 麦 3 cm）通用房间仿真训练；仿真：验证集 1,000 个样本；真实录音：RealMAN 测试集 600 个样本；每组两个种子平均",
-    REAL_NOTE + `\n各组两个种子的真实录音结果：${SC.map((r) => `${r.label.replace(" · ", " 条、")} 参数 ${r.real_seeds.join(" / ")}%`).join("；")}。同一配置换种子，真实录音相差最多约 8 个百分点，仿真只差 0.1–0.8。\n`
-    + `对照实验：12,000 条数据训练 150 轮（训练步数与 60,000 条 × 30 轮相同），仿真验证 ${D.ep150.join(" / ")}%，与 30 轮相当，说明仿真上的提升来自数据量。\n`
+    REAL_NOTE + `\n各组两个种子的真实录音结果：${SC.map((r) => `${r.label.replace(" · ", " 条、")} 参数 ${r.real_seeds.map((x) => x.toFixed(1)).join(" / ")}%`).join("；")}。同一配置换种子，真实录音相差最多约 8 个百分点，仿真只差 0.1–0.8。\n`
+    + `对照实验：12,000 条数据训练 150 轮（训练步数与 60,000 条 × 30 轮相同），仿真验证 ${D.ep150.map((x) => x.toFixed(1)).join(" / ")}%，与 30 轮相当，说明仿真上的提升来自数据量。\n`
     + `会议室阵列（6 麦线阵 17.5 cm）用 60,000 条数据：仿真固定测试集 94% → ${D.meeting60k[0]}%（两个种子相同）。`);
   s.addChart(p.charts.BAR, [{ name: "仿真验证", labels: SC.map((r) => r.label.replace(" · ", " 条\n")), values: SC.map((r) => r.sim) },
                             { name: "真实录音", labels: SC.map((r) => r.label.replace(" · ", " 条\n")), values: SC.map((r) => r.real) }],
@@ -186,7 +186,7 @@ if (AM) {
   const s = newSlide("真实录音的误差来源",
     "RealMAN 测试集 600 个样本；右上：两侧（60–80°）样本按说话人距离分组，偏差为预测方位比真值靠近正前方的角度（中位数）",
     REAL_NOTE + `\n各方位区间样本数：${bins.map((b) => `${b} ${D.diag_n_az[b]} 个`).join("、")}。两侧样本按距离：<2 m ${D.diag_n["<2 m"]} 个、2–3 m ${D.diag_n["2–3 m"]} 个、≥3 m ${D.diag_n["≥3 m"]} 个（≥3 m 样本少，仅作参考）。\n`
-    + `扩散噪声：仿真时以 70% 的概率加入空间上符合扩散声场相关性的噪声（信噪比 0–20 dB）；麦克风位置误差：每个麦克风随机偏移约 2 mm。每组 4 个种子，真实录音结果：基线 ${AU.seeds.base.join(" / ")}%；+扩散噪声 ${AU.seeds.dif.join(" / ")}%；+位置误差 ${AU.seeds.difjit.join(" / ")}%。两组差的 95% 置信区间约 ±4.4 个百分点。`);
+    + `扩散噪声：仿真时以 70% 的概率加入空间上符合扩散声场相关性的噪声（信噪比 0–20 dB）；麦克风位置误差：每个麦克风随机偏移约 2 mm。每组 4 个种子，真实录音结果：基线 ${AU.seeds.base.map((x) => x.toFixed(1)).join(" / ")}%；+扩散噪声 ${AU.seeds.dif.map((x) => x.toFixed(1)).join(" / ")}%；+位置误差 ${AU.seeds.difjit.map((x) => x.toFixed(1)).join(" / ")}%。两组差的 95% 置信区间约 ±4.4 个百分点。`);
   s.addChart(p.charts.BAR, [{ name: "GEVD-MUSIC", labels: bins, values: bins.map((b) => DG["GEVD-MUSIC"].by_az[b]) },
                             { name: "小网络", labels: bins, values: bins.map((b) => DG["小网络"].by_az[b]) },
                             { name: "小网络 + 实录微调", labels: bins, values: bins.map((b) => DG["+实录微调"].by_az[b]) }],
@@ -232,7 +232,7 @@ if (AM) {
     ], 8.4, 1.95, [3.1, 1.2], [0.42, 0.42, 0.42, ...L.D.map(() => 0.42), 0.42]);
     note(s, `微调后各组都在 ${f1(Math.min(...L.ftAll))}–${f1(Math.max(...L.ftAll))}%；同一组换种子或换一组录音，相差 ≤${f1(Math.max(...L.noise))} 个百分点。`
       + `在 ${f0(Math.min(...amtRows.filter((r) => r.m > 0).map((r) => r.m)))}–143 分钟范围内，录音多少、几个房间都不明显影响结果。`, 8.4, 4.35 + 0.42 * L.D.length, 4.3, 1.2);
-    oneLine(s, `约 ${f0(L.enough.m)} 分钟真实录音（每个房间约 ${f0(L.enough.m / 3)} 分钟）微调就从 ${f1(RM.base)}% 提高到 ${f1(L.enough.acc)}%，与全部 143 分钟相同。`);
+    oneLine(s, `约 ${f0(L.enough.m)} 分钟真实录音（每个房间约 ${f0(L.enough.m / 3)} 分钟）微调就从 ${f1(RM.base)}% 提高到 ${f1(L.enough.acc)}%，与全部 143 分钟相当。`);
   } else {
     table(s, [
       [head("模型"), head("真实录音 ≤10°", { align: "center" })],
@@ -273,7 +273,7 @@ if (AM) {
     "真实录音是目前最有效的改进，因此后续以自有阵列的会议室实录为主。RealMAN 阵列与产品阵列不同，RealMAN 上的实验用于验证方法和估算采集量。");
   table(s, [
     [head("工作"), head("内容"), head("需要")],
-    [bold("自有阵列实录"), cell("会议室实采：多个房间、多个座位，含换人、抢话、远端喇叭、无人说话；采集量按第 7 页估算"), cell(`阵列样机、会议室与采集时间${TBD}`)],
+    [bold("自有阵列实录"), cell("先在 1 个会议室采集约半天（音箱播放为主、少量真人），微调后在另一个会议室测试，再决定是否扩展"), cell(`阵列样机、会议室与采集时间${TBD}`)],
     [bold("实录微调"), cell("多个起点模型重复微调，确认提升稳定；之后用自有阵列数据微调产品模型"), cell("—")],
     [bold("噪声段误转"), cell("纯噪声样本训练或有人说话判断，按误转与漏转的取舍选定"), cell(`误转与漏转的取舍${TBD}`)],
     [bold("端侧"), cell("按目标芯片评估计算量与内存；必要时改卷积减计算量，再 8 比特量化"), cell(`目标芯片与算力预算${TBD}`)],
