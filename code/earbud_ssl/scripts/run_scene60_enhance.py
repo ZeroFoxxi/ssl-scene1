@@ -117,7 +117,7 @@ def main():
                 for src, azb in srcs.items():
                     if src in LINK:
                         if len(mics) < 4:
-                            res[sname][src].append(float("nan")); continue
+                            res[sname][src].append(None); continue
                         dly = LINK[src]
                         sh = lambda X: np.concatenate([X[:2], np.concatenate([np.zeros_like(X[2:, :, :dly]), X[2:, :, :-dly]], axis=2)], axis=0)
                         Yd, td, idd = sh(Y), sh(tgt), sh(intf)
@@ -132,7 +132,7 @@ def main():
             print(cname, f"{i + 1}/{a.n}", f"{time.time() - t0:.0f} s", "锁定", round(lock_acc[-1], 1),
                   {s: round(res[s]["真值"][-1], 1) for s in SUBS}, flush=True)
         out[cname] = {"信干比提升_dB（中位数 / 最小 / 最大）": {s: {src: ([round(float(np.median(v)), 1), round(float(np.min(v)), 1), round(float(np.max(v)), 1)]
-                                                               if not np.all(np.isnan(v)) else None) for src, v in d.items()} for s, d in res.items()},
+                                                               if all(x is not None for x in v) else None) for src, v in d.items()} for s, d in res.items()},
                       "全流程锁定正确率_%（各段）": [round(x, 1) for x in lock_acc], "逐段": res}
         print(json.dumps(out[cname]["信干比提升_dB（中位数 / 最小 / 最大）"], ensure_ascii=False, indent=1), flush=True)
     out["elapsed_s"] = round(time.time() - t0)
