@@ -6,7 +6,7 @@
   A 本地 2 麦：只用左耳 2 麦（间距 1.5 cm）做 MVDR；
   B 两耳 4 麦：两耳 4 麦组阵做 MVDR（耳间链路按理想、无时延处理，时延影响另算）。
   MVDR：w = R⁻¹d / (dᴴR⁻¹d)，d 为头部模板在目标方位的导向向量（相对左耳前麦），R 为目标不说话、佩戴者也不说话时的混合信号协方差
-  （按唇动 / 骨声纹判断，此处用剧本真值；递推时间常数 1 s，对角加载 1e-3）。另算一组上限：R 直接用干扰本身（理想干扰协方差）。
+  （按唇动 / 骨声纹判断，此处用剧本真值；递推时间常数 1 s，对角加载 1e-3）。另算一组上限：R 直接用干扰本身（理想干扰协方差，同样去掉自语音帧）。
 方位来源：真值（含理想干扰协方差的上限）；真值偏 5° / 10°；全流程实际锁定输出（锁错时就是对准了别人）。
 耳间链路时延（只对 B）：右耳两路整体晚 1 / 2 帧（16 / 32 ms）直接参与组阵（不等待、不补偿），导向向量不变，协方差按延后的信号估计。
 指标：目标在说话、佩戴者没说话的帧里，200–7000 Hz 信干比提升（dB，输出相对左耳前麦）；干扰 = 其余所有声源 + 噪声。
@@ -124,8 +124,8 @@ def main():
                         W = mvdr_track(Yd, sc.persons[tp].speaking | sc.self_speech, azb, ctx4["Htab"], mics, fm)
                         res[sname][src].append(float(sir_gain(W, td, idd, mics, fm, sel)))
                         continue
-                    if src == "真值 + 理想干扰协方差":   # 上限：干扰协方差直接用干扰本身（每帧更新）
-                        W = mvdr_track(intf, np.zeros(sc.T, bool), azb, ctx4["Htab"], mics, fm)
+                    if src == "真值 + 理想干扰协方差":   # 上限：干扰协方差直接用干扰本身（佩戴者说话的帧除外，评测帧里没有自语音）
+                        W = mvdr_track(intf, sc.self_speech.copy(), azb, ctx4["Htab"], mics, fm)
                     else:                              # 实际：目标没说、佩戴者没说的帧里用混合信号估计
                         W = mvdr_track(Y, sc.persons[tp].speaking | sc.self_speech, azb, ctx4["Htab"], mics, fm)
                     res[sname][src].append(float(sir_gain(W, tgt, intf, mics, fm, sel)))
