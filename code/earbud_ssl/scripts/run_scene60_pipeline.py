@@ -441,16 +441,19 @@ def main():
     ap.add_argument("--thresh", type=float, default=3.5)
     ap.add_argument("--tag", default="dev")
     ap.add_argument("--only", choices=["turns", "case2"], help="只跑一类场景（便于两类并行）")
+    ap.add_argument("--facing-err", type=float, default=0.15, help="视觉判断脸朝向佩戴者的判错率（假设值）")
     ap.add_argument("--confirm", type=int, default=2, help="换到新方向前要求连续几次观测一致（跟随、对话组）")
     a = ap.parse_args()
     LOCK["confirm_n"] = a.confirm
+    global FACING_ERR
+    FACING_ERR = a.facing_err
     ctx = build_ctx()
     fm = (ctx["freqs"] >= 200) & (ctx["freqs"] <= 7000)
     grid = np.arange(-180, 180, 5.0)
     ctx.update({"fmask": fm, "grid": grid, "Hg": sphere_tf(azimuth_points(grid, 1.5), ctx["mics"], ctx["freqs"])})
     pick = lambda n, r: pick_segment(ctx["speech"], n, r)
     out = {"setup": {"n_per_kind": a.n, "seed": a.seed, "acoustic_onset_threshold_db": a.thresh, "lock": LOCK, "output_every_s": DT,
-                     "imu_sigma_deg": IMU_SIGMA, "vision": RA.VIS, "soft_fusion": RA.SOFT, "monitor_fps": MON_FPS,
+                     "imu_sigma_deg": IMU_SIGMA, "facing_err": FACING_ERR, "vision": RA.VIS, "soft_fusion": RA.SOFT, "monitor_fps": MON_FPS,
                      "head_model": "刚性球，2+1 阵列，5° 网格", "truth": "对话对象（scene.partner）"}}
     t0 = time.time()
     for kname, kcfg in KINDS.items():
