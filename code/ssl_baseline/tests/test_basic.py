@@ -169,6 +169,63 @@ def test_turn_doa_adaptive_background():
     assert r.mode == "quiet" and angdiff(r.az, 60.0) < 3.0, (r.mode, r.az)
 
 
+def test_nn_decode_and_confidence():
+    """小网络输出：峰值处解码出方位（抛物线插值），尖峰置信度高、平坦分布置信度低。"""
+    from ssl_baseline.nn_doa import AZ_GRID, decode, confidence, soft_label
+    lg = np.log(soft_label(np.array([31.0, -64.0])) + 1e-9)
+    az = decode(lg)
+    assert abs(az[0] - 31.0) < 1.0 and abs(az[1] + 64.0) < 1.0, az
+    c = confidence(np.vstack([lg[:1], np.zeros((1, len(AZ_GRID)))]))
+    assert c[0] > 0.9 and c[1] < 0.1, c
+
+
+def test_finetune_sample_composition():
+    """实录微调样本合成（build_own_finetune.compose，与 build_realman_finetune.py 同一做法）：
+    格式与长度、换人 / 抢话的上一位方位差 ≥10°、同一随机种子结果完全相同。"""
+    sys.path.insert(0, os.path.join(ROOT, "scripts"))
+    import build_own_finetune as B
+    r0 = np.random.default_rng(0)
+    audio = {f"u{i}": r0.normal(0, 0.1, (6, int(r0.integers(8000, 30000)))) for i in range(6)}
+    utts = [(f"u{i}", a) for i, a in enumerate([-60.0, -30.0, -5.0, 0.0, 25.0, 70.0])]
+    bank = r0.normal(0, 0.01, (6, 16000 * 5))
+    run = lambda: B.compose(utts, bank, audio.__getitem__, 200, np.random.default_rng(101))
+    X, meta = run()
+    assert len(X) == 200 and X[0].shape == (6, B.N) and X[0].dtype == np.int16
+    conds = np.array([m["cond"] for m in meta])
+    assert set(conds.tolist()) == {0, 1, 2}
+    for m in meta:
+        if m["cond"] in (0, 1):
+            assert abs(m["az"] - m["az_prev"]) >= 10
+        else:
+            assert m["az"] == m["az_prev"]
+    X2, meta2 = run()
+    assert all(np.array_equal(a, b) for a, b in zip(X, X2)) and meta == meta2
+
+
+def test_data_amount_report_formats():
+    """数据量实验汇总：单起点（旧格式）与多起点（取平均）两种结果文件都能正确汇总。"""
+    import tempfile
+    sys.path.insert(0, os.path.join(ROOT, "scripts"))
+    import run_realman_data_amount as R
+    sc = {"A": {"utts": 10, "minutes": 6.0}, "B": {"utts": 10, "minutes": 6.0}}
+    row = {"name": "f025", "group": "A", "seed": 0, "scenes": sc, "sel_acc10_best": 0.85, "acc10": 0.85, "acc20": 0.9, "mae": 3.0}
+    old = {"steps": 1128, "base_model": R.BASE, "ref": {"base": {"acc10": 0.8}, "f1": {"acc10": 0.87}}, "rows": [row]}
+    new = {"steps": 1128, "bases": ["b0", "b1"], "base_model": "b0.pt",
+           "ref": {"b0": {"base": {"acc10": 0.76}, "f1": {"acc10": 0.86}}, "b1": {"base": {"acc10": 0.82}, "f1": {"acc10": 0.88}}},
+           "rows": [dict(row, base="b0"), dict(row, base="b1", acc10=0.81)]}
+    root0 = R.ROOT
+    with tempfile.TemporaryDirectory() as d:
+        os.makedirs(os.path.join(d, "out")); R.ROOT = d
+        try:
+            R.report(old, "_old"); R.report(new, "_new")
+            t_old = open(os.path.join(d, "out", "realman_data_amount_old.txt"), encoding="utf-8").read()
+            t_new = open(os.path.join(d, "out", "realman_data_amount_new.txt"), encoding="utf-8").read()
+        finally:
+            R.ROOT = root0
+    assert "80.0%" in t_old and "87.0%" in t_old and "12 分钟" in t_old and "85.0%" in t_old
+    assert "79.0%" in t_new and "87.0%" in t_new and "83.0%" in t_new and "85.0% / 81.0%" in t_new
+
+
 if __name__ == "__main__":
     fns = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for fn in fns:
