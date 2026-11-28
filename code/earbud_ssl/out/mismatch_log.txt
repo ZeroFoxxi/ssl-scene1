@@ -1,0 +1,14 @@
+S2 混响 + 2 个干扰（SIR 6 dB） 一致: GEVD-MUSIC 88.5% / GEVD-MUSIC + 视觉 95.0%  216 s
+S2 混响 + 2 个干扰（SIR 6 dB） 头小 7.5 cm: GEVD-MUSIC 90.5% / GEVD-MUSIC + 视觉 94.0%  425 s
+S2 混响 + 2 个干扰（SIR 6 dB） 头大 10 cm: GEVD-MUSIC 83.0% / GEVD-MUSIC + 视觉 94.0%  649 s
+S2 混响 + 2 个干扰（SIR 6 dB） 装配误差 2 mm: GEVD-MUSIC 86.0% / GEVD-MUSIC + 视觉 94.0%  882 s
+S2 混响 + 2 个干扰（SIR 6 dB） 佩戴角度 ±20°: GEVD-MUSIC 89.5% / GEVD-MUSIC + 视觉 95.0%  1166 s
+S2 混响 + 2 个干扰（SIR 6 dB） 佩戴偏转 ±10°: GEVD-MUSIC 88.5% / GEVD-MUSIC + 视觉 95.0%  1389 s
+S2 混响 + 2 个干扰（SIR 6 dB） 综合: GEVD-MUSIC 81.5% / GEVD-MUSIC + 视觉 94.0%  1615 s
+S4 混响 + 2 个干扰（SIR 0 dB） 一致: GEVD-MUSIC 66.5% / GEVD-MUSIC + 视觉 83.0%  1834 s
+S4 混响 + 2 个干扰（SIR 0 dB） 头小 7.5 cm: GEVD-MUSIC 63.0% / GEVD-MUSIC + 视觉 85.0%  2047 s
+S4 混响 + 2 个干扰（SIR 0 dB） 头大 10 cm: GEVD-MUSIC 60.0% / GEVD-MUSIC + 视觉 83.5%  2269 s
+S4 混响 + 2 个干扰（SIR 0 dB） 装配误差 2 mm: GEVD-MUSIC 65.0% / GEVD-MUSIC + 视觉 83.0%  2494 s
+S4 混响 + 2 个干扰（SIR 0 dB） 佩戴角度 ±20°: GEVD-MUSIC 64.5% / GEVD-MUSIC + 视觉 83.5%  2723 s
+S4 混响 + 2 个干扰（SIR 0 dB） 佩戴偏转 ±10°: GEVD-MUSIC 66.0% / GEVD-MUSIC + 视觉 83.5%  2962 s
+S4 混响 + 2 个干扰（SIR 0 dB） 综合: GEVD-MUSIC 62.5% / GEVD-MUSIC + 视觉 80.0%  3194 s

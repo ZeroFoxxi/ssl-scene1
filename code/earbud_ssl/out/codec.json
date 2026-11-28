@@ -1,0 +1,221 @@
+{
+ "setup": {
+  "array": "2+1",
+  "forwarded_channel": 2,
+  "level_dbfs": -30.0,
+  "trials": 200,
+  "seed": 21,
+  "codec_delay_samples": {
+   "PCM 16 bit": 0,
+   "IMA ADPCM 4 bit（64 kbps）": 0,
+   "G.722（64 kbps）": 22,
+   "Opus 32 kbps（感知编码）": 0
+  },
+  "note": "Opus 作为感知编码（如 LC3）的替代"
+ },
+ "codec_snr_db_median": {
+  "PCM 16 bit": 71.10282112348332,
+  "IMA ADPCM 4 bit（64 kbps）": 25.422324248396958,
+  "G.722（64 kbps）": 27.625361767592615,
+  "Opus 32 kbps（感知编码）": 17.270122570239792
+ },
+ "results": {
+  "S2 混响 + 2 个干扰（SIR 6 dB）": {
+   "PCM 16 bit": {
+    "GEVD-MUSIC": {
+     "acc10": 0.87,
+     "acc5": 0.85,
+     "gross30": 0.115,
+     "mae": 13.065555137249698,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 100.0,
+     "vs_pcm_median_diff_deg": 0.0,
+     "right_to_wrong": 0,
+     "wrong_to_right": 0
+    },
+    "GEVD-MUSIC + 视觉": {
+     "acc10": 0.935,
+     "acc5": 0.93,
+     "gross30": 0.045,
+     "mae": 6.95799292882612,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 100.0,
+     "vs_pcm_median_diff_deg": 0.0,
+     "right_to_wrong": 0,
+     "wrong_to_right": 0
+    }
+   },
+   "IMA ADPCM 4 bit（64 kbps）": {
+    "GEVD-MUSIC": {
+     "acc10": 0.86,
+     "acc5": 0.855,
+     "gross30": 0.115,
+     "mae": 13.765974022788141,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 94.5,
+     "vs_pcm_median_diff_deg": 0.20929336372392982,
+     "right_to_wrong": 2,
+     "wrong_to_right": 0
+    },
+    "GEVD-MUSIC + 视觉": {
+     "acc10": 0.94,
+     "acc5": 0.935,
+     "gross30": 0.04,
+     "mae": 6.458808799938449,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 98.5,
+     "vs_pcm_median_diff_deg": 0.0,
+     "right_to_wrong": 0,
+     "wrong_to_right": 1
+    }
+   },
+   "G.722（64 kbps）": {
+    "GEVD-MUSIC": {
+     "acc10": 0.87,
+     "acc5": 0.85,
+     "gross30": 0.115,
+     "mae": 13.255157359584219,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 96.5,
+     "vs_pcm_median_diff_deg": 0.1868929732519149,
+     "right_to_wrong": 1,
+     "wrong_to_right": 1
+    },
+    "GEVD-MUSIC + 视觉": {
+     "acc10": 0.935,
+     "acc5": 0.93,
+     "gross30": 0.05,
+     "mae": 7.133950630676493,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 99.0,
+     "vs_pcm_median_diff_deg": 0.0,
+     "right_to_wrong": 0,
+     "wrong_to_right": 0
+    }
+   },
+   "Opus 32 kbps（感知编码）": {
+    "GEVD-MUSIC": {
+     "acc10": 0.855,
+     "acc5": 0.845,
+     "gross30": 0.13,
+     "mae": 14.339172642648315,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 89.5,
+     "vs_pcm_median_diff_deg": 0.4174482350952218,
+     "right_to_wrong": 5,
+     "wrong_to_right": 2
+    },
+    "GEVD-MUSIC + 视觉": {
+     "acc10": 0.93,
+     "acc5": 0.925,
+     "gross30": 0.05,
+     "mae": 7.116869259522909,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 97.5,
+     "vs_pcm_median_diff_deg": 0.0,
+     "right_to_wrong": 2,
+     "wrong_to_right": 1
+    }
+   }
+  },
+  "S4 混响 + 2 个干扰（SIR 0 dB）": {
+   "PCM 16 bit": {
+    "GEVD-MUSIC": {
+     "acc10": 0.63,
+     "acc5": 0.595,
+     "gross30": 0.32,
+     "mae": 33.73527044983302,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 100.0,
+     "vs_pcm_median_diff_deg": 0.0,
+     "right_to_wrong": 0,
+     "wrong_to_right": 0
+    },
+    "GEVD-MUSIC + 视觉": {
+     "acc10": 0.79,
+     "acc5": 0.785,
+     "gross30": 0.185,
+     "mae": 19.668955421857603,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 100.0,
+     "vs_pcm_median_diff_deg": 0.0,
+     "right_to_wrong": 0,
+     "wrong_to_right": 0
+    }
+   },
+   "IMA ADPCM 4 bit（64 kbps）": {
+    "GEVD-MUSIC": {
+     "acc10": 0.615,
+     "acc5": 0.595,
+     "gross30": 0.35,
+     "mae": 37.88782823522709,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 86.0,
+     "vs_pcm_median_diff_deg": 0.3655372470895344,
+     "right_to_wrong": 5,
+     "wrong_to_right": 2
+    },
+    "GEVD-MUSIC + 视觉": {
+     "acc10": 0.77,
+     "acc5": 0.765,
+     "gross30": 0.205,
+     "mae": 20.75269063760356,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 93.5,
+     "vs_pcm_median_diff_deg": 0.0,
+     "right_to_wrong": 5,
+     "wrong_to_right": 1
+    }
+   },
+   "G.722（64 kbps）": {
+    "GEVD-MUSIC": {
+     "acc10": 0.63,
+     "acc5": 0.61,
+     "gross30": 0.33,
+     "mae": 36.74074411346174,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 82.0,
+     "vs_pcm_median_diff_deg": 0.369442813574949,
+     "right_to_wrong": 8,
+     "wrong_to_right": 8
+    },
+    "GEVD-MUSIC + 视觉": {
+     "acc10": 0.785,
+     "acc5": 0.78,
+     "gross30": 0.19,
+     "mae": 18.879345159881773,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 93.5,
+     "vs_pcm_median_diff_deg": 0.0,
+     "right_to_wrong": 5,
+     "wrong_to_right": 4
+    }
+   },
+   "Opus 32 kbps（感知编码）": {
+    "GEVD-MUSIC": {
+     "acc10": 0.625,
+     "acc5": 0.595,
+     "gross30": 0.34,
+     "mae": 36.171762096635405,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 77.0,
+     "vs_pcm_median_diff_deg": 0.6956554604028895,
+     "right_to_wrong": 9,
+     "wrong_to_right": 8
+    },
+    "GEVD-MUSIC + 视觉": {
+     "acc10": 0.765,
+     "acc5": 0.76,
+     "gross30": 0.21,
+     "mae": 21.58948387266165,
+     "n": 200,
+     "vs_pcm_same_within_2deg_pct": 89.5,
+     "vs_pcm_median_diff_deg": 0.0,
+     "right_to_wrong": 11,
+     "wrong_to_right": 6
+    }
+   }
+  }
+ },
+ "elapsed_s": 351.9018726348877
+}

@@ -1,0 +1,23 @@
+编码时延（样点） {'PCM 16 bit': 0, 'IMA ADPCM 4 bit（64 kbps）': 0, 'G.722（64 kbps）': 22, 'Opus 32 kbps（感知编码）': 0}
+S2 混响 + 2 个干扰（SIR 6 dB） 20/200 17 s
+S2 混响 + 2 个干扰（SIR 6 dB） 40/200 34 s
+S2 混响 + 2 个干扰（SIR 6 dB） 60/200 52 s
+S2 混响 + 2 个干扰（SIR 6 dB） 80/200 70 s
+S2 混响 + 2 个干扰（SIR 6 dB） 100/200 87 s
+S2 混响 + 2 个干扰（SIR 6 dB） 120/200 105 s
+S2 混响 + 2 个干扰（SIR 6 dB） 140/200 122 s
+S2 混响 + 2 个干扰（SIR 6 dB） 160/200 140 s
+S2 混响 + 2 个干扰（SIR 6 dB） 180/200 158 s
+S2 混响 + 2 个干扰（SIR 6 dB） 200/200 176 s
+{"PCM 16 bit": {"GEVD-MUSIC": 87.0, "GEVD-MUSIC + 视觉": 93.5}, "IMA ADPCM 4 bit（64 kbps）": {"GEVD-MUSIC": 86.0, "GEVD-MUSIC + 视觉": 94.0}, "G.722（64 kbps）": {"GEVD-MUSIC": 87.0, "GEVD-MUSIC + 视觉": 93.5}, "Opus 32 kbps（感知编码）": {"GEVD-MUSIC": 85.5, "GEVD-MUSIC + 视觉": 93.0}}
+S4 混响 + 2 个干扰（SIR 0 dB） 20/200 193 s
+S4 混响 + 2 个干扰（SIR 0 dB） 40/200 211 s
+S4 混响 + 2 个干扰（SIR 0 dB） 60/200 228 s
+S4 混响 + 2 个干扰（SIR 0 dB） 80/200 246 s
+S4 混响 + 2 个干扰（SIR 0 dB） 100/200 263 s
+S4 混响 + 2 个干扰（SIR 0 dB） 120/200 280 s
+S4 混响 + 2 个干扰（SIR 0 dB） 140/200 298 s
+S4 混响 + 2 个干扰（SIR 0 dB） 160/200 316 s
+S4 混响 + 2 个干扰（SIR 0 dB） 180/200 334 s
+S4 混响 + 2 个干扰（SIR 0 dB） 200/200 352 s
+{"PCM 16 bit": {"GEVD-MUSIC": 63.0, "GEVD-MUSIC + 视觉": 79.0}, "IMA ADPCM 4 bit（64 kbps）": {"GEVD-MUSIC": 61.5, "GEVD-MUSIC + 视觉": 77.0}, "G.722（64 kbps）": {"GEVD-MUSIC": 63.0, "GEVD-MUSIC + 视觉": 78.5}, "Opus 32 kbps（感知编码）": {"GEVD-MUSIC": 62.5, "GEVD-MUSIC + 视觉": 76.5}}

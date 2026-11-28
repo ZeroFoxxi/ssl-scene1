@@ -27,13 +27,14 @@ def srp_phat(Y, Hgrid, fmask, w):
     """逐帧 PHAT 互谱按帧权重平均后，用模板扫描。返回 (G,) 谱。"""
     ws = w / max(w.sum(), 1e-12)
     out = 0.0
-    for i, j in PAIRS:
+    pairs = list(combinations(range(Y.shape[0]), 2))   # 按实际通道数取全部麦克风对（4 麦时与原 PAIRS 相同）
+    for i, j in pairs:
         c = Y[i][fmask] * np.conj(Y[j][fmask])
         r = (c / (np.abs(c) + 1e-12)) @ ws
         st = Hgrid[:, i, fmask] * np.conj(Hgrid[:, j, fmask])
         st = st / (np.abs(st) + 1e-12)
         out = out + np.real(st.conj() @ r)
-    return out / (len(PAIRS) * fmask.sum())
+    return out / (len(pairs) * fmask.sum())
 
 
 def covariance(Y, fmask, w):
@@ -55,6 +56,7 @@ def music(Rs, Hgrid, fmask, Rb=None, loading=1e-2):
         Rb = Rb + (loading * np.trace(Rb, axis1=1, axis2=2).real / M + 1e-12)[:, None, None] * np.eye(M)
         Li = np.linalg.inv(np.linalg.cholesky(Rb))
         Rw = Li @ Rs @ Li.conj().transpose(0, 2, 1)
+        Rw = 0.5 * (Rw + Rw.conj().transpose(0, 2, 1))  # 去掉数值误差带来的非厄米部分，避免特征分解偶发不收敛
         En = np.linalg.eigh(Rw)[1][:, :, :-1]
         Aw = Li @ A
     num = np.sum(np.abs(Aw) ** 2, axis=1)

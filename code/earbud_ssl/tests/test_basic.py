@@ -113,6 +113,71 @@ def test_room_early_ir():
     assert len(image_sources(room, src, 2, beta)) == 1 + 6 + 18
 
 
+
+def test_scene60():
+    """60 s 场景生成器：目标真值只落在正在说话的人身上；渲染形状正确；两种类型都能生成。"""
+    from earbud_ssl import scene60 as SC
+    from earbud_ssl.sphere import earbud_mic_set
+    rng = np.random.default_rng(3)
+    for kind in ("turns", "case2"):
+        sc = SC.make_scene(rng, {"kind": kind, "duration_s": 20.0})
+        for p in sc.persons:
+            m = sc.target == p.pid
+            assert np.all(p.speaking[m]), (kind, p.pid)
+        assert sc.yaw.shape == (sc.T,) and len(sc.persons) == 5
+        assert np.all(sc.partner[sc.target >= 0] == sc.target[sc.target >= 0])   # 有人说话时对话对象就是他
+        for p in sc.persons:   # 旁桌到耳机处的直达声比 1.5 m 处对面说话人低 side_sir_db
+            if p.role == "side":
+                assert abs(p.gain_db - 20 * np.log10(p.dist / 1.5) + sc.cfg["side_sir_db"]) < 1e-9
+        if kind == "case2":
+            tg = set(sc.target[sc.target >= 0].tolist())
+            assert len(tg) == 1
+            t0 = sc.persons[next(iter(tg))]
+            for p in sc.persons:   # 情况 2：另外两人到耳机处与目标一样响
+                if p.role == "partner" and p is not t0:
+                    assert abs((p.gain_db - 20 * np.log10(p.dist / 1.5)) - (t0.gain_db - 20 * np.log10(t0.dist / 1.5)) - sc.cfg["case2_sir_db"]) < 1e-9
+    mics = earbud_mic_set("2+1")
+    ctx = {"Htab": sphere_tf(azimuth_points(np.arange(0, 360, 1.0), 1.5), mics, FREQS),
+           "H_diff": sphere_tf(fibonacci_sphere(8, 2.0), mics, FREQS),
+           "H_self": sphere_tf(azimuth_points([0.0], 0.115, el_deg=-40.0), mics, FREQS)[0], "psd": np.ones(len(FREQS))}
+    sc = SC.make_scene(rng, {"kind": "turns", "duration_s": 12.0, "rt60": 0.3})
+    Y, parts = SC.render(sc, ctx, rng, lambda n, r: r.standard_normal(n))
+    assert Y.shape == (3, len(FREQS), sc.T) and np.isfinite(Y).all() and "noise" in parts
+
+
+def test_lock_rules():
+    """锁定规则：防抖要连续 2 s 才换人；回应佩戴者立即换；对话组里组员说话立即对准。"""
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
+    from run_scene60_pipeline import Lock, DT
+    seq = [(i * DT, 0.0) for i in range(8)] + [(2.0 + i * DT, 30.0) for i in range(12)]   # 先 A（0°）说 2 s，再 B（30°）说 3 s
+    L = Lock("防抖")
+    for t, z in seq:
+        L.update(t, None, z, None)
+        if t < 2.0 + 1.5:
+            assert abs(L.az) < 1e-6            # B 说满 2 s 之前不换
+    assert abs(L.az - 30.0) < 6                # 之后换到 B
+    L = Lock("防抖")
+    for t, z in seq[:8]:
+        L.update(t, None, z, None)
+    for i in range(3):                         # 佩戴者 2.0 s 说完，B 2.25 s 开口：说满 0.5 s 即换
+        L.update(2.25 + i * DT, None, 30.0, 2.0)
+    assert abs(L.az - 30.0) < 6
+    G = Lock("对话组")
+    for t, z in seq[:8]:                       # A 先说（临时组员）
+        G.update(t, None, z, None)
+    for i in range(3):                         # 佩戴者 2.0 s 说完，B 第一个接话 → 入组并对准
+        G.update(2.25 + i * DT, None, 30.0, 2.0)
+    assert abs(G.az - 30.0) < 6 and len(G.members) == 2
+    G.update(3.5, None, 0.0, 2.0)              # A 是组员，再说话立即对准
+    assert abs(G.az) < 6
+    H = Lock("对话组")
+    for t, z in seq[:8]:
+        H.update(t, None, z, None)
+    H.talking_during_self(2.0, -30.0); H.talking_during_self(2.0, -31.0)   # C（-30°）在佩戴者说话时也在说（≥ 2 次）：不算回应
+    for i in range(3):
+        H.update(2.25 + i * DT, None, -30.0, 2.0)
+    assert abs(H.az) < 6 and len(H.members) == 1
+
 if __name__ == "__main__":
     tests = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for t in tests:

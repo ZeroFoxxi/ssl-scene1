@@ -1,0 +1,151 @@
+{
+ "setup": {
+  "duration_s": 20.0,
+  "talkers": "3 个对话者在正前方 ±60°，轮流说话（每段 2–5 s，间隔 0.1–0.5 s）；1 个旁桌说话人全程说话",
+  "array": "2+1",
+  "grid_deg": 5,
+  "output_every_s": 0.25,
+  "cam_delay_s": 0.2,
+  "cam_on_after_trigger_s": 1.5,
+  "monitor_fps": 1.5,
+  "acoustic_onset_threshold_db": 2.5,
+  "trials": 40,
+  "seed": 61,
+  "vision": {
+   "fov": 70.0,
+   "az_sigma": 2.0,
+   "p_detect": 0.95,
+   "lip_err": 0.1
+  },
+  "note": "B 的唇动档在整段对话中常开，开机占比记 100%（相对于对话时间）"
+ },
+ "results": {
+  "S2 旁桌低 6 dB": {
+   "policies": {
+    "A0 纯声学（不白化）": {
+     "acc10_all": 51.51403249630724,
+     "acc10_first_0p5s": 28.68421052631579,
+     "acc10_steady": 55.2405498281787,
+     "mae_steady": 40.93931070773017,
+     "first_correct_median_s": 0.5126623153387317,
+     "turns_never_correct_pct": 1.9047619047619049
+    },
+    "A 纯声学（声学检测开口）": {
+     "acc10_all": 71.19645494830132,
+     "acc10_first_0p5s": 36.31578947368421,
+     "acc10_steady": 76.89003436426117,
+     "mae_steady": 25.55882670993398,
+     "first_correct_median_s": 0.4625210961730293,
+     "turns_never_correct_pct": 1.4285714285714286
+    },
+    "E 只开监测档": {
+     "acc10_all": 77.99113737075332,
+     "acc10_first_0p5s": 43.42105263157895,
+     "acc10_steady": 83.6340206185567,
+     "mae_steady": 18.192973721197987,
+     "first_correct_median_s": 0.4240162300932653,
+     "turns_never_correct_pct": 0.9523809523809524
+    },
+    "C 声学触发后开摄像头": {
+     "acc10_all": 81.05612998522895,
+     "acc10_first_0p5s": 45.26315789473684,
+     "acc10_steady": 86.89862542955326,
+     "mae_steady": 14.55665859670325,
+     "first_correct_median_s": 0.37880215992373323,
+     "turns_never_correct_pct": 1.4285714285714286
+    },
+    "D 监测档常开 + 声学触发唇动档": {
+     "acc10_all": 85.59822747415066,
+     "acc10_first_0p5s": 48.94736842105264,
+     "acc10_steady": 91.5807560137457,
+     "mae_steady": 9.661303193622429,
+     "first_correct_median_s": 0.3485309825374814,
+     "turns_never_correct_pct": 0.9523809523809524
+    },
+    "B 唇动档常开": {
+     "acc10_all": 92.54062038404727,
+     "acc10_first_0p5s": 68.6842105263158,
+     "acc10_steady": 96.43470790378007,
+     "mae_steady": 5.144105121325383,
+     "first_correct_median_s": 0.25,
+     "turns_never_correct_pct": 0.4761904761904762
+    }
+   },
+   "camera_lip_duty_pct": {
+    "A0": 0.0,
+    "A": 0.0,
+    "E": 0.0,
+    "C": 54.82876712328767,
+    "D": 54.82876712328767,
+    "B": 100.0
+   },
+   "turns_per_min": 17.027027027027025,
+   "acoustic_events_per_min": 28.425,
+   "acoustic_false_events_per_min": 17.849999999999998
+  },
+  "S4 旁桌一样响": {
+   "policies": {
+    "A0 纯声学（不白化）": {
+     "acc10_all": 37.80892659535227,
+     "acc10_first_0p5s": 20.54054054054054,
+     "acc10_steady": 40.53823152498932,
+     "mae_steady": 53.45985701533306,
+     "first_correct_median_s": 0.75,
+     "turns_never_correct_pct": 4.878048780487805
+    },
+    "A 纯声学（声学检测开口）": {
+     "acc10_all": 61.89597934341572,
+     "acc10_first_0p5s": 34.32432432432432,
+     "acc10_steady": 66.25373771892353,
+     "mae_steady": 35.45444125687169,
+     "first_correct_median_s": 0.4620592576066129,
+     "turns_never_correct_pct": 1.4634146341463417
+    },
+    "E 只开监测档": {
+     "acc10_all": 71.5971966064183,
+     "acc10_first_0p5s": 44.32432432432433,
+     "acc10_steady": 75.90773173857326,
+     "mae_steady": 26.52468876948971,
+     "first_correct_median_s": 0.4005280124115931,
+     "turns_never_correct_pct": 0.4878048780487805
+    },
+    "C 声学触发后开摄像头": {
+     "acc10_all": 78.01549243821468,
+     "acc10_first_0p5s": 47.2972972972973,
+     "acc10_steady": 82.87056813327638,
+     "mae_steady": 17.69819266040639,
+     "first_correct_median_s": 0.34883154547409845,
+     "turns_never_correct_pct": 0.975609756097561
+    },
+    "D 监测档常开 + 声学触发唇动档": {
+     "acc10_all": 82.14680929546293,
+     "acc10_first_0p5s": 51.08108108108108,
+     "acc10_steady": 87.05681332763776,
+     "mae_steady": 14.306773491732956,
+     "first_correct_median_s": 0.32428417693161293,
+     "turns_never_correct_pct": 0.4878048780487805
+    },
+    "B 唇动档常开": {
+     "acc10_all": 90.74142382884544,
+     "acc10_first_0p5s": 70.54054054054055,
+     "acc10_steady": 93.93421614694574,
+     "mae_steady": 7.634839909082618,
+     "first_correct_median_s": 0.25,
+     "turns_never_correct_pct": 0.0
+    }
+   },
+   "camera_lip_duty_pct": {
+    "A0": 0.0,
+    "A": 0.0,
+    "E": 0.0,
+    "C": 53.013698630136986,
+    "D": 53.013698630136986,
+    "B": 100.0
+   },
+   "turns_per_min": 16.62162162162162,
+   "acoustic_events_per_min": 25.275000000000002,
+   "acoustic_false_events_per_min": 16.875
+  }
+ },
+ "elapsed_s": 852.0646476745605
+}

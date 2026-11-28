@@ -1,0 +1,1420 @@
+{
+ "setup": {
+  "what": "情况 1 细化：距离 × 算法 × 阵列",
+  "dists_m": [
+   0.5,
+   1.0,
+   2.0,
+   3.0,
+   4.0
+  ],
+  "envs": {
+   "嘈杂（1.5 m 处 SNR 10 dB）": 10.0,
+   "安静（1.5 m 处 SNR 25 dB）": 25.0
+  },
+  "arrays": {
+   "2+1（两耳）": [
+    0,
+    1,
+    2
+   ],
+   "单耳 2 麦": [
+    0,
+    1
+   ]
+  },
+  "template_distance_m": 1.5,
+  "rt60": 0.5,
+  "drr_at_1p5m_db": 0.0,
+  "vision_assumption": "≤2 m 检出 95% 判反 10%；3 m 90% / 20%；4 m 85% / 30%；方位误差 2°",
+  "trials": 150,
+  "seed": 51
+ },
+ "results": {
+  "嘈杂（1.5 m 处 SNR 10 dB）": {
+   "0.5 m": {
+    "2+1（两耳）": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.96,
+       "acc5": 0.96,
+       "gross30": 0.04,
+       "mae": 3.898110420041108,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.9933333333333333,
+       "acc5": 0.9933333333333333,
+       "gross30": 0.006666666666666667,
+       "mae": 1.514391579529411,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.9866666666666667,
+       "acc5": 0.9866666666666667,
+       "gross30": 0.006666666666666667,
+       "mae": 1.4590845387687823,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 1.0,
+       "acc5": 1.0,
+       "gross30": 0.0,
+       "mae": 0.8751258130359262,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 1.0,
+       "acc5": 0.98,
+       "gross30": 0.0,
+       "mae": 1.7260016473307012,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 1.0,
+       "acc5": 0.9866666666666667,
+       "gross30": 0.0,
+       "mae": 1.7017140658392889,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.76,
+       "acc5": 0.76,
+       "gross30": 0.10666666666666667,
+       "mae": 9.431782692976363,
+       "n": 150,
+       "left_right_mirror_pct": 2.666666666666667,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 98.66666666666667
+    },
+    "单耳 2 麦": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.006666666666666667,
+       "acc5": 0.0,
+       "gross30": 0.8333333333333334,
+       "mae": 65.38067109555321,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.2866666666666667,
+       "acc5": 0.18,
+       "gross30": 0.49333333333333335,
+       "mae": 38.57831292473882,
+       "n": 150,
+       "left_right_mirror_pct": 14.000000000000002,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.8133333333333334,
+       "acc5": 0.6733333333333333,
+       "gross30": 0.05333333333333334,
+       "mae": 7.883510572554639,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.8066666666666666,
+       "acc5": 0.6333333333333333,
+       "gross30": 0.10666666666666667,
+       "mae": 12.173642207981096,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.84,
+       "acc5": 0.82,
+       "gross30": 0.08,
+       "mae": 10.350437848978114,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.9266666666666666,
+       "acc5": 0.9133333333333333,
+       "gross30": 0.03333333333333333,
+       "mae": 4.631639776584981,
+       "n": 150,
+       "left_right_mirror_pct": 1.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.76,
+       "acc5": 0.76,
+       "gross30": 0.10666666666666667,
+       "mae": 9.431782692976363,
+       "n": 150,
+       "left_right_mirror_pct": 2.666666666666667,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 88.66666666666667
+    }
+   },
+   "1 m": {
+    "2+1（两耳）": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.94,
+       "acc5": 0.94,
+       "gross30": 0.06,
+       "mae": 5.8826710835813145,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.9866666666666667,
+       "acc5": 0.9866666666666667,
+       "gross30": 0.013333333333333334,
+       "mae": 1.630683008009996,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.9933333333333333,
+       "acc5": 0.9933333333333333,
+       "gross30": 0.006666666666666667,
+       "mae": 1.0269804663867703,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.9933333333333333,
+       "acc5": 0.9933333333333333,
+       "gross30": 0.006666666666666667,
+       "mae": 1.0759373927434135,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.9933333333333333,
+       "acc5": 0.9866666666666667,
+       "gross30": 0.006666666666666667,
+       "mae": 2.214717174172308,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.9933333333333333,
+       "acc5": 0.9733333333333334,
+       "gross30": 0.006666666666666667,
+       "mae": 1.9834973077916402,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.7733333333333333,
+       "acc5": 0.76,
+       "gross30": 0.08666666666666667,
+       "mae": 8.692968720774415,
+       "n": 150,
+       "left_right_mirror_pct": 3.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 80.66666666666666
+    },
+    "单耳 2 麦": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.9333333333333333,
+       "mae": 75.43238931484535,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.02,
+       "acc5": 0.0,
+       "gross30": 0.7533333333333333,
+       "mae": 59.913709477430906,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.3933333333333333,
+       "acc5": 0.24,
+       "gross30": 0.2733333333333333,
+       "mae": 20.860963562008475,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.23333333333333334,
+       "acc5": 0.14666666666666667,
+       "gross30": 0.44,
+       "mae": 36.96243035180229,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.41333333333333333,
+       "acc5": 0.4,
+       "gross30": 0.3333333333333333,
+       "mae": 32.105661545289585,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.8533333333333334,
+       "acc5": 0.8133333333333334,
+       "gross30": 0.04,
+       "mae": 6.491483237423411,
+       "n": 150,
+       "left_right_mirror_pct": 0.6666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.7733333333333333,
+       "acc5": 0.76,
+       "gross30": 0.08666666666666667,
+       "mae": 8.692968720774415,
+       "n": 150,
+       "left_right_mirror_pct": 3.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 68.0
+    }
+   },
+   "2 m": {
+    "2+1（两耳）": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.4666666666666667,
+       "acc5": 0.4666666666666667,
+       "gross30": 0.5066666666666667,
+       "mae": 40.92221043670696,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.5733333333333334,
+       "acc5": 0.5666666666666667,
+       "gross30": 0.4,
+       "mae": 31.79300683623232,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.9866666666666667,
+       "acc5": 0.9866666666666667,
+       "gross30": 0.013333333333333334,
+       "mae": 1.8841650555729172,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.72,
+       "acc5": 0.72,
+       "gross30": 0.2733333333333333,
+       "mae": 20.517740289352403,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.82,
+       "acc5": 0.8,
+       "gross30": 0.17333333333333334,
+       "mae": 15.275487348839112,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.9933333333333333,
+       "acc5": 0.98,
+       "gross30": 0.006666666666666667,
+       "mae": 2.066159852584843,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.78,
+       "acc5": 0.7666666666666667,
+       "gross30": 0.07333333333333333,
+       "mae": 8.629414567534194,
+       "n": 150,
+       "left_right_mirror_pct": 4.666666666666667,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 59.333333333333336
+    },
+    "单耳 2 麦": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.98,
+       "mae": 78.61518077360816,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.9533333333333334,
+       "mae": 72.24207020473344,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.04666666666666667,
+       "acc5": 0.013333333333333334,
+       "gross30": 0.74,
+       "mae": 50.130120157254,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.006666666666666667,
+       "acc5": 0.0,
+       "gross30": 0.86,
+       "mae": 63.680609869868036,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.17333333333333334,
+       "acc5": 0.16666666666666666,
+       "gross30": 0.64,
+       "mae": 49.60430573188169,
+       "n": 150,
+       "left_right_mirror_pct": 2.666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.78,
+       "acc5": 0.7666666666666667,
+       "gross30": 0.14666666666666667,
+       "mae": 11.978549286307418,
+       "n": 150,
+       "left_right_mirror_pct": 1.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.78,
+       "acc5": 0.7666666666666667,
+       "gross30": 0.07333333333333333,
+       "mae": 8.629414567534194,
+       "n": 150,
+       "left_right_mirror_pct": 4.666666666666667,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 48.66666666666667
+    }
+   },
+   "3 m": {
+    "2+1（两耳）": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.02666666666666667,
+       "acc5": 0.02666666666666667,
+       "gross30": 0.9733333333333334,
+       "mae": 77.05051781087701,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.02,
+       "acc5": 0.02,
+       "gross30": 0.9533333333333334,
+       "mae": 78.17081107505847,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.9466666666666667,
+       "acc5": 0.9333333333333333,
+       "gross30": 0.03333333333333333,
+       "mae": 3.6032797923400812,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.54,
+       "acc5": 0.54,
+       "gross30": 0.44666666666666666,
+       "mae": 39.72007605616022,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.6066666666666667,
+       "acc5": 0.6066666666666667,
+       "gross30": 0.38666666666666666,
+       "mae": 35.746239445384774,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.9666666666666667,
+       "acc5": 0.9466666666666667,
+       "gross30": 0.02,
+       "mae": 2.950852013958076,
+       "n": 150,
+       "left_right_mirror_pct": 0.6666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.6533333333333333,
+       "acc5": 0.64,
+       "gross30": 0.10666666666666667,
+       "mae": 12.574696566423555,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 48.0
+    },
+    "单耳 2 麦": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 1.0,
+       "mae": 87.72390660450877,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 1.0,
+       "mae": 83.03295960015058,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.88,
+       "mae": 62.86358300641899,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.006666666666666667,
+       "acc5": 0.0,
+       "gross30": 0.9466666666666667,
+       "mae": 76.26586146504897,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.08666666666666667,
+       "acc5": 0.08666666666666667,
+       "gross30": 0.7933333333333333,
+       "mae": 65.84407730295554,
+       "n": 150,
+       "left_right_mirror_pct": 0.6666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.4866666666666667,
+       "acc5": 0.48,
+       "gross30": 0.37333333333333335,
+       "mae": 30.293368999922944,
+       "n": 150,
+       "left_right_mirror_pct": 0.6666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.6533333333333333,
+       "acc5": 0.64,
+       "gross30": 0.10666666666666667,
+       "mae": 12.574696566423555,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 34.66666666666667
+    }
+   },
+   "4 m": {
+    "2+1（两耳）": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.9866666666666667,
+       "mae": 82.36320224659056,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.98,
+       "mae": 80.28060804612352,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.8266666666666667,
+       "acc5": 0.8133333333333334,
+       "gross30": 0.14666666666666667,
+       "mae": 11.947662680420061,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.3933333333333333,
+       "acc5": 0.38666666666666666,
+       "gross30": 0.5866666666666667,
+       "mae": 48.989532886630684,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.46,
+       "acc5": 0.46,
+       "gross30": 0.4866666666666667,
+       "mae": 43.65930850528406,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.82,
+       "acc5": 0.7866666666666666,
+       "gross30": 0.06,
+       "mae": 8.440900043801916,
+       "n": 150,
+       "left_right_mirror_pct": 1.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.49333333333333335,
+       "acc5": 0.4666666666666667,
+       "gross30": 0.16,
+       "mae": 16.914079064892153,
+       "n": 150,
+       "left_right_mirror_pct": 6.0,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 38.0
+    },
+    "单耳 2 麦": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 1.0,
+       "mae": 89.16536151925747,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 1.0,
+       "mae": 88.02782663384856,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.9666666666666667,
+       "mae": 76.3161109182561,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 1.0,
+       "mae": 87.29994029397051,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.02,
+       "acc5": 0.02,
+       "gross30": 0.94,
+       "mae": 82.22188304769661,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.31333333333333335,
+       "acc5": 0.29333333333333333,
+       "gross30": 0.5333333333333333,
+       "mae": 42.663547472431176,
+       "n": 150,
+       "left_right_mirror_pct": 2.666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.49333333333333335,
+       "acc5": 0.4666666666666667,
+       "gross30": 0.16,
+       "mae": 16.914079064892153,
+       "n": 150,
+       "left_right_mirror_pct": 6.0,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 24.666666666666668
+    }
+   }
+  },
+  "安静（1.5 m 处 SNR 25 dB）": {
+   "0.5 m": {
+    "2+1（两耳）": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.98,
+       "acc5": 0.98,
+       "gross30": 0.02,
+       "mae": 2.2921524584791184,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.9866666666666667,
+       "acc5": 0.9866666666666667,
+       "gross30": 0.013333333333333334,
+       "mae": 1.9818634920199665,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.9666666666666667,
+       "acc5": 0.9666666666666667,
+       "gross30": 0.03333333333333333,
+       "mae": 3.5831398922662494,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 1.0,
+       "acc5": 1.0,
+       "gross30": 0.0,
+       "mae": 0.8941416111089366,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 1.0,
+       "acc5": 0.96,
+       "gross30": 0.0,
+       "mae": 1.7805414813420366,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.98,
+       "acc5": 0.98,
+       "gross30": 0.02,
+       "mae": 3.0647547617119155,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.8266666666666667,
+       "acc5": 0.8266666666666667,
+       "gross30": 0.06,
+       "mae": 7.0515802378528525,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 100.0
+    },
+    "单耳 2 麦": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.06666666666666667,
+       "acc5": 0.04,
+       "gross30": 0.6466666666666666,
+       "mae": 50.894224541671385,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.44666666666666666,
+       "acc5": 0.3,
+       "gross30": 0.38666666666666666,
+       "mae": 30.68849663829428,
+       "n": 150,
+       "left_right_mirror_pct": 27.333333333333332,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.8733333333333333,
+       "acc5": 0.6666666666666666,
+       "gross30": 0.05333333333333334,
+       "mae": 8.627540187170457,
+       "n": 150,
+       "left_right_mirror_pct": 1.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.9666666666666667,
+       "acc5": 0.7133333333333334,
+       "gross30": 0.0,
+       "mae": 3.6515196745412792,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.9866666666666667,
+       "acc5": 0.9466666666666667,
+       "gross30": 0.006666666666666667,
+       "mae": 2.100841517886741,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.9266666666666666,
+       "acc5": 0.9266666666666666,
+       "gross30": 0.04666666666666667,
+       "mae": 6.566988173853402,
+       "n": 150,
+       "left_right_mirror_pct": 0.6666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.8266666666666667,
+       "acc5": 0.8266666666666667,
+       "gross30": 0.06,
+       "mae": 7.0515802378528525,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 100.0
+    }
+   },
+   "1 m": {
+    "2+1（两耳）": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.98,
+       "acc5": 0.98,
+       "gross30": 0.02,
+       "mae": 2.0551051343415923,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.9933333333333333,
+       "acc5": 0.9933333333333333,
+       "gross30": 0.006666666666666667,
+       "mae": 1.1902193732938737,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.9733333333333334,
+       "acc5": 0.9733333333333334,
+       "gross30": 0.02666666666666667,
+       "mae": 2.826031916320246,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 1.0,
+       "acc5": 1.0,
+       "gross30": 0.0,
+       "mae": 0.535038928225977,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 1.0,
+       "acc5": 1.0,
+       "gross30": 0.0,
+       "mae": 1.5057782766307266,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.9866666666666667,
+       "acc5": 0.98,
+       "gross30": 0.013333333333333334,
+       "mae": 2.774109592898082,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.7933333333333333,
+       "acc5": 0.7866666666666666,
+       "gross30": 0.08,
+       "mae": 8.322350563055421,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 100.0
+    },
+    "单耳 2 麦": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.006666666666666667,
+       "acc5": 0.0,
+       "gross30": 0.82,
+       "mae": 62.03985127015612,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.05333333333333334,
+       "acc5": 0.0,
+       "gross30": 0.6333333333333333,
+       "mae": 49.048539991723146,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.36,
+       "acc5": 0.18666666666666668,
+       "gross30": 0.24,
+       "mae": 21.316866479315408,
+       "n": 150,
+       "left_right_mirror_pct": 0.6666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.4533333333333333,
+       "acc5": 0.24,
+       "gross30": 0.2,
+       "mae": 17.23302885814579,
+       "n": 150,
+       "left_right_mirror_pct": 0.6666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.6933333333333334,
+       "acc5": 0.6933333333333334,
+       "gross30": 0.09333333333333334,
+       "mae": 10.440125813757938,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.8533333333333334,
+       "acc5": 0.8466666666666667,
+       "gross30": 0.04,
+       "mae": 6.581164372708889,
+       "n": 150,
+       "left_right_mirror_pct": 0.6666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.7933333333333333,
+       "acc5": 0.7866666666666666,
+       "gross30": 0.08,
+       "mae": 8.322350563055421,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 100.0
+    }
+   },
+   "2 m": {
+    "2+1（两耳）": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.86,
+       "acc5": 0.86,
+       "gross30": 0.14,
+       "mae": 13.543100074203238,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.9533333333333334,
+       "acc5": 0.9533333333333334,
+       "gross30": 0.02666666666666667,
+       "mae": 2.6383597331872215,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.9733333333333334,
+       "acc5": 0.9666666666666667,
+       "gross30": 0.02666666666666667,
+       "mae": 2.588278547885731,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 1.0,
+       "acc5": 1.0,
+       "gross30": 0.0,
+       "mae": 0.4101606928139919,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 1.0,
+       "acc5": 0.9933333333333333,
+       "gross30": 0.0,
+       "mae": 1.5017866356924903,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.9866666666666667,
+       "acc5": 0.96,
+       "gross30": 0.013333333333333334,
+       "mae": 2.8232986786164287,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.84,
+       "acc5": 0.8133333333333334,
+       "gross30": 0.07333333333333333,
+       "mae": 7.028570251797652,
+       "n": 150,
+       "left_right_mirror_pct": 3.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 100.0
+    },
+    "单耳 2 麦": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.96,
+       "mae": 74.41188903398663,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.9266666666666666,
+       "mae": 67.07572987757376,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.04,
+       "acc5": 0.013333333333333334,
+       "gross30": 0.68,
+       "mae": 46.18857974976533,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.08,
+       "acc5": 0.02,
+       "gross30": 0.6333333333333333,
+       "mae": 41.94650004462615,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.44,
+       "acc5": 0.4266666666666667,
+       "gross30": 0.22666666666666666,
+       "mae": 19.85994283877375,
+       "n": 150,
+       "left_right_mirror_pct": 3.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.7733333333333333,
+       "acc5": 0.7466666666666667,
+       "gross30": 0.12666666666666668,
+       "mae": 12.541265785519748,
+       "n": 150,
+       "left_right_mirror_pct": 0.6666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.84,
+       "acc5": 0.8133333333333334,
+       "gross30": 0.07333333333333333,
+       "mae": 7.028570251797652,
+       "n": 150,
+       "left_right_mirror_pct": 3.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 100.0
+    }
+   },
+   "3 m": {
+    "2+1（两耳）": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.35333333333333333,
+       "acc5": 0.35333333333333333,
+       "gross30": 0.6266666666666667,
+       "mae": 50.98441814418507,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.22,
+       "acc5": 0.21333333333333335,
+       "gross30": 0.7266666666666667,
+       "mae": 57.301280016997005,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.92,
+       "acc5": 0.92,
+       "gross30": 0.06666666666666667,
+       "mae": 6.715031720762959,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.9933333333333333,
+       "acc5": 0.9933333333333333,
+       "gross30": 0.0,
+       "mae": 0.6976895566021708,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 1.0,
+       "acc5": 0.9933333333333333,
+       "gross30": 0.0,
+       "mae": 1.638686900506035,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.94,
+       "acc5": 0.9266666666666666,
+       "gross30": 0.02,
+       "mae": 4.1616251625517915,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.6266666666666667,
+       "acc5": 0.62,
+       "gross30": 0.17333333333333334,
+       "mae": 14.937445157715588,
+       "n": 150,
+       "left_right_mirror_pct": 5.333333333333334,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 99.33333333333333
+    },
+    "单耳 2 麦": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.98,
+       "mae": 79.96481804403503,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.96,
+       "mae": 74.36003461709394,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.006666666666666667,
+       "acc5": 0.0,
+       "gross30": 0.8933333333333333,
+       "mae": 64.40958487453106,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.006666666666666667,
+       "acc5": 0.006666666666666667,
+       "gross30": 0.86,
+       "mae": 60.19084365564231,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.32666666666666666,
+       "acc5": 0.32,
+       "gross30": 0.3933333333333333,
+       "mae": 30.015050906515377,
+       "n": 150,
+       "left_right_mirror_pct": 2.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.6266666666666667,
+       "acc5": 0.62,
+       "gross30": 0.18666666666666668,
+       "mae": 18.877169507737527,
+       "n": 150,
+       "left_right_mirror_pct": 3.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.6266666666666667,
+       "acc5": 0.62,
+       "gross30": 0.17333333333333334,
+       "mae": 14.937445157715588,
+       "n": 150,
+       "left_right_mirror_pct": 5.333333333333334,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 99.33333333333333
+    }
+   },
+   "4 m": {
+    "2+1（两耳）": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.02,
+       "acc5": 0.02,
+       "gross30": 0.9466666666666667,
+       "mae": 79.3802080381015,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.02,
+       "acc5": 0.02,
+       "gross30": 0.9466666666666667,
+       "mae": 77.50793415521801,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.8,
+       "acc5": 0.7933333333333333,
+       "gross30": 0.16666666666666666,
+       "mae": 14.369512417640417,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.9733333333333334,
+       "acc5": 0.96,
+       "gross30": 0.013333333333333334,
+       "mae": 1.591090233313425,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.9266666666666666,
+       "acc5": 0.9266666666666666,
+       "gross30": 0.006666666666666667,
+       "mae": 3.3715910517772127,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.8533333333333334,
+       "acc5": 0.8333333333333334,
+       "gross30": 0.06,
+       "mae": 7.869615541819699,
+       "n": 150,
+       "left_right_mirror_pct": 1.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.5133333333333333,
+       "acc5": 0.49333333333333335,
+       "gross30": 0.18,
+       "mae": 17.252560296094586,
+       "n": 150,
+       "left_right_mirror_pct": 8.666666666666668,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 99.33333333333333
+    },
+    "单耳 2 麦": {
+     "methods": {
+      "SRP-PHAT": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 1.0,
+       "mae": 85.5022672826755,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "MUSIC": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 1.0,
+       "mae": 82.16738745920574,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "GEVD-MUSIC": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.94,
+       "mae": 73.68277337716776,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "不开摄像头": {
+       "acc10": 0.0,
+       "acc5": 0.0,
+       "gross30": 0.9533333333333334,
+       "mae": 69.87318998125072,
+       "n": 150,
+       "left_right_mirror_pct": 0.0,
+       "front_back_mirror_pct": 0.0
+      },
+      "低帧率档": {
+       "acc10": 0.19333333333333333,
+       "acc5": 0.19333333333333333,
+       "gross30": 0.56,
+       "mae": 42.940401772199785,
+       "n": 150,
+       "left_right_mirror_pct": 3.3333333333333335,
+       "front_back_mirror_pct": 0.0
+      },
+      "高帧率档": {
+       "acc10": 0.36666666666666664,
+       "acc5": 0.36,
+       "gross30": 0.46,
+       "mae": 37.81071320225024,
+       "n": 150,
+       "left_right_mirror_pct": 2.666666666666667,
+       "front_back_mirror_pct": 0.0
+      },
+      "仅视觉": {
+       "acc10": 0.5133333333333333,
+       "acc5": 0.49333333333333335,
+       "gross30": 0.18,
+       "mae": 17.252560296094586,
+       "n": 150,
+       "left_right_mirror_pct": 8.666666666666668,
+       "front_back_mirror_pct": 0.0
+      }
+     },
+     "onset_detect_within_0p3s_pct": 99.33333333333333
+    }
+   }
+  }
+ },
+ "elapsed_s": 1043.6980485916138
+}
