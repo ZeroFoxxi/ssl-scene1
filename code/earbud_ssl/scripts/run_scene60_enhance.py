@@ -8,6 +8,7 @@
   MVDR：w = R⁻¹d / (dᴴR⁻¹d)，d 为头部模板在目标方位的导向向量（相对左耳前麦），R 为目标不说话、佩戴者也不说话时的混合信号协方差
   （按唇动 / 骨声纹判断，此处用剧本真值；递推时间常数 1 s，对角加载 1e-3）。另算一组上限：R 直接用干扰本身（理想干扰协方差）。
 方位来源：真值（含理想干扰协方差的上限）；真值偏 5° / 10°；全流程实际锁定输出（锁错时就是对准了别人）。
+耳间链路时延（只对 B）：右耳两路整体晚 1 / 2 帧（16 / 32 ms）直接参与组阵（不等待、不补偿），导向向量不变，协方差按延后的信号估计。
 指标：目标在说话、佩戴者没说话的帧里，200–7000 Hz 信干比提升（dB，输出相对左耳前麦）；干扰 = 其余所有声源 + 噪声。
 每个声源单独渲染，所以目标与干扰经过同一个滤波器后可以分别算功率。
 
@@ -29,7 +30,8 @@ from earbud_ssl.sphere import sphere_tf, azimuth_points, earbud_mic_set
 FS, FPS = SC.FS, SC.FPS
 BLOCK = int(round(P.DT * FPS))
 SUBS = {"A 本地 2 麦（左耳）": [0, 1], "B 两耳 4 麦": [0, 1, 2, 3]}
-SOURCES = ["真值 + 理想干扰协方差", "真值", "真值偏 5°", "真值偏 10°", "全流程锁定"]
+SOURCES = ["真值 + 理想干扰协方差", "真值", "真值偏 5°", "真值偏 10°", "全流程锁定", "真值，右耳晚 16 ms（不等待）", "真值，右耳晚 32 ms（不等待）"]
+LINK = {"真值，右耳晚 16 ms（不等待）": 1, "真值，右耳晚 32 ms（不等待）": 2}   # 右耳两路整体晚几帧（帧移 16 ms），只用于 B
 CONDS = {"另两人一样响": 0.0, "另两人低 6 dB": -6.0}
 
 
@@ -110,8 +112,18 @@ def main():
             srcs = {"真值 + 理想干扰协方差": [None] * pad + truth_b, "真值": [None] * pad + truth_b, "真值偏 5°": [None] * pad + [x + 5 for x in truth_b],
                     "真值偏 10°": [None] * pad + [x + 10 for x in truth_b], "全流程锁定": [None] * pad + lock_b}
             sel = active.copy(); sel[: int(P.T_START * FPS)] = False
+            srcs.update({k: srcs["真值"] for k in LINK})
             for sname, mics in SUBS.items():
                 for src, azb in srcs.items():
+                    if src in LINK:
+                        if len(mics) < 4:
+                            res[sname][src].append(float("nan")); continue
+                        dly = LINK[src]
+                        sh = lambda X: np.concatenate([X[:2], np.concatenate([np.zeros_like(X[2:, :, :dly]), X[2:, :, :-dly]], axis=2)], axis=0)
+                        Yd, td, idd = sh(Y), sh(tgt), sh(intf)
+                        W = mvdr_track(Yd, sc.persons[tp].speaking | sc.self_speech, azb, ctx4["Htab"], mics, fm)
+                        res[sname][src].append(float(sir_gain(W, td, idd, mics, fm, sel)))
+                        continue
                     if src == "真值 + 理想干扰协方差":   # 上限：干扰协方差直接用干扰本身（每帧更新）
                         W = mvdr_track(intf, np.zeros(sc.T, bool), azb, ctx4["Htab"], mics, fm)
                     else:                              # 实际：目标没说、佩戴者没说的帧里用混合信号估计
@@ -119,8 +131,8 @@ def main():
                     res[sname][src].append(float(sir_gain(W, tgt, intf, mics, fm, sel)))
             print(cname, f"{i + 1}/{a.n}", f"{time.time() - t0:.0f} s", "锁定", round(lock_acc[-1], 1),
                   {s: round(res[s]["真值"][-1], 1) for s in SUBS}, flush=True)
-        out[cname] = {"信干比提升_dB（中位数 / 最小 / 最大）": {s: {src: [round(float(np.median(v)), 1), round(float(np.min(v)), 1), round(float(np.max(v)), 1)]
-                                                          for src, v in d.items()} for s, d in res.items()},
+        out[cname] = {"信干比提升_dB（中位数 / 最小 / 最大）": {s: {src: ([round(float(np.median(v)), 1), round(float(np.min(v)), 1), round(float(np.max(v)), 1)]
+                                                               if not np.all(np.isnan(v)) else None) for src, v in d.items()} for s, d in res.items()},
                       "全流程锁定正确率_%（各段）": [round(x, 1) for x in lock_acc], "逐段": res}
         print(json.dumps(out[cname]["信干比提升_dB（中位数 / 最小 / 最大）"], ensure_ascii=False, indent=1), flush=True)
     out["elapsed_s"] = round(time.time() - t0)

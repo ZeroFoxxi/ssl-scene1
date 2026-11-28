@@ -47,7 +47,7 @@ def enhance_tables(files):
             out.append("| 增强 | " + " | ".join(srcs) + " |")
             out.append("|---|" + "---|" * len(srcs))
             for s, x in v["信干比提升_dB（中位数 / 最小 / 最大）"].items():
-                out.append(f"| {s} | " + " | ".join(f"{x[k][0]}（{x[k][1]}–{x[k][2]}）" for k in srcs) + " |")
+                out.append(f"| {s} | " + " | ".join("—" if x[k] is None else f"{x[k][0]}（{x[k][1]}–{x[k][2]}）" for k in srcs) + " |")
             out.append("")
     out.append("单位 dB，中位数（最小–最大），目标在说话、佩戴者没说话的帧，200–7000 Hz。")
     return "\n".join(out)
