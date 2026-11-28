@@ -104,7 +104,7 @@ def facing_truth(sc, p):
 
 
 def facing_me(sc, az_world, k, rng, cache):
-    """视觉的"脸朝向佩戴者"判断：最近 0.75 s 多数时间朝向（每 0.25 s 一块，判错率 FACING_ERR）。"""
+    """视觉的"脸朝向佩戴者"判断：最近 1 s 里至少四分之三的时间朝向（每 0.25 s 一块，判错率 FACING_ERR）。"""
     best = min(sc.persons, key=lambda p: angdiff(float(p.az_world[k]), az_world))
     if angdiff(float(best.az_world[k]), az_world) > LOCK["same_deg"] or abs(sc.az_head(best)[k]) > sc.cfg["fov_half_deg"]:
         return None
@@ -112,7 +112,7 @@ def facing_me(sc, az_world, k, rng, cache):
         blk = int(round(DT * FPS)); nb = int(np.ceil(sc.T / blk))
         flip = np.repeat(rng.random(nb) < FACING_ERR, blk)[: sc.T]
         cache[best.pid] = facing_truth(sc, best) ^ flip
-    return bool(cache[best.pid][max(0, k - int(0.75 * FPS)):k + 1].mean() >= 0.5)
+    return bool(cache[best.pid][max(0, k - int(1.0 * FPS)):k + 1].mean() >= 0.75)
 
 
 def lip_talking(om, k):
@@ -231,7 +231,8 @@ class Lock:
             return
         if self.group:
             near = [m for m in self.members if angdiff(m["az"], z) <= same and m["score"] > 0]
-            if near:
+            if near and self.use_facing and facing is False:
+                near = []           # 组员此刻明确没朝向佩戴者（在和别人说话）：不切过去
                 m = near[0]
                 if LOCK["confirm_n"] > 1:
                     pend = getattr(self, "pend", None)
