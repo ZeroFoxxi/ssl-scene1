@@ -21,6 +21,8 @@ D["conf_bins"] = [{"lo": round(b["conf_lo"], 2), "hi": round(b["conf_hi"], 2), "
 th7 = next(t for t in c["threshold"] if t["th"] == 0.7)
 D["conf_th7"] = {"keep": P1(th7["keep"]), "wrong_kept": th7["wrong_kept"], "wrong_all": th7["wrong_all"]}
 
+D["conf_real"] = load("realman_confidence.json") if has("realman_confidence.json") else None   # 真实录音（RealMAN 600 个样本）上的置信度
+
 # 2. 连续会议仿真：门限 0.7（在验证会议 2027、2028 上选定），报告会议 2026 只评测一次
 cl = {s["method"]: s for s in load("closed_loop_meeting_nn_conf_final_summary.json")["summary"] if s["rt60"] == "平均"}
 f = lambda s: {"latency": s["latency_median_s"], "aim2s": P1(s["aim_within_2s"]), "wrong": s["wrong_per_min"], "framed": P1(s["framed_ratio"])}

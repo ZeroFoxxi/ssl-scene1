@@ -130,7 +130,7 @@ if (AM) {
 {
   const s = newSlide("置信度与转向（仿真）",
     "左：会议室仿真固定测试集 800 个样本，按置信度从低到高分 5 组、每组 160 个；右：连续会议仿真 60 段 × 60 s，6 麦线阵 17.5 cm",
-    `置信度：网络输出中，概率最大的方向左右各 6° 内的概率之和。门限只在两批验证会议上选（候选 0.5–0.8），在报告会议上评测一次。固定测试集上门限 0.7 保留 ${D.conf_th7.keep}% 的判决，去掉 ${D.conf_th7.wrong_all - D.conf_th7.wrong_kept}/${D.conf_th7.wrong_all} 个错误。置信度低于门限时摄像头不转，保持上一个方向。`);
+    `置信度：网络输出中，概率最大的方向左右各 6° 内的概率之和。${D.conf_real ? `真实录音上区分对错的能力（AUROC）：仿真训练模型 ${D.conf_real["仿真训练"].auroc.toFixed(2)}、实录微调模型 ${D.conf_real["实录微调"].auroc.toFixed(2)}（仿真测试集上 0.85）。` : ""}门限只在两批验证会议上选（候选 0.5–0.8），在报告会议上评测一次。固定测试集上门限 0.7 保留 ${D.conf_th7.keep}% 的判决，去掉 ${D.conf_th7.wrong_all - D.conf_th7.wrong_kept}/${D.conf_th7.wrong_all} 个错误。置信度低于门限时摄像头不转，保持上一个方向。`);
   s.addChart(p.charts.BAR, [{ name: "≤10°", labels: D.conf_bins.map((b) => `${b.lo.toFixed(2)}–${b.hi.toFixed(2)}`), values: D.conf_bins.map((b) => b.acc) }],
     chartBase({ x: 0.6, y: 1.8, w: 6.4, h: 4.85, showLegend: false, chartColors: [C.navy], barGapWidthPct: 70, dataLabelFormatCode: "0.0",
                 showCatAxisTitle: true, catAxisTitle: "置信度（每组 160 个样本）" }));
@@ -141,7 +141,10 @@ if (AM) {
     [bold("每分钟误转次数"), ctr(CL.none.wrong.toFixed(2)), hi(CL.th7.wrong.toFixed(2))],
     [bold("发言时间中画面对准的比例"), ctr(`${f1(CL.none.framed)}%`), hi(`${f1(CL.th7.framed)}%`)],
   ], 7.4, 2.05, [2.9, 1.2, 1.2], [0.42, 0.48, 0.48, 0.48, 0.48]);
-  note(s, "置信度可直接作为输出给云台和波束成形的可信度：低于门限时不转。", 7.4, 4.65, 5.3, 0.7);
+  const CR = D.conf_real && D.conf_real["实录微调"];
+  note(s, "置信度可直接作为输出给云台和波束成形的可信度：低于门限时不转。"
+    + (CR ? `\n真实录音上同样有效（RealMAN 600 个样本，实录微调模型）：门限 0.7 保留 ${f0(CR.th["0.7"][0])}% 的判决，去掉 ${f0(100 * (1 - CR.th["0.7"][2] / CR.th["0.7"][3]))}% 的错误。` : ""),
+    7.4, 4.65, 5.3, 1.2);
   oneLine(s, `置信度越高越准；加门限后误转降到约三分之一（${CL.none.wrong} → ${CL.th7.wrong} 次 / 分钟），转向速度不变。`);
 }
 
