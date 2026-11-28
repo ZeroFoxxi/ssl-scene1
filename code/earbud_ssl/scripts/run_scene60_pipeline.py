@@ -93,6 +93,11 @@ def lip_open_mask(sc, az_world, k, yaw_imu, rng, cache):
     return cache[best.pid]
 
 
+def lip_talking(om, k):
+    """嘴"正在张合"：最近 0.75 s（三块唇动）里至少三分之二的时间嘴张着；单块判错（10%）不会通过。"""
+    return om is not None and om[max(0, k - int(0.75 * FPS)):k + 1].mean() >= 0.6
+
+
 def face_peak(spec, grid, face_head, width=10.0, min_rel=0.5):
     """已知是哪张脸时：只在这张脸方位 ±width 内找空间谱的峰；峰值不到全局峰值的 min_rel 倍时认为这张脸方向没有明显声源，返回 None。"""
     d = np.abs(wrap(grid - face_head))
@@ -306,8 +311,7 @@ def run_scene(sc, Y, ctx, rng, thresh):
                         faces_t = faces_now(sc, k, rng, True)
                         # 锁定对象本人：用他自己最近一次唇动开口作开口时刻，且他此刻唇动显示在说话
                         om = lip_open_mask(sc, L.az, k, yaw_imu, rng, s.setdefault("lipcache", {}))
-                        # 锁定对象"还在说"：最近 0.5 s 里一半以上时间嘴张着（单次唇动判错不算）
-                        talking = om is not None and om[max(0, k - int(0.5 * FPS)):k + 1].mean() >= 0.5
+                        talking = lip_talking(om, k)     # 锁定对象还在说
                         if talking:
                             sp = lip_gated_spec(Y, k, om, sc.self_speech, ctx) if om is not None else None
                             if sp is None:   # 门控帧不够时退回按开口时刻
@@ -316,7 +320,7 @@ def run_scene(sc, Y, ctx, rng, thresh):
                             if sp is not None:
                                 zp = face_peak(sp, grid, wrap(L.az - yaw))
                                 own = None if zp is None else wrap(zp + yaw)
-                        # 别的人：最近 5 s 内开过口、此刻（最近 0.5 s 一半以上时间）嘴张着、不在锁定方向的每张脸，各给一个观测
+                        # 别的人：最近 5 s 内开过口、此刻嘴在张合、不在锁定方向的每张脸，各给一个观测
                         new = []; done = []
                         for e in reversed(s["seen"]):
                             if RC.frame_time(e[0]) < t - 5.0:
@@ -325,7 +329,7 @@ def run_scene(sc, Y, ctx, rng, thresh):
                                 continue
                             done.append(e[2])
                             om = lip_open_mask(sc, e[2], k, yaw_imu, rng, s.setdefault("lipcache", {}))
-                            if om is None or om[max(0, k - int(0.5 * FPS)):k + 1].mean() < 0.5:
+                            if not lip_talking(om, k):
                                 continue
                             sp = lip_gated_spec(Y, k, om, sc.self_speech, ctx)
                             if sp is None:
