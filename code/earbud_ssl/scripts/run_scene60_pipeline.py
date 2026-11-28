@@ -33,7 +33,8 @@ FS, FPS = SC.FS, SC.FPS
 DT = 0.25
 T_START = 1.0
 MODES = ["纯声学", "低帧率档", "高帧率档常开"]
-LOCKS = ["跟随", "防抖", "对话组"]
+LOCKS = ["跟随", "防抖", "对话组", "对话组+朝向"]
+FACING_ERR = 0.15     # 视觉判断"脸朝向佩戴者"的判错率（每 0.25 s 一块）【设计，待视觉同事确认能否提供】
 LOCK = {"same_deg": 12.0, "switch_s": 2.0, "reply_window_s": 1.5, "reply_min_s": 0.5, "track_gain": 0.3, "confirm_n": 1}
 IMU_SIGMA = 0.5
 MON_FPS = 1.5
@@ -93,6 +94,27 @@ def lip_open_mask(sc, az_world, k, yaw_imu, rng, cache):
     return cache[best.pid]
 
 
+def facing_truth(sc, p):
+    """剧本真值：此人每帧是否脸朝佩戴者。说话时朝向他说话的对象（轮流说话：佩戴者；情况 2：目标朝佩戴者，另外两人互相看）；
+    听的时候朝向正在说话的人（佩戴者在说时朝佩戴者）。旁桌不朝佩戴者。"""
+    if p.role != "partner":
+        return np.zeros(sc.T, bool)
+    talks_to_me = sc.cfg["kind"] == "turns" or bool(np.any(sc.target == p.pid))
+    return (p.speaking & talks_to_me) | (~p.speaking & sc.self_speech & talks_to_me)
+
+
+def facing_me(sc, az_world, k, rng, cache):
+    """视觉的"脸朝向佩戴者"判断：最近 0.75 s 多数时间朝向（每 0.25 s 一块，判错率 FACING_ERR）。"""
+    best = min(sc.persons, key=lambda p: angdiff(float(p.az_world[k]), az_world))
+    if angdiff(float(best.az_world[k]), az_world) > LOCK["same_deg"] or abs(sc.az_head(best)[k]) > sc.cfg["fov_half_deg"]:
+        return None
+    if best.pid not in cache:
+        blk = int(round(DT * FPS)); nb = int(np.ceil(sc.T / blk))
+        flip = np.repeat(rng.random(nb) < FACING_ERR, blk)[: sc.T]
+        cache[best.pid] = facing_truth(sc, best) ^ flip
+    return bool(cache[best.pid][max(0, k - int(0.75 * FPS)):k + 1].mean() >= 0.5)
+
+
 def lip_talking(om, k):
     """嘴"正在张合"：最近 0.75 s（三块唇动）里至少三分之二的时间嘴张着；单块判错（10%）不会通过。"""
     return om is not None and om[max(0, k - int(0.75 * FPS)):k + 1].mean() >= 0.6
@@ -122,6 +144,7 @@ class Lock:
       每段自语音结束后结算：期间一半以上时间唇动显示还在说的组员扣 1 分（在和别人说话），得分 ≤ 0 不再算组员。场景开头先跟第一个说话的人（临时组员）。"""
     def __init__(self, rule):
         self.rule = rule; self.az = None; self.cands = []; self.last_lock_obs = -9.0
+        self.group = rule.startswith("对话组"); self.use_facing = rule == "对话组+朝向"
         self.members = []; self.switches = []
         self.first_after = {}; self.talked_over = {}; self.self_steps = {}; self.settled = set(); self.last_member_talk = -9.0
 
@@ -168,18 +191,19 @@ class Lock:
             if angdiff(m["az"], old) <= LOCK["same_deg"]:
                 m["az"] = self.az; self.last_member_talk = t
 
-    def update(self, t, own, new, self_end, yaw=0.0, yaw_prev=0.0):
+    def update(self, t, own, new, self_end, yaw=0.0, yaw_prev=0.0, facing=None):
         """own：按锁定对象本人开口时刻测得的观测（高帧率档才有）；new：当前（或新开口的人）的观测。"""
         same = LOCK["same_deg"]
-        if self.rule == "对话组" and self_end is not None and t > self_end:
+        if self.group and self_end is not None and t > self_end:
             self.settle(t, self_end)
         if own is not None and self.az is not None and angdiff(own, self.az) <= same:
             self._track(t, own)
         news = [] if new is None else (list(new) if isinstance(new, (list, tuple)) else [new])
-        for z in news:
-            self._obs(t, z, self_end, yaw, yaw_prev)
+        fac = facing if facing is not None else [None] * len(news)
+        for z, f in zip(news, fac):
+            self._obs(t, z, self_end, yaw, yaw_prev, f)
 
-    def _obs(self, t, z, self_end, yaw, yaw_prev):
+    def _obs(self, t, z, self_end, yaw, yaw_prev, facing=None):
         same = LOCK["same_deg"]
         if self.rule == "跟随" and self.az is not None and angdiff(z, self.az) > same and LOCK["confirm_n"] > 1:
             pend = getattr(self, "pend", None)
@@ -192,18 +216,20 @@ class Lock:
             self.pend = None
         if self.az is None and self.rule != "跟随" and abs(wrap(z - yaw)) > 30:
             return            # 开场引导只接受正前方 ±30° 内的人（设计 8.1），旁桌开口不当成对话对象
+        if self.az is None and self.use_facing and facing is False:
+            return            # 有朝向信息时：开场只跟朝向佩戴者说话的人
         if self.rule == "跟随" or self.az is None:
             self._set(t, z)
-            if self.rule == "对话组" and not self.members:
+            if self.group and not self.members:
                 self.members.append({"az": z, "score": 0.5})     # 场景开头：先跟第一个说话的人（临时组员）
                 self.last_member_talk = t
             return
-        lock_valid = (self.rule != "对话组" or not self.members or
+        lock_valid = (not self.group or not self.members or
                       any(angdiff(m["az"], self.az) <= same and m["score"] > 0 for m in self.members))
         if angdiff(z, self.az) <= same and lock_valid:
             self._track(t, z)
             return
-        if self.rule == "对话组":
+        if self.group:
             near = [m for m in self.members if angdiff(m["az"], z) <= same and m["score"] > 0]
             if near:
                 m = near[0]
@@ -225,7 +251,7 @@ class Lock:
         else:
             c = {"az": z, "start": t, "dur": DT, "last": t}; self.cands.append(c)
         reply = self_end is not None and 0 <= c["start"] - self_end <= LOCK["reply_window_s"] and c["dur"] >= LOCK["reply_min_s"]
-        if self.rule == "对话组":
+        if self.group:
             # 回应：佩戴者说完后第一个接话的人，且佩戴者说话时他没在说（高帧率档看唇动；纯声学 / 低帧率档没有这条信息）
             first = self_end is not None and self.first_after.get(self_end) in (None, c["start"])
             n_over = sum(1 for a in self.talked_over.get(self_end, []) if angdiff(c["az"], a) <= same)
@@ -233,6 +259,9 @@ class Lock:
             if reply and first and n_over < max(2, 0.5 * n_steps):   # 佩戴者说话期间一半以上时间被看到在说才排除（唇动有 10% 判错）
                 self.first_after[self_end] = c["start"]
                 self._join(t, c["az"], 1.0)
+                return
+            if self.use_facing and facing and c["dur"] >= LOCK["reply_min_s"]:
+                self._join(t, c["az"], 1.0)      # 面向佩戴者说话满 0.5 s：在跟佩戴者说话
                 return
             look = abs(wrap(yaw - yaw_prev)) > 10 and abs(wrap(c["az"] - yaw)) <= 10 and c["dur"] >= 1.0
             lapse = c["dur"] >= LOCK["switch_s"] and self.last_member_talk < c["start"]   # 候选连续说满 2 s、这期间组员都没说话
@@ -280,11 +309,12 @@ def run_scene(sc, Y, ctx, rng, thresh):
             # 本段自语音结束的时刻（作为键）
             nxt = min([e for e in self_ends if e >= t], default=None)
             if nxt is not None:
-                Lg = state["高帧率档常开"]["locks"]["对话组"]; Lg.self_steps[nxt] = Lg.self_steps.get(nxt, 0) + 1
                 fs_ = faces_now(sc, k, rng, True)
-                for fa, li in fs_:
-                    if li > 0.5:
-                        state["高帧率档常开"]["locks"]["对话组"].talking_during_self(nxt, wrap(fa + yaw), t)
+                for gname in ("对话组", "对话组+朝向"):
+                    Lg = state["高帧率档常开"]["locks"][gname]; Lg.self_steps[nxt] = Lg.self_steps.get(nxt, 0) + 1
+                    for fa, li in fs_:
+                        if li > 0.5:
+                            Lg.talking_during_self(nxt, wrap(fa + yaw), t)
         for m in MODES:
             s = state[m]
             ev = lip_ev if m == "高帧率档常开" else ac_ev
@@ -323,7 +353,7 @@ def run_scene(sc, Y, ctx, rng, thresh):
                                 zp = face_peak(sp, grid, wrap(L.az - yaw))
                                 own = None if zp is None else wrap(zp + yaw)
                         # 别的人：最近 8 s 内开过口、此刻嘴在张合、不在锁定方向的每张脸，各给一个观测
-                        new = []; done = []
+                        new = []; done = []; fac = []
                         for e in reversed(s["seen"]):
                             if RC.frame_time(e[0]) < t - 8.0:
                                 break
@@ -341,9 +371,13 @@ def run_scene(sc, Y, ctx, rng, thresh):
                             zp = face_peak(sp, grid, wrap(e[2] - yaw))
                             if zp is not None and angdiff(wrap(zp + yaw), L.az) > LOCK["same_deg"]:
                                 new.append(wrap(zp + yaw))
-                    L.update(t, own, new, se, yaw, yaw_prev)
+                                fac.append(facing_me(sc, e[2], k, rng, s.setdefault("facecache", {})))
+                    L.update(t, own, new, se, yaw, yaw_prev, facing=fac if (L.use_facing and not selfsp) else None)
                 else:
-                    L.update(t, None, z_world, se, yaw, yaw_prev)
+                    f0 = None
+                    if m == "高帧率档常开" and L.use_facing and z_world is not None:
+                        f0 = [facing_me(sc, z_world, k, rng, s.setdefault("facecache", {}))]
+                    L.update(t, None, z_world, se, yaw, yaw_prev, facing=f0)
                 out[r] = None if L.az is None else float(wrap(L.az - yaw))
             row["out"][m] = out
         rows.append(row)

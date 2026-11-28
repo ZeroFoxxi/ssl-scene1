@@ -6,6 +6,10 @@
 import argparse, json
 
 
+def r_keys(r):
+    return [k for k in r if isinstance(r[k], dict)]
+
+
 def pipeline_tables(files):
     out = []
     for f in files:
@@ -18,7 +22,7 @@ def pipeline_tables(files):
             out.append("| 摄像头 | 锁定规则 | 锁定正确 ≤10° | 对方在说话时 | 佩戴者说话时 | 第一次回话之后 | 另有人同时说时 | 换人后锁定（中位 / 90%） | 每分钟切换 |")
             out.append("|---|---|---|---|---|---|---|---|---|")
             for m, r in v["结果"].items():
-                for L in ("跟随", "防抖", "对话组"):
+                for L in r_keys(r):
                     x = r[L]
                     lat = "—" if x["换人后锁定时间中位数（s）"] is None else f"{x['换人后锁定时间中位数（s）']} / {x['换人后锁定时间 90% 分位（s）']} s"
                     out.append(f"| {m} | {L} | {x['锁定正确 ≤10°（%）：全部']}% | {x['对方在说话时']}% | {x['佩戴者说话时']}% | "
