@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""【未校验：与 build_realman_finetune.py 逐字节一致的校验尚未完成，校验通过前不要使用】
-自有阵列（或任何多通道录音）→ 实录微调数据。做法与 build_realman_finetune.py 完全相同，只是输入换成一张清单。
+"""自有阵列（或任何多通道录音）→ 实录微调数据。做法与 build_realman_finetune.py 完全相同，只是输入换成一张清单。
 
 清单（CSV，UTF-8，每行一段单人说话或一段无人说话的录音）：
   path        录音文件（相对 --root）；多通道 wav / flac，或 --loader realman 时为 RealMAN 的 *_CH0.flac
@@ -12,7 +11,7 @@
      空出的时段用同一房间的背景声填补。长度 1.5 s（开口前 1.0 s + 开口后 0.5 s），与仿真训练数据同格式。
 运行：python scripts/build_own_finetune.py --manifest data.csv --root <录音目录> --train-rooms A B C --val-rooms D --name train_data_own_ft
 校验：python scripts/build_own_finetune.py --export-realman work/realman_val_manifest.csv  （把 RealMAN 验证集写成清单）
-      再用 --loader realman 构建，结果应与 build_realman_finetune.py 的输出逐字节一致。
+      再用 --loader realman 构建，结果应与 build_realman_finetune.py 的输出逐字节一致（11-28 已校验：train、val 两部分都一致）。
 """
 import argparse, csv, glob, json, os, sys
 import numpy as np
