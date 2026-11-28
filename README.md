@@ -12,14 +12,14 @@
 ```
 ├── 记录/                              交接说明、按周的实习工作记录、mentor 沟通纪要、学习笔记
 ├── 01_场景一_摄像头声源定位/
-│   ├── 方案选型/                      方法选型 PPT（完整版 24 页、精简版 11 页）、讲解手册
+│   ├── 方案选型/                      方法选型 PPT、讲解手册、阶段汇报（11-18 已发；第二次汇报初稿）
 │   ├── 竞品调研/                      竞品调研 PPT、竞品规格调研、竞品补充页（mentor 认可版）、公开参照方案汇总
 │   │   └── 旧版/                      早期卡片式竞品补充页
-│   ├── 训练数据/                      训练数据方案与采集计划（PPT + Excel）
+│   ├── 训练数据/                      训练数据方案与采集计划（PPT + Excel）、会议室实录采集方案
 │   └── 声源定位调研清单_文献数据集工具竞品.xlsx
 ├── 02_耳机声源定位/                   耳机 + 摄像头 demo（无障碍听觉辅助）：任务说明与追踪
 │   └── 资料/                          项目设计资料（内部材料，仅限本私有仓库）
-├── code/ssl_baseline/                基线代码：测向、唤醒词定向、跟踪、云台状态机、仿真、评测、单元测试
+├── code/ssl_baseline/                代码：传统测向与端侧小网络（训练、微调、评测）、连续会议仿真、实录回放、单元测试；server_kit/ 为 GPU 服务器一键脚本
 ├── figures/                          仿真图与竞品产品图（附图片来源清单）
 └── _build/                           生成 PPT / Excel / 手册的脚本与数据源
 ```
@@ -32,7 +32,10 @@
 | `竞品调研/竞品规格调研_萤石与思必驰.*` | 萤石、思必驰的内存、模型、执行单元、离线 / 在线、时延核查 |
 | `竞品调研/公开参照方案汇总.*` | 竞品未公开时的资源与效果参照，含 2026 年文献核查表 |
 | `训练数据/训练数据方案与采集计划.*` | 数据集按用途选型（许可已核实）、仿真方案、自采集方案 |
-| `方案选型/场景一专项_摄像头声源定位与跟踪_方案选型与数据集.*` | 方法选型完整版 |
+| `方案选型/场景一专项_摄像头声源定位与跟踪_方案选型与数据集.*` | 方法选型完整版（11-16 前，家居电视场景） |
+| `方案选型/场景一阶段汇报_会议室声源定位.*` | 第一次阶段汇报（11-18 已发） |
+| `方案选型/场景一阶段汇报2_真实录音与训练数据.*` | 第二次阶段汇报（初稿，服务器结果出来后定稿） |
+| `训练数据/会议室实录采集方案.*` | 自有阵列会议室实录：采什么、采多少、怎么标注 |
 
 ## 重新生成材料
 
@@ -44,6 +47,9 @@ python _build/ref_data.py  && node _build/build_ref_deck.js           # 公开�
 python _build/data_plan.py && node _build/build_data_plan_deck.js     # 训练数据方案
 node _build/build_comp_simple.js                                      # 竞品补充页（mentor 认可版）
 node _build/build_ssl_deck.js                                         # 方法选型完整版
+python _build/scene1_progress_data.py && node _build/build_scene1_report.js   # 第一次阶段汇报
+python _build/scene1_report2_data.py && node _build/build_scene1_report2.js   # 第二次阶段汇报
+python _build/scene1_report2_data.py && node _build/build_meeting_rec_plan.js # 会议室实录采集方案
 ```
 
 ## 运行代码
@@ -57,7 +63,11 @@ python scripts/run_closed_loop_demo.py
 python scripts/run_tv_interference_demo.py
 python scripts/run_wake_doa_demo.py         # 唤醒词定向（电视干扰）
 python scripts/run_meeting_eval.py          # 会议室换人测向（场景一选型）
+python scripts/run_meeting_closed_loop.py   # 连续会议仿真（转向、误转）
+python scripts/run_realman_data_amount.py   # 实录微调要多少数据（RealMAN）
 ```
+
+GPU 服务器上的训练与评测见 [`code/ssl_baseline/server_kit/README.md`](./code/ssl_baseline/server_kit/README.md)。
 
 依赖说明：numpy 与 pyroomacoustics 版本要匹配——numpy 2.x 用最新版 pyroomacoustics；numpy 1.x（如 Anaconda 自带的 1.26）用 `pyroomacoustics==0.7.4`，否则可能段错误。
 
