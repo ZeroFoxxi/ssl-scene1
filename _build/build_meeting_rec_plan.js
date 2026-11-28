@@ -58,7 +58,7 @@ const f1 = (v) => (Math.floor(v * 10 + 0.5 + 1e-9) / 10).toFixed(1);
 
 // 数据量实验：按分钟数排列（多个起点模型时取平均）
 const AM = D.amount, RM = D.realman, SC = D.scale, AU = D.aug;
-let curve = null, enough = null, rooms = null, staticOk = null, staticRows = [];
+let curve = null, enough = null, flat = null, low = null, rooms = null, staticOk = null, staticRows = [];
 if (AM) {
   const mins = (r) => r.scenes ? Object.values(r.scenes).reduce((a, v) => a + v.minutes, 0) : null;
   const by = {};
@@ -68,6 +68,9 @@ if (AM) {
   curve = [{ m: 0, acc: refAvg("base") }, ...rows.filter((r) => r.group === "A").map((r) => ({ m: mins(r), acc: r.acc })).sort((a, b) => a.m - b.m), { m: 143, acc: refAvg("f1") }];
   const full = curve[curve.length - 1].acc;
   enough = curve.find((c) => c.m > 0 && c.acc >= full - 2);                  // 事先定好的"够用"：与全量相差 ≤2 个百分点
+  const pts = curve.filter((c) => c.m > 0);                                  // 曲线变平的起点：此后各点都与全量相差 ≤1
+  flat = pts.find((c, i) => pts.slice(i).every((q) => Math.abs(q.acc - full) <= 1.0));
+  low = pts[0] && flat && pts[0].m < flat.m ? pts[0] : null;
   const single = rows.filter((r) => r.group === "B" && r.scenes && Object.keys(r.scenes).length === 1);
   const multi = rows.find((r) => r.name === "f033");
   staticRows = rows.filter((r) => r.group === "D").map((r) => ({ m: mins(r), acc: r.acc }));
@@ -75,7 +78,7 @@ if (AM) {
   if (single.length && multi) rooms = { single: single.reduce((a, r) => a + r.acc, 0) / single.length, multi: multi.acc,
                                         singleMin: single.reduce((a, r) => a + mins(r), 0) / single.length, multiMin: mins(multi) };
 }
-const perRoom = enough ? enough.m / 3 : null;
+const perRoom = flat ? flat.m / 3 : null;
 
 // 1 封面
 {
@@ -107,7 +110,7 @@ const perRoom = enough ? enough.m / 3 : null;
     [bold("仿真加扩散噪声"), ctr(`+${f1(AU.dif - AU.base)}（统计误差内）`)],
     [bold("真实录音微调", { color: C.navy }), ctr(`${f1(RM.base)}% → ${f1(RM.ft)}%`, { bold: true, color: C.navy })],
   ], 8.4, 1.95, [2.6, 1.7], [0.42, 0.45, 0.45, 0.45]);
-  note(s, enough ? `约 ${f0(enough.m)} 分钟（每个房间约 ${f0(perRoom)} 分钟）的录音已接近全量效果（相差 ≤2 个百分点）。` : `录音多少、分几个房间的对比${TBD}。`,
+  note(s, flat ? `约 ${f0(flat.m)} 分钟（每个房间约 ${f0(perRoom)} 分钟）的录音已与全量相当` + (low ? `；约 ${f0(low.m)} 分钟时开始下降（${f1(low.acc)}%）。` : "。") : `录音多少、分几个房间的对比${TBD}。`,
     8.4, 3.95, 4.3, 0.9);
   note(s, "RealMAN 的阵列与产品阵列不同：产品模型需要用自有阵列的录音微调和测试。", 8.4, 4.85, 4.3, 0.9);
   oneLine(s, "已试过的改进里，只有真实录音微调明显提高真实场景效果；产品阵列的录音需要自己采。");
@@ -130,7 +133,7 @@ const perRoom = enough ? enough.m / 3 : null;
     ? `房间数：录音时长相近时，3 个房间 ${f1(rooms.multi)}%、1 个房间 ${f1(rooms.single)}%，${rooms.multi - rooms.single >= 3 ? "多房间明显更好，优先多房间" : "相差在 3 个百分点内，按方便安排"}。`
     : `房间数：多房间与单房间的对比${TBD}。`;
   note(s, ["分两步：先在 1 个会议室采集（约半天），用它微调、在另一个会议室测试；效果达到预期再扩展到更多、更大小不一的会议室。", roomTxt,
-           enough ? `录音量：RealMAN 上每个房间约 ${f0(perRoom)} 分钟已接近全量；产品阵列不同，上表单人说话每个房间约 26–34 分钟，留有余量。` : `录音量：按 RealMAN 上的数据量实验估算${TBD}。`]
+           flat ? `录音量：RealMAN 上每个房间约 ${f0(perRoom)} 分钟已与全量相当；产品阵列不同，上表单人说话每个房间约 26–34 分钟，留有余量。` : `录音量：按 RealMAN 上的数据量实验估算${TBD}。`]
            .concat(staticRows.length ? [`只用静止说话微调：${staticRows.map((r) => `约 ${f0(r.m)} 分钟 ${f1(r.acc)}%`).join("、")}，${staticOk ? "与全量相当，训练以坐着说话为主即可" : "低于全量 2 个百分点以上，走动说话也需要按比例录"}。`] : []).join("\n"),
     0.6, 5.0, 12.1, 1.7);
   oneLine(s, "以单人说话为主，换人、抢话离线合成；另录无人说话、远端喇叭和一段真实会议用于测试。");

@@ -87,10 +87,14 @@ if (AM) {
   const full = amtRows[amtRows.length - 1].acc;
   amtLine.enough = amtRows.find((r) => r.m > 0 && r.acc >= full - 2);          // 事先定好的"够用"：与全量相差 ≤2 个百分点
   amtLine.full = full;
+  const pts = amtRows.filter((r) => r.m > 0);                                  // 曲线变平的起点：此后各点都与全量相差 ≤1
+  amtLine.flat = pts.find((r, i) => pts.slice(i).every((q) => Math.abs(q.acc - full) <= 1.0));
+  amtLine.low = pts[0] && amtLine.flat && pts[0].m < amtLine.flat.m ? pts[0] : null;
   const C_ = Object.fromEntries(rows.filter((r) => r.group === "C").map((r) => [r.name, 100 * r.acc10]));
   const f025 = rows.find((r) => r.name === "f025");
   amtLine.noise = [C_.f1_seed1 != null ? Math.abs(C_.f1_seed1 - full) : null, C_.f025_sub1 != null && f025 ? Math.abs(C_.f025_sub1 - 100 * f025.acc10) : null].filter((v) => v != null);
-  amtLine.ftAll = rows.filter((r) => r.group !== "D").map((r) => 100 * r.acc10).concat([full]);
+  amtLine.ftAllFn = (minM) => rows.filter((r) => mins(r) == null || mins(r) >= minM).map((r) => 100 * r.acc10).concat([full]);
+  amtLine.ftAll = amtLine.ftAllFn(amtLine.flat ? amtLine.flat.m - 1e-6 : 0);
   amtLine.D = rows.filter((r) => r.group === "D").map((r) => ({ name: r.name, m: mins(r), acc: 100 * r.acc10 })).sort((a, b) => a.m - b.m);
 }
 
@@ -107,7 +111,7 @@ if (AM) {
 // 2 阶段结论
 {
   const s = newSlide("阶段结论", "各项数字见后续页；真实录音为公开数据集 RealMAN，未在自有硬件上测试", "本页汇总；每项的数据与条件见后续页。");
-  const amt = amtLine && amtLine.enough ? `；约 ${f0(amtLine.enough.m)} 分钟录音已与全量相当，1 个房间与 3 个房间相当` : "";
+  const amt = amtLine && amtLine.flat ? `；约 ${f0(amtLine.flat.m)} 分钟录音已与全量相当，1 个房间与 3 个房间相当` : "";
   table(s, [
     [head("项目"), head("结论")],
     [bold("置信度"), cell(`小网络同时输出方向和置信度；连续会议仿真中加置信度门限，每分钟误转 ${CL.none.wrong} → ${CL.th7.wrong} 次，转向速度不变（第 3 页）`)],
@@ -231,9 +235,10 @@ if (AM) {
       ...L.D.map((d) => [bold(`只用静止说话（约 ${f0(d.m)} 分钟）`), ctr(`${f1(d.acc)}%`)]),
       [bold("多种子验证（4 个起点模型）"), ctr(D.server_ft ? D.server_ft : TBD)],
     ], 8.4, 1.95, [3.1, 1.2], [0.42, 0.42, 0.42, ...L.D.map(() => 0.42), 0.42]);
-    note(s, `微调后各组都在 ${f1(Math.min(...L.ftAll))}–${f1(Math.max(...L.ftAll))}%；同一组换种子或换一组录音，相差 ≤${f1(Math.max(...L.noise))} 个百分点。`
-      + `在 ${f0(Math.min(...amtRows.filter((r) => r.m > 0).map((r) => r.m)))}–143 分钟范围内，录音多少、几个房间都不明显影响结果。`, 8.4, 4.35 + 0.42 * L.D.length, 4.3, 1.2);
-    oneLine(s, `约 ${f0(L.enough.m)} 分钟真实录音（每个房间约 ${f0(L.enough.m / 3)} 分钟）微调就从 ${f1(RM.base)}% 提高到 ${f1(L.enough.acc)}%，与全部 143 分钟相当。`);
+    note(s, `录音 ≥${f0(L.flat.m)} 分钟时各组都在 ${f1(Math.min(...L.ftAll))}–${f1(Math.max(...L.ftAll))}%，录音多少、几个房间、是否含走动都不明显影响结果；`
+      + `同一组换种子或换一组录音，相差 ≤${f1(Math.max(...L.noise))} 个百分点。`, 8.4, 4.35 + 0.42 * L.D.length, 4.3, 1.2);
+    oneLine(s, `约 ${f0(L.flat.m)} 分钟真实录音（每个房间约 ${f0(L.flat.m / 3)} 分钟）微调就从 ${f1(RM.base)}% 提高到 ${f1(L.flat.acc)}%，与全部 143 分钟相当`
+      + (L.low ? `；约 ${f0(L.low.m)} 分钟时开始下降（${f1(L.low.acc)}%）。` : "。"));
   } else {
     table(s, [
       [head("模型"), head("真实录音 ≤10°", { align: "center" })],
