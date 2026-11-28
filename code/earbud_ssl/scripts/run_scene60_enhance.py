@@ -78,6 +78,7 @@ def main():
     ap.add_argument("--n", type=int, default=4)
     ap.add_argument("--seed", type=int, default=101)
     ap.add_argument("--tag", default="dev")
+    ap.add_argument("--only", choices=["0", "-6"], help="只跑一种电平（0：另两人一样响；-6：低 6 dB）")
     a = ap.parse_args()
     ctx4 = build_ctx("2+2")
     fm = (ctx4["freqs"] >= 200) & (ctx4["freqs"] <= 7000); grid = np.arange(-180, 180, 5.0)
@@ -90,6 +91,8 @@ def main():
                      "mvdr": "目标不说话时的混合协方差，τ = 1 s，对角加载 1e-3，每 0.25 s 更新方位", "locator": "全流程：高帧率档常开 + 对话组锁定"}}
     t0 = time.time()
     for cname, sir in CONDS.items():
+        if a.only is not None and float(a.only) != sir:
+            continue
         rng = np.random.default_rng(a.seed + 2000 + int(-sir))
         res = {s: {src: [] for src in SOURCES} for s in SUBS}; lock_acc = []
         for i in range(a.n):

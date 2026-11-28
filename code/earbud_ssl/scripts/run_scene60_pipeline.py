@@ -398,6 +398,7 @@ def main():
     ap.add_argument("--seed", type=int, default=101)
     ap.add_argument("--thresh", type=float, default=3.5)
     ap.add_argument("--tag", default="dev")
+    ap.add_argument("--only", choices=["turns", "case2"], help="只跑一类场景（便于两类并行）")
     ap.add_argument("--confirm", type=int, default=2, help="换到新方向前要求连续几次观测一致（跟随、对话组）")
     a = ap.parse_args()
     LOCK["confirm_n"] = a.confirm
@@ -411,6 +412,8 @@ def main():
                      "head_model": "刚性球，2+1 阵列，5° 网格", "truth": "对话对象（scene.partner）"}}
     t0 = time.time()
     for kname, kcfg in KINDS.items():
+        if a.only and kcfg["kind"] != a.only:
+            continue
         rng = np.random.default_rng(a.seed + (0 if kcfg["kind"] == "turns" else 1000))
         all_rows_by_scene = []; all_sw = []; n_ev = 0; rows_all = []
         for i in range(a.n):
