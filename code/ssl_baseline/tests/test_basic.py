@@ -226,6 +226,35 @@ def test_data_amount_report_formats():
     assert "79.0%" in t_new and "87.0%" in t_new and "83.0%" in t_new and "85.0% / 81.0%" in t_new
 
 
+def test_streaming_turner_matches_offline():
+    """流式转向（stream.StreamingTurner，每次 0.1 s）与离线评测的 closed_loop 逐块完全一致（平面波 A → 停顿 → B → A）。"""
+    sys.path.insert(0, os.path.join(ROOT, "scripts"))
+    import run_meeting_closed_loop as M
+    from ssl_baseline.stream import StreamingTurner
+    from ssl_baseline.doa import SRPConfig
+    from ssl_baseline.geometry import aliasing_frequency
+    xy = M.ARRAYS["6麦线阵 17.5cm"]; fs = M.FS
+    n = int(12 * fs); x = np.zeros((6, n)); rng = np.random.default_rng(3)
+    for az, a, b, s in [(30.0, 0.5, 4.0, 11), (320.0, 5.0, 8.5, 12), (30.0, 9.3, 11.8, 13)]:
+        x[:, int(a * fs):int(b * fs)] += _plane_wave(xy, az, int(b * fs) - int(a * fs), s)
+    x += rng.normal(0, 0.02, x.shape)
+    srp = SRPConfig(fmax=min(4000.0, 0.95 * aliasing_frequency(xy)))
+    base = dict(pad_pre=0.0, pad_post=0.0, exclude=((85.0, 275.0),), srp=srp)
+    raw = WakeDOA(xy, fs, WakeDOAConfig(method="srp_sub", bg_subtract=False, onset=False, **base))
+    est = WakeDOA(xy, fs, WakeDOAConfig(**base))
+    far = np.zeros(n)
+    e_db, far_db = M.band_energy_blocks(x), M.band_energy_blocks(far[None]); nb = len(e_db)
+    srp_raw = np.array([raw.localize(x, max(0, int(((b + 1) * M.DT - 0.3) * fs)), int((b + 1) * M.DT * fs)).az
+                        if (b + 1) * M.DT >= 0.35 else 0.0 for b in range(nb)])
+    pans, cmds = M.closed_loop(x, e_db, far_db, srp_raw, est, freeze=True)
+    st = StreamingTurner(est, raw, fs=fs, dt=M.DT, freeze=True, pan_speed=M.PAN_SPEED, buf_s=4.0)
+    bs = int(M.DT * fs)
+    sp = [st.push(x[:, b * bs:(b + 1) * bs], far[None, b * bs:(b + 1) * bs])["pan"] for b in range(nb)]
+    assert len(cmds) >= 2 and cmds == st.cmds, (cmds, st.cmds)
+    assert np.max(np.abs(np.array(sp) - pans)) < 1e-9
+    assert angdiff(sp[-1], 30.0) < 10.0, sp[-1]
+
+
 if __name__ == "__main__":
     fns = [v for k, v in dict(globals()).items() if k.startswith("test_")]
     for fn in fns:
